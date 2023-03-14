@@ -50,6 +50,8 @@ public class Widget {
     private Widget prevtt;
     static Map<String, Factory> types = new TreeMap<String, Factory>();
 
+	protected final boolean i10n = i10n();
+
     @dolda.jglob.Discoverable
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
@@ -1519,4 +1521,5 @@ public class Widget {
 
 	public abstract void ntick(double a);
     }
+	protected boolean i10n() {return true;}
 }

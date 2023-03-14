@@ -115,11 +115,11 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
 	}
     }
 
-    public static byte[] gettoken(String user, String hostname) {
+    public static byte[] gettoken2(String user, String hostname) {
 	return(getprefb("savedtoken-" + user, hostname, null, false));
     }
 
-    public static void rottokens(String user, String hostname, boolean creat, boolean rm) {
+    public static void rottokens2(String user, String hostname, boolean creat, boolean rm) {
 	List<String> names = new ArrayList<>(Utils.getprefsl("saved-tokens@" + hostname, new String[] {}));
 	creat = creat || (!rm && names.contains(user));
 	if(rm || creat)
@@ -129,10 +129,28 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
 	Utils.setprefsl("saved-tokens@" + hostname, names);
     }
 
-    public static void settoken(String user, String hostname, byte[] token) {
+    public static void settoken2(String user, String hostname, byte[] token) {
 	Utils.setpref("savedtoken-" + user + "@" + hostname, (token == null) ? "" : Utils.byte2hex(token));
 	rottokens(user, hostname, token != null, true);
     }
+
+	public static byte[] gettoken(String user, String hostname) {
+		return AccountList.getToken(user, hostname);
+	}
+
+	public static void rottokens(String user, String hostname, boolean creat, boolean rm) {
+		if(rm && !creat) {
+			AccountList.removeToken(user, hostname);
+		}
+	}
+
+	public static void settoken(String user, String hostname, byte[] token) {
+		if(token == null) {
+			AccountList.removeToken(user, hostname);
+		} else {
+			AccountList.setToken(user, hostname, token);
+		}
+	}
 
     private Message getmsg() throws InterruptedException {
 	Message msg;

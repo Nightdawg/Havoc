@@ -40,6 +40,7 @@ public class LoginScreen extends Widget {
     private Text error, progress;
     private Button optbtn;
     private OptWnd opts;
+	AccountList accounts;
 
     private String getpref(String name, String def) {
 	return(Utils.getpref(name + "@" + hostname, def));
@@ -53,6 +54,7 @@ public class LoginScreen extends Widget {
 	optbtn = adda(new Button(UI.scale(100), "Options"), pos("cbl").add(10, -10), 0, 1);
 	optbtn.setgkey(GameUI.kb_opt);
 	adda(login = new Credbox(), bgc.adds(0, 10), 0.5, 0.0).hide();
+	accounts = add(new AccountList(10));
     }
 
     public static final KeyBinding kb_savtoken = KeyBinding.get("login/savtoken", KeyMatch.forchar('R', KeyMatch.M));
@@ -291,26 +293,36 @@ public class LoginScreen extends Widget {
 	progress(null);
     }
 
-    public void wdgmsg(Widget sender, String msg, Object... args) {
-	if(sender == optbtn) {
-	    if(opts == null) {
-		opts = adda(new OptWnd(false) {
-			public void hide() {
-			    /* XXX */
-			    reqdestroy();
+	public void wdgmsg(Widget sender, String msg, Object... args) {
+		if(sender == accounts) {
+			if("account".equals(msg)) {
+				String name = (String) args[0];
+				String token = (String) args[1];
+				login.user.settext2(name);
+				login.token = Utils.hex2byte(token);
+				login.enter();
 			}
-		    }, sz.div(2), 0.5, 0.5);
-	    } else {
-		opts.reqdestroy();
-		opts = null;
-	    }
-	    return;
-	} else if(sender == opts) {
-	    opts.reqdestroy();
-	    opts = null;
+			return;
+		}
+		if(sender == optbtn) {
+			if(opts == null) {
+				opts = ui.root.adda(new OptWnd(false) {
+					public void hide() {
+						/* XXX */
+						reqdestroy();
+					}
+				}, sz.div(2), 0.5, 0.5);
+			} else {
+				opts.reqdestroy();
+				opts = null;
+			}
+			return;
+		} else if(sender == opts) {
+			opts.reqdestroy();
+			opts = null;
+		}
+		super.wdgmsg(sender, msg, args);
 	}
-	super.wdgmsg(sender, msg, args);
-    }
 
     public void cdestroy(Widget ch) {
 	if(ch == opts) {

@@ -28,12 +28,14 @@ package haven;
 
 import java.net.URL;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.function.*;
 import java.io.*;
 import java.nio.file.*;
 
 public class Config {
+	public static final File HOMEDIR = new File("").getAbsoluteFile();
     public static final Properties jarprops = getjarprops();
     public static final String confid = jarprops.getProperty("config.client-id", "unknown");
     public static final Variable<Boolean> par = Variable.def(() -> true);
@@ -49,6 +51,71 @@ public class Config {
 	    return(global);
 	}
     }
+
+	public static File getFile(String name) {
+		return new File(HOMEDIR, name);
+	}
+
+	public static String loadFile(String name) {
+		InputStream inputStream = getFSStream(name);
+		if(inputStream == null) {
+			inputStream = getJarStream(name);
+		}
+		return getString(inputStream);
+	}
+
+	private static InputStream getFSStream(String name) {
+		InputStream inputStream = null;
+		File file = Config.getFile(name);
+		if(file.exists() && file.canRead()) {
+			try {
+				inputStream = new FileInputStream(file);
+			} catch (FileNotFoundException ignored) {
+			}
+		}
+		return inputStream;
+	}
+
+	private static InputStream getJarStream(String name) {
+		if(name.charAt(0) != '/') {
+			name = '/' + name;
+		}
+		return Config.class.getResourceAsStream(name);
+	}
+
+	private static String getString(InputStream inputStream) {
+		if(inputStream != null) {
+			try {
+				return Utils.stream2str(inputStream);
+			} catch (Exception ignore) {
+			} finally {
+				try {inputStream.close();} catch (IOException ignored) {}
+			}
+		}
+		return null;
+	}
+
+	public static void saveFile(String name, String data) {
+		File file = Config.getFile(name);
+		boolean exists = file.exists();
+		if(!exists) {
+			try {
+				String parent = file.getParent();
+				//noinspection ResultOfMethodCallIgnored
+				new File(parent).mkdirs();
+				exists = file.createNewFile();
+			} catch (IOException ignored) {}
+		}
+		if(exists && file.canWrite()) {
+			try (FileOutputStream fos = new FileOutputStream(file);
+				 OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+				 BufferedWriter writer = new BufferedWriter(osw)) {
+				writer.write(data);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
     private static Properties getjarprops() {
 	Properties ret = new Properties();
