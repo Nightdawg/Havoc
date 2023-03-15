@@ -3,3 +3,4 @@
 /local-config.properties
 /local-boot.properties
 *~
+/accounts.json
