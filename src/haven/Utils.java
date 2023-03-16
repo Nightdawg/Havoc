@@ -259,7 +259,7 @@ public class Utils {
 	}
     }
 
-    public static final Config.Variable<String> prefspec = Config.Variable.prop("haven.prefspec", "hafen");
+    public static final Config.Variable<String> prefspec = Config.Variable.prop("haven.prefspec", "hafen-Nightdawg");
     public static Preferences prefs() {
 	if(prefs == null) {
 	    synchronized(Utils.class) {
