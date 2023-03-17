@@ -84,7 +84,7 @@ public class LoginScreen extends Widget {
 
 	    protected void changed() {
 		checktoken();
-		savetoken.set(token != null);
+		//savetoken.set(token != null); ND: commented this, so the "remember me" doesn't untick whenever you write inside the username input.
 	    }
 
 	    public void settext2(String text) {
@@ -131,6 +131,7 @@ public class LoginScreen extends Widget {
 		pwbox.add(prev = new Label("Password", textf){{setstroked(Color.BLACK);}}, Coord.z);
 	    pwbox.add(pass = new TextEntry(this.sz.x, ""), prev.pos("bl").adds(0, 1)).pw = true;
 	    pwbox.add(savetoken = new CheckBox("Save Account", true), pass.pos("bl").adds(0, 10));
+		savetoken.set(true); //ND: Set this to true from the beginning. If they don't want to save, untick it.
 	    //savetoken.setgkey(kb_savtoken); //ND: Stupid keybind.
 	    savetoken.settip("Saving an account does not save your password, but rather " +
 			     "a randomly generated token that will be used to log in. " +
@@ -183,7 +184,7 @@ public class LoginScreen extends Widget {
 	private void forget() {
 	    String nm = user.text();
 	    Bootstrap.settoken(nm, hostname, null);
-	    savetoken.set(false);
+	    //savetoken.set(false); //ND: commented this, so the "remember me" doesn't untick whenever you click on "forget me".
 	    checktoken();
 	}
 
