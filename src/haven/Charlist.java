@@ -134,6 +134,16 @@ public class Charlist extends Widget {
 
     protected void added() {
 	parent.setfocus(this);
+		parent.add(new Button(UI.scale(120), "Log out") {
+			@Override
+			public void click() {
+				Session sess = ((RemoteUI)ui.rcvr).sess;
+				synchronized(sess) {
+					sess.close();
+				}
+				super.click();
+			}
+		}, UI.scale(20, 560));
     }
 
     private int scrolltgt = -1;
