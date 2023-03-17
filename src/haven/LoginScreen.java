@@ -34,7 +34,7 @@ public class LoginScreen extends Widget {
 	textf = new Text.Foundry(Text.sans, 16).aa(true),
 	textfs = new Text.Foundry(Text.sans, 14).aa(true);
     public static final Tex bg = Resource.loadtex("gfx/loginscr");
-    public static final Position bgc = new Position(UI.scale(420, 300));
+	public static final Position bgc = new Position(UI.scale(533, 250));// ND: This affects only the login screen username/password location.
     public final Credbox login;
     public final String hostname;
     private Text error, progress;
@@ -55,10 +55,11 @@ public class LoginScreen extends Widget {
 	optbtn.setgkey(GameUI.kb_opt);
 	adda(login = new Credbox(), bgc.adds(0, 10), 0.5, 0.0).hide();
 	accounts = add(new AccountList(10));
+	adda(new StatusLabel(hostname, 0.5), bgc.x, bg.sz().y, 0.5, 1.4); // ND: This adds the server status and player count.
     }
 
-    public static final KeyBinding kb_savtoken = KeyBinding.get("login/savtoken", KeyMatch.forchar('R', KeyMatch.M));
-    public static final KeyBinding kb_deltoken = KeyBinding.get("login/deltoken", KeyMatch.forchar('F', KeyMatch.M));
+    //public static final KeyBinding kb_savtoken = KeyBinding.get("login/savtoken", KeyMatch.forchar('R', KeyMatch.M)); // ND: Why the fuck are there keybinds for these? Someone might press one of those by mistake.
+    //public static final KeyBinding kb_deltoken = KeyBinding.get("login/deltoken", KeyMatch.forchar('F', KeyMatch.M)); // ND: No drink button keybind, BUT OH BOY WE COULD REALLY USE A REMEMBER/FORGET ACCOUNT KEYBIND!
     public class Credbox extends Widget {
 	public final UserEntry user;
 	private final TextEntry pass;
@@ -125,9 +126,9 @@ public class LoginScreen extends Widget {
 	    add(pwbox = new Widget(Coord.z), user.pos("bl").adds(0, 10));
 	    pwbox.add(prev = new Label("Password", textf), Coord.z);
 	    pwbox.add(pass = new TextEntry(this.sz.x, ""), prev.pos("bl").adds(0, 1)).pw = true;
-	    pwbox.add(savetoken = new CheckBox("Remember me", true), pass.pos("bl").adds(0, 10));
-	    savetoken.setgkey(kb_savtoken);
-	    savetoken.settip("Saving your login does not save your password, but rather " +
+	    pwbox.add(savetoken = new CheckBox("Save Account", true), pass.pos("bl").adds(0, 10));
+	    //savetoken.setgkey(kb_savtoken); //ND: Stupid keybind.
+	    savetoken.settip("Saving an account does not save your password, but rather " +
 			     "a randomly generated token that will be used to log in. " +
 			     "You can manage your saved tokens in your Account Settings.",
 			     true);
@@ -137,7 +138,7 @@ public class LoginScreen extends Widget {
 	    add(tkbox = new Widget(new Coord(this.sz.x, 0)), user.pos("bl").adds(0, 10));
 	    tkbox.add(prev = new Label("Login saved", textfs), UI.scale(0, 25));
 	    tkbox.adda(fbtn = new Button(UI.scale(100), "Forget me"), prev.pos("mid").x(this.sz.x), 1.0, 0.5).action(this::forget);
-	    fbtn.setgkey(kb_deltoken);
+	    //fbtn.setgkey(kb_deltoken); //ND: Stupider keybind.
 	    tkbox.pack();
 	    tkbox.hide();
 
@@ -154,7 +155,8 @@ public class LoginScreen extends Widget {
 	    if(inited)
 		return;
 	    inited = true;
-	    user.init(getpref("loginname", ""));
+		//user.init(getpref("loginname", "")); // ND: This line sets the user text if the "remember me" is checked. I don't want that, since we have the accounts on the left side.
+											   // This way, if a new account needs to be added, you don't need to clear the box.
 	}
 
 	private void checktoken() {
@@ -248,14 +250,14 @@ public class LoginScreen extends Widget {
 		if(!stat.syn || (stat.status == ""))
 		    return;
 		if(stat.status == "up") {
-		    FastText.aprintf(g, new Coord(x, FastText.h * 0), ax, 0, "Server status: Up");
-		    FastText.aprintf(g, new Coord(x, FastText.h * 1), ax, 0, "Hearthlings playing: %,d", stat.users);
+		    FastText.aprintf(g, new Coord(x, FastText.h * 0), ax, 0, "Server status: Online");
+		    FastText.aprintf(g, new Coord(x, FastText.h * 1), ax, 0, "Hearthlings connected: %,d", stat.users);
 		} else if(stat.status == "down") {
-		    FastText.aprintf(g, new Coord(x, FastText.h * 0), ax, 0, "Server status: Down");
+		    FastText.aprintf(g, new Coord(x, FastText.h * 0), ax, 0, "Server status: Offline");
 		} else if(stat.status == "shutdown") {
 		    FastText.aprintf(g, new Coord(x, FastText.h * 0), ax, 0, "Server status: Shutting down");
 		} else if(stat.status == "crashed") {
-		    FastText.aprintf(g, new Coord(x, FastText.h * 0), ax, 0, "Server status: Crashed");
+		    FastText.aprintf(g, new Coord(x, FastText.h * 0), ax, 0, "Server status: It crashed bro");
 		}
 	    }
 	}
