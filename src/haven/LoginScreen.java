@@ -26,13 +26,15 @@
 
 package haven;
 
+import java.awt.*;
 import java.util.*;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 public class LoginScreen extends Widget {
     public static final Text.Foundry
-	textf = new Text.Foundry(Text.sans, 16).aa(true),
-	textfs = new Text.Foundry(Text.sans, 14).aa(true);
+	textf = new Text.Foundry(Text.sans, 18).aa(true),//ND: Increased size from 16 to 18
+	textfs = new Text.Foundry(Text.sans, 15).aa(true);//ND: Increased size from 14 to 15
     public static final Tex bg = Resource.loadtex("gfx/loginscr");
 	public static final Position bgc = new Position(UI.scale(533, 250));// ND: This affects only the login screen username/password location.
     public final Credbox login;
@@ -119,12 +121,14 @@ public class LoginScreen extends Widget {
 	private Credbox() {
 	    super(UI.scale(200, 150));
 	    setfocustab(true);
-	    Widget prev = add(new Label("User name", textf), 0, 0);
+	    //Widget prev = add(new Label("User name", textf), 0, 0); //ND: replaced this with stroked text
+		Widget prev = add(new Label("Username", textf){{setstroked(Color.BLACK);}}, 0, 0);
 	    add(user = new UserEntry(this.sz.x), prev.pos("bl").adds(0, 1));
 	    setfocus(user);
 
 	    add(pwbox = new Widget(Coord.z), user.pos("bl").adds(0, 10));
-	    pwbox.add(prev = new Label("Password", textf), Coord.z);
+	    //pwbox.add(prev = new Label("Password", textf), Coord.z); //ND: replaced this with stroked text
+		pwbox.add(prev = new Label("Password", textf){{setstroked(Color.BLACK);}}, Coord.z);
 	    pwbox.add(pass = new TextEntry(this.sz.x, ""), prev.pos("bl").adds(0, 1)).pw = true;
 	    pwbox.add(savetoken = new CheckBox("Save Account", true), pass.pos("bl").adds(0, 10));
 	    //savetoken.setgkey(kb_savtoken); //ND: Stupid keybind.
@@ -136,7 +140,8 @@ public class LoginScreen extends Widget {
 	    pwbox.hide();
 
 	    add(tkbox = new Widget(new Coord(this.sz.x, 0)), user.pos("bl").adds(0, 10));
-	    tkbox.add(prev = new Label("Login saved", textfs), UI.scale(0, 25));
+	    //tkbox.add(prev = new Label("Login saved", textfs), UI.scale(0, 25)); ND: replaced this with stroked text
+		tkbox.add(prev = new Label("Login saved", textfs){{setstroked(Color.BLACK);}}, UI.scale(0, 25));
 	    tkbox.adda(fbtn = new Button(UI.scale(100), "Forget me"), prev.pos("mid").x(this.sz.x), 1.0, 0.5).action(this::forget);
 	    //fbtn.setgkey(kb_deltoken); //ND: Stupider keybind.
 	    tkbox.pack();

@@ -186,10 +186,31 @@ public class Text implements Disposable {
 	    g.dispose();
 	    return(new Line(text, img, m));
 	}
-		
 	public Line render(String text) {
 	    return(render(text, defcol));
 	}
+
+		public Line renderstroked(String text, Color c, Color stroke) {
+			Coord sz = strsize(text);
+			if (sz.x < 1)
+				sz = sz.add(1, 0);
+			sz = sz.add(2, 0);
+			BufferedImage img = TexI.mkbuf(sz);
+			Graphics g = img.createGraphics();
+			if (aa)
+				Utils.AA(g);
+			g.setFont(font);
+			FontMetrics m = g.getFontMetrics();
+			g.setColor(stroke);
+			g.drawString(text, 0, m.getAscent());
+			g.drawString(text, 2, m.getAscent());
+			g.drawString(text, 1, m.getAscent() - 1);
+			g.drawString(text, 1, m.getAscent() + 1);
+			g.setColor(c);
+			g.drawString(text, 1, m.getAscent());
+			g.dispose();
+			return (new Line(text, img, m));
+		}
     }
 
     public static abstract class Imager extends Furnace {

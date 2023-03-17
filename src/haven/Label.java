@@ -33,6 +33,7 @@ public class Label extends Widget {
     Text text;
     String texts;
     Color col = Color.WHITE;
+	Color stroke = Color.BLACK;
 	
     @RName("lbl")
     public static class $_ implements Factory {
@@ -82,6 +83,12 @@ public class Label extends Widget {
 	this.text = f.render(texts, col);
 	sz = this.text.sz();
     }
+
+	public void setstroked(Color stroke) {
+		this.stroke = stroke;
+		this.text = f.renderstroked(texts, col, stroke);
+		sz = this.text.sz();
+	}
 
     public void dispose() {
 	super.dispose();
