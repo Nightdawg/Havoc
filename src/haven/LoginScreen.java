@@ -143,7 +143,13 @@ public class LoginScreen extends Widget {
 	    add(tkbox = new Widget(new Coord(this.sz.x, 0)), user.pos("bl").adds(0, 10));
 	    //tkbox.add(prev = new Label("Login saved", textfs), UI.scale(0, 25)); ND: replaced this with stroked text
 		tkbox.add(prev = new Label("Login saved", textfs){{setstroked(Color.BLACK);}}, UI.scale(0, 25));
-	    tkbox.adda(fbtn = new Button(UI.scale(100), "Forget me"), prev.pos("mid").x(this.sz.x), 1.0, 0.5).action(this::forget);
+	    tkbox.adda(fbtn = new Button(UI.scale(100), "Forget me"), prev.pos("mid").x(this.sz.x), 1.0, 0.5).action(() -> {
+			forget();
+			if (accounts.getAccountFromName(user.text()) != null) {
+				accounts.remove(accounts.getAccountFromName(user.text()));
+			}
+			user.rsettext("");
+		});
 	    //fbtn.setgkey(kb_deltoken); //ND: Stupider keybind.
 	    tkbox.pack();
 	    tkbox.hide();

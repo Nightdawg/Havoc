@@ -180,4 +180,14 @@ public class AccountList extends Widget {
         ui.destroy(account.plb);
         ui.destroy(account.del);
     }
+    public Account getAccountFromName(String name){
+        synchronized (accounts) {
+            for (Account account : accounts) {
+                if (name.equals(account.name)){
+                    return account;
+                }
+            }
+        }
+        return null;
+    }
 }
