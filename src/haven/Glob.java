@@ -111,6 +111,24 @@ public class Glob {
 	    }
 	}
     }
+    //ND: This is used for the Night Mode slider stuff in the camera settings
+	private final Object brightsync = new Object();
+	public Color blightamb = null, blightdif = null, blightspc = null;
+	public static double nightModeBrightness = Utils.getprefd("nightModeSetting", 0.0);
+	public void brighten(){
+		synchronized(brightsync) {
+			double bright = nightModeBrightness;
+			if(lightamb != null) {
+				blightamb = Utils.blendcol(lightamb, Color.WHITE, bright);
+			}
+			if(lightdif != null) {
+				blightdif = Utils.blendcol(lightdif, Color.WHITE, bright);
+			}
+			if(lightspc != null) {
+				blightspc = Utils.blendcol(lightspc, Color.WHITE, bright);
+			}
+		}
+	}
 
     private double lastctick = 0;
     public void ctick() {
@@ -220,6 +238,7 @@ public class Glob {
 			lightang = tlightang;
 			lightelev = tlightelev;
 			lchange = -1;
+			brighten(); // ND: Added for the night mode
 		    }
 		}
 	    } else if(t == "sky") {

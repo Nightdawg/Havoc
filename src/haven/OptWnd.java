@@ -32,6 +32,7 @@ import java.awt.event.KeyEvent;
 public class OptWnd extends Window {
     public final Panel main;
     public Panel current;
+	public static int cameraLmaoMessage = 1; // ND: Message for "cam" console command, idk where to put this lmao
 
     public void chpanel(Panel p) {
 	if(current != null)
@@ -501,61 +502,293 @@ public class OptWnd extends Window {
 						     "$col[255,255,0]{Backspace}: Revert to default\n" +
 						     "$col[255,255,0]{Delete}: Disable keybinding", 0);
     public class BindingPanel extends Panel {
-	private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
-	    return(cont.addhl(new Coord(0, y), cont.sz.x,
-			      new Label(nm), new SetButton(UI.scale(175), cmd))
-		   + UI.scale(2));
-	}
+		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
+			return (cont.addhl(new Coord(0, y), cont.sz.x,
+					new Label(nm), new SetButton(UI.scale(175), cmd))
+					+ UI.scale(2));
+		}
 
-	public BindingPanel(Panel back) {
-	    super();
-	    Scrollport scroll = add(new Scrollport(UI.scale(new Coord(300, 300))), 0, 0);
-	    Widget cont = scroll.cont;
-	    Widget prev;
-	    int y = 0;
-	    y = cont.adda(new Label("Main menu"), cont.sz.x / 2, y, 0.5, 0.0).pos("bl").adds(0, 5).y;
-	    y = addbtn(cont, "Inventory", GameUI.kb_inv, y);
-	    y = addbtn(cont, "Equipment", GameUI.kb_equ, y);
-	    y = addbtn(cont, "Character sheet", GameUI.kb_chr, y);
-	    y = addbtn(cont, "Map window", GameUI.kb_map, y);
-	    y = addbtn(cont, "Kith & Kin", GameUI.kb_bud, y);
-	    y = addbtn(cont, "Options", GameUI.kb_opt, y);
-	    y = addbtn(cont, "Search actions", GameUI.kb_srch, y);
-	    y = addbtn(cont, "Toggle chat", GameUI.kb_chat, y);
-	    y = addbtn(cont, "Quick chat", ChatUI.kb_quick, y);
-	    y = addbtn(cont, "Take screenshot", GameUI.kb_shoot, y);
-	    y = addbtn(cont, "Minimap icons", GameUI.kb_ico, y);
-	    y = addbtn(cont, "Toggle UI", GameUI.kb_hide, y);
-	    y = addbtn(cont, "Log out", GameUI.kb_logout, y);
-	    y = addbtn(cont, "Switch character", GameUI.kb_switchchr, y);
-	    y = cont.adda(new Label("Map options"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
-	    y = addbtn(cont, "Display claims", GameUI.kb_claim, y);
-	    y = addbtn(cont, "Display villages", GameUI.kb_vil, y);
-	    y = addbtn(cont, "Display realms", GameUI.kb_rlm, y);
-	    y = addbtn(cont, "Display grid-lines", MapView.kb_grid, y);
-	    y = cont.adda(new Label("Camera control"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
-	    y = addbtn(cont, "Rotate left", MapView.kb_camleft, y);
-	    y = addbtn(cont, "Rotate right", MapView.kb_camright, y);
-	    y = addbtn(cont, "Zoom in", MapView.kb_camin, y);
-	    y = addbtn(cont, "Zoom out", MapView.kb_camout, y);
-	    y = addbtn(cont, "Reset", MapView.kb_camreset, y);
-	    y = cont.adda(new Label("Map window"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
-	    y = addbtn(cont, "Reset view", MapWnd.kb_home, y);
-	    y = addbtn(cont, "Place marker", MapWnd.kb_mark, y);
-	    y = addbtn(cont, "Toggle markers", MapWnd.kb_hmark, y);
-	    y = addbtn(cont, "Compact mode", MapWnd.kb_compact, y);
-	    y = cont.adda(new Label("Walking speed"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
-	    y = addbtn(cont, "Increase speed", Speedget.kb_speedup, y);
-	    y = addbtn(cont, "Decrease speed", Speedget.kb_speeddn, y);
-	    for(int i = 0; i < 4; i++)
-		y = addbtn(cont, String.format("Set speed %d", i + 1), Speedget.kb_speeds[i], y);
-	    y = cont.adda(new Label("Combat actions"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
-	    for(int i = 0; i < Fightsess.kb_acts.length; i++)
-		y = addbtn(cont, String.format("Combat action %d", i + 1), Fightsess.kb_acts[i], y);
-	    y = addbtn(cont, "Switch targets", Fightsess.kb_relcycle, y);
-	    prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
-	    prev = adda(new PButton(UI.scale(200), "Back", 27, back), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
-	    pack();
+		public BindingPanel(Panel back) {
+			super();
+			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(300, 300))), 0, 0);
+			Widget cont = scroll.cont;
+			Widget prev;
+			int y = 0;
+			y = cont.adda(new Label("Main menu"), cont.sz.x / 2, y, 0.5, 0.0).pos("bl").adds(0, 5).y;
+			y = addbtn(cont, "Inventory", GameUI.kb_inv, y);
+			y = addbtn(cont, "Equipment", GameUI.kb_equ, y);
+			y = addbtn(cont, "Character sheet", GameUI.kb_chr, y);
+			y = addbtn(cont, "Map window", GameUI.kb_map, y);
+			y = addbtn(cont, "Kith & Kin", GameUI.kb_bud, y);
+			y = addbtn(cont, "Options", GameUI.kb_opt, y);
+			y = addbtn(cont, "Search actions", GameUI.kb_srch, y);
+			y = addbtn(cont, "Toggle chat", GameUI.kb_chat, y);
+			y = addbtn(cont, "Quick chat", ChatUI.kb_quick, y);
+			y = addbtn(cont, "Take screenshot", GameUI.kb_shoot, y);
+			y = addbtn(cont, "Minimap icons", GameUI.kb_ico, y);
+			y = addbtn(cont, "Toggle UI", GameUI.kb_hide, y);
+			y = addbtn(cont, "Log out", GameUI.kb_logout, y);
+			y = addbtn(cont, "Switch character", GameUI.kb_switchchr, y);
+			y = cont.adda(new Label("Map options"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
+			y = addbtn(cont, "Display claims", GameUI.kb_claim, y);
+			y = addbtn(cont, "Display villages", GameUI.kb_vil, y);
+			y = addbtn(cont, "Display realms", GameUI.kb_rlm, y);
+			y = addbtn(cont, "Display grid-lines", MapView.kb_grid, y);
+			y = cont.adda(new Label("Camera control"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
+			//y = addbtn(cont, "Rotate left", MapView.kb_camleft, y);
+			//y = addbtn(cont, "Rotate right", MapView.kb_camright, y);
+			//y = addbtn(cont, "Zoom in", MapView.kb_camin, y);
+			//y = addbtn(cont, "Zoom out", MapView.kb_camout, y);
+			y = addbtn(cont, "Snap North", MapView.kb_camSnapNorth, y);
+			y = addbtn(cont, "Snap South", MapView.kb_camSnapSouth, y);
+			y = addbtn(cont, "Snap East", MapView.kb_camSnapEast, y);
+			y = addbtn(cont, "Snap West", MapView.kb_camSnapWest, y);
+			y = addbtn(cont, "Reset", MapView.kb_camreset, y);
+			y = cont.adda(new Label("Map window"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
+			y = addbtn(cont, "Reset view", MapWnd.kb_home, y);
+			y = addbtn(cont, "Place marker", MapWnd.kb_mark, y);
+			y = addbtn(cont, "Toggle markers", MapWnd.kb_hmark, y);
+			y = addbtn(cont, "Compact mode", MapWnd.kb_compact, y);
+			y = cont.adda(new Label("Walking speed"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
+			y = addbtn(cont, "Increase speed", Speedget.kb_speedup, y);
+			y = addbtn(cont, "Decrease speed", Speedget.kb_speeddn, y);
+			for (int i = 0; i < 4; i++)
+				y = addbtn(cont, String.format("Set speed %d", i + 1), Speedget.kb_speeds[i], y);
+			y = cont.adda(new Label("Combat actions"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
+			for (int i = 0; i < Fightsess.kb_acts.length; i++)
+				y = addbtn(cont, String.format("Combat action %d", i + 1), Fightsess.kb_acts[i], y);
+			y = addbtn(cont, "Switch targets", Fightsess.kb_relcycle, y);
+			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
+			prev = adda(new PButton(UI.scale(200), "Back", 27, back), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
+			pack();
+		}
+	}
+	//ND: Set the variables for the camera menu things
+	private Label freeCamZoomSpeedLabel;
+	private HSlider freeCamZoomSpeedSlider;
+	private Button freeCamZoomSpeedResetButton;
+	private Label freeCamHeightLabel;
+	private HSlider freeCamHeightSlider;
+	private Button freeCamHeightResetButton;
+	private CheckBox unlockedOrthoCamCheckBox;
+	private Label orthoCamZoomSpeedLabel;
+	private HSlider orthoCamZoomSpeedSlider;
+	private Button orthoCamZoomSpeedResetButton;
+	private CheckBox revertCameraAxisCheckBox;
+	private CheckBox allowLowerFreeCamTilt;
+	private HSlider nightModeCameraSlider;
+	public class NDCamSettingsPanel extends Panel {
+
+		public NDCamSettingsPanel(Panel back) {
+			Widget prev; // this will be visible with both camera type settings
+			Widget FreePrev; // used to calculate the positions for the NDFree camera settings
+			Widget OrthoPrev; // used to calculate the positions for the NDOrtho camera settings
+			if (Utils.getprefb("CamAxisSettingBool", true)){
+				Utils.setprefb("CamAxisSettingBool", true);
+				MapView.cameraAxisReverter = -1;
+			}
+			else {
+				Utils.setprefb("CamAxisSettingBool", false);
+				MapView.cameraAxisReverter = 1;
+			}
+
+			if (Utils.getprefb("unlockedNDOrtho", true)){
+				MapView.isometricNDOrtho = false;
+			}
+			else {
+				MapView.isometricNDOrtho = true;
+			}
+
+			if (Utils.getprefb("allowLowerTiltBool", false)){
+				MapView.freeCamTiltBool = true;
+			}
+			else {
+				MapView.freeCamTiltBool = false;
+			}
+			prev = add(new Label(""), 0, 0);
+
+			prev = add(new Label("Night Mode / Brighter World:"), prev.pos("bl").adds(0, 46));
+			Glob.nightModeBrightness = Utils.getprefd("nightModeSetting", 0.0);
+			prev = add(nightModeCameraSlider = new HSlider(UI.scale(200), 0, 650, (int)(Glob.nightModeBrightness*1000)) {
+				protected void attach(UI ui) {
+					super.attach(ui);
+					val = (int)(Glob.nightModeBrightness*1000);
+				}
+				public void changed() {
+					Glob.nightModeBrightness = val/1000.0;
+					Utils.setprefd("nightModeSetting", val/1000.0);
+					if(ui.sess != null && ui.sess.glob != null) {
+						ui.sess.glob.brighten();
+					}
+				}
+			}, prev.pos("bl").adds(0, 2));
+			add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Glob.nightModeBrightness = 0.0;
+				nightModeCameraSlider.val = 0;
+				Utils.setprefd("nightModeSetting", 0.0);
+				if(ui.sess != null && ui.sess.glob != null) {
+					ui.sess.glob.brighten();
+				}
+			}), prev.pos("bl").adds(210, -20));
+			prev = add(new Label("Additional Camera Settings"), prev.pos("bl").adds(0, 10));
+			prev = add(revertCameraAxisCheckBox = new CheckBox("Revert Camera Look Axes"){
+				{a = (Utils.getprefb("CamAxisSettingBool", true));}
+				public void set(boolean val) {
+					if (val) {
+						MapView.cameraAxisReverter = -1;
+						Utils.setprefb("CamAxisSettingBool", true);
+					}
+					else {
+						MapView.cameraAxisReverter = 1;
+						Utils.setprefb("CamAxisSettingBool", false);
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(16, 6));
+			OrthoPrev = add(unlockedOrthoCamCheckBox = new CheckBox("Unlocked Ortho Camera"){
+				{a = Utils.getprefb("unlockedNDOrtho", true);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("unlockedNDOrtho", true);
+						MapView.isometricNDOrtho = false;
+					}
+					else {
+						Utils.setprefb("unlockedNDOrtho", false);
+						MapView.isometricNDOrtho = true;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			OrthoPrev = add(orthoCamZoomSpeedLabel = new Label("Ortho Camera Zoom Speed:"), OrthoPrev.pos("bl").adds(-16, 10));
+			MapView.orthoCameraZoomSpeed = Utils.getprefi("orthoCamZoomSpeed", 10);
+			OrthoPrev = add(orthoCamZoomSpeedSlider = new HSlider(UI.scale(200), 2, 40, MapView.orthoCameraZoomSpeed) {
+				protected void attach(UI ui) {
+					super.attach(ui);
+					val = MapView.orthoCameraZoomSpeed;
+				}
+				public void changed() {
+					MapView.orthoCameraZoomSpeed = val;
+					Utils.setprefi("orthoCamZoomSpeed", val);
+				}
+			}, OrthoPrev.pos("bl").adds(0, 2));
+			add(orthoCamZoomSpeedResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
+				MapView.orthoCameraZoomSpeed = 10;
+				orthoCamZoomSpeedSlider.val = 10;
+				Utils.setprefi("orthoCamZoomSpeed", 10);
+			}), OrthoPrev.pos("bl").adds(210, -20));
+
+			//ND: Now the free camera settings
+			FreePrev = add(allowLowerFreeCamTilt = new CheckBox("Enable lower freecam tilting"){
+				{a = (Utils.getprefb("allowLowerTiltBool", false));}
+				public void set(boolean val) {
+					if (val) {
+						MapView.freeCamTiltBool = true;
+						Utils.setprefb("allowLowerTiltBool", true);
+					}
+					else {
+						MapView.freeCamTiltBool = false;
+						Utils.setprefb("allowLowerTiltBool", false);
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			FreePrev = add(freeCamZoomSpeedLabel = new Label("Free Camera Zoom Speed:"), FreePrev.pos("bl").adds(-16, 10));
+			MapView.freeCameraZoomSpeed = Utils.getprefi("freeCamZoomSpeed", 25);
+			FreePrev = add(freeCamZoomSpeedSlider = new HSlider(UI.scale(200), 4, 40, MapView.freeCameraZoomSpeed) {
+				protected void attach(UI ui) {
+					super.attach(ui);
+					val = MapView.freeCameraZoomSpeed;
+				}
+				public void changed() {
+					MapView.freeCameraZoomSpeed = val;
+					Utils.setprefi("freeCamZoomSpeed", val);
+				}
+			}, FreePrev.pos("bl").adds(0, 2));
+			add(freeCamZoomSpeedResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
+				MapView.freeCameraZoomSpeed = 25;
+				freeCamZoomSpeedSlider.val = 25;
+				Utils.setprefi("freeCamZoomSpeed", 25);
+			}), FreePrev.pos("bl").adds(210, -20));
+			FreePrev = add(freeCamHeightLabel = new Label("Free Camera Height:"), FreePrev.pos("bl").adds(0, 10));
+			MapView.cameraHeightDistance = (float) Utils.getprefd("cameraHeightDistance", 15f);
+			FreePrev = add(freeCamHeightSlider = new HSlider(UI.scale(200), 10, 300, (Math.round(MapView.cameraHeightDistance))*10) {
+				protected void attach(UI ui) {
+					super.attach(ui);
+					val = (Math.round(MapView.cameraHeightDistance))*10;
+				}
+				public void changed() {
+					float tempVal = val;
+					MapView.cameraHeightDistance = (tempVal/10);
+					Utils.setprefd("cameraHeightDistance", (tempVal/10));
+				}
+			}, FreePrev.pos("bl").adds(0, 2));
+			add(freeCamHeightResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
+				MapView.cameraHeightDistance = 15f;
+				freeCamHeightSlider.val = 150;
+				Utils.setprefd("cameraHeightDistance", 15f);
+			}), FreePrev.pos("bl").adds(210, -20));
+			add(new Label(""), 278, 0); // added this so the window's width does not change when switching camera type and closing/reopening the panel
+			prev = add(new Label("Selected Camera Type:"), 0, 0);
+			{
+				boolean[] done = {false};
+				RadioGroup camGrp = new RadioGroup(this) {
+					public void changed(int btn, String lbl) {
+						if(!done[0])
+							return;
+						try {
+							if(btn==0) {
+								Utils.setpref("defcam", "NDFree");
+								setFreeCameraSettingsVisibility(true);
+								setOrthoCameraSettingsVisibility(false);
+								MapView.publicCurrentCameraName = 1;
+								MapView.publicFreeCamDist = 100f;
+								if (gameui() != null && gameui().map != null) {
+									gameui().map.setcam("NDFree");
+								}
+							}
+							if(btn==1) {
+								Utils.setpref("defcam", "NDOrtho");
+								setFreeCameraSettingsVisibility(false);
+								setOrthoCameraSettingsVisibility(true);
+								MapView.publicCurrentCameraName = 2;
+								MapView.publicOrthoCamDist = 150f;
+								if (gameui() != null && gameui().map != null) {
+									gameui().map.setcam("NDOrtho");
+								}
+							}
+						} catch (Exception e) {
+							throw new RuntimeException(e);
+						}
+					}
+				};
+				prev = camGrp.add("Free Camera", prev.pos("bl").adds(16, 6));
+				prev = camGrp.add("Ortho Camera", prev.pos("bl").adds(0, 5));
+
+				String startupSelectedCamera = Utils.getpref("defcam", "NDFree");
+				if (startupSelectedCamera.equals("NDFree") || startupSelectedCamera.equals("bad") || startupSelectedCamera.equals("worse") || startupSelectedCamera.equals("follow")){
+					camGrp.check(0);
+					Utils.setpref("defcam", "NDFree");
+					setFreeCameraSettingsVisibility(true);
+					setOrthoCameraSettingsVisibility(false);
+					MapView.publicCurrentCameraName = 1;
+					MapView.publicFreeCamDist = 100f;
+				}
+				else {
+					camGrp.check(1);
+					Utils.setpref("defcam", "NDOrtho");
+					setFreeCameraSettingsVisibility(false);
+					setOrthoCameraSettingsVisibility(true);
+					MapView.publicCurrentCameraName = 2;
+					MapView.publicOrthoCamDist = 150f;
+				}
+				done[0] = true;
+			}
+
+
+			add(new PButton(UI.scale(200), "Back", 27, back), FreePrev.pos("bl").adds(40, 18));
+			setTooltipsForCameraSettingsStuff();
+			pack();
+		}
 	}
 
 	public class SetButton extends KeyMatch.Capture {
@@ -594,7 +827,7 @@ public class OptWnd extends Window {
 		return(kbtt.tex());
 	    }
 	}
-    }
+
 
 
     public static class PointBind extends Button {
@@ -710,13 +943,16 @@ public class OptWnd extends Window {
 	Panel audio = add(new AudioPanel(main));
 	Panel iface = add(new InterfacePanel(main));
 	Panel keybind = add(new BindingPanel(main));
+	Panel camsettings = add(new NDCamSettingsPanel(main));
 
 	int y = 0;
 	Widget prev;
 	y = main.add(new PButton(UI.scale(200), "Interface settings", 'v', iface), 0, y).pos("bl").adds(0, 5).y;
 	y = main.add(new PButton(UI.scale(200), "Video settings", 'v', video), 0, y).pos("bl").adds(0, 5).y;
 	y = main.add(new PButton(UI.scale(200), "Audio settings", 'a', audio), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Keybindings", 'k', keybind), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Keybindings", 'k', keybind), 0, y).pos("bl").adds(0, 35).y;
+
+	y = main.add(new PButton(UI.scale(200), "Camera Settings", 'k', camsettings), 0, y).pos("bl").adds(0, 5).y;
 	y += UI.scale(60);
 	if(gopts) {
 	    y = main.add(new Button(UI.scale(200), "Switch character", false).action(() -> {
@@ -733,10 +969,36 @@ public class OptWnd extends Window {
 
 	chpanel(this.main);
     }
+	private void setFreeCameraSettingsVisibility(boolean bool){
+		freeCamZoomSpeedLabel.visible = bool;
+		freeCamZoomSpeedSlider.visible = bool;
+		freeCamZoomSpeedResetButton.visible = bool;
+		freeCamHeightLabel.visible = bool;
+		freeCamHeightSlider.visible = bool;
+		freeCamHeightResetButton.visible = bool;
+		allowLowerFreeCamTilt.visible = bool;
+	}
+	private void setOrthoCameraSettingsVisibility(boolean bool){
+		unlockedOrthoCamCheckBox.visible = bool;
+		orthoCamZoomSpeedLabel.visible = bool;
+		orthoCamZoomSpeedSlider.visible = bool;
+		orthoCamZoomSpeedResetButton.visible = bool;
+	}
+	private void setTooltipsForCameraSettingsStuff(){
+		revertCameraAxisCheckBox.tooltip = RichText.render("Enabling this will revert the Vertical and Horizontal axes when dragging the camera to look around.\n$col[185,185,185]{I don't know why Loftar inverts them in the first place...}", 280);
+		unlockedOrthoCamCheckBox.tooltip = RichText.render("Enabling this allows you to rotate the Ortho camera freely, without locking it to only 4 view angles.", 280);
+
+		freeCamZoomSpeedResetButton.tooltip = RichText.render("Reset to default", 300);
+		freeCamHeightResetButton.tooltip = RichText.render("Reset to default", 300);
+		orthoCamZoomSpeedResetButton.tooltip = RichText.render("Reset to default", 300);
+		allowLowerFreeCamTilt.tooltip = RichText.render("Enabling this will allow you to tilt the camera below the character and look upwards.\n$col[200,0,0]{BE CAREFUL WITH THIS IN COMBAT!}\n$col[185,185,185]{Honestly just enable this when you need to take a screenshot or something, and keep it disabled the rest of the time.}", 300);
+
+	}
 
     public OptWnd() {
 	this(true);
     }
+
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	if((sender == this) && (msg == "close")) {

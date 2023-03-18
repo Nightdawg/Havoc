@@ -1309,11 +1309,31 @@ public class Utils {
     }
 
     public static Color blendcol(Color x, Color y, double a) {
+		a = clip(a, 0, 1); //ND: Add this for the camera night mode.
 	int f1 = (int)(a * 255), f2 = 255 - f1;
 	return(new Color(((x.getRed()   * f2) + (y.getRed()   * f1)) / 255,
 			 ((x.getGreen() * f2) + (y.getGreen() * f1)) / 255,
 			 ((x.getBlue()  * f2) + (y.getBlue()  * f1)) / 255,
 			 ((x.getAlpha() * f2) + (y.getAlpha() * f1)) / 255));
+    }
+
+    public static Color blendcol(double a, Color... cols) {
+        a = clip(a, 0, 1);
+        if(cols.length > 2) {
+            int n = cols.length - 1;
+            double d = 1.0 / n;
+            int section = (int) (a / d);
+            if(section >= n){
+                return cols[n];
+            } else {
+                return blendcol(cols[section], cols[section + 1], (a - section * d) / d);
+            }
+        } else if(cols.length == 2) {
+            return blendcol(cols[0], cols[1], a);
+        } else if(cols.length == 1) {
+            return cols[0];
+        }
+        return null;
     }
 
     public static Color preblend(Color c1, Color c2) {

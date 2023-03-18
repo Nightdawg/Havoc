@@ -1521,5 +1521,16 @@ public class Widget {
 
 	public abstract void ntick(double a);
     }
+
+	//ND: This function gets the gameui. I got it from matias. I don't understand this static/non-static bullshit. Maybe one day I will.
+	public GameUI gameui() {
+		Widget parent = this.parent;
+		while (parent != null) {
+			if (parent instanceof GameUI)
+				return (GameUI) parent;
+			parent = parent.parent;
+		}
+		return null;
+	}
 	protected boolean i10n() {return true;}
 }

@@ -69,6 +69,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	void mmousemove(Coord mc);
     }
 
+	private enum Direction {
+		WEST, EAST, NORTH, SOUTH
+	}
+
     public abstract class Camera implements Pipe.Op {
 	protected haven.render.Camera view = new haven.render.Camera(Matrix4f.identity());
 	protected Projection proj = new Projection(Matrix4f.identity());
@@ -89,6 +93,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public boolean wheel(Coord sc, int amount) {
 	    return(false);
 	}
+
+	public void snap(Direction dir) {}
 	
 	public void resized() {
 	    float field = 0.5f;
@@ -371,6 +377,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public static KeyBinding kb_camin    = KeyBinding.get("cam-in",    KeyMatch.forcode(KeyEvent.VK_UP, 0));
     public static KeyBinding kb_camout   = KeyBinding.get("cam-out",   KeyMatch.forcode(KeyEvent.VK_DOWN, 0));
     public static KeyBinding kb_camreset = KeyBinding.get("cam-reset", KeyMatch.forcode(KeyEvent.VK_HOME, 0));
+	public static KeyBinding kb_camSnapNorth = KeyBinding.get("cam-SnapNorth", KeyMatch.forcode(KeyEvent.VK_UP, 0));
+	public static KeyBinding kb_camSnapSouth = KeyBinding.get("cam-SnapSouth", KeyMatch.forcode(KeyEvent.VK_DOWN, 0));
+	public static KeyBinding kb_camSnapEast = KeyBinding.get("cam-SnapEast", KeyMatch.forcode(KeyEvent.VK_RIGHT, 0));
+	public static KeyBinding kb_camSnapWest = KeyBinding.get("cam-SnapWest", KeyMatch.forcode(KeyEvent.VK_LEFT, 0));
     public class SOrthoCam extends OrthoCam {
 	private Coord dragorig = null;
 	private float anglorig;
@@ -480,6 +490,227 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
     static {camtypes.put("ortho", SOrthoCam.class);}
+
+	public static int cameraAxisReverter = 1;
+	public static boolean freeCamTiltBool = false;
+	public static float cameraHeightDistance = 15f;
+	public static int freeCameraZoomSpeed = 25;
+	public static float publicFreeCamDist = 100f;
+	public static int publicCurrentCameraName = 1;
+	public class NDFreeCam extends FreeCam {
+		private float dist = 500.0f, tdist = dist;
+		private float elev = (float)Math.PI / 4.0f, telev = elev;
+		private float angl = (float) (3 * Math.PI / 2), tangl = angl;
+		private Coord dragorig = null;
+		private float elevorig, anglorig;
+		private final float pi2 = (float)(Math.PI * 2);
+		private Coord3f cc = null;
+
+		public void tick(double dt) {
+			float cf = (1f - (float)Math.pow(500, -dt * 3));
+			angl = angl + ((tangl - angl) * cf);
+			while(angl > pi2) {angl -= pi2; tangl -= pi2; anglorig -= pi2;}
+			while(angl < 0)   {angl += pi2; tangl += pi2; anglorig += pi2;}
+			if(Math.abs(tangl - angl) < 0.0001) angl = tangl;
+
+			elev = elev + ((telev - elev) * cf);
+			if(Math.abs(telev - elev) < 0.0001) elev = telev;
+
+			dist = dist + ((tdist - dist) * cf);
+			if(Math.abs(tdist - dist) < 0.0001) dist = tdist;
+
+			Coord3f mc = getcc();
+			mc.y = -mc.y;
+			if((cc == null) || (Math.hypot(mc.x - cc.x, mc.y - cc.y) > 250))
+				cc = mc;
+			else
+				cc = cc.add(mc.sub(cc).mul(cf));
+			view = haven.render.Camera.pointed(cc.add(0.0f, 0.0f, cameraHeightDistance), dist, elev, angl);
+		}
+
+		public float angle() {
+			return(angl);
+		}
+
+		public boolean click(Coord c) {
+			elevorig = elev;
+			anglorig = angl;
+			dragorig = c;
+			return(true);
+		}
+
+		public void drag(Coord c) {
+			telev = elevorig - cameraAxisReverter * ((float)(c.y - dragorig.y) / 100.0f);
+			if (freeCamTiltBool){
+				if(telev < -0.5f) telev = -0.5f;
+			}
+			else {
+				if(telev < 0.0f) telev = 0.0f;
+			}
+			if(telev > (Math.PI / 2.0)) telev = (float)Math.PI / 2.0f;
+			tangl = anglorig + cameraAxisReverter * ((float)(c.x - dragorig.x) / 100.0f);
+		}
+
+		public boolean wheel(Coord c, int amount) {
+			float d = tdist + (amount * freeCameraZoomSpeed);
+			if(d < 10)
+				d = 10;
+			tdist = d;
+			publicFreeCamDist = d;
+			return(true);
+		}
+
+		@Override
+		public void snap(Direction dir) {
+			switch (dir) {
+				case WEST:
+					tangl = (float) (2 * Math.PI);
+					break;
+				case EAST:
+					tangl = (float) Math.PI;
+					break;
+				case NORTH:
+					tangl = (float) (3 * Math.PI / 2);
+					break;
+				case SOUTH:
+					tangl = (float) (Math.PI / 2);
+					break;
+			}
+		}
+
+		public boolean keydown(KeyEvent ev) {
+			if(kb_camSnapNorth.key().match(ev)) {
+				snapCameraNorth();
+				return(true);
+			} else if(kb_camSnapSouth.key().match(ev)) {
+				snapCameraSouth();
+				return(true);
+			} else if(kb_camSnapEast.key().match(ev)) {
+				snapCameraEast();
+				return(true);
+			} else if(kb_camSnapWest.key().match(ev)) {
+				snapCameraWest();
+				return (true);
+			}
+			return(false);
+		}
+	}
+	static {camtypes.put("NDFree", NDFreeCam.class);}
+
+	public static Boolean isometricNDOrtho = true;
+	public static int orthoCameraZoomSpeed = 10;
+	public static float publicOrthoCamDist = 150f;
+
+	public class NDSOrthoCam extends SOrthoCam {
+		private Coord dragorig = null;
+		private float anglorig;
+		private float tangl = angl;
+		private float tfield = field;
+		//private boolean isometric = false;
+		private final float pi2 = (float)(Math.PI * 2);
+		private double tf = 2.0;
+
+		public NDSOrthoCam(String... args) {
+			PosixArgs opt = PosixArgs.getopt(args, "enift:Z:");
+			for(char c : opt.parsed()) {
+				switch(c) {
+					case 'e':
+						exact = true;
+						break;
+					case 'n':
+						exact = false;
+						break;
+					case 'i':
+						//isometric = true;
+						break;
+					case 'f':
+						//isometric = false;
+						break;
+					case 't':
+						tf = Double.parseDouble(opt.arg);
+						break;
+					case 'Z':
+						field = tfield = Float.parseFloat(opt.arg);
+						break;
+				}
+			}
+		}
+
+		public void tick2(double dt) {
+			dt *= tf;
+			float cf = 1f - (float)Math.pow(500, -dt);
+			Coord3f mc = getcc();
+			mc.y = -mc.y;
+			if((cc == null) || (Math.hypot(mc.x - cc.x, mc.y - cc.y) > 250))
+				cc = mc;
+			else if(!exact || (mc.dist(cc) > 2))
+				cc = cc.add(mc.sub(cc).mul(cf));
+
+			angl = angl + ((tangl - angl) * cf);
+			while(angl > pi2) {angl -= pi2; tangl -= pi2; anglorig -= pi2;}
+			while(angl < 0)   {angl += pi2; tangl += pi2; anglorig += pi2;}
+			if(Math.abs(tangl - angl) < 0.001)
+				angl = tangl;
+			else
+				jc = cc;
+
+			field = field + ((tfield - field) * cf);
+			if(Math.abs(tfield - field) < 0.1)
+				field = tfield;
+			else
+				jc = cc;
+		}
+
+		public boolean click(Coord c) {
+			anglorig = angl;
+			dragorig = c;
+			return(true);
+		}
+
+		public void drag(Coord c) {
+			tangl = anglorig + cameraAxisReverter * ((float)(c.x - dragorig.x) / 100.0f);
+		}
+
+		public void release() {
+			if(isometricNDOrtho && (tfield > 100))
+				tangl = (float)(Math.PI * 0.5 * (Math.floor(tangl / (Math.PI * 0.5)) + 0.5));
+		}
+
+		private void chfield(float nf) {
+			tfield = nf;
+			tfield = Math.max(Math.min(tfield, sz.x * (float)Math.sqrt(2) / 2f), 50); // ND: changed "8f" to "2f" to increase the zoom out distance limit
+			if(tfield > 100)
+				release();
+			publicOrthoCamDist = tfield;
+		}
+
+		public boolean wheel(Coord c, int amount) {
+			chfield(tfield + amount * orthoCameraZoomSpeed);
+			return(true);
+		}
+
+		public boolean keydown(KeyEvent ev) {
+			if(kb_camleft.key().match(ev)) {
+				tangl = (float)(Math.PI * 0.5 * (Math.floor((tangl / (Math.PI * 0.5)) - 0.51) + 0.5));
+				return(true);
+			} else if(kb_camright.key().match(ev)) {
+				tangl = (float)(Math.PI * 0.5 * (Math.floor((tangl / (Math.PI * 0.5)) + 0.51) + 0.5));
+				return(true);
+			} else if(kb_camin.key().match(ev)) {
+				chfield(tfield - 50);
+				return(true);
+			} else if(kb_camout.key().match(ev)) {
+				chfield(tfield + 50);
+				return(true);
+			} else if(kb_camreset.key().match(ev)) {
+				tangl = angl + (float)Utils.cangle(-(float)Math.PI * 0.25f - angl);
+				chfield((float)(100 * Math.sqrt(2)));
+				return(true);
+			}
+			return(false);
+		}
+	}
+	static {camtypes.put("NDOrtho", NDSOrthoCam.class);}
 
     @RName("mapview")
     public static class $_ implements Factory {
@@ -1037,7 +1268,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private void amblight() {
 	synchronized(glob) {
 	    if(glob.lightamb != null) {
-		amblight = new DirLight(glob.lightamb, glob.lightdif, glob.lightspc, Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
+		//amblight = new DirLight(glob.lightamb, glob.lightdif, glob.lightspc, Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
+		amblight = new DirLight(glob.blightamb, glob.blightdif, glob.blightspc, Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));// ND: change for night mode
 		amblight.prio(100);
 	    } else {
 		amblight = null;
@@ -2285,21 +2517,45 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
     {
-	cmdmap.put("cam", new Console.Command() {
-		public void run(Console cons, String[] args) throws Exception {
-		    if(args.length >= 2) {
-			Class<? extends Camera> ct = camtypes.get(args[1]);
-			String[] cargs = Utils.splice(args, 2);
-			if(ct != null) {
-				camera = makecam(ct, cargs);
-				Utils.setpref("defcam", args[1]);
-				Utils.setprefb("camargs", Utils.serialize(cargs));
-			} else {
-			    throw(new Exception("no such camera: " + args[1]));
+		//ND: Change the "cam" console command. Console commands are stupid and not everyone knows of them, use the options menu instead.
+//	cmdmap.put("cam", new Console.Command() {
+//		public void run(Console cons, String[] args) throws Exception {
+//		    if(args.length >= 2) {
+//			Class<? extends Camera> ct = camtypes.get(args[1]);
+//			String[] cargs = Utils.splice(args, 2);
+//			if(ct != null) {
+//				camera = makecam(ct, cargs);
+//				Utils.setpref("defcam", args[1]);
+//				Utils.setprefb("camargs", Utils.serialize(cargs));
+//			} else {
+//			    throw(new Exception("no such camera: " + args[1]));
+//			}
+//		    }
+//		}
+//	    });
+
+		cmdmap.put("cam", new Console.Command() {
+			public void run(Console cons, String[] args) throws Exception {
+				if (OptWnd.cameraLmaoMessage == 1) {
+					OptWnd.cameraLmaoMessage = 2;
+					throw (new Exception("Please use the Options menu to change the camera instead."));
+				}
+				else if (OptWnd.cameraLmaoMessage == 2) {
+					OptWnd.cameraLmaoMessage = 3;
+					throw (new Exception("No. I said use the Options menu to change the camera!"));
+				}
+				else if (OptWnd.cameraLmaoMessage == 3) {
+					OptWnd.cameraLmaoMessage = 4;
+					throw (new Exception("USE THE FUCKING OPTIONS MENU TO CHANGE THE CAMERA!!!"));
+				}
+				else if (OptWnd.cameraLmaoMessage == 4) {
+					OptWnd.cameraLmaoMessage = 1;
+					throw (new Exception("I literally disabled this command in case you couldn't tell. Use the Options menu."));
+				}
 			}
-		    }
-		}
-	    });
+		});
+
+
 	cmdmap.put("whyload", new Console.Command() {
 		public void run(Console cons, String[] args) throws Exception {
 		    Loading l = lastload;
@@ -2340,4 +2596,29 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		}
 	    });
     }
+	//ND: Using this "setcam" to change the camera in OptWnd.java. This depends on gameui() inside Widget.java
+	public void setcam(String name, String... opts) throws Exception {
+		Class<? extends Camera> ct = camtypes.get(name);
+		if(ct != null) {
+			camera = makecam(ct, opts);
+			Utils.setpref("defcam", name);
+			Utils.setprefb("camargs", Utils.serialize(opts));
+		} else {
+			throw(new Exception("no such camera: " + name));
+		}
+	}
+	//ND: These functions are used to snap the camera in NDFree.
+	public void snapCameraNorth() {
+		camera.snap(Direction.NORTH);
+	}
+	public void snapCameraSouth() {
+		camera.snap(Direction.SOUTH);
+	}
+	public void snapCameraWest() {
+		camera.snap(Direction.WEST);
+	}
+	public void snapCameraEast() {
+		camera.snap(Direction.EAST);
+	}
+
 }
