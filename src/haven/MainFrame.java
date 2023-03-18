@@ -171,7 +171,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	super("Haven & Hearth");
 	Coord sz;
 	if(isz == null) {
-	    sz = Utils.getprefc("wndsz", new Coord(800, 600));
+	    sz = Utils.getprefc("wndsz", new Coord(1067, 600));// ND: Changed this to match the new login screen size. This is 16:9
 	    if(sz.x < 640) sz.x = 640;
 	    if(sz.y < 480) sz.y = 480;
 	} else {
