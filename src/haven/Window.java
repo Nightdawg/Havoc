@@ -31,26 +31,26 @@ import java.awt.image.BufferedImage;
 import static haven.PUtils.*;
 
 public class Window extends Widget implements DTarget {
-    public static final Tex bg = Resource.loadtex("gfx/hud/wnd/lg/bg");
-    public static final Tex bgl = Resource.loadtex("gfx/hud/wnd/lg/bgl");
-    public static final Tex bgr = Resource.loadtex("gfx/hud/wnd/lg/bgr");
-    public static final Tex cl = Resource.loadtex("gfx/hud/wnd/lg/cl");
-    public static final TexI cm = new TexI(Resource.loadsimg("gfx/hud/wnd/lg/cm"));
-    public static final Tex cr = Resource.loadtex("gfx/hud/wnd/lg/cr");
-    public static final Tex tm = Resource.loadtex("gfx/hud/wnd/lg/tm");
-    public static final Tex tr = Resource.loadtex("gfx/hud/wnd/lg/tr");
-    public static final Tex lm = Resource.loadtex("gfx/hud/wnd/lg/lm");
-    public static final Tex lb = Resource.loadtex("gfx/hud/wnd/lg/lb");
-    public static final Tex rm = Resource.loadtex("gfx/hud/wnd/lg/rm");
-    public static final Tex bl = Resource.loadtex("gfx/hud/wnd/lg/bl");
-    public static final Tex bm = Resource.loadtex("gfx/hud/wnd/lg/bm");
-    public static final Tex br = Resource.loadtex("gfx/hud/wnd/lg/br");
-    public static final Tex sizer = Resource.loadtex("gfx/hud/wnd/sizer");
+    public static final Tex bg = Resource.loadtex("gfx/hud/wnd/lg/bg"); // background seamless image
+    public static final Tex bgl = Resource.loadtex("gfx/hud/wnd/lg/bgl"); // left green bg overlay (leaves or whatever the fuck)
+    public static final Tex bgr = Resource.loadtex("gfx/hud/wnd/lg/bgr"); // right green bg overlay (leaves or whatever the fuck)
+    public static final Tex cl = Resource.loadtex("gfx/hud/wnd/lg/cl"); // top left corner
+    public static final TexI cm = new TexI(Resource.loadsimg("gfx/hud/wnd/lg/cm")); // top seamless big
+    public static final Tex cr = Resource.loadtex("gfx/hud/wnd/lg/cr"); // top current big end
+    public static final Tex tm = Resource.loadtex("gfx/hud/wnd/lg/tm"); // top seamless small
+    public static final Tex tr = Resource.loadtex("gfx/hud/wnd/lg/tr"); // top right corner
+    public static final Tex lm = Resource.loadtex("gfx/hud/wnd/lg/lm"); // left margin? super short margin? seamless extender? some shit
+    public static final Tex lb = Resource.loadtex("gfx/hud/wnd/lg/lb"); // left lower margin
+    public static final Tex rm = Resource.loadtex("gfx/hud/wnd/lg/rm"); // right margin? long margin? it's like 50 times longer than "lm"
+    public static final Tex bl = Resource.loadtex("gfx/hud/wnd/lg/bl"); // bottom left corner
+    public static final Tex bm = Resource.loadtex("gfx/hud/wnd/lg/bm"); // bottom margin?
+    public static final Tex br = Resource.loadtex("gfx/hud/wnd/lg/br"); // bottom right corner
+    public static final Tex sizer = Resource.loadtex("gfx/hud/wnd/sizer"); // corner resizer
     public static final Coord tlm = UI.scale(18, 30);
     public static final Coord brm = UI.scale(13, 22);
-    public static final Coord cpo = UI.rscale(36, 16.4);
+    public static final Coord cpo = UI.rscale(27, 13); // ND: Changed this from (36, 16.4). I don't remember why
     public static final int capo = 7, capio = 2;
-    public static final Coord dlmrgn = UI.scale(23, 14);
+    public static final Coord dlmrgn = UI.scale(23, 14); // ND: Changed from (23, 14). It's the margins iirc
     public static final Coord dsmrgn = UI.scale(9, 9);
     public static final BufferedImage ctex = Resource.loadimg("gfx/hud/fonttex");
     public static final Text.Furnace cf = new Text.Imager(new PUtils.TexFurn(new Text.Foundry(Text.fraktur, 15).aa(true), ctex)) {
@@ -70,9 +70,9 @@ public class Window extends Widget implements DTarget {
 	    public Coord cisz() {return(super.cisz().sub(co.mul(2)));}
 	};
     private static final BufferedImage[] cbtni = new BufferedImage[] {
-	Resource.loadsimg("gfx/hud/wnd/lg/cbtnu"),
-	Resource.loadsimg("gfx/hud/wnd/lg/cbtnd"),
-	Resource.loadsimg("gfx/hud/wnd/lg/cbtnh")};
+	Resource.loadsimg("gfx/hud/wnd/lg/cbtnu"), // close button up
+	Resource.loadsimg("gfx/hud/wnd/lg/cbtnd"), // close button down
+	Resource.loadsimg("gfx/hud/wnd/lg/cbtnh")}; // close button hover
     public final Coord tlo, rbo, mrgn;
     public final IButton cbtn;
     public boolean dt = false;
@@ -216,9 +216,11 @@ public class Window extends Widget implements DTarget {
 	cmw = (cap == null) ? 0 : cap.sz().x;
 	cmw = Math.max(cmw, wsz.x / 4);
 	cptl = new Coord(ctl.x, tlo.y);
-	cpsz = tlo.add(cpo.x + cmw, cm.sz().y).sub(cptl);
+	//cpsz = tlo.add(cpo.x + cmw, cm.sz().y).sub(cptl); // ND: I can't remember why I changed this. Something to do with the top bar, draggable size or whatever.
+	cpsz = tlo.add((int)(wsz.x*0.95), cm.sz().y).sub(cptl);
 	cmw = cmw - (cl.sz().x - cpo.x) - UI.scale(5);
-	cbtn.c = xlate(tlo.add(wsz.x - cbtn.sz.x, 0), false);
+	//cbtn.c = xlate(tlo.add(wsz.x - cbtn.sz.x, 0), false); // ND: UI Window close button location
+	cbtn.c = xlate(tlo.add(wsz.x - (int)(cbtn.sz.x*1.5), (int)(-cbtn.sz.x/6)), false);
 	for(Widget ch = child; ch != null; ch = ch.next)
 	    ch.presize();
     }
