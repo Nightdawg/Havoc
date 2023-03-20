@@ -114,10 +114,10 @@ public class Glob {
     //ND: This is used for the Night Mode slider stuff in the camera settings
 	private final Object brightsync = new Object();
 	public Color blightamb = null, blightdif = null, blightspc = null;
-	public static double nightModeBrightness = Utils.getprefd("nightModeSetting", 0.0);
+	public static double nightVisionBrightness = Utils.getprefd("nightVisionSetting", 0.0);
 	public void brighten(){
 		synchronized(brightsync) {
-			double bright = nightModeBrightness;
+			double bright = nightVisionBrightness;
 			if(lightamb != null) {
 				blightamb = Utils.blendcol(lightamb, Color.WHITE, bright);
 			}

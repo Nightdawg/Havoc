@@ -577,6 +577,8 @@ public class OptWnd extends Window {
 	private CheckBox revertCameraAxisCheckBox;
 	private CheckBox allowLowerFreeCamTilt;
 	private HSlider nightModeCameraSlider;
+	private Label nightVisionLabel;
+	private Button nightVisionResetButton;
 	public class NDCamSettingsPanel extends Panel {
 
 		public NDCamSettingsPanel(Panel back) {
@@ -607,25 +609,25 @@ public class OptWnd extends Window {
 			}
 			prev = add(new Label(""), 0, 0);
 
-			prev = add(new Label("Night Mode / Brighter World:"), prev.pos("bl").adds(0, 46));
-			Glob.nightModeBrightness = Utils.getprefd("nightModeSetting", 0.0);
-			prev = add(nightModeCameraSlider = new HSlider(UI.scale(200), 0, 650, (int)(Glob.nightModeBrightness*1000)) {
+			prev = add(nightVisionLabel = new Label("Night Vision / Brighter World:"), prev.pos("bl").adds(0, 46));
+			Glob.nightVisionBrightness = Utils.getprefd("nightVisionSetting", 0.0);
+			prev = add(nightModeCameraSlider = new HSlider(UI.scale(200), 0, 650, (int)(Glob.nightVisionBrightness*1000)) {
 				protected void attach(UI ui) {
 					super.attach(ui);
-					val = (int)(Glob.nightModeBrightness*1000);
+					val = (int)(Glob.nightVisionBrightness*1000);
 				}
 				public void changed() {
-					Glob.nightModeBrightness = val/1000.0;
-					Utils.setprefd("nightModeSetting", val/1000.0);
+					Glob.nightVisionBrightness = val/1000.0;
+					Utils.setprefd("nightVisionSetting", val/1000.0);
 					if(ui.sess != null && ui.sess.glob != null) {
 						ui.sess.glob.brighten();
 					}
 				}
 			}, prev.pos("bl").adds(0, 2));
-			add(new Button(UI.scale(70), "Reset", false).action(() -> {
-				Glob.nightModeBrightness = 0.0;
+			add(nightVisionResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
+				Glob.nightVisionBrightness = 0.0;
 				nightModeCameraSlider.val = 0;
-				Utils.setprefd("nightModeSetting", 0.0);
+				Utils.setprefd("nightVisionSetting", 0.0);
 				if(ui.sess != null && ui.sess.glob != null) {
 					ui.sess.glob.brighten();
 				}
@@ -678,7 +680,7 @@ public class OptWnd extends Window {
 			}), OrthoPrev.pos("bl").adds(210, -20));
 
 			//ND: Now the free camera settings
-			FreePrev = add(allowLowerFreeCamTilt = new CheckBox("Enable lower freecam tilting"){
+			FreePrev = add(allowLowerFreeCamTilt = new CheckBox("Enable lower freecam tilting angle"){
 				{a = (Utils.getprefb("allowLowerTiltBool", false));}
 				public void set(boolean val) {
 					if (val) {
@@ -985,13 +987,14 @@ public class OptWnd extends Window {
 		orthoCamZoomSpeedResetButton.visible = bool;
 	}
 	private void setTooltipsForCameraSettingsStuff(){
+		nightVisionLabel.tooltip = RichText.render("Increasing this will simulate daytime lighting during the night. It does not affect the light levels during the day.", 280);
+		nightVisionResetButton.tooltip = RichText.render("Reset to default", 300);
 		revertCameraAxisCheckBox.tooltip = RichText.render("Enabling this will revert the Vertical and Horizontal axes when dragging the camera to look around.\n$col[185,185,185]{I don't know why Loftar inverts them in the first place...}", 280);
 		unlockedOrthoCamCheckBox.tooltip = RichText.render("Enabling this allows you to rotate the Ortho camera freely, without locking it to only 4 view angles.", 280);
-
 		freeCamZoomSpeedResetButton.tooltip = RichText.render("Reset to default", 300);
 		freeCamHeightResetButton.tooltip = RichText.render("Reset to default", 300);
 		orthoCamZoomSpeedResetButton.tooltip = RichText.render("Reset to default", 300);
-		allowLowerFreeCamTilt.tooltip = RichText.render("Enabling this will allow you to tilt the camera below the character and look upwards.\n$col[200,0,0]{BE CAREFUL WITH THIS IN COMBAT!}\n$col[185,185,185]{Honestly just enable this when you need to take a screenshot or something, and keep it disabled the rest of the time.}", 300);
+		allowLowerFreeCamTilt.tooltip = RichText.render("Enabling this will allow you to tilt the camera below the character and look upwards.\n$col[200,0,0]{WARNING: Be careful when using this setting in combat! You're not able to click on the ground when looking at the world from below.}\n$col[185,185,185]{Honestly just enable this when you need to take a screenshot or something, and keep it disabled the rest of the time.}", 300);
 
 	}
 

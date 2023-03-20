@@ -99,7 +99,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public void resized() {
 	    float field = 0.5f;
 	    float aspect = ((float)sz.y) / ((float)sz.x);
-	    proj = Projection.frustum(-field, field, -aspect * field, aspect * field, 1, 2000);
+	    proj = Projection.frustum(-field, field, -aspect * field, aspect * field, 1, 5000); // ND: Changed this from 2000 to 5000. This is the max free cam distance, before it turns black.
 	}
 
 	public void apply(Pipe p) {
