@@ -474,7 +474,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
     }
 
     private StreamOut streamout = null;
-
+	public static boolean enableCornerFPSSetting; // ND: Variable used for the interface menu to show the framerate
     private void display(UI ui, GLRender buf) {
 	buf.clear(wnd, FragColor.fragcol, FColor.BLACK);
 	Pipe state = wnd.copy();
@@ -483,6 +483,9 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	synchronized(ui) {
 	    ui.draw(g);
 	}
+		if (enableCornerFPSSetting) {
+			FastText.aprint(g, new Coord(g.sz().x - 50, 15), 0, 1, "FPS: " + fps);
+		}
 	if(dbtext.get())
 	    drawstats(ui, g, buf);
 	drawtooltip(ui, g);
@@ -498,6 +501,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	    streamout.accept(buf, state);
 	}
     }
+
 
     public void run() {
 	Thread drawthread = new HackThread(this::renderloop, "Render thread");

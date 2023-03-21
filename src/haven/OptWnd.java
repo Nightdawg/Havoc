@@ -356,7 +356,7 @@ public class OptWnd extends Window {
 			    ui.setgprefs(GSettings.defaults());
 			    curcf.destroy();
 			    curcf = null;
-		}), prev.pos("bl").adds(0, 5));
+		}), prev.pos("bl").adds(0, 5).x(0));
 		pack();
 	    }
 	}
@@ -419,14 +419,26 @@ public class OptWnd extends Window {
 	}
     }
 
+	private CheckBox enableCornerFPSCheckBox;
+	private Label granularityPositionLabel;
+	private Label granularityAngleLabel;
+
     public class InterfacePanel extends Panel {
+
 	public InterfacePanel(Panel back) {
+		if (Utils.getprefb("CornerFPSSettingBool", false)){
+			JOGLPanel.enableCornerFPSSetting = true;
+		}
+		else {
+			JOGLPanel.enableCornerFPSSetting = false;
+		}
+
 	    Widget prev = add(new Label("Interface scale (requires restart)"), 0, 0);
 	    {
 		Label dpy = new Label("");
 		final double smin = 1, smax = Math.floor(UI.maxscale() / 0.25) * 0.25;
 		final int steps = (int)Math.round((smax - smin) / 0.25);
-		addhlp(prev.pos("bl").adds(0, 2), UI.scale(5),
+		addhlp(prev.pos("bl").adds(0, 4), UI.scale(5),
 		       prev = new HSlider(UI.scale(160), 0, steps, (int)Math.round(steps * (Utils.getprefd("uiscale", 1.0) - smin) / (smax - smin))) {
 			       protected void added() {
 				   dpy();
@@ -444,8 +456,8 @@ public class OptWnd extends Window {
 	    }
 	    prev = add(new Label("Object fine-placement granularity"), prev.pos("bl").adds(0, 5));
 	    {
-		Label pos = add(new Label("Position"), prev.pos("bl").adds(5, 2));
-		Label ang = add(new Label("Angle"), pos.pos("bl").adds(0, 2));
+		Label pos = add(granularityPositionLabel = new Label("Position"), prev.pos("bl").adds(5, 4));
+		Label ang = add(granularityAngleLabel= new Label("Angle"), pos.pos("bl").adds(0, 4));
 		int x = Math.max(pos.pos("ur").x, ang.pos("ur").x);
 		{
 		    Label dpy = new Label("");
@@ -453,15 +465,15 @@ public class OptWnd extends Window {
 		    final int steps = (int)Math.round((smax - smin) / 0.25);
 		    int ival = (int)Math.round(MapView.plobpgran);
 		    addhlp(Coord.of(x + UI.scale(5), pos.c.y), UI.scale(5),
-			   prev = new HSlider(UI.scale(155 - x), 2, 17, (ival == 0) ? 17 : ival) {
+			   prev = new HSlider(UI.scale(155 - x), 2, 65, (ival == 0) ? 65 : ival) {
 				   protected void added() {
 				       dpy();
 				   }
 				   void dpy() {
-				       dpy.settext((this.val == 17) ? "\u221e" : Integer.toString(this.val));
+				       dpy.settext((this.val == 65) ? "\u221e" : Integer.toString(this.val));
 				   }
 				   public void changed() {
-				       Utils.setprefd("plobpgran", MapView.plobpgran = ((this.val == 17) ? 0 : this.val));
+				       Utils.setprefd("plobpgran", MapView.plobpgran = ((this.val == 65) ? 0 : this.val));
 				       dpy();
 				   }
 			       },
@@ -493,7 +505,23 @@ public class OptWnd extends Window {
 			   dpy);
 		}
 	    }
+		prev = add(new Label("Advanced Interface Settings"), prev.pos("bl").adds(0, 10).x(0));
+		prev = add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
+			{a = (Utils.getprefb("CornerFPSSettingBool", false));}
+			public void set(boolean val) {
+				if (val) {
+					JOGLPanel.enableCornerFPSSetting = true;
+					Utils.setprefb("CornerFPSSettingBool", true);
+				}
+				else {
+					JOGLPanel.enableCornerFPSSetting = false;
+					Utils.setprefb("CornerFPSSettingBool", false);
+				}
+				a = val;
+			}
+		}, prev.pos("bl").adds(16, 6));
 	    add(new PButton(UI.scale(200), "Back", 27, back), prev.pos("bl").adds(0, 30).x(0));
+		setTooltipsForInterfaceSettingsStuff();
 	    pack();
 	}
     }
@@ -623,7 +651,7 @@ public class OptWnd extends Window {
 						ui.sess.glob.brighten();
 					}
 				}
-			}, prev.pos("bl").adds(0, 2));
+			}, prev.pos("bl").adds(0, 4));
 			add(nightVisionResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
 				Glob.nightVisionBrightness = 0.0;
 				nightModeCameraSlider.val = 0;
@@ -672,7 +700,7 @@ public class OptWnd extends Window {
 					MapView.orthoCameraZoomSpeed = val;
 					Utils.setprefi("orthoCamZoomSpeed", val);
 				}
-			}, OrthoPrev.pos("bl").adds(0, 2));
+			}, OrthoPrev.pos("bl").adds(0, 4));
 			add(orthoCamZoomSpeedResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
 				MapView.orthoCameraZoomSpeed = 10;
 				orthoCamZoomSpeedSlider.val = 10;
@@ -705,7 +733,7 @@ public class OptWnd extends Window {
 					MapView.freeCameraZoomSpeed = val;
 					Utils.setprefi("freeCamZoomSpeed", val);
 				}
-			}, FreePrev.pos("bl").adds(0, 2));
+			}, FreePrev.pos("bl").adds(0, 4));
 			add(freeCamZoomSpeedResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
 				MapView.freeCameraZoomSpeed = 25;
 				freeCamZoomSpeedSlider.val = 25;
@@ -723,7 +751,7 @@ public class OptWnd extends Window {
 					MapView.cameraHeightDistance = (tempVal/10);
 					Utils.setprefd("cameraHeightDistance", (tempVal/10));
 				}
-			}, FreePrev.pos("bl").adds(0, 2));
+			}, FreePrev.pos("bl").adds(0, 4));
 			add(freeCamHeightResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
 				MapView.cameraHeightDistance = 15f;
 				freeCamHeightSlider.val = 150;
@@ -987,7 +1015,7 @@ public class OptWnd extends Window {
 		orthoCamZoomSpeedResetButton.visible = bool;
 	}
 	private void setTooltipsForCameraSettingsStuff(){
-		nightVisionLabel.tooltip = RichText.render("Increasing this will simulate daytime lighting during the night. It does not affect the light levels during the day.", 280);
+		nightVisionLabel.tooltip = RichText.render("Increasing this will simulate daytime lighting during the night.\n$col[185,185,185]{It slightly affects the light levels during the day too.}", 280);
 		nightVisionResetButton.tooltip = RichText.render("Reset to default", 300);
 		revertCameraAxisCheckBox.tooltip = RichText.render("Enabling this will revert the Vertical and Horizontal axes when dragging the camera to look around.\n$col[185,185,185]{I don't know why Loftar inverts them in the first place...}", 280);
 		unlockedOrthoCamCheckBox.tooltip = RichText.render("Enabling this allows you to rotate the Ortho camera freely, without locking it to only 4 view angles.", 280);
@@ -995,7 +1023,13 @@ public class OptWnd extends Window {
 		freeCamHeightResetButton.tooltip = RichText.render("Reset to default", 300);
 		orthoCamZoomSpeedResetButton.tooltip = RichText.render("Reset to default", 300);
 		allowLowerFreeCamTilt.tooltip = RichText.render("Enabling this will allow you to tilt the camera below the character and look upwards.\n$col[200,0,0]{WARNING: Be careful when using this setting in combat! You're not able to click on the ground when looking at the world from below.}\n$col[185,185,185]{Honestly just enable this when you need to take a screenshot or something, and keep it disabled the rest of the time.}", 300);
+		freeCamHeightLabel.tooltip = RichText.render("This affects the height of the point at which the free camera is pointed. By default, it is pointed right above the player's head.\n$col[185,185,185]{This doesn't really affect gameplay that much, if at all. With this setting, you can make it point at the feet, or torso, or head, or whatever.}", 300);
+	}
 
+	private void setTooltipsForInterfaceSettingsStuff(){
+		enableCornerFPSCheckBox.tooltip = RichText.render("Enabling this will display the current FPS in the top-right corner of the screen.", 300);
+		granularityPositionLabel.tooltip = RichText.render ("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
+		granularityAngleLabel.tooltip = RichText.render ("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
 	}
 
     public OptWnd() {
