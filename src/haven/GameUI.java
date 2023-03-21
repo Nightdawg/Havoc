@@ -294,7 +294,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			if(!srchwnd.hasfocus) {
 			    this.setfocus(srchwnd);
 			} else {
-			    ui.destroy(srchwnd);
+				Utils.setprefc("wndc-srch",srchwnd.c); // ND: Add this to save the search window location
+				ui.destroy(srchwnd);
 			    srchwnd = null;
 			}
 		    }
