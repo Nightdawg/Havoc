@@ -46,16 +46,16 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
     public static final int offset = UI.scale(35);
     public static final Tex online = Resource.loadtex("gfx/hud/online");
     public static final Tex offline = Resource.loadtex("gfx/hud/offline");
-    public static final Color[] gc = new Color[] {
-	new Color(255, 255, 255),
-	new Color(0, 255, 0),
-	new Color(255, 0, 0),
-	new Color(0, 0, 255),
-	new Color(0, 255, 255),
-	new Color(255, 255, 0),
-	new Color(255, 0, 255),
-	new Color(255, 0, 128),
-    };
+	public static final Color[] gc = new Color[] { // ND: Slightly adjusted colors
+			new Color(255, 255, 255),
+			new Color(44, 219, 44),
+			new Color(225, 0, 0),
+			new Color(61, 108, 255),
+			new Color(82, 242, 234),
+			new Color(255, 230, 0),
+			new Color(126, 61, 255),
+			new Color(255, 112, 212),
+	};
     private Comparator<Buddy> bcmp;
     private Comparator<Buddy> alphacmp = new Comparator<Buddy>() {
 	private Collator c = Collator.getInstance();

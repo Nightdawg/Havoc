@@ -33,7 +33,7 @@ import haven.render.*;
 
 public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D {
     public static final BufferedImage vlg = Resource.loadimg("gfx/hud/vilind");
-    public static final Text.Foundry nfnd = new Text.Foundry(Text.dfont, 10);
+	public static final Text.Foundry nfnd = new Text.Foundry(Text.dfont, 12); // ND: Changed the size from 10 to 12
     public String name;
     public int group, type;
     public double seen = 0;
@@ -58,7 +58,8 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
 	    boolean hv = (type & 2) != 0;
 	    BufferedImage nm = null;
 	    if(name.length() > 0)
-		nm = Utils.outline2(nfnd.render(name, BuddyWnd.gc[group]).img, Utils.contrast(BuddyWnd.gc[group]));
+		//nm = Utils.outline2(nfnd.render(name, BuddyWnd.gc[group]).img, Utils.contrast(BuddyWnd.gc[group]));
+		nm = Utils.outline2(nfnd.renderstroked(name, BuddyWnd.gc[group], Color.BLACK).img, Color.BLACK, true); // ND: Changed this for better name visibility
 	    int w = 0, h = 0;
 	    if(nm != null) {
 		w += nm.getWidth();
