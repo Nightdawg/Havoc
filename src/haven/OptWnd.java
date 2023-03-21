@@ -532,13 +532,13 @@ public class OptWnd extends Window {
     public class BindingPanel extends Panel {
 		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
 			return (cont.addhl(new Coord(0, y), cont.sz.x,
-					new Label(nm), new SetButton(UI.scale(175), cmd))
+					new Label(nm), new SetButton(UI.scale(140), cmd))
 					+ UI.scale(2));
 		}
 
 		public BindingPanel(Panel back) {
 			super();
-			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(300, 300))), 0, 0);
+			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(260, 380))), 0, 0);
 			Widget cont = scroll.cont;
 			Widget prev;
 			int y = 0;
