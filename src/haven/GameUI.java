@@ -35,7 +35,7 @@ import static haven.Inventory.invsq;
 
 public class GameUI extends ConsoleHost implements Console.Directory, UI.MessageWidget {
     public static final Text.Foundry msgfoundry = RootWidget.msgfoundry;
-    private static final int blpw = UI.scale(142), brpw = UI.scale(142);
+    public static final int blpw = UI.scale(142), brpw = UI.scale(142); //ND: Changed this from private to public
     public final String chrid, genus;
     public final long plid;
     private final Hidepanel ulpanel, umpanel, urpanel, blpanel, mapmenupanel, brpanel, menupanel;
@@ -226,7 +226,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	setfocusctl(true);
 	chat = add(new ChatUI(0, 0));
 	if(Utils.getprefb("chatvis", true)) {
-	    chat.hresize(chat.savedh);
+	    chat.hresize(chat.savedh); // ND: I think i need to keep this cause of "clearanims(Spring.class);", whatever that is.
+		chat.resize(chat.savedw,chat.savedh); // ND: Added this to set both sizes
 	    chat.show();
 	}
 	beltwdg.raise();
@@ -1474,7 +1475,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
     public void resize(Coord sz) {
 	super.resize(sz);
-	chat.resize(sz.x - blpw - brpw);
+	//chat.resize(sz.x - blpw - brpw); // ND: commented this
 	chat.move(new Coord(blpw, sz.y));
 	if(map != null)
 	    map.resize(sz);

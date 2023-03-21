@@ -71,7 +71,8 @@ public class ChatUI extends Widget {
 
     protected void added() {
 	base = this.c;
-	resize(this.sz);
+	//resize(this.sz); // ND: Changed this
+	resize(savedw,savedh);
     }
     
     public static class ChatAttribute extends Attribute {
@@ -1182,7 +1183,7 @@ public class ChatUI extends Widget {
 	g.rimagev(bvlb, new Coord(0, bulc.sz().y), sz.y - bulc.sz().y);
 	g.rimagev(bvrb, new Coord(sz.x - bvrb.sz().x, burc.sz().y), sz.y - burc.sz().y);
 	g.rimageh(bhb, new Coord(bulc.sz().x, 0), sz.x - bulc.sz().x - burc.sz().x);
-	g.aimage(bmf, new Coord(sz.x / 2, 0), 0.5, 0);
+	//g.aimage(bmf, new Coord(sz.x / 2, 0), 0.5, 0); ND: Commented this
 	if((sel == null) || (sel.cb == null))
 	    g.aimage(bcbd, new Coord(sz.x, 0), 1, 0);
     }
@@ -1276,37 +1277,52 @@ public class ChatUI extends Widget {
 
     private UI.Grab dm = null;
     private Coord doff;
-    private static final int minh = 111;
-    public int savedh = UI.scale(Math.max(minh, Utils.getprefi("chatsize", minh)));
-    public boolean mousedown(Coord c, int button) {
-	int bmfx = (sz.x - bmf.sz().x) / 2;
-	if((button == 1) && (c.y < bmf.sz().y) && (c.x >= bmfx) && (c.x <= (bmfx + bmf.sz().x))) {
-	    dm = ui.grabmouse(this);
-	    doff = c;
-	    return(true);
-	} else {
-	    return(super.mousedown(c, button));
+    private static final int minh = 96; //ND: Decreased from 111 to 96
+    //public int savedh = UI.scale(Math.max(minh, Utils.getprefi("chatsize", minh)));
+	public int savedh = UI.scale(Math.max(minh, Utils.getprefc("chatsize", new Coord(UI.scale(410), minh)).y));
+	public int savedw = UI.scale(Math.max(minh, Utils.getprefc("chatsize", new Coord(UI.scale(410), minh)).x));
+	private boolean resizehoriz = false;
+	public boolean mousedown(Coord c, int button) {
+		if (button == 1 && c.x > sz.x - 9) {
+			dm = ui.grabmouse(this);
+			doff = c;
+			resizehoriz = true;
+			return (true);
+		}
+		else if((button == 1) && (c.y < bmf.sz().y)) {
+			dm = ui.grabmouse(this);
+			doff = c;
+			return(true);
+		} else {
+			return(super.mousedown(c, button));
+		}
 	}
-    }
 
-    public void mousemove(Coord c) {
-	if(dm != null) {
-	    resize(sz.x, savedh = Math.max(UI.scale(minh), sz.y + doff.y - c.y));
-	} else {
-	    super.mousemove(c);
+	public void mousemove(Coord c) {
+		if(dm != null) {
+			if (resizehoriz) {
+				resize(Math.max(UI.scale(410), Math.min(parent.sz.x - UI.scale(142*2), sz.x + c.x - doff.x)), savedh);
+				doff = c;
+			} else {
+				//resize(sz.x, savedh = Math.max(UI.scale(minh), sz.y + doff.y - c.y)); // ND: prevent the user from dragging the chat beyond the game window size, or even too close to it.
+				resize(sz.x, savedh = Math.max(UI.scale(minh), Math.min(parent.sz.y - UI.scale(120), sz.y + doff.y - c.y)));
+			}
+		} else {
+			super.mousemove(c);
+		}
 	}
-    }
 
-    public boolean mouseup(Coord c, int button) {
-	if(dm != null) {
-	    dm.remove();
-	    dm = null;
-	    Utils.setprefi("chatsize", UI.unscale(savedh));
-	    return(true);
-	} else {
-	    return(super.mouseup(c, button));
+	public boolean mouseup(Coord c, int button) {
+		if(dm != null) {
+			dm.remove();
+			dm = null;
+			Utils.setprefc("chatsize", UI.unscale(sz));
+			resizehoriz = false;
+			return(true);
+		} else {
+			return(super.mouseup(c, button));
+		}
 	}
-    }
 
     public boolean keydown(KeyEvent ev) {
 	boolean M = (ev.getModifiersEx() & (KeyEvent.META_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)) != 0;
