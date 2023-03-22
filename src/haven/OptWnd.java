@@ -27,6 +27,8 @@
 package haven;
 
 import haven.render.*;
+import haven.res.ui.tt.q.quality.Quality;
+
 import java.awt.event.KeyEvent;
 
 public class OptWnd extends Window {
@@ -821,6 +823,31 @@ public class OptWnd extends Window {
 		}
 	}
 
+	public static CheckBox toggleQualityDisplayCheckBox;
+
+	public class NDGameplaySettingsPanel extends Panel {
+		public NDGameplaySettingsPanel(Panel back) {
+			Widget prev;
+			prev = add(new Label("Toggles:"), 0, 0);
+			prev = add(toggleQualityDisplayCheckBox = new CheckBox("Display item quality"){
+				{a = (Utils.getprefb("qtoggle", false));}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("qtoggle", true);
+						Quality.show = true;
+					}
+					else {
+						Utils.setprefb("qtoggle", false);
+						Quality.show = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(16, 6));
+			add(new PButton(UI.scale(200), "Back", 27, back), prev.pos("bl").adds(40, 18).x(0));
+			pack();
+		}
+	}
+
 	public class SetButton extends KeyMatch.Capture {
 	    public final KeyBinding cmd;
 
@@ -974,6 +1001,7 @@ public class OptWnd extends Window {
 	Panel iface = add(new InterfacePanel(main));
 	Panel keybind = add(new BindingPanel(main));
 	Panel camsettings = add(new NDCamSettingsPanel(main));
+	Panel gameplaysettings = add(new NDGameplaySettingsPanel(main));
 
 	int y = 0;
 	Widget prev;
@@ -983,6 +1011,7 @@ public class OptWnd extends Window {
 	y = main.add(new PButton(UI.scale(200), "Keybindings", 'k', keybind), 0, y).pos("bl").adds(0, 35).y;
 
 	y = main.add(new PButton(UI.scale(200), "Camera Settings", 'k', camsettings), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Gameplay Settings", 'k', gameplaysettings), 0, y).pos("bl").adds(0, 5).y;
 	y += UI.scale(40);
 	if(gopts) {
 	    y = main.add(new Button(UI.scale(200), "Switch character", false).action(() -> {
