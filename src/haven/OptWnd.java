@@ -54,15 +54,23 @@ public class OptWnd extends Window {
     public class PButton extends Button {
 	public final Panel tgt;
 	public final int key;
+	public String newWindowTitle;
 
 	public PButton(int w, String title, int key, Panel tgt) {
 	    super(w, title, false);
 	    this.tgt = tgt;
 	    this.key = key;
 	}
+		public PButton(int w, String title, int key, Panel tgt, String newWindowTitle) {
+			super(w, title, false);
+			this.tgt = tgt;
+			this.key = key;
+			this.newWindowTitle = newWindowTitle;
+		}
 
 	public void click() {
-	    chpanel(tgt);
+		chpanel(tgt);
+		OptWnd.this.cap = Window.cf.render(newWindowTitle);
 	}
 
 	public boolean keydown(java.awt.event.KeyEvent ev) {
@@ -93,7 +101,7 @@ public class OptWnd extends Window {
 
 	public VideoPanel(Panel prev) {
 	    super();
-	    back = add(new PButton(UI.scale(200), "Back", 27, prev));
+	    back = add(new PButton(UI.scale(200), "Back", 27, prev, "Options            "));
 	}
 
 	public class CPanel extends Widget {
@@ -416,7 +424,7 @@ public class OptWnd extends Window {
 			ui.audio.amb.setvolume(val / 1000.0);
 		    }
 		}, prev.pos("bl").adds(0, 2));
-	    add(new PButton(UI.scale(200), "Back", 27, back), prev.pos("bl").adds(0, 30));
+	    add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 30));
 	    pack();
 	}
     }
@@ -522,7 +530,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, prev.pos("bl").adds(16, 6));
-	    add(new PButton(UI.scale(200), "Back", 27, back), prev.pos("bl").adds(0, 30).x(0));
+	    add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 30).x(0));
 		setTooltipsForInterfaceSettingsStuff();
 	    pack();
 	}
@@ -589,7 +597,7 @@ public class OptWnd extends Window {
 				y = addbtn(cont, String.format("Combat action %d", i + 1), Fightsess.kb_acts[i], y);
 			y = addbtn(cont, "Switch targets", Fightsess.kb_relcycle, y);
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
-			prev = adda(new PButton(UI.scale(200), "Back", 27, back), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
+			prev = adda(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			pack();
 		}
 	}
@@ -817,7 +825,7 @@ public class OptWnd extends Window {
 			}
 
 
-			add(new PButton(UI.scale(200), "Back", 27, back), FreePrev.pos("bl").adds(40, 18));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), FreePrev.pos("bl").adds(40, 18));
 			setTooltipsForCameraSettingsStuff();
 			pack();
 		}
@@ -843,7 +851,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
-			add(new PButton(UI.scale(200), "Back", 27, back), prev.pos("bl").adds(40, 18).x(0));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(40, 18).x(0));
 			pack();
 		}
 	}
@@ -994,7 +1002,7 @@ public class OptWnd extends Window {
     }
 
     public OptWnd(boolean gopts) {
-	super(Coord.z, "Options", true);
+	super(Coord.z, "Options            ", true); // ND: Added a bunch of spaces to the caption(title) in order avoid text cutoff when changing it
 	main = add(new Panel());
 	Panel video = add(new VideoPanel(main));
 	Panel audio = add(new AudioPanel(main));
@@ -1005,13 +1013,13 @@ public class OptWnd extends Window {
 
 	int y = 0;
 	Widget prev;
-	y = main.add(new PButton(UI.scale(200), "Interface settings", 'v', iface), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Video settings", 'v', video), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Audio settings", 'a', audio), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Keybindings", 'k', keybind), 0, y).pos("bl").adds(0, 35).y;
+	y = main.add(new PButton(UI.scale(200), "Interface settings", 'v', iface, "Interface Settings"), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Video settings", 'v', video, "Video settings"), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Audio settings", 'a', audio, "Audio settings"), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Keybindings", 'k', keybind, "Keybindings"), 0, y).pos("bl").adds(0, 35).y;
 
-	y = main.add(new PButton(UI.scale(200), "Camera Settings", 'k', camsettings), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Gameplay Settings", 'k', gameplaysettings), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Camera Settings", 'k', camsettings, "Camera Settings"), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Gameplay Settings", 'k', gameplaysettings, "Gameplay Settings"), 0, y).pos("bl").adds(0, 5).y;
 	y += UI.scale(40);
 	if(gopts) {
 	    y = main.add(new Button(UI.scale(200), "Switch character", false).action(() -> {
