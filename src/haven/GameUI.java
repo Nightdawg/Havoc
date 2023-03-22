@@ -35,15 +35,16 @@ import static haven.Inventory.invsq;
 
 public class GameUI extends ConsoleHost implements Console.Directory, UI.MessageWidget {
     public static final Text.Foundry msgfoundry = RootWidget.msgfoundry;
-    public static final int blpw = UI.scale(142), brpw = UI.scale(142); //ND: Changed this from private to public
+    public static final int blpw = UI.scale(0), brpw = UI.scale(142); //ND: Changed this from private to public
     public final String chrid, genus;
     public final long plid;
-    private final Hidepanel ulpanel, umpanel, urpanel, blpanel, mapmenupanel, brpanel, menupanel;
+    private final Hidepanel ulpanel, umpanel, urpanel, brpanel, menupanel; //blpanel, mapmenupanel
+	public static AlignPanel questObjectivesPanel;
     public Widget portrait;
     public MenuGrid menu;
     public MapView map;
     public GobIcon.Settings iconconf;
-    public MiniMap mmap;
+    //public MiniMap mmap;
     public Fightview fv;
     private List<Widget> meters = new LinkedList<Widget>();
     private Text lastmsg;
@@ -231,17 +232,18 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    chat.show();
 	}
 	beltwdg.raise();
-	blpanel = add(new Hidepanel("gui-bl", null, new Coord(-1,  1)) {
-		public void move(double a) {
-		    super.move(a);
-		    mapmenupanel.move();
-		}
-	    });
-	mapmenupanel = add(new Hidepanel("mapmenu", new Indir<Coord>() {
-		public Coord get() {
-		    return(new Coord(0, Math.min(blpanel.c.y - mapmenupanel.sz.y + UI.scale(33), GameUI.this.sz.y - mapmenupanel.sz.y)));
-		}
-	    }, new Coord(-1, 0)));
+//	blpanel = add(new Hidepanel("gui-bl", null, new Coord(-1,  1)) {
+//		public void move(double a) {
+//		    super.move(a);
+//		    mapmenupanel.move();
+//		}
+//	    });
+//	mapmenupanel = add(new Hidepanel("mapmenu", new Indir<Coord>() {
+//		public Coord get() {
+//		    //return(new Coord(0, Math.min(blpanel.c.y - mapmenupanel.sz.y + UI.scale(33), GameUI.this.sz.y - mapmenupanel.sz.y)));
+//			return(new Coord(0,0));
+//		}
+//	    }, new Coord(-1, 0)));
 	brpanel = add(new Hidepanel("gui-br", null, new Coord( 1,  1)) {
 		public void move(double a) {
 		    super.move(a);
@@ -256,8 +258,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	ulpanel = add(new Hidepanel("gui-ul", null, new Coord(-1, -1)));
 	umpanel = add(new Hidepanel("gui-um", null, new Coord( 0, -1)));
 	urpanel = add(new Hidepanel("gui-ur", null, new Coord( 1, -1)));
-	mapmenupanel.add(new MapMenu(), 0, 0);
-	blpanel.add(new Img(Resource.loadtex("gfx/hud/blframe")), 0, 0);
+	//mapmenupanel.add(new MapMenu(), 0, 0);
+	//blpanel.add(new Img(Resource.loadtex("gfx/hud/blframe")), 0, 0);
 	minimapc = new Coord(UI.scale(4), UI.scale(34));
 	Tex rbtnbg = Resource.loadtex("gfx/hud/csearch-bg");
 	Img brframe = brpanel.add(new Img(Resource.loadtex("gfx/hud/brframe")), rbtnbg.sz().x - UI.scale(22), 0);
@@ -265,7 +267,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	Img rbtnimg = brpanel.add(new Img(rbtnbg), 0, brpanel.sz.y - rbtnbg.sz().y);
 	menupanel.add(new MainMenu(), 0, 0);
 	menubuttons(rbtnimg);
-	foldbuttons();
+	//foldbuttons();
 	portrait = ulpanel.add(Frame.with(new Avaview(Avaview.dasz, plid, "avacam"), false), UI.scale(10, 10));
 	buffs = ulpanel.add(new Bufflist(), portrait.c.x + portrait.sz.x + UI.scale(10), portrait.c.y + ((IMeter.fsz.y + UI.scale(2)) * 2) + UI.scale(5 - 2));
 	umpanel.add(new Cal(), Coord.z);
@@ -304,118 +306,118 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 
     /* Ice cream */
-    private final IButton[] fold_br = new IButton[4];
-    private final IButton[] fold_bl = new IButton[4];
-    private void updfold(boolean reset) {
-	int br;
-	if(brpanel.tvis && menupanel.tvis)
-	    br = 0;
-	else if(brpanel.tvis && !menupanel.tvis)
-	    br = 1;
-	else if(!brpanel.tvis && !menupanel.tvis)
-	    br = 2;
-	else
-	    br = 3;
-	for(int i = 0; i < fold_br.length; i++)
-	    fold_br[i].show(i == br);
-
-	int bl;
-	if(blpanel.tvis && mapmenupanel.tvis)
-	    bl = 0;
-	else if(blpanel.tvis && !mapmenupanel.tvis)
-	    bl = 1;
-	else if(!blpanel.tvis && !mapmenupanel.tvis)
-	    bl = 2;
-	else
-	    bl = 3;
-	for(int i = 0; i < fold_bl.length; i++)
-	    fold_bl[i].show(i == bl);
-
-	if(reset)
-	    resetui();
-    }
-
-    private void foldbuttons() {
-	final Tex rdnbg = Resource.loadtex("gfx/hud/rbtn-maindwn");
-	final Tex rupbg = Resource.loadtex("gfx/hud/rbtn-upbg");
-	fold_br[0] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
-		public void click() {
-		    menupanel.cshow(false);
-		    updfold(true);
-		}
-	    };
-	fold_br[1] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
-		public void click() {
-		    brpanel.cshow(false);
-		    updfold(true);
-		}
-	    };
-	fold_br[2] = new IButton("gfx/hud/rbtn-up", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(rupbg, Coord.z); super.draw(g);}
-		public void click() {
-		    menupanel.cshow(true);
-		    updfold(true);
-		}
-		public void presize() {
-		    this.c = parent.sz.sub(this.sz);
-		}
-	    };
-	fold_br[3] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
-		public void click() {
-		    brpanel.cshow(true);
-		    updfold(true);
-		}
-	    };
-	menupanel.add(fold_br[0], 0, 0);
-	fold_br[0].lower();
-	brpanel.adda(fold_br[1], brpanel.sz.x, UI.scale(32), 1, 1);
-	adda(fold_br[2], 1, 1);
-	fold_br[2].lower();
-	menupanel.add(fold_br[3], 0, 0);
-	fold_br[3].lower();
-
-	final Tex ldnbg = Resource.loadtex("gfx/hud/lbtn-bgs");
-	final Tex lupbg = Resource.loadtex("gfx/hud/lbtn-upbg");
-	fold_bl[0] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
-		public void click() {
-		    mapmenupanel.cshow(false);
-		    updfold(true);
-		}
-	    };
-	fold_bl[1] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(ldnbg, Coord.z); super.draw(g);}
-		public void click() {
-		    blpanel.cshow(false);
-		    updfold(true);
-		}
-	    };
-	fold_bl[2] = new IButton("gfx/hud/lbtn-up", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(lupbg, Coord.z); super.draw(g);}
-		public void click() {
-		    mapmenupanel.cshow(true);
-		    updfold(true);
-		}
-		public void presize() {
-		    this.c = new Coord(0, parent.sz.y - sz.y);
-		}
-	    };
-	fold_bl[3] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
-		public void click() {
-		    blpanel.cshow(true);
-		    updfold(true);
-		}
-	    };
-	mapmenupanel.add(fold_bl[0], 0, 0);
-	blpanel.adda(fold_bl[1], 0, UI.scale(33), 0, 1);
-	adda(fold_bl[2], 0, 1);
-	fold_bl[2].lower();
-	mapmenupanel.add(fold_bl[3], 0, 0);
-
-	updfold(false);
-    }
+//    private final IButton[] fold_br = new IButton[4];
+//    private final IButton[] fold_bl = new IButton[4];
+//    private void updfold(boolean reset) {
+//	int br;
+//	if(brpanel.tvis && menupanel.tvis)
+//	    br = 0;
+//	else if(brpanel.tvis && !menupanel.tvis)
+//	    br = 1;
+//	else if(!brpanel.tvis && !menupanel.tvis)
+//	    br = 2;
+//	else
+//	    br = 3;
+//	for(int i = 0; i < fold_br.length; i++)
+//	    fold_br[i].show(i == br);
+//
+//	int bl;
+//	if(blpanel.tvis && mapmenupanel.tvis)
+//	    bl = 0;
+//	else if(blpanel.tvis && !mapmenupanel.tvis)
+//	    bl = 1;
+//	else if(!blpanel.tvis && !mapmenupanel.tvis)
+//	    bl = 2;
+//	else
+//	    bl = 3;
+//	for(int i = 0; i < fold_bl.length; i++)
+//	    fold_bl[i].show(i == bl);
+//
+//	if(reset)
+//	    resetui();
+//    }
+//
+//    private void foldbuttons() {
+//	final Tex rdnbg = Resource.loadtex("gfx/hud/rbtn-maindwn");
+//	final Tex rupbg = Resource.loadtex("gfx/hud/rbtn-upbg");
+//	fold_br[0] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
+//		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
+//		public void click() {
+//		    menupanel.cshow(false);
+//		    updfold(true);
+//		}
+//	    };
+//	fold_br[1] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
+//		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
+//		public void click() {
+//		    brpanel.cshow(false);
+//		    updfold(true);
+//		}
+//	    };
+//	fold_br[2] = new IButton("gfx/hud/rbtn-up", "", "-d", "-h") {
+//		public void draw(GOut g) {g.image(rupbg, Coord.z); super.draw(g);}
+//		public void click() {
+//		    menupanel.cshow(true);
+//		    updfold(true);
+//		}
+//		public void presize() {
+//		    this.c = parent.sz.sub(this.sz);
+//		}
+//	    };
+//	fold_br[3] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
+//		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
+//		public void click() {
+//		    brpanel.cshow(true);
+//		    updfold(true);
+//		}
+//	    };
+//	menupanel.add(fold_br[0], 0, 0);
+//	fold_br[0].lower();
+//	brpanel.adda(fold_br[1], brpanel.sz.x, UI.scale(32), 1, 1);
+//	adda(fold_br[2], 1, 1);
+//	fold_br[2].lower();
+//	menupanel.add(fold_br[3], 0, 0);
+//	fold_br[3].lower();
+//
+//	final Tex ldnbg = Resource.loadtex("gfx/hud/lbtn-bgs");
+//	final Tex lupbg = Resource.loadtex("gfx/hud/lbtn-upbg");
+//	fold_bl[0] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
+//		public void click() {
+//		    mapmenupanel.cshow(false);
+//		    updfold(true);
+//		}
+//	    };
+//	fold_bl[1] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
+//		public void draw(GOut g) {g.image(ldnbg, Coord.z); super.draw(g);}
+//		public void click() {
+//		    blpanel.cshow(false);
+//		    updfold(true);
+//		}
+//	    };
+//	fold_bl[2] = new IButton("gfx/hud/lbtn-up", "", "-d", "-h") {
+//		public void draw(GOut g) {g.image(lupbg, Coord.z); super.draw(g);}
+//		public void click() {
+//		    mapmenupanel.cshow(true);
+//		    updfold(true);
+//		}
+//		public void presize() {
+//		    this.c = new Coord(0, parent.sz.y - sz.y);
+//		}
+//	    };
+//	fold_bl[3] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
+//		public void click() {
+//		    blpanel.cshow(true);
+//		    updfold(true);
+//		}
+//	    };
+//	mapmenupanel.add(fold_bl[0], 0, 0);
+//	blpanel.adda(fold_bl[1], 0, UI.scale(33), 0, 1);
+//	adda(fold_bl[2], 0, 1);
+//	fold_bl[2].lower();
+//	mapmenupanel.add(fold_bl[3], 0, 0);
+//
+//	updfold(false);
+//    }
 
     protected void added() {
 	resize(parent.sz);
@@ -520,7 +522,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 	    };
 	    tvis = vis;
-	    updfold(false);
+	    //updfold(false);
 	    return(vis);
 	}
 
@@ -754,8 +756,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    child.resize(sz);
 	    map = add((MapView)child, Coord.z);
 	    map.lower();
-	    if(mmap != null)
-		ui.destroy(mmap);
+//	    if(mmap != null)
+//		ui.destroy(mmap);
 	    if(mapfile != null) {
 		ui.destroy(mapfile);
 		mapfile = null;
@@ -777,8 +779,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		     * existing mapfile with a new one is better. */
 		    throw(new RuntimeException("failed to load mapfile", e));
 		}
-		mmap = blpanel.add(new CornerMap(UI.scale(new Coord(133, 133)), file), minimapc);
-		mmap.lower();
+//		mmap = blpanel.add(new CornerMap(UI.scale(new Coord(133, 133)), file), minimapc);
+//		mmap.lower();
 		mapfile = new MapWnd(file, map, Utils.getprefc("wndsz-map", UI.scale(new Coord(700, 500))), "Map");
 		mapfile.show(Utils.getprefb("wndvis-map", false));
 		add(mapfile, Utils.getprefc("wndc-map", new Coord(50, 50)));
@@ -863,11 +865,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    if(qqview != null)
 		qqview.reqdestroy();
 	    final Widget cref = qqview = child;
-	    add(new AlignPanel() {
+		questObjectivesPanel = add(new AlignPanel() {
 		    {add(cref);}
 
 		    protected Coord getc() {
-			return(new Coord(10, mapmenupanel.c.y - this.sz.y - 10));
+			//return(new Coord(10, mapmenupanel.c.y - this.sz.y - 10));
+				return(new Coord(10, GameUI.this.sz.y -chat.sz.y - beltwdg.sz.y - this.sz.y - 10));
 		    }
 
 		    public void cdestroy(Widget ch) {
@@ -1120,8 +1123,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     private int lastsaveseq = -1;
     private void mapfiletick() {
 	MapView map = this.map;
-	MiniMap mmap = this.mmap;
-	if((map == null) || (mmap == null))
+//	MiniMap mmap = this.mmap;
+	if((map == null) /*|| (mmap == null)*/)
 	    return;
 	Gob pl = ui.sess.glob.oc.getgob(map.plgob);
 	Coord gc;
@@ -1132,7 +1135,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	try {
 	    MCache.Grid grid = ui.sess.glob.map.getgrid(gc);
 	    if((grid != null) && (!Utils.eq(gc, lastsavegrid) || (lastsaveseq != grid.seq))) {
-		mmap.file.update(ui.sess.glob.map, gc);
+		//mmap.file.update(ui.sess.glob.map, gc);
 		lastsavegrid = gc;
 		lastsaveseq = grid.seq;
 	    }
@@ -1446,7 +1449,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
     private int uimode = 1;
     public void toggleui(int mode) {
-	Hidepanel[] panels = {blpanel, brpanel, ulpanel, umpanel, urpanel, menupanel, mapmenupanel};
+	Hidepanel[] panels = {brpanel, ulpanel, umpanel, urpanel, menupanel};
 	switch(uimode = mode) {
 	case 0:
 	    for(Hidepanel p : panels)
@@ -1464,7 +1467,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 
     public void resetui() {
-	Hidepanel[] panels = {blpanel, brpanel, ulpanel, umpanel, urpanel, menupanel, mapmenupanel};
+	Hidepanel[] panels = {brpanel, ulpanel, umpanel, urpanel, menupanel};
 	for(Hidepanel p : panels)
 	    p.cshow(p.tvis);
 	uimode = 1;
