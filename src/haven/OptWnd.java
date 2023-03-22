@@ -856,6 +856,95 @@ public class OptWnd extends Window {
 		}
 	}
 
+	private HSlider combatUITopPanelHeightSlider;
+	private HSlider combatUIBottomPanelHeightSlider;
+	public class NDCombatSettingsPanel extends Panel {
+		public NDCombatSettingsPanel(Panel back) {
+			Widget prev;
+			prev = add(new Label("Combat UI:"), 0, 0);
+			prev = add(new CheckBox("Use Improved Combat UI"){
+				{a = Utils.getprefb("useProperCombatUI", true);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("useProperCombatUI", true);
+						Fightsess.altui = true;
+					}
+					else {
+						Utils.setprefb("useProperCombatUI", false);
+						Fightsess.altui = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(16, 6));
+			prev = add(new Label("Top panel height:"), prev.pos("bl").adds(-16, 10));
+			Fightsess.combaty0HeightInt = Utils.getprefi("combatTopPanelHeight", 400);
+			prev = add(combatUITopPanelHeightSlider = new HSlider(UI.scale(200), 1, 500, Fightsess.combaty0HeightInt) {
+				protected void attach(UI ui) {
+					super.attach(ui);
+					val = Fightsess.combaty0HeightInt;
+				}
+				public void changed() {
+					Fightsess.combaty0HeightInt = val;
+					Utils.setprefi("combatTopPanelHeight", val);
+				}
+			}, prev.pos("bl").adds(0, 2));
+			add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Fightsess.combaty0HeightInt = 400;
+				combatUITopPanelHeightSlider.val = 400;
+				Utils.setprefi("combatTopPanelHeight", 400);
+			}), prev.pos("bl").adds(210, -20));
+			prev = add(new Label("Bottom panel height:"), prev.pos("bl").adds(0, 10));
+			Fightsess.combatbottomHeightInt = Utils.getprefi("combatBottomPanelHeight", 100);
+			prev = add(combatUIBottomPanelHeightSlider = new HSlider(UI.scale(200), 1, 500, Fightsess.combatbottomHeightInt) {
+				protected void attach(UI ui) {
+					super.attach(ui);
+					val = Fightsess.combatbottomHeightInt;
+				}
+				public void changed() {
+					Fightsess.combatbottomHeightInt = val;
+					Utils.setprefi("combatBottomPanelHeight", val);
+				}
+			}, prev.pos("bl").adds(0, 2));
+			add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Fightsess.combatbottomHeightInt = 100;
+				combatUIBottomPanelHeightSlider.val = 100;
+				Utils.setprefi("combatBottomPanelHeight", 100);
+			}), prev.pos("bl").adds(210, -20));
+			prev = add(new CheckBox("Show hotkeys"){
+				{a = Utils.getprefb("showCombatHotkeysUI", true);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("showCombatHotkeysUI", true);
+						Fightsess.showKeybindCombatSetting = true;
+					}
+					else {
+						Utils.setprefb("showCombatHotkeysUI", false);
+						Fightsess.showKeybindCombatSetting = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(16, 6));
+			prev = add(new Label("Other Combat Settings:"), prev.pos("bl").adds(-16, 10));
+			prev = add(new CheckBox("Mark current target"){
+				{a = Utils.getprefb("markCurrentCombatTarget", true);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("markCurrentCombatTarget", true);
+						Fightsess.markCombatTargetSetting = true;
+					}
+					else {
+						Utils.setprefb("markCurrentCombatTarget", false);
+						Fightsess.markCombatTargetSetting = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(16, 6));
+
+			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(40, 18).x(0));
+			pack();
+		}
+	}
+
 	public class SetButton extends KeyMatch.Capture {
 	    public final KeyBinding cmd;
 
@@ -1010,6 +1099,7 @@ public class OptWnd extends Window {
 	Panel keybind = add(new BindingPanel(main));
 	Panel camsettings = add(new NDCamSettingsPanel(main));
 	Panel gameplaysettings = add(new NDGameplaySettingsPanel(main));
+	Panel combatsettings = add(new NDCombatSettingsPanel(main));
 
 	int y = 0;
 	Widget prev;
@@ -1020,6 +1110,7 @@ public class OptWnd extends Window {
 
 	y = main.add(new PButton(UI.scale(200), "Camera Settings", 'k', camsettings, "Camera Settings"), 0, y).pos("bl").adds(0, 5).y;
 	y = main.add(new PButton(UI.scale(200), "Gameplay Settings", 'k', gameplaysettings, "Gameplay Settings"), 0, y).pos("bl").adds(0, 5).y;
+		y = main.add(new PButton(UI.scale(200), "Combat Settings", 'k', combatsettings, "Combat Settings"), 0, y).pos("bl").adds(0, 5).y;
 	y += UI.scale(40);
 	if(gopts) {
 	    y = main.add(new Button(UI.scale(200), "Switch character", false).action(() -> {

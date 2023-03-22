@@ -1737,4 +1737,28 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public Map<String, Console.Command> findcmds() {
 	return(cmdmap);
     }
+
+	public IMeter.Meter getmeter(String name, int midx) {
+		List<IMeter.Meter> meters = getmeters(name);
+		if (meters != null && midx < meters.size()) {
+			return meters.get(midx);
+		}
+		return null;
+	}
+
+	public List<IMeter.Meter> getmeters(String name) {
+		for (Widget meter : meters) {
+			if (meter instanceof IMeter) {
+				IMeter im = (IMeter) meter;
+				try {
+					Resource res = im.bg.get();
+					if (res != null && res.basename().equals(name)) {
+						return im.meters;
+					}
+				} catch (Loading l) {
+				}
+			}
+		}
+		return null;
+	}
 }

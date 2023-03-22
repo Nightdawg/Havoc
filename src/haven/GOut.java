@@ -216,6 +216,14 @@ public class GOut {
 	T.dispose();
     }
 
+	public void atextstroked(String text, Coord c, double ax, double ay, Color color, Color stroke, Text.Foundry foundry) {
+		Text t = Text.renderstroked(text, color, stroke, foundry);
+		Tex T = t.tex();
+		Coord sz = t.sz();
+		image(T, c.add((int) ((double) sz.x * -ax), (int) ((double) sz.y * -ay)));
+		T.dispose();
+	}
+
     public void text(String text, Coord c) {
 	atext(text, c, 0, 0);
     }

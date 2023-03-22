@@ -26,13 +26,22 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
+
 import haven.ItemInfo.AttrCache;
 
 public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed {
-    public static final Text.Foundry nfnd = new Text.Foundry(Text.dfont, 10);
+	private static final Map<String, Color> NightdawgOPENINGS = new HashMap<String, Color>(4) {{
+		put("paginae/atk/offbalance", new Color(0, 128, 3));
+		put("paginae/atk/reeling", new Color(217, 177, 20));
+		put("paginae/atk/dizzy", new Color(39, 82, 191));
+		put("paginae/atk/cornered", new Color(192, 28, 28));
+	}};
+    //public static final Text.Foundry nfnd = new Text.Foundry(Text.dfont, 10);
+	public static final Text.Foundry nfnd = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 13);
     public static final Tex frame = Resource.loadtex("gfx/hud/buffs/frame");
     public static final Tex cframe = Resource.loadtex("gfx/hud/buffs/cframe");
     public static final Coord imgoff = UI.scale(new Coord(3, 3));
@@ -107,47 +116,60 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
 
     private final AttrCache<Double> ameteri = new AttrCache<>(this::info, AttrCache.map1(AMeterInfo.class, minf -> minf::ameter));
     private final AttrCache<Tex> nmeteri = new AttrCache<>(this::info, AttrCache.map1s(GItem.NumberInfo.class, ninf -> new TexI(GItem.NumberInfo.numrender(ninf.itemnum(), ninf.numcolor()))));
-    private final AttrCache<Double> cmeteri = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
+	private final AttrCache<Double> cmeteri = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
 
-    public void draw(GOut g) {
-	g.chcolor(255, 255, 255, a);
-	Double ameter = (this.ameter >= 0) ? Double.valueOf(this.ameter / 100.0) : ameteri.get();
-	if(ameter != null) {
-	    g.image(cframe, Coord.z);
-	    g.chcolor(0, 0, 0, a);
-	    g.frect(ameteroff, ametersz);
-	    g.chcolor(255, 255, 255, a);
-	    g.frect(ameteroff, new Coord((int)Math.floor(ameter * ametersz.x), ametersz.y));
-	} else {
-	    g.image(frame, Coord.z);
-	}
-	try {
-	    Tex img = res.get().flayer(Resource.imgc).tex();
-	    g.image(img, imgoff);
-	    Tex nmeter = (this.nmeter >= 0) ? nmeter() : nmeteri.get();
-	    if(nmeter != null)
-		g.aimage(nmeter, imgoff.add(img.sz()).sub(1, 1), 1, 1, UI.scale(nmeter.sz()));
-	    Double cmeter;
-	    if(this.cmeter >= 0) {
-		double m = this.cmeter;
-		if(cmrem >= 0) {
-		    double ot = cmrem;
-		    double pt = Utils.rtime() - gettime;
-		    m *= (ot - pt) / ot;
-		}
-		cmeter = m;
-	    } else {
-		cmeter = cmeteri.get();
-	    }
-	    if(cmeter != null) {
-		double m = Utils.clip(cmeter, 0.0, 1.0);
-		g.chcolor(255, 255, 255, a / 2);
-		Coord ccc = img.sz().div(2);
-		g.prect(imgoff.add(ccc), ccc.inv(), img.sz().sub(ccc), Math.PI * 2 * m);
+	public void draw(GOut g) {
 		g.chcolor(255, 255, 255, a);
-	    }
-	} catch(Loading e) {}
-    }
+		Double ameter = (this.ameter >= 0) ? Double.valueOf(this.ameter / 100.0) : ameteri.get();
+		int ameteri = 0; // Added
+		if(ameter != null) {
+			ameteri = (int) (100*ameter); // Added
+			g.image(cframe, Coord.z);
+			g.chcolor(0, 0, 0, a);
+			g.frect(ameteroff, ametersz);
+			g.chcolor(255, 255, 255, a);
+			g.frect(ameteroff, new Coord((int)Math.floor(ameter * ametersz.x), ametersz.y));
+		} else {
+			g.image(frame, Coord.z);
+		}
+		try {
+			Tex img = res.get().flayer(Resource.imgc).tex();
+			Coord isz = img.sz();
+			String name = res.get().name;
+			if(NightdawgOPENINGS.containsKey(name)) {
+				g.chcolor(NightdawgOPENINGS.get(name));
+				g.frect(imgoff, isz);
+				g.chcolor(Color.WHITE);
+				if(ameteri != nmeter) {
+					ntext = null;
+					nmeter = ameteri;
+				}
+			} else {
+				g.image(img, imgoff);
+			}
+			if(nmeter >= 0)
+				g.aimage(nmeter(), imgoff.add(isz).sub(1, 1), 1, 1);
+			Double cmeter;
+			if(this.cmeter >= 0) {
+				double m = this.cmeter;
+				if(cmrem >= 0) {
+					double ot = cmrem;
+					double pt = Utils.rtime() - gettime;
+					m *= (ot - pt) / ot;
+				}
+				cmeter = m;
+			} else {
+				cmeter = cmeteri.get();
+			}
+			if(cmeter != null) {
+				double m = Utils.clip(cmeter, 0.0, 1.0);
+				g.chcolor(255, 255, 255, a / 2);
+				Coord ccc = img.sz().div(2);
+				g.prect(imgoff.add(ccc), ccc.inv(), img.sz().sub(ccc), Math.PI * 2 * m);
+				g.chcolor(255, 255, 255, a);
+			}
+		} catch(Loading e) {}
+	}
 
     private BufferedImage shorttip() {
 	if(rawinfo != null)

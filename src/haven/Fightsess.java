@@ -27,8 +27,9 @@
 package haven;
 
 import haven.render.*;
+
+import java.awt.*;
 import java.util.*;
-import java.awt.Color;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
@@ -161,15 +162,16 @@ public class Fightsess extends Widget {
 	super.destroy();
     }
 
-    private static final Text.Furnace ipf = new PUtils.BlurFurn(new Text.Foundry(Text.serif, 18, new Color(128, 128, 255)).aa(true), 1, 1, new Color(48, 48, 96));
-    private final Text.UText<?> ip = new Text.UText<Integer>(ipf) {
-	public String text(Integer v) {return("IP: " + v);}
-	public Integer value() {return(fv.current.ip);}
-    };
-    private final Text.UText<?> oip = new Text.UText<Integer>(ipf) {
-	public String text(Integer v) {return("IP: " + v);}
-	public Integer value() {return(fv.current.oip);}
-    };
+	private static final Text.Furnace ipf = new PUtils.BlurFurn(new Text.Foundry(Text.serif.deriveFont(Font.BOLD), 22, new Color(0, 201, 4)).aa(true), 1, 1, new Color(0, 0, 0));
+	private static final Text.Furnace ipfEnemy = new PUtils.BlurFurn(new Text.Foundry(Text.serif.deriveFont(Font.BOLD), 22, new Color(245, 0, 0)).aa(true), 1, 1, new Color(0, 0, 0));
+	private final Text.UText<?> ip = new Text.UText<Integer>(ipf) {
+		public String text(Integer v) {return("" + v);} // ND: Removed "IP" text. I only need to see the number, we already know it's the IP/Coins
+		public Integer value() {return(fv.current.ip);}
+	};
+	private final Text.UText<?> oip = new Text.UText<Integer>(ipfEnemy) { // Changed this so I can give the enemy IP a different color
+		public String text(Integer v) {return("" + v);} // ND: Removed "IP" text. I only need to see the number, we already know it's the IP/Coins
+		public Integer value() {return(fv.current.oip);}
+	};
 
     private static Coord actc(int i) {
 	int rl = 5;
@@ -182,177 +184,235 @@ public class Fightsess extends Widget {
     private Indir<Resource> lastact1 = null, lastact2 = null;
     private Text lastacttip1 = null, lastacttip2 = null;
     private Effect curtgtfx;
-    public void draw(GOut g) {
-	updatepos();
-	double now = Utils.rtime();
 
-	for(Buff buff : fv.buffs.children(Buff.class))
-	    buff.draw(g.reclip(pcc.add(-buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
-	if(fv.current != null) {
-	    for(Buff buff : fv.current.buffs.children(Buff.class))
-		buff.draw(g.reclip(pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
+	public static Boolean altui = true;
+	public static int combaty0HeightInt = 400;
+	public static int combatbottomHeightInt = 100;
+	public static boolean markCombatTargetSetting = true;
+	public static boolean showKeybindCombatSetting = true;
+	public void draw(GOut g) {
+		updatepos();
 
-	    g.aimage(ip.get().tex(), pcc.add(-UI.scale(75), 0), 1, 0.5);
-	    g.aimage(oip.get().tex(), pcc.add(UI.scale(75), 0), 0, 0.5);
+		GameUI gui = gameui();
+		double x1 = gui.sz.x / 2.0;
+		double y1 = gui.sz.y - ((gui.sz.y / 500.0) * combaty0HeightInt);
+		int x0 = (int)x1; // I have to do it like this, otherwise it's not consistent when resizing the window
+		int y0 = (int)y1; // I have to do it like this, otherwise it's not consistent when resizing the window
 
-	    if(fv.lsrel.size() > 1)
-		curtgtfx = fxon(fv.current.gobid, tgtfx, curtgtfx);
+		double bottom1 = gui.sz.y - ((gui.sz.y / 500.0) * combatbottomHeightInt);
+		int bottom = (int)bottom1;// I have to do it like this, otherwise it's not consistent when resizing the window
+		double now = Utils.rtime();
+
+		for(Buff buff : fv.buffs.children(Buff.class))
+			buff.draw(g.reclip(altui ? new Coord(x0 - buff.c.x - Buff.cframe.sz().x - UI.scale(80), y0 - UI.scale(20)) : pcc.add(-buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
+		if(fv.current != null) {
+			for(Buff buff : fv.current.buffs.children(Buff.class))
+				buff.draw(g.reclip(altui ? new Coord(x0 + buff.c.x + UI.scale(80), y0 - UI.scale(20)) : pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
+
+			g.aimage(ip.get().tex(), altui ? new Coord(x0 - UI.scale(40), y0 - UI.scale(30)) : pcc.add(-UI.scale(75), 0), 1, 0.5);
+			g.aimage(oip.get().tex(), altui ? new Coord(x0 + UI.scale(40), y0 - UI.scale(30)) : pcc.add(UI.scale(75), 0), 0, 0.5);
+
+			if(markCombatTargetSetting){curtgtfx = fxon(fv.current.gobid, tgtfx, curtgtfx);}
+		}
+
+		{
+			Coord cdc = altui ? new Coord(x0, y0) : pcc.add(cmc);
+			if(now < fv.atkct) {
+				double a = (now - fv.atkcs) / (fv.atkct - fv.atkcs);
+				g.chcolor(225, 0, 0, 220);
+				g.fellipse(cdc, UI.scale(altui ? new Coord(24, 24) : new Coord(22, 22)), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)), Math.PI / 2);
+				g.chcolor();
+				g.aimage(Text.renderstroked(fmt1DecPlace(fv.atkct - now)).tex(), cdc, 0.5, 0.5);
+			}
+			g.image(cdframe, altui ? new Coord(x0, y0).sub(cdframe.sz().div(2)) : cdc.sub(cdframe.sz().div(2)));
+		}
+		try {
+			Indir<Resource> lastact = fv.lastact;
+			if(lastact != this.lastact1) {
+				this.lastact1 = lastact;
+				this.lastacttip1 = null;
+			}
+			double lastuse = fv.lastuse;
+			if(lastact != null) {
+				Tex ut = lastact.get().layer(Resource.imgc).tex();
+				Coord useul = altui ? new Coord(x0 - UI.scale(69), y0 - UI.scale(80)) : pcc.add(usec1).sub(ut.sz().div(2));
+				g.image(ut, useul);
+				g.image(useframe, useul.sub(useframeo));
+				double a = now - lastuse;
+				if(a < 1) {
+					Coord off = new Coord((int)(a * ut.sz().x / 2), (int)(a * ut.sz().y / 2));
+					g.chcolor(255, 255, 255, (int)(255 * (1 - a)));
+					g.image(ut, useul.sub(off), ut.sz().add(off.mul(2)));
+					g.chcolor();
+				}
+			}
+		} catch(Loading l) {
+		}
+		if(fv.current != null) {
+			try {
+				Indir<Resource> lastact = fv.current.lastact;
+				if(lastact != this.lastact2) {
+					this.lastact2 = lastact;
+					this.lastacttip2 = null;
+				}
+				double lastuse = fv.current.lastuse;
+				if(lastact != null) {
+					Tex ut = lastact.get().layer(Resource.imgc).tex();
+					Coord useul = altui ? new Coord(x0 + UI.scale(69) - ut.sz().x, y0 - UI.scale(80)) : pcc.add(usec2).sub(ut.sz().div(2));
+					g.image(ut, useul);
+					g.image(useframe, useul.sub(useframeo));
+					double a = now - lastuse;
+					if(a < 1) {
+						Coord off = new Coord((int)(a * ut.sz().x / 2), (int)(a * ut.sz().y / 2));
+						g.chcolor(255, 255, 255, (int)(255 * (1 - a)));
+						g.image(ut, useul.sub(off), ut.sz().add(off.mul(2)));
+						g.chcolor();
+					}
+				}
+			} catch(Loading l) {
+			}
+		}
+		for(int i = 0; i < actions.length; i++) {
+			Coord ca = altui ? new Coord(x0 - 18, bottom - 150).add(actc(i)) : pcc.add(actc(i));
+			Action act = actions[i];
+			try {
+				if(act != null) {
+					Tex img = act.res.get().layer(Resource.imgc).tex();
+					Coord hsz = img.sz().div(2);
+					g.image(img, ca);
+					if(now < act.ct) {
+						double a = (now - act.cs) / (act.ct - act.cs);
+						g.chcolor(0, 0, 0, 132);
+						g.prect(ca.add(hsz), hsz.inv(), hsz, (1.0 - a) * Math.PI * 2);
+						g.chcolor();
+					}
+					if (showKeybindCombatSetting){g.aimage(Text.renderstroked((kb_acts[i].key().name())).tex(), ca.add(img.sz()), 0.95, 0.95);}
+					//
+					if(i == use) {
+						g.image(indframe, ca.sub(indframeo));
+					} else if(i == useb) {
+						g.image(indbframe, ca.sub(indbframeo));
+					} else {
+						g.image(actframe, ca.sub(actframeo));
+					}
+				}
+			} catch(Loading l) {}
+		}
+		IMeter.Meter stam = gui.getmeter("stam", 0);
+		if (altui) {
+			if (stam != null) {
+				Coord msz = UI.scale(new Coord(150, 20));
+				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(40));
+				drawMeterBar(g, stam, sc, msz);
+			}
+		}
 	}
 
-	{
-	    Coord cdc = pcc.add(cmc);
-	    if(now < fv.atkct) {
-		double a = (now - fv.atkcs) / (fv.atkct - fv.atkcs);
-		g.chcolor(255, 0, 128, 224);
-		g.fellipse(cdc, UI.scale(new Coord(24, 24)), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)), Math.PI / 2);
-		g.chcolor();
-	    }
-	    g.image(cdframe, cdc.sub(cdframe.sz().div(2)));
+	private static final Color blu1 = new Color(3, 3, 80, 141);
+	private static final Color blu2 = new Color(32, 32, 184, 90);
+	private static final Color blu3 = new Color(14, 14, 213, 70);
+	private static final Color barframe = new Color(255, 255, 255, 111);
+	private void drawMeterBar(GOut g, IMeter.Meter m, Coord sc, Coord msz) {
+		int w = msz.x;
+		int w1 = (int) Math.ceil(w * m.a);
+		int w2 = (int) (w * Math.max(m.a-0.25,0));
+		int w3 = (int) (w * Math.max(m.a-0.50,0));
+
+		g.chcolor(blu1);
+		g.frect(sc, new Coord(w1, msz.y));
+		g.chcolor(blu2);
+		g.frect(new Coord(sc.x+(w*25)/100, sc.y), new Coord(w2, msz.y));
+		g.chcolor(blu3);
+		g.frect(new Coord(sc.x+(w*50)/100, sc.y), new Coord(w3, msz.y));
+		g.chcolor(barframe);
+		g.line(new Coord(sc.x+w1, sc.y), new Coord(sc.x+w1, sc.y+msz.y), 1);
+		g.rect(sc, new Coord(msz.x, msz.y));
+		g.chcolor(Color.WHITE);
+		g.atextstroked(Utils.fmt1DecPlace((int)(m.a*100)), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5, Color.WHITE, Color.BLACK, Text.num12boldFnd);
 	}
-	try {
-	    Indir<Resource> lastact = fv.lastact;
-	    if(lastact != this.lastact1) {
-		this.lastact1 = lastact;
-		this.lastacttip1 = null;
-	    }
-	    double lastuse = fv.lastuse;
-	    if(lastact != null) {
-		Tex ut = lastact.get().flayer(Resource.imgc).tex();
-		Coord useul = pcc.add(usec1).sub(ut.sz().div(2));
-		g.image(ut, useul);
-		g.image(useframe, useul.sub(useframeo));
-		double a = now - lastuse;
-		if(a < 1) {
-		    Coord off = new Coord((int)(a * ut.sz().x / 2), (int)(a * ut.sz().y / 2));
-		    g.chcolor(255, 255, 255, (int)(255 * (1 - a)));
-		    g.image(ut, useul.sub(off), ut.sz().add(off.mul(2)));
-		    g.chcolor();
-		}
-	    }
-	} catch(Loading l) {
+	public static String fmt1DecPlace(double value) {
+		double rvalue = (double) Math.round(value * 10) / 10;
+		return (rvalue % 1 == 0) ? Integer.toString((int) rvalue) : Double.toString(rvalue);
 	}
-	if(fv.current != null) {
-	    try {
-		Indir<Resource> lastact = fv.current.lastact;
-		if(lastact != this.lastact2) {
-		    this.lastact2 = lastact;
-		    this.lastacttip2 = null;
-		}
-		double lastuse = fv.current.lastuse;
-		if(lastact != null) {
-		    Tex ut = lastact.get().flayer(Resource.imgc).tex();
-		    Coord useul = pcc.add(usec2).sub(ut.sz().div(2));
-		    g.image(ut, useul);
-		    g.image(useframe, useul.sub(useframeo));
-		    double a = now - lastuse;
-		    if(a < 1) {
-			Coord off = new Coord((int)(a * ut.sz().x / 2), (int)(a * ut.sz().y / 2));
-			g.chcolor(255, 255, 255, (int)(255 * (1 - a)));
-			g.image(ut, useul.sub(off), ut.sz().add(off.mul(2)));
-			g.chcolor();
-		    }
-		}
-	    } catch(Loading l) {
-	    }
-	}
-	for(int i = 0; i < actions.length; i++) {
-	    Coord ca = pcc.add(actc(i));
-	    Action act = actions[i];
-	    try {
-		if(act != null) {
-		    Resource res = act.res.get();
-		    Tex img = res.flayer(Resource.imgc).tex();
-		    Coord ic = ca.sub(img.sz().div(2));
-		    g.image(img, ic);
-		    if(now < act.ct) {
-			double a = (now - act.cs) / (act.ct - act.cs);
-			g.chcolor(0, 0, 0, 128);
-			g.prect(ca, ic.sub(ca), ic.add(img.sz()).sub(ca), (1.0 - a) * Math.PI * 2);
-			g.chcolor();
-		    }
-		    if(i == use) {
-			g.image(indframe, ic.sub(indframeo));
-		    } else if(i == useb) {
-			g.image(indbframe, ic.sub(indbframeo));
-		    } else {
-			g.image(actframe, ic.sub(actframeo));
-		    }
-		}
-	    } catch(Loading l) {}
-	}
-    }
 
     private Widget prevtt = null;
     private Text acttip = null;
     public static final String[] keytips = {"1", "2", "3", "4", "5", "Shift+1", "Shift+2", "Shift+3", "Shift+4", "Shift+5"};
-    public Object tooltip(Coord c, Widget prev) {
-	for(Buff buff : fv.buffs.children(Buff.class)) {
-	    Coord dc = pcc.add(-buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y);
-	    if(c.isect(dc, buff.sz)) {
-		Object ret = buff.tooltip(c.sub(dc), prevtt);
-		if(ret != null) {
-		    prevtt = buff;
-		    return(ret);
+	public Object tooltip(Coord c, Widget prev) {
+		GameUI gui = gameui();
+		double x1 = gui.sz.x / 2.0;
+		double y1 = gui.sz.y - ((gui.sz.y / 500.0) * combaty0HeightInt);
+		int x0 = (int)x1; // I have to do it like this, otherwise it's not consistent when resizing the window
+		int y0 = (int)y1; // I have to do it like this, otherwise it's not consistent when resizing the window
+
+		double bottom1 = gui.sz.y - ((gui.sz.y / 500.0) * combatbottomHeightInt);
+		int bottom = (int)bottom1;// I have to do it like this, otherwise it's not consistent when resizing the window
+		for(Buff buff : fv.buffs.children(Buff.class)) {
+			Coord dc = altui ? new Coord(x0 - buff.c.x - Buff.cframe.sz().x - UI.scale(80), y0 - UI.scale(20)) : pcc.add(-buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y);
+			if(c.isect(dc, buff.sz)) {
+				Object ret = buff.tooltip(c.sub(dc), prevtt);
+				if(ret != null) {
+					prevtt = buff;
+					return(ret);
+				}
+			}
 		}
-	    }
+		if(fv.current != null) {
+			for(Buff buff : fv.current.buffs.children(Buff.class)) {
+				Coord dc = altui ? new Coord(x0 + buff.c.x + UI.scale(80), y0 - UI.scale(20)) : pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y);
+
+				if(c.isect(dc, buff.sz)) {
+					Object ret = buff.tooltip(c.sub(dc), prevtt);
+					if(ret != null) {
+						prevtt = buff;
+						return(ret);
+					}
+				}
+			}
+		}
+		final int rl = 5;
+		for(int i = 0; i < actions.length; i++) {
+			Coord ca = altui ? new Coord(x0 - 18, bottom - 150).add(actc(i)).add(16, 16) : pcc.add(actc(i));
+			Indir<Resource> act = (actions[i] == null) ? null : actions[i].res;
+			try {
+				if(act != null) {
+					Tex img = act.get().layer(Resource.imgc).tex();
+					ca = ca.sub(img.sz().div(2));
+					if(c.isect(ca, img.sz())) {
+						String tip = act.get().layer(Resource.tooltip).t + " ($b{$col[255,128,0]{" + kb_acts[i].key().name() + "}})";
+						if((acttip == null) || !acttip.text.equals(tip))
+							acttip = RichText.render(tip, -1);
+						return(acttip);
+					}
+				}
+			} catch(Loading l) {}
+		}
+		try {
+			Indir<Resource> lastact = this.lastact1;
+			if(lastact != null) {
+				Coord usesz = lastact.get().layer(Resource.imgc).sz;
+				Coord lac = altui ? new Coord(x0 - UI.scale(69), y0 - UI.scale(80)).add(usesz.div(2)) : pcc.add(usec1);
+				if(c.isect(lac.sub(usesz.div(2)), usesz)) {
+					if(lastacttip1 == null)
+						lastacttip1 = Text.render(lastact.get().layer(Resource.tooltip).t);
+					return(lastacttip1);
+				}
+			}
+		} catch(Loading l) {}
+		try {
+			Indir<Resource> lastact = this.lastact2;
+			if(lastact != null) {
+				Coord usesz = lastact.get().layer(Resource.imgc).sz;
+				Coord lac = altui ? new Coord(x0 + UI.scale(69) - usesz.x, y0 - UI.scale(80)).add(usesz.div(2)) : pcc.add(usec2);
+				if(c.isect(lac.sub(usesz.div(2)), usesz)) {
+					if(lastacttip2 == null)
+						lastacttip2 = Text.render(lastact.get().layer(Resource.tooltip).t);
+					return(lastacttip2);
+				}
+			}
+		} catch(Loading l) {}
+		return(null);
 	}
-	if(fv.current != null) {
-	    for(Buff buff : fv.current.buffs.children(Buff.class)) {
-		Coord dc = pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y);
-		if(c.isect(dc, buff.sz)) {
-		    Object ret = buff.tooltip(c.sub(dc), prevtt);
-		    if(ret != null) {
-			prevtt = buff;
-			return(ret);
-		    }
-		}
-	    }
-	}
-	final int rl = 5;
-	for(int i = 0; i < actions.length; i++) {
-	    Coord ca = pcc.add(actc(i));
-	    Indir<Resource> act = (actions[i] == null) ? null : actions[i].res;
-	    try {
-		if(act != null) {
-		    Tex img = act.get().flayer(Resource.imgc).tex();
-		    ca = ca.sub(img.sz().div(2));
-		    if(c.isect(ca, img.sz())) {
-			String tip = act.get().flayer(Resource.tooltip).t;
-			if(kb_acts[i].key() != KeyMatch.nil)
-			    tip += " ($b{$col[255,128,0]{" + kb_acts[i].key().name() + "}})";
-			if((acttip == null) || !acttip.text.equals(tip))
-			    acttip = RichText.render(tip, -1);
-			return(acttip);
-		    }
-		}
-	    } catch(Loading l) {}
-	}
-	try {
-	    Indir<Resource> lastact = this.lastact1;
-	    if(lastact != null) {
-		Coord usesz = lastact.get().flayer(Resource.imgc).sz;
-		Coord lac = pcc.add(usec1);
-		if(c.isect(lac.sub(usesz.div(2)), usesz)) {
-		    if(lastacttip1 == null)
-			lastacttip1 = Text.render(lastact.get().flayer(Resource.tooltip).t);
-		    return(lastacttip1);
-		}
-	    }
-	} catch(Loading l) {}
-	try {
-	    Indir<Resource> lastact = this.lastact2;
-	    if(lastact != null) {
-		Coord usesz = lastact.get().flayer(Resource.imgc).sz;
-		Coord lac = pcc.add(usec2);
-		if(c.isect(lac.sub(usesz.div(2)), usesz)) {
-		    if(lastacttip2 == null)
-			lastacttip2 = Text.render(lastact.get().flayer(Resource.tooltip).t);
-		    return(lastacttip2);
-		}
-	    }
-	} catch(Loading l) {}
-	return(null);
-    }
 
     public void uimsg(String msg, Object... args) {
 	if(msg == "act") {

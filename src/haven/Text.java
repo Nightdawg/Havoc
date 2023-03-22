@@ -45,9 +45,13 @@ public class Text implements Disposable {
     private Tex tex;
     public static final Color black = Color.BLACK;
     public static final Color white = Color.WHITE;
+	public static final Font latin;
+	public static final Foundry num12boldFnd;
 	
     static {
 	std = new Foundry(sans, 10);
+		latin = new Font("Dialog", Font.PLAIN, 10);
+	num12boldFnd = new Text.Foundry(latin.deriveFont(Font.BOLD), 12).aa(true);
     }
 	
     public static class Line extends Text {
@@ -293,6 +297,25 @@ public class Text implements Disposable {
     public static Line renderf(Color c, String text, Object... args) {
 	return(std.render(String.format(text, args), c));
     }
+
+	public static Line renderstroked(String text, Color c, Color s, Text.Foundry fnd) {
+		return fnd.renderstroked(text, c, s);
+	}
+	public static Line renderstroked(String text, Color c, Color s) {
+		return renderstroked(text, c, s, std);
+	}
+	public static Line renderstroked(String text, Color c) {
+		return renderstroked(text, c, Utils.contrast(c));
+	}
+	public static Line renderstroked(String text, Color c, Text.Foundry fnd) {
+		return renderstroked(text, c, Utils.contrast(c), fnd);
+	}
+	public static Line renderstroked(String text) {
+		return renderstroked(text, Color.WHITE, Color.BLACK);
+	}
+	public static Line renderstroked(String text, Text.Foundry fnd) {
+		return renderstroked(text, Color.WHITE, Color.BLACK, fnd);
+	}
 	
     public static Line render(String text) {
 	return(render(text, Color.WHITE));
