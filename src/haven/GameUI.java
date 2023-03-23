@@ -285,24 +285,57 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
     public static final KeyBinding kb_srch = KeyBinding.get("scm-srch", KeyMatch.forchar('Z', KeyMatch.C));
     private void menubuttons(Widget bg) {
-	brpanel.add(new MenuButton("csearch", kb_srch, "Search actions...") {
-		public void click() {
-		    if(menu == null)
-			return;
-		    if(srchwnd == null) {
-			srchwnd = new MenuSearch(menu);
-			fitwdg(GameUI.this.add(srchwnd, Utils.getprefc("wndc-srch", new Coord(200, 200))));
-		    } else {
-			if(!srchwnd.hasfocus) {
-			    this.setfocus(srchwnd);
+//	brpanel.add(new MenuButton("csearch", kb_srch, "Search actions...") {
+//		public void click() {
+//		    if(menu == null)
+//			return;
+//		    if(srchwnd == null) {
+//			srchwnd = new MenuSearch(menu);
+//			fitwdg(GameUI.this.add(srchwnd, Utils.getprefc("wndc-srch", new Coord(200, 200))));
+//		    } else {
+//			if(!srchwnd.hasfocus) {
+//			    this.setfocus(srchwnd);
+//			} else {
+//				Utils.setprefc("wndc-srch",srchwnd.c); // ND: Add this to save the search window location
+//				ui.destroy(srchwnd);
+//			    srchwnd = null;
+//			}
+//		    }
+//		}
+//	    }, bg.c);
+		brpanel.add(new MenuCheckBox("csearch", kb_srch, "Search actions..."), bg.c).state(() -> wndstate(srchwnd)).click(() -> { // ND: Made the action search be a checkbox, rather than just a button. Why isn't it like this in the first place?
+			if(menu == null)
+				return;
+			if(srchwnd == null) {
+				srchwnd = new MenuSearch(menu);
+				fitwdg(GameUI.this.add(srchwnd, Utils.getprefc("wndc-srch", new Coord(200, 200))));
 			} else {
-				Utils.setprefc("wndc-srch",srchwnd.c); // ND: Add this to save the search window location
-				ui.destroy(srchwnd);
-			    srchwnd = null;
+				if(!srchwnd.hasfocus) {
+					this.setfocus(srchwnd);
+				} else {
+					Utils.setprefc("wndc-srch",srchwnd.c); // ND: Add this to save the search window location
+					ui.destroy(srchwnd);
+					srchwnd = null;
+				}
 			}
-		    }
-		}
-	    }, bg.c);
+		});
+		brpanel.add(new MenuCheckBox("lbtn-map", kb_map, "Map"), bg.c).state(() -> wndstate(mapfile)).click(() -> {
+			togglewnd(mapfile);
+			if(mapfile != null)
+				Utils.setprefb("wndvis-map", mapfile.visible());
+		});
+		brpanel.add(new MenuCheckBox("lbtn-ico", kb_ico, "Map Icons"), bg.c).state(() -> wndstate(iconwnd)).click(() -> {
+			if(iconconf == null)
+				return;
+			if(iconwnd == null) {
+				iconwnd = new GobIcon.SettingsWindow(iconconf, () -> Utils.defer(GameUI.this::saveiconconf));
+				fitwdg(GameUI.this.add(iconwnd, Utils.getprefc("wndc-icon", new Coord(200, 200))));
+			} else {
+				Utils.setprefc("wndc-icon",iconwnd.c); // ND: Add this to save the icon settings window location
+				ui.destroy(iconwnd);
+				iconwnd = null;
+			}
+		});
     }
 
     /* Ice cream */
