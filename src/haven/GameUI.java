@@ -329,8 +329,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		});
 		brpanel.add(new MenuCheckBox("lbtn-map", kb_map, "Map"), bg.c).state(() -> wndstate(mapfile)).click(() -> {
 			togglewnd(mapfile);
-			if(mapfile != null)
-				Utils.setprefb("wndvis-map", mapfile.visible());
 		});
 		brpanel.add(new MenuCheckBox("lbtn-ico", kb_ico, "Map Icons"), bg.c).state(() -> wndstate(iconwnd)).click(() -> {
 			if(iconconf == null)
@@ -787,8 +785,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	if(zerg != null)
 	    Utils.setprefc("wndc-zerg", zerg.c);
 	if(mapfile != null) {
-	    Utils.setprefc("wndc-map", mapfile.c);
-	    Utils.setprefc("wndsz-map", mapfile.asz);
+		mapfile.savePos(!mapfile.compact);
 	}
     }
 
@@ -825,9 +822,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 //		mmap = blpanel.add(new CornerMap(UI.scale(new Coord(133, 133)), file), minimapc);
 //		mmap.lower();
-		mapfile = new MapWnd(file, map, Utils.getprefc("wndsz-map", UI.scale(new Coord(700, 500))), "Map");
-		mapfile.show(Utils.getprefb("wndvis-map", false));
-		add(mapfile, Utils.getprefc("wndc-map", new Coord(50, 50)));
+		mapfile = new MapWnd(file, map, Utils.getprefc("smallmapsz", new Coord(230,230)), "Map");
+		mapfile.show(true);
+		add(mapfile, Utils.getprefc("smallmapc", new Coord(0, 100)));
 	    }
 	} else if(place == "menu") {
 	    menu = (MenuGrid)brpanel.add(child, menugridc);
@@ -1314,8 +1311,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    chrwdg.hide();
 	    return;
 	} else if((sender == mapfile) && (msg == "close")) {
+		mapfile.savePos(true);
 	    mapfile.hide();
-	    Utils.setprefb("wndvis-map", false);
 	    return;
 	} else if((sender == help) && (msg == "close")) {
 	    ui.destroy(help);
@@ -1426,8 +1423,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display provinces"), 0, 0).changed(a -> toggleol("prov", a));
 	    add(new MenuCheckBox("lbtn-map", kb_map, "Map")).state(() -> wndstate(mapfile)).click(() -> {
 		    togglewnd(mapfile);
-		    if(mapfile != null)
-			Utils.setprefb("wndvis-map", mapfile.visible());
 		});
 	    add(new MenuCheckBox("lbtn-ico", kb_ico, "Icon settings"), 0, 0).state(() -> wndstate(iconwnd)).click(() -> {
 		    if(iconconf == null)
