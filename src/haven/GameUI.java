@@ -1311,10 +1311,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    help = null;
 	    return;
 	} else if((sender == srchwnd) && (msg == "close")) {
+		Utils.setprefc("wndc-srch",srchwnd.c); // ND: Add this to save the search window location
 	    ui.destroy(srchwnd);
 	    srchwnd = null;
 	    return;
 	} else if((sender == iconwnd) && (msg == "close")) {
+		Utils.setprefc("wndc-icon",iconwnd.c); // ND: Add this to save the icon settings window location
 	    ui.destroy(iconwnd);
 	    iconwnd = null;
 	    return;
