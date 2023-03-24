@@ -244,6 +244,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 //			return(new Coord(0,0));
 //		}
 //	    }, new Coord(-1, 0)));
+
 	brpanel = add(new Hidepanel("gui-br", null, new Coord( 1,  1)) {
 		public void move(double a) {
 		    super.move(a);
@@ -282,7 +283,14 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	iconconf = loadiconconf();
 	super.attached();
     }
-
+	private  void toggleol(String tag, boolean a) {
+		if(map != null) {
+			if(a)
+				map.enol(tag);
+			else
+				map.disol(tag);
+		}
+	}
     public static final KeyBinding kb_srch = KeyBinding.get("scm-srch", KeyMatch.forchar('Z', KeyMatch.C));
     private void menubuttons(Widget bg) {
 //	brpanel.add(new MenuButton("csearch", kb_srch, "Search actions...") {
@@ -336,6 +344,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				iconwnd = null;
 			}
 		});
+		brpanel.add(new MenuCheckBox("lbtn-claim", kb_claim, "Display personal claims"), bg.c).changed(a -> toggleol("cplot", a));
+		brpanel.add(new MenuCheckBox("lbtn-vil", kb_vil, "Display village claims"), bg.c).changed(a -> toggleol("vlg", a));
+		brpanel.add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display provinces"), bg.c).changed(a -> toggleol("prov", a));
     }
 
     /* Ice cream */
