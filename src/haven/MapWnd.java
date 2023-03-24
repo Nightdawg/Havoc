@@ -63,7 +63,7 @@ public class MapWnd extends Window implements Console.Directory {
     private List<ListMarker> markers = Collections.emptyList();
     private int markerseq = -1;
     private boolean domark = false;
-    private int olalpha = 64;
+    private int olalpha = 80;
     private final Collection<Runnable> deferred = new LinkedList<>();
 
     private final static Predicate<Marker> pmarkers = (m -> m instanceof PMarker);
@@ -76,6 +76,8 @@ public class MapWnd extends Window implements Console.Directory {
     public static final KeyBinding kb_hmark = KeyBinding.get("mapwnd/hmark", KeyMatch.forchar('M', KeyMatch.C));
     public static final KeyBinding kb_compact = KeyBinding.get("mapwnd/compact", KeyMatch.forchar('A', KeyMatch.M));
     public static final KeyBinding kb_prov = KeyBinding.get("mapwnd/prov", KeyMatch.nil);
+	public static final KeyBinding kb_claim = KeyBinding.get("mapwnd/pclaim", KeyMatch.nil);
+	public static final KeyBinding kb_vil = KeyBinding.get("mapwnd/vclaim", KeyMatch.nil);
     public MapWnd(MapFile file, MapView mv, Coord sz, String title) {
 	super(sz, title, true);
 	this.file = file;
@@ -95,7 +97,7 @@ public class MapWnd extends Window implements Console.Directory {
 		}
 	    }, Coord.z);
 	toolbar.add(new IButton("gfx/hud/mmap/home", "", "-d", "-h") {
-		{settip("Follow"); setgkey(kb_home);}
+		{settip("Recenter on self"); setgkey(kb_home);}
 		public void click() {
 		    recenter();
 		}
@@ -113,6 +115,26 @@ public class MapWnd extends Window implements Console.Directory {
 			markcfg = MarkerConfig.hideall;
 		})
 	    .settip("Hide markers").setgkey(kb_hmark);
+	toolbar.add(new ICheckBox("gfx/hud/mmap/pclaim", "", "-d", "-h", "-dh") {
+				public boolean mousewheel(Coord c, int amount) {
+					if(!checkhit(c) || !ui.modshift || !a)
+						return(super.mousewheel(c, amount));
+					olalpha = Utils.clip(olalpha + (amount * -16), 48, 256);
+					return(true);
+				}
+			})
+			.changed(a -> toggleol("cplot", a))
+			.settip("Display personal claims").setgkey(kb_claim);
+	toolbar.add(new ICheckBox("gfx/hud/mmap/vclaim", "", "-d", "-h", "-dh") {
+				public boolean mousewheel(Coord c, int amount) {
+					if(!checkhit(c) || !ui.modshift || !a)
+						return(super.mousewheel(c, amount));
+					olalpha = Utils.clip(olalpha + (amount * -16), 48, 256);
+					return(true);
+				}
+			})
+			.changed(a -> toggleol("vlg", a))
+			.settip("Display village claims").setgkey(kb_vil);
 	toolbar.add(new ICheckBox("gfx/hud/mmap/wnd", "", "-d", "-h", "-dh"))
 	    .state(() -> decohide()).set(a -> {
 		    compact(a);
@@ -123,7 +145,7 @@ public class MapWnd extends Window implements Console.Directory {
 		public boolean mousewheel(Coord c, int amount) {
 		    if(!checkhit(c) || !ui.modshift || !a)
 			return(super.mousewheel(c, amount));
-		    olalpha = Utils.clip(olalpha + (amount * -32), 32, 256);
+		    olalpha = Utils.clip(olalpha + (amount * -16), 48, 256);
 		    return(true);
 		}
 	    })
@@ -181,8 +203,8 @@ public class MapWnd extends Window implements Console.Directory {
 	public void mousemove(Coord c) {
 	    if(drag != null) {
 		Coord nsz = parentpos(MapWnd.this, c).add(dragc);
-		nsz.x = Math.max(nsz.x, UI.scale(150));
-		nsz.y = Math.max(nsz.y, UI.scale(150));
+		nsz.x = Math.max(nsz.x, UI.scale(230));// ND: Width
+		nsz.y = Math.max(nsz.y, UI.scale(230));// ND: Height
 		MapWnd.this.resize(nsz);
 	    }
 	    super.mousemove(c);
@@ -728,8 +750,8 @@ public class MapWnd extends Window implements Console.Directory {
     public void mousemove(Coord c) {
 	if(drag != null) {
 	    Coord nsz = c.add(dragc);
-	    nsz.x = Math.max(nsz.x, UI.scale(350));
-	    nsz.y = Math.max(nsz.y, UI.scale(240));
+	    nsz.x = Math.max(nsz.x, UI.scale(440));// ND: Width
+	    nsz.y = Math.max(nsz.y, UI.scale(230));// ND: Height
 	    resize(nsz);
 	}
 	super.mousemove(c);
