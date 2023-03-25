@@ -484,7 +484,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	    ui.draw(g);
 	}
 		if (enableCornerFPSSetting) {
-			FastText.aprint(g, new Coord(g.sz().x - 50, 15), 0, 1, "FPS: " + fps);
+			FastText.aprint(g, new Coord(g.sz().x - UI.scale(50), UI.scale(15)), 0, 1, "FPS: " + fps);
 		}
 	if(dbtext.get())
 	    drawstats(ui, g, buf);
