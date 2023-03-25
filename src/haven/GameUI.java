@@ -1138,7 +1138,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	     * zoomgrids for very high zoom levels, especially when
 	     * done by mistake, so lock to an arbitrary five levels of
 	     * zoom, at least for now. */
-	    if(zoomlevel >= 5)
+	    if(zoomlevel >= 32)
 		return(false);
 	    return(super.allowzoomout());
 	}
