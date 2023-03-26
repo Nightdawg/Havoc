@@ -32,75 +32,86 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class Curiosity extends ItemInfo.Tip implements GItem.ColorInfo {
-    public final Color better = new Color(0, 255, 0, 64), worse = new Color(255, 0, 0, 64);
-    public final int exp, mw, enc, time;
-    public final UI ui;
+	public transient final int lph;
+	public final Color better = new Color(0, 200, 0, 110), worse = new Color(175, 0, 0, 110);
+	public final int exp, mw, enc, time;
+	public final UI ui;
 
-    public Curiosity(Owner owner, int exp, int mw, int enc, int time) {
-	super(owner);
-	this.exp = exp;
-	this.mw = mw;
-	this.enc = enc;
-	this.time = time;
-	UI ui = null;
-	if(owner instanceof Widget) {
-	    Widget wdg = (Widget)owner;
-	    if(wdg.getparent(CharWnd.class) != null)
-		ui = wdg.ui;
+	public Curiosity(Owner owner, int exp, int mw, int enc, int time) {
+		super(owner);
+		this.exp = exp;
+		this.mw = mw;
+		this.enc = enc;
+		this.time = time;
+		this.lph = (exp > 0 && time > 0) ? (int)((3600 * exp / time)*3.29f) : 0;
+		UI ui = null;
+		if(owner instanceof Widget) {
+			Widget wdg = (Widget)owner;
+			if(wdg.getparent(CharWnd.class) != null)
+				ui = wdg.ui;
+		}
+		this.ui = ui;
 	}
-	this.ui = ui;
-    }
 
-    static String[] units = {"s", "m", "h", "d"};
-    static int[] div = {60, 60, 24};
-    static String timefmt(int time) {
-	int[] vals = new int[units.length];
-	vals[0] = time;
-	for(int i = 0; i < div.length; i++) {
-	    vals[i + 1] = vals[i] / div[i];
-	    vals[i] = vals[i] % div[i];
+	static String[] units = {"s", "m", "h", "d"};
+	static int[] div = {60, 60, 24};
+	static String timefmt(int time) {
+		time =	(int) (time/3.29f);
+		int[] vals = new int[units.length];
+		vals[0] = time;
+		for(int i = 0; i < div.length; i++) {
+			vals[i + 1] = vals[i] / div[i];
+			vals[i] = vals[i] % div[i];
+		}
+		StringBuilder buf = new StringBuilder();
+		for(int i = units.length - 1; i >= 0; i--) {
+			if(vals[i] > 0) {
+				if(buf.length() > 0) { // ND: Wtf does this check for?
+					buf.append(String.format(" %02d", vals[i]));
+				} else {
+					buf.append(vals[i]);
+				}
+				buf.append(units[i]);
+			}
+		}
+		return(buf.toString());
 	}
-	StringBuilder buf = new StringBuilder();
-	for(int i = units.length - 1; i >= 0; i--) {
-	    if(vals[i] > 0) {
-		if(buf.length() > 0)
-		    buf.append(' ');
-		buf.append(vals[i]);
-		buf.append(units[i]);
-	    }
+	public static int lph(int lph){
+		return lph;
 	}
-	return(buf.toString());
-    }
 
-    public BufferedImage tipimg() {
-	StringBuilder buf = new StringBuilder();
-	if(exp > 0)
-	    buf.append(String.format("Learning points: $col[192,192,255]{%s} ($col[192,192,255]{%s}/h)\n", Utils.thformat(exp), Utils.thformat(Math.round(exp / (time / 3600.0)))));
-	if(time > 0)
-	    buf.append(String.format("Study time: $col[192,255,192]{%s}\n", timefmt(time)));
-	if(mw > 0)
-	    buf.append(String.format("Mental weight: $col[255,192,255]{%d}\n", mw));
-	if(enc > 0)
-	    buf.append(String.format("Experience cost: $col[255,255,192]{%d}\n", enc));
-	return(RichText.render(buf.toString(), 0).img);
-    }
+	public BufferedImage tipimg() {
+		StringBuilder buf = new StringBuilder();
+		if(exp > 0)
+			//buf.append(String.format("Learning points: $col[192,192,255]{%s} ($col[192,192,255]{%s}/h)\n", Utils.thformat(exp), Utils.thformat(Math.round(exp / (time / 3600.0)))));
+			buf.append(String.format("Learning points: $col[192,192,255]{%s}\n", Utils.thformat(exp), Utils.thformat(Math.round(exp / (time / 3600.0)))));
+		if(time > 0)
+			buf.append(String.format("Study time: $col[192,255,192]{%s}\n", timefmt(time)));
 
-    public Color olcol() {
-	Object tip = (ui == null) ? null : ui.lasttip;
-	if(tip instanceof ItemInfo.InfoTip) {
-	    Curiosity that = ItemInfo.find(Curiosity.class, ((ItemInfo.InfoTip)tip).info());
-	    if(that != null) {
-		double crate = (double)that.exp / (double)that.time;
-		double trate = (double)this.exp / (double)this.time;
-		if(Debug.ff)
-		    Debug.dump(trate, crate);
-		double ε = 0.5 / 3600.0;
-		if(trate < crate - ε)
-		    return(worse);
-		if(trate > crate + ε)
-		    return(better);
-	    }
+		buf.append(String.format("LP/H: $col[192,255,255]{%d}\n", this.lph));
+		if(mw > 0)
+			buf.append(String.format("Mental weight: $col[255,192,255]{%d}\n", mw));
+		if(enc > 0)
+			buf.append(String.format("Experience cost: $col[255,255,192]{%d}\n", enc));
+		return(RichText.render(buf.toString(), 0).img);
 	}
-	return(null);
-    }
+
+	public Color olcol() {
+		Object tip = (ui == null) ? null : ui.lasttip;
+		if(tip instanceof ItemInfo.InfoTip) {
+			Curiosity that = ItemInfo.find(Curiosity.class, ((ItemInfo.InfoTip)tip).info());
+			if(that != null) {
+				double crate = (double)that.exp / (double)that.time;
+				double trate = (double)this.exp / (double)this.time;
+				if(Debug.ff)
+					Debug.dump(trate, crate);
+				double ε = 0.5 / 3600.0;
+				if(trate < crate - ε)
+					return(worse);
+				if(trate > crate + ε)
+					return(better);
+			}
+		}
+		return(null);
+	}
 }
