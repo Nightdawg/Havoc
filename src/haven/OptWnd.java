@@ -29,6 +29,7 @@ package haven;
 import haven.render.*;
 import haven.res.ui.tt.q.quality.Quality;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class OptWnd extends Window {
@@ -851,16 +852,82 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
-			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(40, 18).x(0));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 18).x(0));
 			pack();
 		}
 	}
 
 	private HSlider combatUITopPanelHeightSlider;
 	private HSlider combatUIBottomPanelHeightSlider;
+	public static CheckBox toggleGobDamageInfoCheckBox;
+	private Button damageInfoClearButton;
 	public class NDCombatSettingsPanel extends Panel {
 		public NDCombatSettingsPanel(Panel back) {
 			Widget prev;
+			if (Utils.getprefb("useProperCombatUI", true)){
+				Utils.setprefb("useProperCombatUI", true);
+				Fightsess.altui = true;
+			}
+			else {
+				Utils.setprefb("useProperCombatUI", false);
+				Fightsess.altui = false;
+			}
+
+			if (Utils.getprefb("showCombatHotkeysUI", true)){
+				Utils.setprefb("showCombatHotkeysUI", true);
+				Fightsess.showKeybindCombatSetting = true;
+			}
+			else {
+				Utils.setprefb("showCombatHotkeysUI", false);
+				Fightsess.showKeybindCombatSetting = false;
+			}
+
+			if (Utils.getprefb("markCurrentCombatTarget", true)){
+				Utils.setprefb("markCurrentCombatTarget", true);
+				Fightsess.markCombatTargetSetting = true;
+			}
+			else {
+				Utils.setprefb("markCurrentCombatTarget", false);
+				Fightsess.markCombatTargetSetting = false;
+			}
+
+			if (Utils.getprefb("GobDamageInfoToggled", true)){
+				Utils.setprefb("GobDamageInfoToggled", true);
+				GobDamageInfo.toggleGobDamageInfo = true;
+			}
+			else {
+				Utils.setprefb("GobDamageInfoToggled", false);
+				GobDamageInfo.toggleGobDamageInfo = false;
+			}
+
+			if (Utils.getprefb("GobDamageInfoWoundsToggled", true)){
+				Utils.setprefb("GobDamageInfoWoundsToggled", true);
+				GobDamageInfo.toggleGobDamageInfoWounds = true;
+			}
+			else {
+				Utils.setprefb("GobDamageInfoWoundsToggled", false);
+				GobDamageInfo.toggleGobDamageInfoWounds = false;
+			}
+
+			if (Utils.getprefb("GobDamageInfoArmorToggled", true)){
+				Utils.setprefb("GobDamageInfoArmorToggled", true);
+				GobDamageInfo.toggleGobDamageInfoArmor = true;
+			}
+			else {
+				Utils.setprefb("GobDamageInfoArmorToggled", false);
+				GobDamageInfo.toggleGobDamageInfoArmor = false;
+			}
+
+			if (Utils.getprefb("GobDamageInfoBackgroundToggled", false)){
+				Utils.setprefb("GobDamageInfoBackgroundToggled", true);
+				GobDamageInfo.toggleGobDamageInfoBackground = true;
+				GobDamageInfo.BG = new Color(0, 0, 0, 150);
+			}
+			else {
+				Utils.setprefb("GobDamageInfoBackgroundToggled", false);
+				GobDamageInfo.toggleGobDamageInfoBackground = false;
+				GobDamageInfo.BG = new Color(0, 0, 0, 0);
+			}
 			prev = add(new Label("Combat UI:"), 0, 0);
 			prev = add(new CheckBox("Use Improved Combat UI"){
 				{a = Utils.getprefb("useProperCombatUI", true);}
@@ -939,8 +1006,71 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
+			prev = add(toggleGobDamageInfoCheckBox = new CheckBox("Show damage info:"){
+				{a = Utils.getprefb("GobDamageInfoToggled", true);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("GobDamageInfoToggled", true);
+						GobDamageInfo.toggleGobDamageInfo = true;
+					}
+					else {
+						Utils.setprefb("GobDamageInfoToggled", false);
+						GobDamageInfo.toggleGobDamageInfo = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			prev = add(new Label("> Include:"), prev.pos("bl").adds(18, 3));
+			prev = add(new CheckBox("Wounds"){
+				{a = Utils.getprefb("GobDamageInfoWoundsToggled", true);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("GobDamageInfoWoundsToggled", true);
+						GobDamageInfo.toggleGobDamageInfoWounds = true;
+					}
+					else {
+						Utils.setprefb("GobDamageInfoWoundsToggled", false);
+						GobDamageInfo.toggleGobDamageInfoWounds = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(56, -13));
+			prev = add(new CheckBox("Armor"){
+				{a = Utils.getprefb("GobDamageInfoArmorToggled", true);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("GobDamageInfoArmorToggled", true);
+						GobDamageInfo.toggleGobDamageInfoArmor = true;
+					}
+					else {
+						Utils.setprefb("GobDamageInfoArmorToggled", false);
+						GobDamageInfo.toggleGobDamageInfoArmor = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(62, -14));
+			prev = add(new CheckBox("Show damage background"){
+				{a = Utils.getprefb("GobDamageInfoBackgroundToggled", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("GobDamageInfoBackgroundToggled", true);
+						GobDamageInfo.toggleGobDamageInfoBackground = true;
+						GobDamageInfo.BG = new Color(0, 0, 0, 150);
+					}
+					else {
+						Utils.setprefb("GobDamageInfoBackgroundToggled", false);
+						GobDamageInfo.toggleGobDamageInfoBackground = false;
+						GobDamageInfo.BG = new Color(0, 0, 0, 0);
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4).x(UI.scale(34)));
+			add(damageInfoClearButton = new Button(UI.scale(70), "Clear", false).action(() -> {
+				GobDamageInfo.clearAllDamage(gameui());
+			}), prev.pos("bl").adds(0, -54).x(UI.scale(210)));
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(40, 18).x(0));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
+			setTooltipsForCombatSettingsStuff();
 			pack();
 		}
 	}
@@ -1103,14 +1233,14 @@ public class OptWnd extends Window {
 
 	int y = 0;
 	Widget prev;
-	y = main.add(new PButton(UI.scale(200), "Interface settings", 'v', iface, "Interface Settings"), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Video settings", 'v', video, "Video settings"), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Audio settings", 'a', audio, "Audio settings"), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Keybindings", 'k', keybind, "Keybindings"), 0, y).pos("bl").adds(0, 35).y;
+	y = main.add(new PButton(UI.scale(200), "Interface settings", -1, iface, "Interface Settings"), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Video settings", -1, video, "Video settings"), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Audio settings", -1, audio, "Audio settings"), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Keybindings", -1, keybind, "Keybindings"), 0, y).pos("bl").adds(0, 35).y;
 
-	y = main.add(new PButton(UI.scale(200), "Camera Settings", 'k', camsettings, "Camera Settings"), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Gameplay Settings", 'k', gameplaysettings, "Gameplay Settings"), 0, y).pos("bl").adds(0, 5).y;
-		y = main.add(new PButton(UI.scale(200), "Combat Settings", 'k', combatsettings, "Combat Settings"), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Camera Settings", -1, camsettings, "Camera Settings"), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Gameplay Settings", -1, gameplaysettings, "Gameplay Settings"), 0, y).pos("bl").adds(0, 5).y;
+		y = main.add(new PButton(UI.scale(200), "Combat Settings", -1, combatsettings, "Combat Settings"), 0, y).pos("bl").adds(0, 5).y;
 	y += UI.scale(40);
 	if(gopts) {
 	    y = main.add(new Button(UI.scale(200), "Switch character", false).action(() -> {
@@ -1158,6 +1288,11 @@ public class OptWnd extends Window {
 		enableCornerFPSCheckBox.tooltip = RichText.render("Enabling this will display the current FPS in the top-right corner of the screen.", 300);
 		granularityPositionLabel.tooltip = RichText.render ("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
 		granularityAngleLabel.tooltip = RichText.render ("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
+	}
+
+	private void setTooltipsForCombatSettingsStuff(){
+		toggleGobDamageInfoCheckBox.tooltip = RichText.render("Enabling this will display the amount of damage players and animals took.\nNote: The damage you will see saved above players/animals is the total damage you saw the entity take while inside of your view range. This is not all of the damage said entity might have taken recently.\n$col[185,185,185]{If you change any of the settings below, you will need a damage update in order to see the changes (for example, deal some damage to the player/animal).}", 300);
+		damageInfoClearButton.tooltip = RichText.render("Clear all damage info", 300);
 	}
 
     public OptWnd() {

@@ -46,6 +46,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     private final LinkedList<Runnable> deferred = new LinkedList<>();
     private Loader.Future<?> deferral = null;
 
+	private GobDamageInfo damage;
+	public StatusUpdates status = new StatusUpdates();
+
     public static class Overlay implements RenderTree.Node {
 	public final int id;
 	public final Gob gob;
@@ -104,8 +107,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public void remove(boolean async) {
 	    if(async) {
-		gob.defer(() -> remove(false));
-		return;
+			gob.defer(() -> remove(false));
+			return;
 	    }
 	    remove0();
 	    gob.ols.remove(this);
@@ -113,6 +116,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public void remove() {
 	    remove(true);
+		gob.overlaysUpdated();
 	}
 
 	public void added(RenderTree.Slot slot) {
@@ -341,6 +345,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	this.id = id;
 	if(id < 0)
 	    virtual = true;
+	if(GobDamageInfo.has(this)) {
+			addDmg();
+		}
     }
 
     public Gob(Glob glob, Coord2d c) {
@@ -422,6 +429,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	ol.init();
 	ol.add0();
 	ols.add(ol);
+	overlayAdded(ol);
+	overlaysUpdated();
     }
     public void addol(Overlay ol) {
 	addol(ol, true);
@@ -440,6 +449,46 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 	return(null);
     }
+
+	private void overlayAdded(Overlay item) {
+		try {
+			Indir<Resource> indir = item.res;
+			if(indir != null) {
+				Resource res = indir.get();
+				if(res != null) {
+					if(res.name.equals("gfx/fx/floatimg"))
+						processDmg(item.sdt.clone());
+//		    System.out.printf("overlayAdded: '%s'%n", res.name);
+				}
+			}
+		} catch (Loading ignored) {}
+	}
+	private void processDmg(MessageBuf msg) {
+		try {
+			msg.rewind();
+			int v = msg.int32();
+			msg.uint8();
+			int c = msg.uint16();
+//	    System.out.println(String.format("processDmg v: %d, c: %d", v, c));
+
+			if(damage == null) {
+				addDmg();
+			}
+			damage.update(c, v);
+		} catch (Exception ignored) {
+			ignored.printStackTrace();
+		}
+	}
+
+	private void addDmg() {
+		damage = new GobDamageInfo(this);
+		setattr(GobDamageInfo.class, damage);
+	}
+
+	public void clearDmg() {
+		setattr(GobDamageInfo.class, null);
+		damage = null;
+	}
 
     public void dispose() {
 	for(GAttrib a : attr.values())
@@ -866,4 +915,33 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public TickList.Ticking ticker() {return(this);}
     }
     public final Placed placed = new Placed();
+
+	public void overlaysUpdated() { status.update(StatusType.overlay); }
+
+	private static class StatusUpdates {
+		private final Set<StatusType> updated = new HashSet<>();
+
+		private void update(StatusType type) {
+			synchronized (updated) {
+				updated.add(type);
+			}
+		}
+
+		private boolean updated(StatusType... types) {
+			synchronized (updated) {
+				for (StatusType type : types) {
+					if(updated.contains(type)) {return true;}
+				}
+			}
+			return false;
+		}
+
+		private boolean updated() {
+			return !updated.isEmpty();
+		}
+	}
+
+	private enum StatusType {
+		drawable, overlay, tags, pose, id, info, kin, hitbox, icon, visibility, marker
+	}
 }

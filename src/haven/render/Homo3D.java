@@ -200,4 +200,9 @@ public class Homo3D {
     public static Coord3f obj2view(Coord3f c, Pipe state) {
 	return(obj2view(c, state, state.get(States.viewport).area));
     }
+
+	public static Coord3f obj2view2(Coord3f objc, Pipe state, Area view) {
+		HomoCoord4f homo = obj2clip(objc, state);
+		return homo.clipped() ? null : homo.toview(view);
+	}
 }

@@ -26,11 +26,12 @@
 
 package haven;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.*;
 import java.lang.reflect.*;
 import java.awt.image.BufferedImage;
-import java.awt.Graphics;
 
 public abstract class ItemInfo {
     public final Owner owner;
@@ -293,27 +294,35 @@ public abstract class ItemInfo {
 	return(ret);
     }
 
-    public static BufferedImage catimgsh(int margin, BufferedImage... imgs) {
-	int w = -margin, h = 0;
-	for(BufferedImage img : imgs) {
-	    if(img == null)
-		continue;
-	    if(img.getHeight() > h)
-		h = img.getHeight();
-	    w += img.getWidth() + margin;
+	public static BufferedImage catimgsh(int margin, BufferedImage... imgs) {
+		return catimgsh(margin, 0, null, imgs);
 	}
-	BufferedImage ret = TexI.mkbuf(new Coord(w, h));
-	Graphics g = ret.getGraphics();
-	int x = 0;
-	for(BufferedImage img : imgs) {
-	    if(img == null)
-		continue;
-	    g.drawImage(img, x, (h - img.getHeight()) / 2, null);
-	    x += img.getWidth() + margin;
+
+	public static BufferedImage catimgsh(int margin, int pad, Color bg, BufferedImage... imgs) {
+		int w = 2 * pad - margin, h = 0;
+		for(BufferedImage img : imgs) {
+			if(img == null)
+				continue;
+			if(img.getHeight() > h)
+				h = img.getHeight();
+			w += img.getWidth() + margin;
+		}
+		BufferedImage ret = TexI.mkbuf(new Coord(w, h));
+		Graphics g = ret.getGraphics();
+		if(bg != null) {
+			g.setColor(bg);
+			g.fillRect(0, 0, w, h);
+		}
+		int x = pad;
+		for(BufferedImage img : imgs) {
+			if(img == null)
+				continue;
+			g.drawImage(img, x, (h - img.getHeight()) / 2, null);
+			x += img.getWidth() + margin;
+		}
+		g.dispose();
+		return(ret);
 	}
-	g.dispose();
-	return(ret);
-    }
 
     public static BufferedImage longtip(List<ItemInfo> info) {
 	Layout l = new Layout();
