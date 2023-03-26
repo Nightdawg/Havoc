@@ -782,7 +782,7 @@ public class OptWnd extends Window {
 								setFreeCameraSettingsVisibility(true);
 								setOrthoCameraSettingsVisibility(false);
 								MapView.publicCurrentCameraName = 1;
-								MapView.publicFreeCamDist = 100f;
+								MapView.publicFreeCamDist = 500.0f;
 								if (gameui() != null && gameui().map != null) {
 									gameui().map.setcam("NDFree");
 								}
@@ -812,7 +812,7 @@ public class OptWnd extends Window {
 					setFreeCameraSettingsVisibility(true);
 					setOrthoCameraSettingsVisibility(false);
 					MapView.publicCurrentCameraName = 1;
-					MapView.publicFreeCamDist = 100f;
+					MapView.publicFreeCamDist = 500.0f;
 				}
 				else {
 					camGrp.check(1);

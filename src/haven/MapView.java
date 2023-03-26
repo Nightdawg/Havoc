@@ -495,7 +495,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public static boolean freeCamTiltBool = false;
 	public static float cameraHeightDistance = 15f;
 	public static int freeCameraZoomSpeed = 25;
-	public static float publicFreeCamDist = 100f;
+	public static float publicFreeCamDist = 500.0f;
 	public static int publicCurrentCameraName = 1;
 	public class NDFreeCam extends FreeCam {
 		private float dist = 500.0f, tdist = dist;
