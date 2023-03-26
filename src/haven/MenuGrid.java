@@ -502,9 +502,33 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	}
     }
 
+	private boolean togglestuff = true;
+	public static boolean toggleTrackingOnLogin = Utils.getprefb("toggleTrackingOnLogin", false);
+	public static boolean toggleSwimmingOnLogin = Utils.getprefb("toggleSwimmingOnLogin", false);
+	public static boolean toggleCriminalActsOnLogin = Utils.getprefb("toggleCriminalActsOnLogin", false);
+	public static boolean toggleSiegeEnginesOnLogin = Utils.getprefb("toggleSiegeEnginesOnLogin", false);
+
     public void tick(double dt) {
 	if(recons)
 	    updlayout();
+		if (togglestuff) {
+			GameUI gui = getparent(GameUI.class);
+			if (gui != null) {
+				if (toggleTrackingOnLogin){
+					wdgmsg("act", "tracking");
+				}
+				if (toggleSwimmingOnLogin){
+					wdgmsg("act", "swim");
+				}
+				if (toggleCriminalActsOnLogin){
+					wdgmsg("act", "crime");
+				}
+				if (toggleSiegeEnginesOnLogin){
+					wdgmsg("act", "siegeptr");
+				}
+				togglestuff = false;
+			}
+		}
     }
 
     public boolean mouseup(Coord c, int button) {

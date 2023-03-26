@@ -433,7 +433,7 @@ public class OptWnd extends Window {
 	private CheckBox enableCornerFPSCheckBox;
 	private Label granularityPositionLabel;
 	private Label granularityAngleLabel;
-
+	public static CheckBox toggleQualityDisplayCheckBox;
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -531,6 +531,20 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, prev.pos("bl").adds(16, 6));
+		prev = add(toggleQualityDisplayCheckBox = new CheckBox("Display Quality on Items"){
+			{a = (Utils.getprefb("qtoggle", false));}
+			public void set(boolean val) {
+				if (val) {
+					Utils.setprefb("qtoggle", true);
+					Quality.show = true;
+				}
+				else {
+					Utils.setprefb("qtoggle", false);
+					Quality.show = false;
+				}
+				a = val;
+			}
+		}, prev.pos("bl").adds(0, 6));
 	    add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 30).x(0));
 		setTooltipsForInterfaceSettingsStuff();
 	    pack();
@@ -615,9 +629,6 @@ public class OptWnd extends Window {
 	private Button orthoCamZoomSpeedResetButton;
 	private CheckBox revertCameraAxisCheckBox;
 	private CheckBox allowLowerFreeCamTilt;
-	private HSlider nightModeCameraSlider;
-	private Label nightVisionLabel;
-	private Button nightVisionResetButton;
 	public class NDCamSettingsPanel extends Panel {
 
 		public NDCamSettingsPanel(Panel back) {
@@ -648,30 +659,7 @@ public class OptWnd extends Window {
 			}
 			prev = add(new Label(""), 0, 0);
 
-			prev = add(nightVisionLabel = new Label("Night Vision / Brighter World:"), prev.pos("bl").adds(0, 46));
-			Glob.nightVisionBrightness = Utils.getprefd("nightVisionSetting", 0.0);
-			prev = add(nightModeCameraSlider = new HSlider(UI.scale(200), 0, 650, (int)(Glob.nightVisionBrightness*1000)) {
-				protected void attach(UI ui) {
-					super.attach(ui);
-					val = (int)(Glob.nightVisionBrightness*1000);
-				}
-				public void changed() {
-					Glob.nightVisionBrightness = val/1000.0;
-					Utils.setprefd("nightVisionSetting", val/1000.0);
-					if(ui.sess != null && ui.sess.glob != null) {
-						ui.sess.glob.brighten();
-					}
-				}
-			}, prev.pos("bl").adds(0, 4));
-			add(nightVisionResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
-				Glob.nightVisionBrightness = 0.0;
-				nightModeCameraSlider.val = 0;
-				Utils.setprefd("nightVisionSetting", 0.0);
-				if(ui.sess != null && ui.sess.glob != null) {
-					ui.sess.glob.brighten();
-				}
-			}), prev.pos("bl").adds(210, -20));
-			prev = add(new Label("Additional Camera Settings"), prev.pos("bl").adds(0, 10));
+			prev = add(new Label("Selected Camera Settings:"), prev.pos("bl").adds(0, 50));
 			prev = add(revertCameraAxisCheckBox = new CheckBox("Revert Camera Look Axes"){
 				{a = (Utils.getprefb("CamAxisSettingBool", true));}
 				public void set(boolean val) {
@@ -719,7 +707,7 @@ public class OptWnd extends Window {
 			}), OrthoPrev.pos("bl").adds(210, -20));
 
 			//ND: Now the free camera settings
-			FreePrev = add(allowLowerFreeCamTilt = new CheckBox("Enable lower freecam tilting angle"){
+			FreePrev = add(allowLowerFreeCamTilt = new CheckBox("Enable Lower Tilting Angle"){
 				{a = (Utils.getprefb("allowLowerTiltBool", false));}
 				public void set(boolean val) {
 					if (val) {
@@ -769,8 +757,7 @@ public class OptWnd extends Window {
 				Utils.setprefd("cameraHeightDistance", 15f);
 			}), FreePrev.pos("bl").adds(210, -20));
 			add(new Label(""), 278, 0); // added this so the window's width does not change when switching camera type and closing/reopening the panel
-			prev = add(new Label("Selected Camera Type:"), 0, 0);
-			{
+			prev = add(new Label("Selected Camera Type:"), 0, 0);{
 				boolean[] done = {false};
 				RadioGroup camGrp = new RadioGroup(this) {
 					public void changed(int btn, String lbl) {
@@ -826,33 +813,102 @@ public class OptWnd extends Window {
 			}
 
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), FreePrev.pos("bl").adds(40, 18));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), FreePrev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForCameraSettingsStuff();
 			pack();
 		}
 	}
 
-	public static CheckBox toggleQualityDisplayCheckBox;
+	private Label nightVisionLabel;
+	private HSlider nightVisionSlider;
+	private Button nightVisionResetButton;
 
 	public class NDGameplaySettingsPanel extends Panel {
 		public NDGameplaySettingsPanel(Panel back) {
 			Widget prev;
-			prev = add(new Label("Toggles:"), 0, 0);
-			prev = add(toggleQualityDisplayCheckBox = new CheckBox("Display item quality"){
-				{a = (Utils.getprefb("qtoggle", false));}
+			add(new Label(""), 278, 0); // To fix window width
+			prev = add(nightVisionLabel = new Label("Night Vision / Brighter World:"), 0, 0);
+			Glob.nightVisionBrightness = Utils.getprefd("nightVisionSetting", 0.0);
+			prev = add(nightVisionSlider = new HSlider(UI.scale(200), 0, 650, (int)(Glob.nightVisionBrightness*1000)) {
+				protected void attach(UI ui) {
+					super.attach(ui);
+					val = (int)(Glob.nightVisionBrightness*1000);
+				}
+				public void changed() {
+					Glob.nightVisionBrightness = val/1000.0;
+					Utils.setprefd("nightVisionSetting", val/1000.0);
+					if(ui.sess != null && ui.sess.glob != null) {
+						ui.sess.glob.brighten();
+					}
+				}
+			}, prev.pos("bl").adds(0, 6));
+			add(nightVisionResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
+				Glob.nightVisionBrightness = 0.0;
+				nightVisionSlider.val = 0;
+				Utils.setprefd("nightVisionSetting", 0.0);
+				if(ui.sess != null && ui.sess.glob != null) {
+					ui.sess.glob.brighten();
+				}
+			}), prev.pos("bl").adds(210, -20));
+			prev = add(new Label("Toggle on Login:"), prev.pos("bl").adds(0, 10).x(0));
+			prev = add(new CheckBox("Tracking"){
+				{a = Utils.getprefb("toggleTrackingOnLogin", false);}
 				public void set(boolean val) {
 					if (val) {
-						Utils.setprefb("qtoggle", true);
-						Quality.show = true;
+						Utils.setprefb("toggleTrackingOnLogin", true);
+						MenuGrid.toggleTrackingOnLogin = true;
 					}
 					else {
-						Utils.setprefb("qtoggle", false);
-						Quality.show = false;
+						Utils.setprefb("toggleTrackingOnLogin", false);
+						MenuGrid.toggleTrackingOnLogin = false;
 					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
-			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 18).x(0));
+			prev = add(new CheckBox("Swimming"){
+				{a = Utils.getprefb("toggleSwimmingOnLogin", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("toggleSwimmingOnLogin", true);
+						MenuGrid.toggleSwimmingOnLogin = true;
+					}
+					else {
+						Utils.setprefb("toggleSwimmingOnLogin", false);
+						MenuGrid.toggleSwimmingOnLogin = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			prev = add(new CheckBox("Criminal Acts"){
+				{a = Utils.getprefb("toggleCriminalActsOnLogin", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("toggleCriminalActsOnLogin", true);
+						MenuGrid.toggleCriminalActsOnLogin = true;
+					}
+					else {
+						Utils.setprefb("toggleCriminalActsOnLogin", false);
+						MenuGrid.toggleCriminalActsOnLogin = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			prev = add(new CheckBox("Check for Siege Engines"){
+				{a = Utils.getprefb("toggleSiegeEnginesOnLogin", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("toggleSiegeEnginesOnLogin", true);
+						MenuGrid.toggleSiegeEnginesOnLogin = true;
+					}
+					else {
+						Utils.setprefb("toggleSiegeEnginesOnLogin", false);
+						MenuGrid.toggleSiegeEnginesOnLogin = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
+			setTooltipsForGameplaySettingsStuff();
 			pack();
 		}
 	}
@@ -1273,14 +1329,12 @@ public class OptWnd extends Window {
 		orthoCamZoomSpeedResetButton.visible = bool;
 	}
 	private void setTooltipsForCameraSettingsStuff(){
-		nightVisionLabel.tooltip = RichText.render("Increasing this will simulate daytime lighting during the night.\n$col[185,185,185]{It slightly affects the light levels during the day too.}", 280);
-		nightVisionResetButton.tooltip = RichText.render("Reset to default", 300);
 		revertCameraAxisCheckBox.tooltip = RichText.render("Enabling this will revert the Vertical and Horizontal axes when dragging the camera to look around.\n$col[185,185,185]{I don't know why Loftar inverts them in the first place...}", 280);
 		unlockedOrthoCamCheckBox.tooltip = RichText.render("Enabling this allows you to rotate the Ortho camera freely, without locking it to only 4 view angles.", 280);
 		freeCamZoomSpeedResetButton.tooltip = RichText.render("Reset to default", 300);
 		freeCamHeightResetButton.tooltip = RichText.render("Reset to default", 300);
 		orthoCamZoomSpeedResetButton.tooltip = RichText.render("Reset to default", 300);
-		allowLowerFreeCamTilt.tooltip = RichText.render("Enabling this will allow you to tilt the camera below the character and look upwards.\n$col[200,0,0]{WARNING: Be careful when using this setting in combat! You're not able to click on the ground when looking at the world from below.}\n$col[185,185,185]{Honestly just enable this when you need to take a screenshot or something, and keep it disabled the rest of the time.}", 300);
+		allowLowerFreeCamTilt.tooltip = RichText.render("Enabling this will allow you to tilt the camera below the character and look upwards.\n$col[200,0,0]{WARNING: Be careful when using this setting in combat! You're not able to click on the ground when looking at the world from below.}\n$col[185,185,185]{Honestly just enable this when you need to take a screenshot or something, and keep it disabled the rest of the time. I added this option for fun.}", 300);
 		freeCamHeightLabel.tooltip = RichText.render("This affects the height of the point at which the free camera is pointed. By default, it is pointed right above the player's head.\n$col[185,185,185]{This doesn't really affect gameplay that much, if at all. With this setting, you can make it point at the feet, or torso, or head, or whatever.}", 300);
 	}
 
@@ -1293,6 +1347,11 @@ public class OptWnd extends Window {
 	private void setTooltipsForCombatSettingsStuff(){
 		toggleGobDamageInfoCheckBox.tooltip = RichText.render("Enabling this will display the amount of damage players and animals took.\nNote: The damage you will see saved above players/animals is the total damage you saw the entity take while inside of your view range. This is not all of the damage said entity might have taken recently.\n$col[185,185,185]{If you change any of the settings below, you will need a damage update in order to see the changes (for example, deal some damage to the player/animal).}", 300);
 		damageInfoClearButton.tooltip = RichText.render("Clear all damage info", 300);
+	}
+
+	private void setTooltipsForGameplaySettingsStuff(){
+		nightVisionLabel.tooltip = RichText.render("Increasing this will simulate daytime lighting during the night.\n$col[185,185,185]{It slightly affects the light levels during the day too.}", 280);
+		nightVisionResetButton.tooltip = RichText.render("Reset to default", 300);
 	}
 
     public OptWnd() {
