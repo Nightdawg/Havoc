@@ -87,7 +87,10 @@ public class Curiosity extends ItemInfo.Tip implements GItem.ColorInfo {
 			buf.append(String.format("Learning points: $col[192,192,255]{%s}\n", Utils.thformat(exp), Utils.thformat(Math.round(exp / (time / 3600.0)))));
 		if(time > 0)
 			buf.append(String.format("Study time: $col[192,255,192]{%s}\n", timefmt(time)));
-
+		String remaining = remainingLongTip();
+		if(remaining != null) {
+			buf.append(String.format("Remaining: $col[255,224,192]{%s}\n", remaining));
+		}
 		buf.append(String.format("LP/H: $col[192,255,255]{%d}\n", this.lph));
 		if(mw > 0)
 			buf.append(String.format("Mental weight: $col[255,192,255]{%d}\n", mw));
@@ -113,5 +116,46 @@ public class Curiosity extends ItemInfo.Tip implements GItem.ColorInfo {
 			}
 		}
 		return(null);
+	}
+
+	private String remainingLongTip() {
+		return remainingLongTip(remaining());
+	}
+	private String remainingLongTip(int remaining) {
+		if(remaining >= 0) {
+			return timefmt(remaining);
+		}
+		return null;
+	}
+
+	private String remainingShortTip(int time) {
+		if(time < 0) {return null;}
+		time = (int) (time / 3.29f); //short tip is always in real time
+		if(time >= 60) {
+			if(time > 3600) {
+				time = time / 60;
+			}
+			return String.format("%d:%02d", time / 60, time % 60);
+		} else {
+			return String.format("%02d", time);
+		}
+	}
+	public Pair<String, String> remainingTip() {
+		int time = remaining();
+		return new Pair<>(remainingShortTip(time), remainingLongTip(time));
+	}
+	public int remaining() {
+		if(owner instanceof GItem) {
+			GItem item = ((GItem) owner);
+			GItem.MeterInfo m = ItemInfo.find(GItem.MeterInfo.class, item.info());
+			double meter = (m != null) ? m.meter() : 0;
+			if(meter > 0) {
+				long now = System.currentTimeMillis();
+				long remStudy = (long) ((1.0 - meter) * time);
+				long elapsed = (long) (3.29f * (now - item.meterUpdated) / 1000);
+				return (int) (remStudy - elapsed);
+			}
+		}
+		return -1;
 	}
 }

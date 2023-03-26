@@ -32,6 +32,8 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.*;
 import haven.ItemInfo.AttrCache;
+import haven.resutil.Curiosity;
+
 import static haven.ItemInfo.find;
 import static haven.Inventory.sqsz;
 
@@ -182,17 +184,69 @@ public class WItem extends Widget implements DTarget {
 		for(GItem.InfoOverlay<?> ol : ols)
 		    ol.draw(g);
 	    }
-	    Double meter = (item.meter > 0) ? Double.valueOf(item.meter / 100.0) : itemmeter.get();
-	    if((meter != null) && (meter > 0)) {
-		g.chcolor(255, 255, 255, 64);
-		Coord half = sz.div(2);
-		g.prect(half, half.inv(), half, meter * Math.PI * 2);
-		g.chcolor();
-	    }
+		drawmeter(g, sz);
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
 	}
     }
+	private void drawmeter(GOut g, Coord sz) {
+		double meter = meter();
+		if(meter > 0) {
+			Tex studyTime = getStudyTime();
+			if(studyTime == null) {
+				Tex tex = Text.renderstroked(String.format("%d%%", Math.round(100 * meter))).tex();
+				g.aimage(tex, sz.div(2), 0.5, 0.5);
+				tex.dispose();
+			}
+			// ND: This following commented code is the curio circle overlay. I removed it and added the actual time at the bottom.
+//			g.chcolor(255, 255, 255, 64);
+//			Coord half = sz.div(2);
+//			g.prect(half, half.inv(), half, meter * Math.PI * 2);
+//			g.chcolor();
+			if(studyTime != null) {
+				g.chcolor(0, 0, 0, 150);
+				int h = studyTime.sz().y;
+				g.frect(new Coord(0, sz.y - h+4), new Coord(sz.x+2, h));
+				g.chcolor();
+				g.aimage(studyTime, new Coord(sz.x / 2, sz.y), 0.5, 0.9);
+			}
+		}
+	}
+
+	public double meter() {
+		Double meter = (item.meter > 0) ? (Double) (item.meter / 100.0) : itemmeter.get();
+		return meter == null ? 0 : meter;
+	}
+
+	private String cachedStudyValue = null;
+	private String cachedTipValue = null;
+	private Tex cachedStudyTex = null;
+	private Tex getStudyTime() {
+		Pair<String, String> data = study.get();
+		String value = data == null ? null : data.a;
+		String tip = data == null ? null : data.b;
+		if(!Objects.equals(tip, cachedTipValue)) {
+			cachedTipValue = tip;
+			longtip = null;
+		}
+		if(value != null) {
+			if(!Objects.equals(value, cachedStudyValue)) {
+				if(cachedStudyTex != null) {
+					cachedStudyTex.dispose();
+					cachedStudyTex = null;
+				}
+			}
+
+			if(cachedStudyTex == null) {
+				cachedStudyValue = value;
+				cachedStudyTex = Text.renderstroked(value).tex();
+			}
+			return cachedStudyTex;
+		}
+		return null;
+	}
+
+	public final AttrCache<Pair<String, String>> study = new AttrCache<Pair<String, String>>(this::info, AttrCache.map1(Curiosity.class, curio -> curio::remainingTip));
 
     public boolean mousedown(Coord c, int btn) {
 	if(btn == 1) {
