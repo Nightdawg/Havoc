@@ -76,7 +76,7 @@ public class WItem extends Widget implements DTarget {
 	public LongTip(List<ItemInfo> info) {super(info, ItemInfo.longtip(info));}
     }
 
-    private double hoverstart;
+    private double hoverstart; //ND: Skip this crap
     private ItemTip shorttip = null, longtip = null;
     private List<ItemInfo> ttinfo = null;
     public Object tooltip(Coord c, Widget prev) {
@@ -99,15 +99,15 @@ public class WItem extends Widget implements DTarget {
 		shorttip = longtip = null;
 		ttinfo = info;
 	    }
-	    if(now - hoverstart < 1.0) {
-		if(shorttip == null)
-		    shorttip = new ShortTip(info);
-		return(shorttip);
-	    } else {
+//	    if(now - hoverstart < 1.0) {
+//		if(shorttip == null)
+//		    shorttip = new ShortTip(info);
+//		return(shorttip);
+//	    } else {
 		if(longtip == null)
 		    longtip = new LongTip(info);
 		return(longtip);
-	    }
+//	    }
 	} catch(Loading e) {
 	    return("...");
 	}
