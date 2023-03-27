@@ -1805,4 +1805,13 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 		return null;
 	}
+	public static KeyBinding kb_drinkButton  = KeyBinding.get("DrinkButton",  KeyMatch.forcode(KeyEvent.VK_BACK_QUOTE, 0));
+	public boolean keydown(KeyEvent ev) {
+		if(kb_drinkButton.key().match(ev)) {
+			wdgmsg("act", "drink");
+			return(true);
+		}
+		return(super.keydown(ev));
+	}
+
 }
