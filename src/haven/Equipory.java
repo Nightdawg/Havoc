@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.awt.*;
 import java.util.*;
 import static haven.Inventory.invsq;
 
@@ -35,6 +36,9 @@ public class Equipory extends Widget implements DTarget {
 	rx = invsq.sz().x + bg.sz().x,
 	yo = Inventory.sqsz.y;
     public static final Coord bgc = new Coord(invsq.sz().x, 0);
+	private static final Text.Foundry acf = new Text.Foundry(Text.sans, 12);
+	private Tex Detection = null;
+	private Tex Sneak = null;
     public static final Coord ecoords[] = {
 	new Coord( 0, 0 * yo),
 	new Coord( 0, 1 * yo),
@@ -136,6 +140,14 @@ public class Equipory extends Widget implements DTarget {
 	    }
 	    v.trimToSize();
 	    wmap.put(g, v);
+		if (Detection != null) {
+			Detection.dispose();
+			Detection = null;
+		}
+		if (Sneak != null) {
+			Sneak.dispose();
+			Sneak = null;
+		}
 	} else {
 	    super.addchild(child, args);
 	}
@@ -147,6 +159,14 @@ public class Equipory extends Widget implements DTarget {
 	    GItem i = (GItem)w;
 	    for(WItem v : wmap.remove(i))
 		ui.destroy(v);
+		if (Detection != null) {
+			Detection.dispose();
+			Detection = null;
+		}
+		if (Sneak != null) {
+			Sneak.dispose();
+			Sneak = null;
+		}
 	}
     }
 
@@ -204,10 +224,55 @@ public class Equipory extends Widget implements DTarget {
 	return(null);
     }
 
-    public void draw(GOut g) {
-	drawslots(g);
-	super.draw(g);
-    }
+	public void draw(GOut g) {
+		drawslots(g);
+		super.draw(g);
+		GameUI gui = gameui();
+
+		if (Detection == null) {
+			int h = 0, s = 0, x;
+			CharWnd chrwdg = null;
+			try {
+				chrwdg = gui.chrwdg;
+				for (CharWnd.Attr attr : chrwdg.base) {
+					if (attr.attr.nm.contains("prc"))
+						h = attr.attr.comp;
+				}
+				for (CharWnd.SAttr attr : chrwdg.skill)
+					if (attr.attr.nm.contains("exp"))
+						s = attr.attr.comp;
+				x = h * s;
+				String xString = String.format("%,d", x).replace(',', '.');
+				//Sneak = Text.renderstroked2("Sneak: " + x, Color.WHITE, Color.BLACK, acf).tex();
+				Detection = new TexI(Utils.outline2(Text.renderstroked2("Detection (Prc*Exp):  " + xString, Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
+			} catch (Exception e) { // fail silently
+			}
+		}
+		if (Detection != null)
+			g.image(Detection, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - Detection.sz().x / 2, bg.sz().y - UI.scale(56)));
+
+		if (Sneak == null) {
+			int h = 0, s = 0, x;
+			CharWnd chrwdg = null;
+			try {
+				chrwdg = gui.chrwdg;
+				for (CharWnd.Attr attr : chrwdg.base) {
+					if (attr.attr.nm.contains("int"))
+						h = attr.attr.comp;
+				}
+				for (CharWnd.SAttr attr : chrwdg.skill)
+					if (attr.attr.nm.contains("ste"))
+						s = attr.attr.comp;
+				x = h * s;
+				String xString = String.format("%,d", x).replace(',', '.');
+				//Sneak = Text.renderstroked2("Sneak: " + x, Color.WHITE, Color.BLACK, acf).tex();
+				Sneak = new TexI(Utils.outline2(Text.renderstroked2("Sneak (Int*Ste):  " + xString, Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
+			} catch (Exception e) { // fail silently
+			}
+		}
+		if (Sneak != null)
+			g.image(Sneak, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - Sneak.sz().x / 2, bg.sz().y - UI.scale(40)));
+	}
 
     public boolean iteminteract(Coord cc, Coord ul) {
 	return(false);
