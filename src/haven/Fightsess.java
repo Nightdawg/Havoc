@@ -273,7 +273,7 @@ public class Fightsess extends Widget {
 			}
 		}
 		for(int i = 0; i < actions.length; i++) {
-			Coord ca = altui ? new Coord(x0 - 18, bottom - 150).add(actc(i)) : pcc.add(actc(i));
+			Coord ca = altui ? new Coord(x0 - 18, bottom - UI.scale(150)).add(actc(i)) : pcc.add(actc(i));
 			Action act = actions[i];
 			try {
 				if(act != null) {
@@ -396,7 +396,7 @@ public class Fightsess extends Widget {
 		}
 		final int rl = 5;
 		for(int i = 0; i < actions.length; i++) {
-			Coord ca = altui ? new Coord(x0 - 18, bottom - 150).add(actc(i)).add(16, 16) : pcc.add(actc(i));
+			Coord ca = altui ? new Coord(x0 - 18, bottom - UI.scale(150)).add(actc(i)).add(16, 16) : pcc.add(actc(i));
 			Indir<Resource> act = (actions[i] == null) ? null : actions[i].res;
 			try {
 				if(act != null) {
