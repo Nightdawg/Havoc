@@ -120,6 +120,7 @@ public class MapWnd extends Window implements Console.Directory {
 			markcfg = MarkerConfig.hideall;
 		})
 	    .settip("Hide markers").setgkey(kb_hmark);
+	if(Utils.getprefb("pclaim-claimMapState", false)) overlays.add("cplot");
 	toolbar.add(new ICheckBox("gfx/hud/mmap/pclaim", "", "-d", "-h", "-dh") {
 				public boolean mousewheel(Coord c, int amount) {
 					if(!checkhit(c) || !ui.modshift || !a)
@@ -128,8 +129,18 @@ public class MapWnd extends Window implements Console.Directory {
 					return(true);
 				}
 			})
-			.changed(a -> toggleol("cplot", a))
+			.state(() -> visol("cplot"))
+			.click(() -> {
+				if (!visol("cplot")) {
+					toggleol("cplot", true);
+					Utils.setprefb("pclaim-claimMapState", true);
+				} else{
+					toggleol("cplot", false);
+					Utils.setprefb("pclaim-claimMapState", false);
+				}
+			})
 			.settip("Display personal claims").setgkey(kb_claim);
+	if(Utils.getprefb("vclaim-claimMapState", false)) overlays.add("vlg");
 	toolbar.add(new ICheckBox("gfx/hud/mmap/vclaim", "", "-d", "-h", "-dh") {
 				public boolean mousewheel(Coord c, int amount) {
 					if(!checkhit(c) || !ui.modshift || !a)
@@ -138,7 +149,16 @@ public class MapWnd extends Window implements Console.Directory {
 					return(true);
 				}
 			})
-			.changed(a -> toggleol("vlg", a))
+			.state(() -> visol("vlg"))
+			.click(() -> {
+				if (!visol("vlg")) {
+					toggleol("vlg", true);
+					Utils.setprefb("vclaim-claimMapState", true);
+				} else{
+					toggleol("vlg", false);
+					Utils.setprefb("vclaim-claimMapState", false);
+				}
+			})
 			.settip("Display village claims").setgkey(kb_vil);
 	toolbar.add(new ICheckBox("gfx/hud/mmap/wnd", "", "-d", "-h", "-dh"))
 	    .state(() -> decohide()).set(a -> {
@@ -146,6 +166,7 @@ public class MapWnd extends Window implements Console.Directory {
 		    compact(a);
 		})
 	    .settip("Compact mode").setgkey(kb_compact);
+	if(Utils.getprefb("prov-claimMapState", false)) overlays.add("realm");
 	toolbar.add(new ICheckBox("gfx/hud/mmap/prov", "", "-d", "-h", "-dh") {
 		public boolean mousewheel(Coord c, int amount) {
 		    if(!checkhit(c) || !ui.modshift || !a)
@@ -154,7 +175,16 @@ public class MapWnd extends Window implements Console.Directory {
 		    return(true);
 		}
 	    })
-	    .changed(a -> toggleol("realm", a))
+			.state(() -> visol("realm"))
+			.click(() -> {
+				if (!visol("realm")) {
+					toggleol("realm", true);
+					Utils.setprefb("prov-claimMapState", true);
+				} else{
+					toggleol("realm", false);
+					Utils.setprefb("prov-claimMapState", false);
+				}
+			})
 	    .settip("Display provinces").setgkey(kb_prov);
 	toolbar.pack();
 	tool = add(new Toolbox());
@@ -168,6 +198,13 @@ public class MapWnd extends Window implements Console.Directory {
 	else
 	    overlays.remove(tag);
     }
+
+	private boolean visol(String tag) {
+		if(overlays != null) {
+			return overlays.contains(tag);
+		}
+		return false;
+	}
 
     private class ViewFrame extends Frame {
 	Coord sc = Coord.z;

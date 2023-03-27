@@ -291,6 +291,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				map.disol(tag);
 		}
 	}
+	private boolean visol(String tag) {
+		if(map != null) {
+			return map.visol(tag);
+		}
+		return false;
+	}
     public static final KeyBinding kb_srch = KeyBinding.get("scm-srch", KeyMatch.forchar('Z', KeyMatch.C));
     private void menubuttons(Widget bg) {
 //	brpanel.add(new MenuButton("csearch", kb_srch, "Search actions...") {
@@ -342,9 +348,34 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				iconwnd = null;
 			}
 		});
-		brpanel.add(new MenuCheckBox("lbtn-claim", kb_claim, "Display personal claims"), bg.c).changed(a -> toggleol("cplot", a));
-		brpanel.add(new MenuCheckBox("lbtn-vil", kb_vil, "Display village claims"), bg.c).changed(a -> toggleol("vlg", a));
-		brpanel.add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display provinces"), bg.c).changed(a -> toggleol("prov", a));
+		brpanel.add(new MenuCheckBox("lbtn-claim", kb_claim, "Display personal claims"), bg.c).state(() -> visol("cplot")).click(() -> {
+			if (!visol("cplot")) {
+				toggleol("cplot", true);
+				Utils.setprefb("lbtn-claimWorldState", true);
+			} else{
+				toggleol("cplot", false);
+				Utils.setprefb("lbtn-claimWorldState", false);
+			}
+		});
+
+		brpanel.add(new MenuCheckBox("lbtn-vil", kb_vil, "Display village claims"), bg.c).state(() -> visol("vlg")).click(() -> {
+			if (!visol("vlg")) {
+				toggleol("vlg", true);
+				Utils.setprefb("lbtn-vilWorldState", true);
+			} else{
+				toggleol("vlg", false);
+				Utils.setprefb("lbtn-vilWorldState", false);
+			}
+		});
+		brpanel.add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display provinces"), bg.c).state(() -> visol("prov")).click(() -> {
+			if (!visol("prov")) {
+				toggleol("prov", true);
+				Utils.setprefb("lbtn-rlmWorldState", true);
+			} else{
+				toggleol("prov", false);
+				Utils.setprefb("lbtn-rlmWorldState", false);
+			}
+		});
     }
 
     /* Ice cream */
@@ -797,6 +828,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    child.resize(sz);
 	    map = add((MapView)child, Coord.z);
 	    map.lower();
+		if (Utils.getprefb("lbtn-claimWorldState", false)) toggleol("cplot", true);
+		if (Utils.getprefb("lbtn-vilWorldState", false)) toggleol("vlg", true);
+		if (Utils.getprefb("lbtn-rlmWorldState", false)) toggleol("prov", true);
 //	    if(mmap != null)
 //		ui.destroy(mmap);
 	    if(mapfile != null) {
@@ -1416,26 +1450,40 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    }
 	}
 
-	public MapMenu() {
-	    super(mapmenubg.sz());
-	    add(new MenuCheckBox("lbtn-claim", kb_claim, "Display personal claims"), 0, 0).changed(a -> toggleol("cplot", a));
-	    add(new MenuCheckBox("lbtn-vil", kb_vil, "Display village claims"), 0, 0).changed(a -> toggleol("vlg", a));
-	    add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display provinces"), 0, 0).changed(a -> toggleol("prov", a));
-	    add(new MenuCheckBox("lbtn-map", kb_map, "Map")).state(() -> wndstate(mapfile)).click(() -> {
-		    togglewnd(mapfile);
-		});
-	    add(new MenuCheckBox("lbtn-ico", kb_ico, "Icon settings"), 0, 0).state(() -> wndstate(iconwnd)).click(() -> {
-		    if(iconconf == null)
-			return;
-		    if(iconwnd == null) {
-			iconwnd = new GobIcon.SettingsWindow(iconconf, () -> Utils.defer(GameUI.this::saveiconconf));
-			fitwdg(GameUI.this.add(iconwnd, Utils.getprefc("wndc-icon", new Coord(200, 200))));
-		    } else {
-			ui.destroy(iconwnd);
-			iconwnd = null;
-		    }
-		});
-	}
+//	public MapMenu() {
+//	    super(mapmenubg.sz());
+//	    add(new MenuCheckBox("lbtn-claim", kb_claim, "Display personal claims"), 0, 0).changed(a -> toggleol("cplot", a));
+//	    add(new MenuCheckBox("lbtn-vil", kb_vil, "Display village claims"), 0, 0).changed(a -> toggleol("vlg", a));
+//	    add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display provinces"), 0, 0).changed(a -> toggleol("prov", a));
+//
+//		add(new MenuCheckBox("lbtn-claim", kb_claim, "Display personal claims"), 0, 0).state(() -> visol("cplot")).changed(a -> {
+//			toggleol("cplot", a);
+//			Utils.setprefb("lbtn-claimMapState", a);
+//		});
+//		add(new MenuCheckBox("lbtn-vil", kb_vil, "Display village claims"), 0, 0).state(() -> visol("vlg")).changed(a -> {
+//			toggleol("vlg", a);
+//			Utils.setprefb("lbtn-vilMapState", a);
+//		});
+//		add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display provinces"), 0, 0).state(() -> visol("prov")).changed(a -> {
+//			toggleol("prov", a);
+//			Utils.setprefb("lbtn-rlmMapState", a);
+//		});
+//
+//	    add(new MenuCheckBox("lbtn-map", kb_map, "Map")).state(() -> wndstate(mapfile)).click(() -> {
+//		    togglewnd(mapfile);
+//		});
+//	    add(new MenuCheckBox("lbtn-ico", kb_ico, "Icon settings"), 0, 0).state(() -> wndstate(iconwnd)).click(() -> {
+//		    if(iconconf == null)
+//			return;
+//		    if(iconwnd == null) {
+//			iconwnd = new GobIcon.SettingsWindow(iconconf, () -> Utils.defer(GameUI.this::saveiconconf));
+//			fitwdg(GameUI.this.add(iconwnd, Utils.getprefc("wndc-icon", new Coord(200, 200))));
+//		    } else {
+//			ui.destroy(iconwnd);
+//			iconwnd = null;
+//		    }
+//		});
+//	}
 
 	public void draw(GOut g) {
 	    g.image(mapmenubg, Coord.z);
