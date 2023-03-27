@@ -299,20 +299,44 @@ public class Fightsess extends Widget {
 			} catch(Loading l) {}
 		}
 		IMeter.Meter stam = gui.getmeter("stam", 0);
+		IMeter.Meter hp = gui.getmeter("hp", 0);
 		if (altui) {
 			if (stam != null) {
 				Coord msz = UI.scale(new Coord(150, 20));
+				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(70));
+				drawStamMeterBar(g, stam, sc, msz);
+			}
+			if (hp != null) {
+				Coord msz = UI.scale(new Coord(150, 20));
 				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(40));
-				drawMeterBar(g, stam, sc, msz);
+				drawHealthMeterBar(g, hp, sc, msz);
 			}
 		}
+	}
+
+	private static final Color red = new Color(168, 0, 0, 255);
+	private static final Color yellow = new Color(182, 165, 0, 255);
+	private void drawHealthMeterBar(GOut g, IMeter.Meter m, Coord sc, Coord msz) {
+		int w = msz.x;
+		int w1 = (int) Math.ceil(w * m.a);
+		int w2 = (int) Math.ceil(w * (IMeter.characterSoftHealthPercent/100));
+		g.chcolor(yellow);
+		g.frect(sc, new Coord(w1, msz.y));
+		g.chcolor(red);
+		g.frect(sc, new Coord(w2, msz.y));
+		g.chcolor(barframe);
+		g.line(new Coord(sc.x+w1, sc.y), new Coord(sc.x+w1, sc.y+msz.y), 1);
+		g.rect(sc, new Coord(msz.x, msz.y));
+
+		g.chcolor(Color.WHITE);
+		g.atextstroked(IMeter.characterCurrentHealth+" ("+(Utils.fmt1DecPlace((int)(m.a*100)))+"%)", new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5, Color.WHITE, Color.BLACK, Text.num12boldFnd);
 	}
 
 	private static final Color blu1 = new Color(3, 3, 80, 141);
 	private static final Color blu2 = new Color(32, 32, 184, 90);
 	private static final Color blu3 = new Color(14, 14, 213, 70);
 	private static final Color barframe = new Color(255, 255, 255, 111);
-	private void drawMeterBar(GOut g, IMeter.Meter m, Coord sc, Coord msz) {
+	private void drawStamMeterBar(GOut g, IMeter.Meter m, Coord sc, Coord msz) {
 		int w = msz.x;
 		int w1 = (int) Math.ceil(w * m.a);
 		int w2 = (int) (w * Math.max(m.a-0.25,0));

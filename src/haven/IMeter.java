@@ -141,6 +141,8 @@ public void draw(GOut g) {
 			}
 		}
 	}
+	public static double characterSoftHealthPercent;
+	public static String characterCurrentHealth;
 	public void uimsg(String msg, Object... args) {
 		if(msg == "set") {
 			this.meters = decmeters(args, 0);
@@ -149,7 +151,15 @@ public void draw(GOut g) {
 				String value = ((String)args[0]).split(":")[1].replaceAll("(\\(.+\\))", "");
 				if (value.contains("/")) { // ND: this part removes the HHP, so I only show the SHP and MHP
 					String[] hps = value.split("/");
-					value = hps[0] + "/" + hps[hps.length - 1]; // ND: hps[0] is SHP, hps[1] is SHP, hps[2] (or hps[hps.length - 1]) is MHP
+					String SHP = hps[0].trim();
+					if (Double.parseDouble(SHP) > 0){
+						String MHP = hps[2].trim();
+						characterSoftHealthPercent = (Double.parseDouble(SHP)/((Double.parseDouble(MHP)/100)));
+					} else {
+						characterSoftHealthPercent = 0;
+					}
+					value = hps[0] + " / " + hps[hps.length - 1]; // ND: hps[0] is SHP, hps[1] is SHP, hps[2] (or hps[hps.length - 1]) is MHP
+					characterCurrentHealth = value;
 				}
 				tipTex = Text.renderstroked2(value.trim(), Color.WHITE, Color.BLACK, tipF).tex();
 			}
