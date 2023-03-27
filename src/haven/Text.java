@@ -216,7 +216,17 @@ public class Text implements Disposable {
 			g.dispose();
 			return (new Line(text, img, m));
 		}
+
+		public Line renderstroked2(String text, Color c, Color s){ // ND: This is Matias' version, it's better imo
+			Line line = render(text, c);
+			BufferedImage img = Utils.outline2(line.img, s, true);
+			return new Line(text, img, line.m);
+		}
     }
+
+	public static Line renderstroked2(String text, Color c, Color s, Text.Foundry fnd) {
+		return fnd.renderstroked2(text, c, s);
+	}
 
     public static abstract class Imager extends Furnace {
 	private final Furnace back;

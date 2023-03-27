@@ -34,13 +34,16 @@ public class IMeter extends LayerMeter {
     public static final Coord fsz = UI.scale(101, 24);
     public static final Coord msz = UI.scale(75, 10);
     public final Indir<Resource> bg;
+	MeterType type;
+	private static final Text.Foundry tipF = new Text.Foundry(Text.sans, 10);
+	private Tex tipTex;
 
     @RName("im")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
 	    Indir<Resource> bg = ui.sess.getres((Integer)args[0]);
 	    List<Meter> meters = decmeters(args, 1);
-	    return(new IMeter(bg, meters));
+	    return (new IMeter(bg, meters));
 	}
     }
 
@@ -50,21 +53,108 @@ public class IMeter extends LayerMeter {
 	set(meters);
     }
 
-    public void draw(GOut g) {
+//    public void draw(GOut g) {
+//	try {
+//	    Tex bg = this.bg.get().flayer(Resource.imgc).tex();
+//	    g.chcolor(0, 0, 0, 255);
+//	    g.frect(off, msz);
+//	    g.chcolor();
+//	    for(Meter m : meters) {
+//		int w = msz.x;
+//		w = (int)Math.ceil(w * m.a);
+//		g.chcolor(m.c);
+//		g.frect(off, new Coord(w, msz.y));
+//	    }
+//	    g.chcolor();
+//	    g.image(bg, Coord.z);
+//	} catch(Loading l) {
+//	}
+//    }
+public void draw(GOut g) {
 	try {
-	    Tex bg = this.bg.get().flayer(Resource.imgc).tex();
-	    g.chcolor(0, 0, 0, 255);
-	    g.frect(off, msz);
-	    g.chcolor();
-	    for(Meter m : meters) {
-		int w = msz.x;
-		w = (int)Math.ceil(w * m.a);
-		g.chcolor(m.c);
-		g.frect(off, new Coord(w, msz.y));
-	    }
-	    g.chcolor();
-	    g.image(bg, Coord.z);
-	} catch(Loading l) {
+		Resource res = this.bg.get();
+		if (type == null) {
+			determineType(res);
+		}
+
+		Tex bg = res.layer(Resource.imgc).tex();
+		g.chcolor(0, 0, 0, 255);
+		g.frect(off, msz);
+		g.chcolor();
+			/*for (Meter m : meters) {
+				int w = msz.x;
+				w = (int) Math.ceil(w * m.a);
+				g.chcolor(m.c);
+				g.frect(off, new Coord(w, msz.y));
+			}*/
+		for (Meter m : meters) {
+			int w = msz.x;
+			if (type != null) {
+				//System.out.println("meter: " + type + " " + m.a);
+				if (type.equals(MeterType.STAMINA)) {
+					int w1 = (int) Math.ceil(w * m.a);
+					int w2 = (int) (w * Math.max(m.a-0.25,0));
+					int w3 = (int) (w * Math.max(m.a-0.50,0));
+
+					g.chcolor(m.c.darker());
+					g.frect(off, new Coord(w1, msz.y));
+					g.chcolor(m.c);
+					g.frect(new Coord(off.x+(w*25)/100, off.y), new Coord(w2, msz.y));
+					g.chcolor(m.c.brighter());
+					g.frect(new Coord(off.x+(w*50)/100, off.y), new Coord(w3, msz.y));
+				} else {
+					w = (int) Math.ceil(w * m.a);
+					g.chcolor(m.c);
+					g.frect(off, new Coord(w, msz.y));
+				}
+			}
+		}
+		if (tipTex != null) {
+			g.chcolor();
+			g.image(tipTex, sz.div(2).sub(tipTex.sz().div(2)).add(10, -1));
+		}
+		g.chcolor();
+		g.image(bg, Coord.z, sz);
+	} catch (Loading l) {
 	}
-    }
+}
+	private enum MeterType {
+		HEALTH, ENERGY, STAMINA, HORSE, UNKNOWN
+	}
+	private void determineType(Resource res) {
+		if (type == null) {
+			switch (res.basename()) {
+				case "hp":
+					type = MeterType.HEALTH;
+					break;
+				case "stam":
+					type = MeterType.STAMINA;
+					break;
+				case "nrj":
+					type = MeterType.ENERGY;
+					break;
+				case "häst":
+					type = MeterType.HORSE;
+					break;
+				default:
+					type = MeterType.UNKNOWN;
+			}
+		}
+	}
+	public void uimsg(String msg, Object... args) {
+		if(msg == "set") {
+			this.meters = decmeters(args, 0);
+		}  else {
+			if (msg == "tip") {
+				String value = ((String)args[0]).split(":")[1].replaceAll("(\\(.+\\))", "");
+				if (value.contains("/")) { // ND: this part removes the HHP, so I only show the SHP and MHP
+					String[] hps = value.split("/");
+					value = hps[0] + "/" + hps[hps.length - 1]; // ND: hps[0] is SHP, hps[1] is SHP, hps[2] (or hps[hps.length - 1]) is MHP
+				}
+				tipTex = Text.renderstroked2(value.trim(), Color.WHITE, Color.BLACK, tipF).tex();
+			}
+			super.uimsg(msg, args);
+		}
+	}
+
 }
