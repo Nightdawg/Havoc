@@ -1911,6 +1911,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
 
+	public static boolean isWeatherDisabled = Utils.getprefb("isWeatherDisabled", false);
     public void tick(double dt) {
 	super.tick(dt);
 	checkload();
@@ -1929,7 +1930,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	basic(Camera.class, camera);
 	amblight();
 	updsmap(amblight);
-	updweather();
+	if (!isWeatherDisabled) updweather();
 	synchronized(glob.map) {
 	    terrain.tick();
 	    oltick();

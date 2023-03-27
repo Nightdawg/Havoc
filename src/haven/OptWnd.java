@@ -823,6 +823,8 @@ public class OptWnd extends Window {
 	private HSlider nightVisionSlider;
 	private Button nightVisionResetButton;
 
+	private CheckBox disableWeatherEffectsCheckBox;
+
 	public class NDGameplaySettingsPanel extends Panel {
 		public NDGameplaySettingsPanel(Panel back) {
 			Widget prev;
@@ -850,6 +852,20 @@ public class OptWnd extends Window {
 					ui.sess.glob.brighten();
 				}
 			}), prev.pos("bl").adds(210, -20));
+			prev = add(disableWeatherEffectsCheckBox = new CheckBox("Disable Weather (Requires Relog)"){
+				{a = Utils.getprefb("isWeatherDisabled", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("isWeatherDisabled", true);
+						MapView.isWeatherDisabled = true;
+					}
+					else {
+						Utils.setprefb("isWeatherDisabled", false);
+						MapView.isWeatherDisabled = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8));
 			prev = add(new Label("Toggle on Login:"), prev.pos("bl").adds(0, 10).x(0));
 			prev = add(new CheckBox("Tracking"){
 				{a = Utils.getprefb("toggleTrackingOnLogin", false);}
@@ -1352,6 +1368,7 @@ public class OptWnd extends Window {
 	private void setTooltipsForGameplaySettingsStuff(){
 		nightVisionLabel.tooltip = RichText.render("Increasing this will simulate daytime lighting during the night.\n$col[185,185,185]{It slightly affects the light levels during the day too.}", 280);
 		nightVisionResetButton.tooltip = RichText.render("Reset to default", 300);
+		disableWeatherEffectsCheckBox.tooltip = RichText.render("Note: This disables *ALL* weather and camera effects, including rain effects, drunkenness distortion, drug high, valhalla gray overlay, camera shake, and any other similar effects.", 300);
 	}
 
     public OptWnd() {
