@@ -1176,7 +1176,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	try {
 	    MCache.Grid grid = ui.sess.glob.map.getgrid(gc);
 	    if((grid != null) && (!Utils.eq(gc, lastsavegrid) || (lastsaveseq != grid.seq))) {
-		//mmap.file.update(ui.sess.glob.map, gc);
+		mapfile.file.update(ui.sess.glob.map, gc);
 		lastsavegrid = gc;
 		lastsaveseq = grid.seq;
 	    }
