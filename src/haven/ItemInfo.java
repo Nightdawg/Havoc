@@ -26,14 +26,19 @@
 
 package haven;
 
+import haven.res.ui.tt.attrmod.AttrMod;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.*;
 import java.lang.reflect.*;
 import java.awt.image.BufferedImage;
+import java.util.stream.Collectors;
 
 public abstract class ItemInfo {
+	public static final Resource armor_hard = Resource.local().loadwait("gfx/hud/chr/custom/ahard");
+	public static final Resource armor_soft = Resource.local().loadwait("gfx/hud/chr/custom/asoft");
     public final Owner owner;
 
     public interface Owner extends OwnerContext {
@@ -386,6 +391,87 @@ public abstract class ItemInfo {
 	}
 	return(ret);
     }
+
+	@SuppressWarnings("unchecked")
+	public static Map<Resource, Integer> getBonuses(List<ItemInfo> infos) {
+		List<ItemInfo> slotInfos = ItemInfo.findall("ISlots", infos);
+		List<ItemInfo> gilding = ItemInfo.findall("Slotted", infos);
+		Map<Resource, Integer> bonuses = new HashMap<>();
+		try {
+			for (ItemInfo islots : slotInfos) {
+				List<Object> slots = (List<Object>) Reflect.getFieldValue(islots, "s");
+				for (Object slot : slots) {
+					parseAttrMods(bonuses, (List) Reflect.getFieldValue(slot, "info"));
+				}
+			}
+			for (ItemInfo info : gilding) {
+				List<Object> slots = (List<Object>) Reflect.getFieldValue(info, "sub");
+				parseAttrMods(bonuses, slots);
+			}
+			parseAttrMods(bonuses, ItemInfo.findall(AttrMod.class, infos));
+		} catch (Exception ignored) {
+		}
+		Pair<Integer, Integer> wear = ItemInfo.getArmor(infos);
+		if (wear != null) {
+			bonuses.put(armor_hard, wear.a);
+			bonuses.put(armor_soft, wear.b);
+		}
+		return bonuses;
+	}
+	public static Pair<Integer, Integer> getWear(List<ItemInfo> infos) {
+		infos = findall("Wear", infos);
+		for (ItemInfo info : infos) {
+			if (Reflect.hasField(info, "m") && Reflect.hasField(info, "d")) {
+				return new Pair<>(Reflect.getFieldValueInt(info, "d"), Reflect.getFieldValueInt(info, "m"));
+			}
+		}
+		return null;
+	}
+
+	public static Pair<Integer, Integer> getArmor(List<ItemInfo> infos) {
+		//loftar is wonderful sunshine and has same class name for wear and armor tooltips even though
+		//they are different classes with different fields :)
+		infos = findall("Wear", infos);
+		for (ItemInfo info : infos) {
+			if (Reflect.hasField(info, "hard") && Reflect.hasField(info, "soft")) {
+				return new Pair<>(Reflect.getFieldValueInt(info, "hard"), Reflect.getFieldValueInt(info, "soft"));
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void parseAttrMods(Map<Resource, Integer> bonuses, List infos) {
+		for (Object inf : infos) {
+			List<Object> mods = (List<Object>) Reflect.getFieldValue(inf, "mods");
+			if (mods != null) {
+				for (Object mod : mods) {
+					Resource attr = (Resource) Reflect.getFieldValue(mod, "attr");
+					int value = Reflect.getFieldValueInt(mod, "mod");
+					if (bonuses.containsKey(attr)) {
+						bonuses.put(attr, bonuses.get(attr) + value);
+					} else {
+						bonuses.put(attr, value);
+					}
+				}
+			}
+		}
+	}
+
+	public static <T> List<T> findall(Class<T> cl, List<ItemInfo> il) {
+		List<T> ret = new LinkedList<>();
+		for (ItemInfo inf : il) {
+			if (cl.isInstance(inf))
+				ret.add(cl.cast(inf));
+		}
+		return ret;
+	}
+
+	public static List<ItemInfo> findall(String cl, List<ItemInfo> infos) {
+		return infos.stream()
+				.filter(inf -> Reflect.is(inf, cl))
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
 
     public static List<ItemInfo> buildinfo(Owner owner, Object[] rawinfo) {
 	return(buildinfo(owner, new Raw(rawinfo)));

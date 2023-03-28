@@ -9,7 +9,7 @@
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS FOR A ULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  Other parts of this source tree adhere to other copying
@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.res.ui.tt.armor.Armor;
+
 import java.awt.*;
 import java.util.*;
 import static haven.Inventory.invsq;
@@ -37,51 +39,56 @@ public class Equipory extends Widget implements DTarget {
 	yo = Inventory.sqsz.y;
     public static final Coord bgc = new Coord(invsq.sz().x, 0);
 	private static final Text.Foundry acf = new Text.Foundry(Text.sans, 12);
+	public boolean updateBottomText = false;
+	long delayBottomTextUpdate;
 	private Tex Detection = null;
 	private Tex Sneak = null;
+	private Tex ArmorClass = null;
     public static final Coord ecoords[] = {
-	new Coord( 0, 0 * yo),
-	new Coord( 0, 1 * yo),
-	new Coord( 0, 2 * yo),
-	new Coord(rx, 2 * yo),
-	new Coord( 0, 3 * yo),
-	new Coord(rx, 3 * yo),
-	new Coord( 0, 4 * yo),
-	new Coord(rx, 4 * yo),
-	new Coord( 0, 5 * yo),
-	new Coord(rx, 5 * yo),
-	new Coord( 0, 6 * yo),
-	new Coord(rx, 6 * yo),
-	new Coord( 0, 7 * yo),
-	new Coord(rx, 7 * yo),
-	new Coord( 0, 8 * yo),
-	new Coord(rx, 8 * yo),
-	new Coord(invsq.sz().x, 0 * yo),
-	new Coord(rx, 0 * yo),
-	new Coord(rx, 1 * yo),
+		new Coord( 0, 0 * yo),
+		new Coord( 0, 1 * yo),
+		new Coord( 0, 2 * yo),
+		new Coord(rx, 2 * yo),
+		new Coord( 0, 3 * yo),
+		new Coord(rx, 3 * yo),
+		new Coord( 0, 4 * yo),
+		new Coord(rx, 4 * yo),
+		new Coord( 0, 5 * yo),
+		new Coord(rx, 5 * yo),
+		new Coord( 0, 6 * yo),
+		new Coord(rx, 6 * yo),
+		new Coord( 0, 7 * yo),
+		new Coord(rx, 7 * yo),
+		new Coord( 0, 8 * yo),
+		new Coord(rx, 8 * yo),
+		new Coord(invsq.sz().x, 0 * yo),
+		new Coord(rx, 0 * yo),
+		new Coord(rx, 1 * yo),
     };
     public static final Tex[] ebgs = new Tex[ecoords.length];
     public static final Text[] etts = new Text[ecoords.length];
     static Coord isz;
     static {
-	isz = new Coord();
-	for(Coord ec : ecoords) {
-	    if(ec.x + invsq.sz().x > isz.x)
-		isz.x = ec.x + invsq.sz().x;
-	    if(ec.y + invsq.sz().y > isz.y)
-		isz.y = ec.y + invsq.sz().y;
-	}
-	for(int i = 0; i < ebgs.length; i++) {
-	    Resource bgres = Resource.local().loadwait("gfx/hud/equip/ep" + i);
-	    Resource.Image img = bgres.layer(Resource.imgc);
-	    if(img != null) {
-		ebgs[i] = img.tex();
-		etts[i] = Text.render(bgres.flayer(Resource.tooltip).t);
-	    }
-	}
+		isz = new Coord();
+		for(Coord ec : ecoords) {
+			if(ec.x + invsq.sz().x > isz.x)
+				isz.x = ec.x + invsq.sz().x;
+			if(ec.y + invsq.sz().y > isz.y)
+				isz.y = ec.y + invsq.sz().y;
+		}
+		for(int i = 0; i < ebgs.length; i++) {
+			Resource bgres = Resource.local().loadwait("gfx/hud/equip/ep" + i);
+			Resource.Image img = bgres.layer(Resource.imgc);
+			if(img != null) {
+			ebgs[i] = img.tex();
+			etts[i] = Text.render(bgres.flayer(Resource.tooltip).t);
+			}
+		}
     }
-    Map<GItem, Collection<WItem>> wmap = new HashMap<>();
+	Map<GItem, WItem[]> wmap = new HashMap<GItem, WItem[]>();
     private final Avaview ava;
+	AttrBonusesWdg bonuses;
+	public WItem[] slots = new WItem[ecoords.length];
 
     @RName("epry")
     public static class $_ implements Factory {
@@ -122,6 +129,9 @@ public class Equipory extends Widget implements DTarget {
 		final FColor cc = new FColor(0, 0, 0, 0);
 		protected FColor clearcolor() {return(cc);}
 	    }, bgc);
+
+		bonuses = add(new AttrBonusesWdg(isz.y), isz.x + UI.scale(14), 0);
+		pack();
     }
 
     public static interface SlotInfo {
@@ -129,44 +139,46 @@ public class Equipory extends Widget implements DTarget {
     }
 
     public void addchild(Widget child, Object... args) {
-	if(child instanceof GItem) {
-	    add(child);
-	    GItem g = (GItem)child;
-	    ArrayList<WItem> v = new ArrayList<>();
-	    for(int i = 0; i < args.length; i++) {
-		int ep = (Integer)args[i];
-		if(ep < ecoords.length)
-		    v.add(add(new WItem(g), ecoords[ep].add(1, 1)));
-	    }
-	    v.trimToSize();
-	    wmap.put(g, v);
-		if (Detection != null) {
-			Detection.dispose();
-			Detection = null;
+		if(child instanceof GItem) {
+			add(child);
+			GItem g = (GItem)child;
+			WItem[] v = new WItem[args.length];
+			for (int i = 0; i < args.length; i++) {
+				int ep = (Integer) args[i];
+				v[i] = slots[ep] = add(new WItem(g), ecoords[ep].add(1, 1));
+			}
+			g.sendttupdate = true;
+			wmap.put(g, v);
+			delayBottomTextUpdate = System.currentTimeMillis();
+			updateBottomText = true;
+		} else {
+			super.addchild(child, args);
 		}
-		if (Sneak != null) {
-			Sneak.dispose();
-			Sneak = null;
-		}
-	} else {
-	    super.addchild(child, args);
-	}
     }
+
+	@Override
+	public void wdgmsg(Widget sender, String msg, Object... args) {
+		if (sender instanceof GItem && wmap.containsKey(sender) && msg.equals("ttupdate")) {
+			bonuses.update(slots);
+		} else {
+			super.wdgmsg(sender, msg, args);
+		}
+	}
 
     public void cdestroy(Widget w) {
 	super.cdestroy(w);
 	if(w instanceof GItem) {
 	    GItem i = (GItem)w;
-	    for(WItem v : wmap.remove(i))
-		ui.destroy(v);
-		if (Detection != null) {
-			Detection.dispose();
-			Detection = null;
+		final WItem[] witms = wmap.remove(i);
+		for (WItem v : witms) {
+			ui.destroy(v);
+			for (int s = 0; s < slots.length; ++s) {
+				if (slots[s] == v)
+					slots[s] = null;
+			}
 		}
-		if (Sneak != null) {
-			Sneak.dispose();
-			Sneak = null;
-		}
+		bonuses.update(slots);
+		updateBottomText = true;
 	}
     }
 
@@ -181,7 +193,7 @@ public class Equipory extends Widget implements DTarget {
     public int epat(Coord c) {
 	for(int i = 0; i < ecoords.length; i++) {
 	    if(c.isect(ecoords[i], invsq.sz()))
-		return(i);
+			return(i);
 	}
 	return(-1);
     }
@@ -210,71 +222,80 @@ public class Equipory extends Widget implements DTarget {
 	    }
 	    g.image(invsq, ecoords[i]);
 	    if(ebgs[i] != null)
-		g.image(ebgs[i], ecoords[i]);
+			g.image(ebgs[i], ecoords[i]);
 	}
     }
 
     public Object tooltip(Coord c, Widget prev) {
-	Object tt = super.tooltip(c, prev);
-	if(tt != null)
-	    return(tt);
-	int sl = epat(c);
-	if(sl >= 0)
-	    return(etts[sl]);
-	return(null);
+		Object tt = super.tooltip(c, prev);
+		if(tt != null)
+			return(tt);
+		int sl = epat(c);
+		if(sl >= 0)
+			return(etts[sl]);
+		return(null);
     }
 
 	public void draw(GOut g) {
 		drawslots(g);
 		super.draw(g);
 		GameUI gui = gameui();
-
-		if (Detection == null) {
-			int h = 0, s = 0, x;
-			CharWnd chrwdg = null;
-			try {
-				chrwdg = gui.chrwdg;
-				for (CharWnd.Attr attr : chrwdg.base) {
-					if (attr.attr.nm.contains("prc"))
-						h = attr.attr.comp;
+		if (updateBottomText) {
+			long now = System.currentTimeMillis();
+			if ((now - delayBottomTextUpdate) > 100){ // ND: Hopefully 100ms is enough? I can't reproduce it any more on my PC at least. This is client-sided, so ping should not affect it (SHOULD, BUT GOD KNOWS WITH LOFTAR)
+				// ND: I genuinely don't know any other workaround to this crap not updating when you add a new item. For some reason this doesn't happen in Ardennes' (old render)
+				//     In Ardennes', it looks like the UI freezes for a second when you try to add the new item sometimes. Maybe these weird hiccups are different in new render? For now, I have no clue.
+				int prc = 0, exp = 0, det, intl = 0, ste = 0, snk, aHard = 0, aSoft = 0;
+				CharWnd chrwdg = null;
+				try {
+					chrwdg = gui.chrwdg;
+					for (CharWnd.Attr attr : chrwdg.base) {
+						if (attr.attr.nm.contains("prc"))
+							prc = attr.attr.comp;
+						if (attr.attr.nm.contains("int"))
+							intl = attr.attr.comp;
+					}
+					for (CharWnd.SAttr attr : chrwdg.skill) {
+						if (attr.attr.nm.contains("exp"))
+							exp = attr.attr.comp;
+						if (attr.attr.nm.contains("ste"))
+							ste = attr.attr.comp;
+					}
+					for (int i = 0; i < slots.length; i++) {
+						WItem itm = slots[i];
+						if (itm != null) {
+							for (ItemInfo info : itm.item.info()) {
+								if (info instanceof Armor) {
+									aHard += ((Armor) info).hard;
+									aSoft += ((Armor) info).soft;
+									break;
+								}
+							}
+						}
+					}
+					det = prc * exp;
+					snk = intl * ste;
+					String DetectionString = String.format("%,d", det).replace(',', '.');
+					String SneakString = String.format("%,d", snk).replace(',', '.');
+					//Sneak = Text.renderstroked2("Sneak: " + x, Color.WHITE, Color.BLACK, acf).tex();
+					Detection = new TexI(Utils.outline2(Text.renderstroked2("Detection (Prc*Exp):  " + DetectionString, Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
+					Sneak = new TexI(Utils.outline2(Text.renderstroked2("Sneak (Int*Ste):  " + SneakString, Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
+					ArmorClass = new TexI(Utils.outline2(Text.renderstroked2("Armor Class:  " + aHard + "/" + aSoft + " (" + (aHard + aSoft) + ")", Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
+					updateBottomText = false;
+				} catch (Exception e) { // fail silently
+					e.printStackTrace();// Ignored
 				}
-				for (CharWnd.SAttr attr : chrwdg.skill)
-					if (attr.attr.nm.contains("exp"))
-						s = attr.attr.comp;
-				x = h * s;
-				String xString = String.format("%,d", x).replace(',', '.');
-				//Sneak = Text.renderstroked2("Sneak: " + x, Color.WHITE, Color.BLACK, acf).tex();
-				Detection = new TexI(Utils.outline2(Text.renderstroked2("Detection (Prc*Exp):  " + xString, Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
-			} catch (Exception e) { // fail silently
 			}
 		}
 		if (Detection != null)
 			g.image(Detection, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - Detection.sz().x / 2, bg.sz().y - UI.scale(56)));
-
-		if (Sneak == null) {
-			int h = 0, s = 0, x;
-			CharWnd chrwdg = null;
-			try {
-				chrwdg = gui.chrwdg;
-				for (CharWnd.Attr attr : chrwdg.base) {
-					if (attr.attr.nm.contains("int"))
-						h = attr.attr.comp;
-				}
-				for (CharWnd.SAttr attr : chrwdg.skill)
-					if (attr.attr.nm.contains("ste"))
-						s = attr.attr.comp;
-				x = h * s;
-				String xString = String.format("%,d", x).replace(',', '.');
-				//Sneak = Text.renderstroked2("Sneak: " + x, Color.WHITE, Color.BLACK, acf).tex();
-				Sneak = new TexI(Utils.outline2(Text.renderstroked2("Sneak (Int*Ste):  " + xString, Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
-			} catch (Exception e) { // fail silently
-			}
-		}
 		if (Sneak != null)
 			g.image(Sneak, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - Sneak.sz().x / 2, bg.sz().y - UI.scale(40)));
+		if (ArmorClass != null)
+			g.image(ArmorClass, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - ArmorClass.sz().x / 2, bg.sz().y - UI.scale(20)));
 	}
 
     public boolean iteminteract(Coord cc, Coord ul) {
-	return(false);
+		return(false);
     }
 }

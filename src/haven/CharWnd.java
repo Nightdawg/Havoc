@@ -31,6 +31,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.IntStream;
+
 import haven.resutil.FoodInfo;
 import haven.resutil.Curiosity;
 import static haven.PUtils.*;
@@ -2126,6 +2128,39 @@ public class CharWnd extends Window {
 
 	resize(contentsz().add(UI.scale(15, 10)));
     }
+
+	public int statIndex(Resource res) {
+		if (base != null) {
+			return IntStream.range(0, base.size())
+					.filter(i -> base.stream().equals(res))
+					.findFirst().orElse(Integer.MAX_VALUE);
+		}
+		return Integer.MAX_VALUE;
+	}
+	public int skillIndex(Resource res) {
+		if (skill != null) {
+			return IntStream.range(0, skill.size())
+					.filter(i -> skill.stream().equals(res))
+					.findFirst().orElse(Integer.MAX_VALUE);
+		}
+		return Integer.MAX_VALUE;
+	}
+	public int BY_PRIORITY(Resource r1, Resource r2) {
+		int b1 = statIndex(r1);
+		int b2 = statIndex(r2);
+
+		if (b1 == b2) {
+			b1 = skillIndex(r1);
+			b2 = skillIndex(r2);
+			if (b1 == b2) {
+				return r1.name.compareTo(r2.name);
+			} else {
+				return Integer.compare(b1, b2);
+			}
+		} else {
+			return Integer.compare(b1, b2);
+		}
+	}
 
     public void addchild(Widget child, Object... args) {
 	String place = (args[0] instanceof String)?(((String)args[0]).intern()):null;

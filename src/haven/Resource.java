@@ -26,6 +26,10 @@
 
 package haven;
 
+import haven.res.ui.tt.armor.Armor;
+import haven.res.ui.tt.attrmod.AttrMod;
+import haven.res.ui.tt.q.quality.Quality;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.annotation.*;
@@ -1507,6 +1511,10 @@ public class Resource implements Serializable {
 	}
     };
 
+	private static HashMap<String, Class> customClasses = new HashMap<String, Class>(){{ // ND: Stole this shit from shubla, it overwrites the stupid res file code, doesn't even check for the res version.
+		put("ui/tt/armor$haven.ItemInfo$InfoFactory", Armor.Fac.class);
+	}};
+
     public static class LibClassLoader extends ClassLoader {
 	private final ClassLoader[] classpath;
 	
@@ -1702,6 +1710,14 @@ public class Resource implements Serializable {
     }
 
     public <T> T getcode(Class<T> cl, boolean fail) {
+		try {
+			// System.out.println(name + cl.getName()); use for debug
+			Class<?> ret = customClasses.get(name + "$" + cl.getName());
+			if(ret != null)
+				return cl.cast(ret.newInstance());
+		} catch(IllegalAccessException | InstantiationException e) {
+			e.printStackTrace();
+		}
 	CodeEntry e = layer(CodeEntry.class);
 	if(e == null) {
 	    if(fail)
