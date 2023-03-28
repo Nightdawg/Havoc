@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/hafen-client.iml" filepath="$PROJECT_DIR$/hafen-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ND-Client.iml" filepath="$PROJECT_DIR$/ND-Client.iml" />
     </modules>
   </component>
 </project>
