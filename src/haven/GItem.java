@@ -329,9 +329,13 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     public Window contentswnd;
     private void ckconthover() {
 	if(lcont != this.contents) {
-	    if((this.contents != null) && (this.contentsid != null) && (contentswdg == null) && (contentswnd == null) &&
-	       Utils.getprefb(String.format("cont-wndvis/%s", this.contentsid), false)) {
-		Coord c = Utils.getprefc(String.format("cont-wndc/%s", this.contentsid), null);
+	    if((this.contents != null) && (this.contentsid != null) && (contentswdg == null) && (contentswnd == null)){
+			Coord c = null;
+			if (Utils.getprefb("alwaysOpenBeltOnLogin", false) && String.format("%s",this.contentsid).equals("toolbelt")){
+				c = Utils.getprefc(String.format("cont-wndc/%s", this.contentsid), null);
+			} else if (Utils.getprefb(String.format("cont-wndvis/%s", this.contentsid), false)) { // ND: Moved this specific condition for the "Always open belt on login" setting
+				c = Utils.getprefc(String.format("cont-wndc/%s", this.contentsid), null);
+			}
 		if(c != null) {
 		    this.contents.unlink();
 		    contentswnd = contparent().add(new ContentsWindow(this, this.contents), c);

@@ -434,6 +434,7 @@ public class OptWnd extends Window {
 	private Label granularityPositionLabel;
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
+	public static CheckBox alwaysOpenBeltCheckBox;
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -542,6 +543,13 @@ public class OptWnd extends Window {
 					Utils.setprefb("qtoggle", false);
 					Quality.show = false;
 				}
+				a = val;
+			}
+		}, prev.pos("bl").adds(0, 6));
+		prev = add(alwaysOpenBeltCheckBox = new CheckBox("Always open belt on login"){
+			{a = (Utils.getprefb("alwaysOpenBeltOnLogin", false));}
+			public void set(boolean val) {
+				Utils.setprefb("alwaysOpenBeltOnLogin", val);
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 6));
@@ -1356,10 +1364,11 @@ public class OptWnd extends Window {
 		freeCamHeightLabel.tooltip = RichText.render("This affects the height of the point at which the free camera is pointed. By default, it is pointed right above the player's head.\n$col[185,185,185]{This doesn't really affect gameplay that much, if at all. With this setting, you can make it point at the feet, or torso, or head, or whatever.}", 300);
 	}
 
-	private void setTooltipsForInterfaceSettingsStuff(){
+	private void setTooltipsForInterfaceSettingsStuff() {
 		enableCornerFPSCheckBox.tooltip = RichText.render("Enabling this will display the current FPS in the top-right corner of the screen.", 300);
-		granularityPositionLabel.tooltip = RichText.render ("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
-		granularityAngleLabel.tooltip = RichText.render ("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
+		granularityPositionLabel.tooltip = RichText.render("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
+		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
+		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in. \n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){
