@@ -1299,17 +1299,24 @@ public class ChatUI extends Widget {
 	}
 
 	public void mousemove(Coord c) {
-		if(dm != null) {
-			if (resizehoriz) {
-				resize(Math.max(UI.scale(410), Math.min(parent.sz.x - UI.scale(142), sz.x + c.x - doff.x)), savedh);
-				doff = c;
+		try {
+			if (dm != null) {
+				if (resizehoriz) {
+					resize(Math.max(UI.scale(410), Math.min(parent.sz.x - UI.scale(142), sz.x + c.x - doff.x)), savedh);
+					doff = c;
+				} else {
+					GameUI.questObjectivesPanel.presize(); // ND: move the quest objectives panel as we resize the chat vertically
+					//resize(sz.x, savedh = Math.max(UI.scale(minh), sz.y + doff.y - c.y)); // ND: prevent the user from dragging the chat beyond the game window size, or even too close to it.
+					resize(sz.x, savedh = Math.max(UI.scale(minh), Math.min(parent.sz.y - UI.scale(120), sz.y + doff.y - c.y)));
+				}
 			} else {
-				GameUI.questObjectivesPanel.presize(); // ND: move the quest objectives panel as we resize the chat vertically
-				//resize(sz.x, savedh = Math.max(UI.scale(minh), sz.y + doff.y - c.y)); // ND: prevent the user from dragging the chat beyond the game window size, or even too close to it.
-				resize(sz.x, savedh = Math.max(UI.scale(minh), Math.min(parent.sz.y - UI.scale(120), sz.y + doff.y - c.y)));
+				super.mousemove(c);
 			}
-		} else {
-			super.mousemove(c);
+		}
+		catch (Exception e) { // ND: Trying to drag the chat vertically crashed my client once, and I couldn't reproduce this for the life of me.
+			System.out.println("HELLO, SOMETHING WENT WRONG:");
+			e.printStackTrace();
+			System.out.println("MESSAGE NIGHTDAWG ABOUT THIS");
 		}
 	}
 
