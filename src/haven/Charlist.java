@@ -96,7 +96,7 @@ public class Charlist extends Widget {
 
 	public void draw(GOut g) {
 	    if(list.sel == chr)
-		g.chcolor(255, 255, 128, 255);
+		g.chcolor(255, 195, 0, 255); // ND: Character selection overlay
 	    g.image(bg, Coord.z);
 	    g.chcolor();
 	    super.draw(g);

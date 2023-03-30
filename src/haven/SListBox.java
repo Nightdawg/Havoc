@@ -152,7 +152,7 @@ public abstract class SListBox<I, W extends Widget> extends SListWidget<I, W> im
     }
 
     protected void drawsel(GOut g, I item, int idx, Area area) {
-	g.chcolor(255, 255, 0, 128);
+	g.chcolor(100, 100, 100, 128); // ND: This sets the selection color in lists, such as buddy list, search action, map icons
 	g.frect2(area.ul, area.br);
 	g.chcolor();
     }

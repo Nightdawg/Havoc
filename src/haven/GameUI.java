@@ -1696,7 +1696,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    adda(new IButton("gfx/hud/hb-btn-chat", "", "-d", "-h") {
 		    Tex glow;
 		    {
-			this.tooltip = RichText.render("Chat ($col[255,255,0]{Ctrl+C})", 0);
+			this.tooltip = RichText.render("Chat ($col[255,200,0]{Ctrl+C})", 0); // ND: Chat button tooltip
 			glow = new TexI(PUtils.rasterimg(PUtils.blurmask(up.getRaster(), 2, 2, Color.WHITE)));
 		    }
 

@@ -1369,18 +1369,18 @@ public class Widget {
 		    if(rich) {
 			tip = base;
 			if((key != null) && (key != KeyMatch.nil))
-			    tip = String.format("%s\n\nKeyboard shortcut: $col[255,255,0]{%s}", tip, RichText.Parser.quote(key.name()));
+			    tip = String.format("%s\n\nKeyboard shortcut: $col[255,200,0]{%s}", tip, RichText.Parser.quote(key.name())); // ND: all 3 of these affect the keybind text color
 			w = UI.scale(300);
 		    } else {
 			tip = RichText.Parser.quote(base);
 			if((key != null) && (key != KeyMatch.nil))
-			    tip = String.format("%s ($col[255,255,0]{%s})", tip, RichText.Parser.quote(key.name()));
+			    tip = String.format("%s ($col[255,200,0]{%s})", tip, RichText.Parser.quote(key.name())); // ND: all 3 of these affect the keybind text color
 		    }
 		} else {
 		    if((key == null) || (key == KeyMatch.nil))
 			tip = null;
 		    else
-			tip = String.format("Keyboard shortcut: $col[255,255,0]{%s}", RichText.Parser.quote(key.name()));
+			tip = String.format("Keyboard shortcut: $col[255,200,0]{%s}", RichText.Parser.quote(key.name())); // ND: all 3 of these affect the keybind text color
 		}
 		rend = (tip == null) ? null : RichText.render(tip, w).tex();
 		hrend = true;

@@ -392,7 +392,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 		pos.x = 0;
 	    if(pos.y < 0)
 		pos.y = 0;
-	    g.chcolor(244, 247, 21, 192);
+	    g.chcolor(255, 195, 0, 215); // ND: This is the tooltip border color
 	    g.rect(pos.add(-3, -3), sz.add(6, 6));
 	    g.chcolor(35, 35, 35, 192);
 	    g.frect(pos.add(-2, -2), sz.add(4, 4));
