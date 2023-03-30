@@ -102,7 +102,7 @@ public abstract class GridList<T> extends Widget {
     protected void drawbg(GOut g) {}
 
     protected void drawsel(GOut g) {
-	g.chcolor(255, 255, 0, 128);
+	g.chcolor(100, 100, 100, 128); // ND: This sets the selection color for the skills in the character window (lore and skills)
 	g.frect(Coord.z, g.sz());
 	g.chcolor();
     }
