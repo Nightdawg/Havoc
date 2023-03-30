@@ -31,6 +31,8 @@ import haven.res.ui.tt.q.quality.Quality;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.List;
 
 public class OptWnd extends Window {
     public final Panel main;
@@ -833,10 +835,12 @@ public class OptWnd extends Window {
 	private Label nightVisionLabel;
 	private HSlider nightVisionSlider;
 	private Button nightVisionResetButton;
-
 	private CheckBox disableWeatherEffectsCheckBox;
+	private Label defaultSpeedLabel;
 
 	public class NDGameplaySettingsPanel extends Panel {
+		private final List<String> runSpeeds = Arrays.asList("Crawl", "Walk", "Run", "Sprint");
+		private final int speedSetInt = Utils.getprefi("defaultSetSpeed", 2);
 		public NDGameplaySettingsPanel(Panel back) {
 			Widget prev;
 			add(new Label(""), 278, 0); // To fix window width
@@ -934,6 +938,34 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
+			prev = add(defaultSpeedLabel = new Label("Default Speed:"), prev.pos("bl").adds(0, 10).x(0));
+			add(new Dropbox<String>(runSpeeds.size(), runSpeeds) {
+					{
+						super.change(runSpeeds.get(speedSetInt));
+					}
+					@Override
+					protected String listitem(int i) {
+						return runSpeeds.get(i);
+					}
+					@Override
+					protected int listitems() {
+						return runSpeeds.size();
+					}
+					@Override
+					protected void drawitem(GOut g, String item, int i) {
+						g.text(item, Coord.z);
+					}
+					@Override
+					public void change(String item) {
+						super.change(item);
+						for (int i = 0; i < runSpeeds.size(); i++){
+							if (item.equals(runSpeeds.get(i))){
+								Utils.setprefi("defaultSetSpeed", i);
+							}
+						}
+					}
+				}, prev.pos("bl").adds(80, -14));
+
 			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForGameplaySettingsStuff();
 			pack();
@@ -1381,6 +1413,7 @@ public class OptWnd extends Window {
 		nightVisionLabel.tooltip = RichText.render("Increasing this will simulate daytime lighting during the night.\n$col[185,185,185]{It slightly affects the light levels during the day too.}", 280);
 		nightVisionResetButton.tooltip = RichText.render("Reset to default", 300);
 		disableWeatherEffectsCheckBox.tooltip = RichText.render("Note: This disables *ALL* weather and camera effects, including rain effects, drunkenness distortion, drug high, valhalla gray overlay, camera shake, and any other similar effects.", 300);
+		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
 	}
 
     public OptWnd() {

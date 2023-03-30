@@ -27,6 +27,8 @@
 package haven;
 
 import java.awt.Color;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class Dropbox<T> extends ListWidget<T> {
     public static final Tex drop = Resource.loadtex("gfx/hud/drop");
@@ -39,9 +41,23 @@ public abstract class Dropbox<T> extends ListWidget<T> {
 	this.listh = listh;
 	dropc = new Coord(sz.x - drop.sz().x, 0);
     }
+	public Dropbox(int listh, List<String> values) {
+		this(calcWidth(values) + drop.sz().x + 2, listh, calcHeight(values));
+	}
+	private static int calcWidth(List<String> names) {
+		if (names.size() == 0)
+			return 0;
+		List<Integer> widths = names.stream().map((v) -> Text.render(v).sz().x).collect(Collectors.toList());
+		return widths.stream().reduce(Integer::max).get();
+	}
+
+	private static int calcHeight(List<String> values) {
+		return Math.max(Text.render(values.get(0)).sz().y, 16);
+	}
 
     private class Droplist extends Listbox<T> {
 	private UI.Grab grab = null;
+		private boolean risen = false;
 
 	private Droplist() {
 	    super(Dropbox.this.sz.x, Math.min(listh, Dropbox.this.listitems()), Dropbox.this.itemh);
@@ -50,6 +66,12 @@ public abstract class Dropbox<T> extends ListWidget<T> {
 	    grab = ui.grabmouse(this);
 	    display();
 	}
+		public void tick(double dt) {
+			if(!risen){
+				risen = true;
+				raise();
+			}
+		}
 
 	protected T listitem(int i) {return(Dropbox.this.listitem(i));}
 	protected int listitems() {return(Dropbox.this.listitems());}
@@ -76,7 +98,7 @@ public abstract class Dropbox<T> extends ListWidget<T> {
     }
 
     public void draw(GOut g) {
-	g.chcolor(Color.BLACK);
+	g.chcolor(new Color(20, 20, 20, 255));
 	g.frect(Coord.z, sz);
 	g.chcolor();
 	if(sel != null)

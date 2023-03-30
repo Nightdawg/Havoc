@@ -39,13 +39,13 @@ public abstract class Listbox<T> extends ListWidget<T> {
     }
 
     protected void drawsel(GOut g) {
-	g.chcolor(255, 255, 0, 128);
+	g.chcolor(new Color(20, 20, 20, 255));
 	g.frect(Coord.z, g.sz());
 	g.chcolor();
     }
 
     protected void drawbg(GOut g) {
-	g.chcolor(Color.BLACK);
+	g.chcolor(new Color(8, 8, 8, 255));
 	g.frect(Coord.z, sz);
 	g.chcolor();
     }
