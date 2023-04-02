@@ -629,6 +629,76 @@ public class OptWnd extends Window {
 			pack();
 		}
 	}
+
+	private Label nightVisionLabel;
+	private HSlider nightVisionSlider;
+	private Button nightVisionResetButton;
+	private CheckBox disableWeatherEffectsCheckBox;
+	private CheckBox disableFlavourObjectsCheckBox;
+	public static boolean disableFlavourObjects = Utils.getprefb("disableFlavourObjects", false);
+	public class NDGraphicsSettingsPanel extends Panel {
+		public NDGraphicsSettingsPanel(Panel back) {
+			Widget prev;
+			add(new Label(""), 278, 0); // To fix window width
+
+			prev = add(nightVisionLabel = new Label("Night Vision / Brighter World:"), 0, 0);
+			Glob.nightVisionBrightness = Utils.getprefd("nightVisionSetting", 0.0);
+			prev = add(nightVisionSlider = new HSlider(UI.scale(200), 0, 650, (int)(Glob.nightVisionBrightness*1000)) {
+				protected void attach(UI ui) {
+					super.attach(ui);
+					val = (int)(Glob.nightVisionBrightness*1000);
+				}
+				public void changed() {
+					Glob.nightVisionBrightness = val/1000.0;
+					Utils.setprefd("nightVisionSetting", val/1000.0);
+					if(ui.sess != null && ui.sess.glob != null) {
+						ui.sess.glob.brighten();
+					}
+				}
+			}, prev.pos("bl").adds(0, 6));
+			add(nightVisionResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
+				Glob.nightVisionBrightness = 0.0;
+				nightVisionSlider.val = 0;
+				Utils.setprefd("nightVisionSetting", 0.0);
+				if(ui.sess != null && ui.sess.glob != null) {
+					ui.sess.glob.brighten();
+				}
+			}), prev.pos("bl").adds(210, -20));
+			prev = add(disableWeatherEffectsCheckBox = new CheckBox("Disable Weather (Requires Relog)"){
+				{a = Utils.getprefb("isWeatherDisabled", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("isWeatherDisabled", true);
+						MapView.isWeatherDisabled = true;
+					}
+					else {
+						Utils.setprefb("isWeatherDisabled", false);
+						MapView.isWeatherDisabled = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8));
+			prev = add(disableFlavourObjectsCheckBox = new CheckBox("Disable Flavour Objects (Requires Relog)"){
+				{a = Utils.getprefb("disableFlavourObjects", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("disableFlavourObjects", true);
+						disableFlavourObjects = true;
+					}
+					else {
+						Utils.setprefb("disableFlavourObjects", false);
+						disableFlavourObjects = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8));
+
+			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
+			setTooltipsForGraphicsSettingsStuff();
+			pack();
+		}
+	}
+
 	//ND: Set the variables for the camera menu things
 	private Label freeCamZoomSpeedLabel;
 	private HSlider freeCamZoomSpeedSlider;
@@ -832,10 +902,6 @@ public class OptWnd extends Window {
 		}
 	}
 
-	private Label nightVisionLabel;
-	private HSlider nightVisionSlider;
-	private Button nightVisionResetButton;
-	private CheckBox disableWeatherEffectsCheckBox;
 	private Label defaultSpeedLabel;
 
 	public class NDGameplaySettingsPanel extends Panel {
@@ -844,44 +910,8 @@ public class OptWnd extends Window {
 		public NDGameplaySettingsPanel(Panel back) {
 			Widget prev;
 			add(new Label(""), 278, 0); // To fix window width
-			prev = add(nightVisionLabel = new Label("Night Vision / Brighter World:"), 0, 0);
-			Glob.nightVisionBrightness = Utils.getprefd("nightVisionSetting", 0.0);
-			prev = add(nightVisionSlider = new HSlider(UI.scale(200), 0, 650, (int)(Glob.nightVisionBrightness*1000)) {
-				protected void attach(UI ui) {
-					super.attach(ui);
-					val = (int)(Glob.nightVisionBrightness*1000);
-				}
-				public void changed() {
-					Glob.nightVisionBrightness = val/1000.0;
-					Utils.setprefd("nightVisionSetting", val/1000.0);
-					if(ui.sess != null && ui.sess.glob != null) {
-						ui.sess.glob.brighten();
-					}
-				}
-			}, prev.pos("bl").adds(0, 6));
-			add(nightVisionResetButton = new Button(UI.scale(70), "Reset", false).action(() -> {
-				Glob.nightVisionBrightness = 0.0;
-				nightVisionSlider.val = 0;
-				Utils.setprefd("nightVisionSetting", 0.0);
-				if(ui.sess != null && ui.sess.glob != null) {
-					ui.sess.glob.brighten();
-				}
-			}), prev.pos("bl").adds(210, -20));
-			prev = add(disableWeatherEffectsCheckBox = new CheckBox("Disable Weather (Requires Relog)"){
-				{a = Utils.getprefb("isWeatherDisabled", false);}
-				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("isWeatherDisabled", true);
-						MapView.isWeatherDisabled = true;
-					}
-					else {
-						Utils.setprefb("isWeatherDisabled", false);
-						MapView.isWeatherDisabled = false;
-					}
-					a = val;
-				}
-			}, prev.pos("bl").adds(0, 8));
-			prev = add(new Label("Toggle on Login:"), prev.pos("bl").adds(0, 10).x(0));
+
+			prev = add(new Label("Toggle on Login:"), 0, 0);
 			prev = add(new CheckBox("Tracking"){
 				{a = Utils.getprefb("toggleTrackingOnLogin", false);}
 				public void set(boolean val) {
@@ -1342,6 +1372,7 @@ public class OptWnd extends Window {
 	Panel audio = add(new AudioPanel(main));
 	Panel iface = add(new InterfacePanel(main));
 	Panel keybind = add(new BindingPanel(main));
+	Panel graphicssettings = add(new NDGraphicsSettingsPanel(main));
 	Panel camsettings = add(new NDCamSettingsPanel(main));
 	Panel gameplaysettings = add(new NDGameplaySettingsPanel(main));
 	Panel combatsettings = add(new NDCombatSettingsPanel(main));
@@ -1353,6 +1384,7 @@ public class OptWnd extends Window {
 	y = main.add(new PButton(UI.scale(200), "Audio settings", -1, audio, "Audio settings"), 0, y).pos("bl").adds(0, 5).y;
 	y = main.add(new PButton(UI.scale(200), "Keybindings", -1, keybind, "Keybindings"), 0, y).pos("bl").adds(0, 35).y;
 
+	y = main.add(new PButton(UI.scale(200), "Graphics Settings", -1, graphicssettings, "Graphics Settings"), 0, y).pos("bl").adds(0, 5).y;
 	y = main.add(new PButton(UI.scale(200), "Camera Settings", -1, camsettings, "Camera Settings"), 0, y).pos("bl").adds(0, 5).y;
 	y = main.add(new PButton(UI.scale(200), "Gameplay Settings", -1, gameplaysettings, "Gameplay Settings"), 0, y).pos("bl").adds(0, 5).y;
 		y = main.add(new PButton(UI.scale(200), "Combat Settings", -1, combatsettings, "Combat Settings"), 0, y).pos("bl").adds(0, 5).y;
@@ -1410,10 +1442,14 @@ public class OptWnd extends Window {
 	}
 
 	private void setTooltipsForGameplaySettingsStuff(){
+		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
+	}
+
+	private void setTooltipsForGraphicsSettingsStuff(){
 		nightVisionLabel.tooltip = RichText.render("Increasing this will simulate daytime lighting during the night.\n$col[185,185,185]{It slightly affects the light levels during the day too.}", 280);
 		nightVisionResetButton.tooltip = RichText.render("Reset to default", 300);
 		disableWeatherEffectsCheckBox.tooltip = RichText.render("Note: This disables *ALL* weather and camera effects, including rain effects, drunkenness distortion, drug high, valhalla gray overlay, camera shake, and any other similar effects.", 300);
-		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
+		disableFlavourObjectsCheckBox.tooltip = RichText.render("Note: This only disables random objects that appear in the world which you cannot interact with.\n$col[185,185,185]{Players usually disable flavour objects to improve visibility and/or performance.}", 300);
 	}
 
     public OptWnd() {

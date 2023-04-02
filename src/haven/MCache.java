@@ -395,6 +395,11 @@ public class MCache implements MapSource {
 		    if(set.flavobjs.size() > 0) {
 			if((fp % set.flavprob) == 0) {
 			    Indir<Resource> r = set.flavobjs.pick(rp % set.flavobjs.tw);
+				if (OptWnd.disableFlavourObjects) {
+					Resource res = r.get();
+					if (res != null && res.name.startsWith("gfx/tiles/"))
+						continue;
+				}
 			    Gob g = new Flavobj(o.add(gul).mul(tilesz).add(tilesz.div(2)), a * 2 * Math.PI);
 			    g.setattr(new ResDrawable(g, r, Message.nil));
 			    mbuf.add(g);
