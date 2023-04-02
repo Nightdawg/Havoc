@@ -437,6 +437,7 @@ public class OptWnd extends Window {
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
 	public static CheckBox alwaysOpenBeltCheckBox;
+	public static CheckBox showQuickSlotsBar;
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -555,6 +556,21 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 6));
+
+		prev = add(showQuickSlotsBar = new CheckBox("Show Quick Slots Widget"){
+			{a = (Utils.getprefb("showQuickSlotsBar", true));}
+			public void set(boolean val) {
+				if (val){
+					Utils.setprefb("showQuickSlotsBar", true);
+					gameui().quickslots.show();
+				} else {
+					Utils.setprefb("showQuickSlotsBar", false);
+					gameui().quickslots.hide();
+				}
+
+				a = val;
+			}
+		}, prev.pos("bl").adds(0, 6));
 	    add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 30).x(0));
 		setTooltipsForInterfaceSettingsStuff();
 	    pack();
@@ -573,7 +589,7 @@ public class OptWnd extends Window {
 
 		public BindingPanel(Panel back) {
 			super();
-			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(260, 380))), 0, 0);
+			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(280, 380))), 0, 0);
 			Widget cont = scroll.cont;
 			Widget prev;
 			int y = 0;
@@ -624,6 +640,8 @@ public class OptWnd extends Window {
 			y = cont.adda(new Label("Custom features"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
 			y = addbtn(cont, "Drink Button", GameUI.kb_drinkButton, y);
 			y = addbtn(cont, "Attack! Button", GameUI.kb_aggroButton, y);
+			y = addbtn(cont, "Right Hand (Quick switch)", GameUI.kb_rightQuickSlotButton, y);
+			y = addbtn(cont, "Left Hand (Quick switch)", GameUI.kb_leftQuickSlotButton, y);
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			prev = adda(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			pack();
@@ -1434,6 +1452,7 @@ public class OptWnd extends Window {
 		granularityPositionLabel.tooltip = RichText.render("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
 		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in. \n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
+		showQuickSlotsBar.tooltip = RichText.render("Note: The Quick Switch keybinds ('Right Hand' and 'Left Hand') will still work, regardless of this widget being visible or not.", 300);
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){

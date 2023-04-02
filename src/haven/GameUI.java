@@ -70,6 +70,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public Belt beltwdg;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+	public QuickSlotsWdg quickslots;
 
     private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(GameUI.class, slot -> slot.wdg())
@@ -277,6 +278,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	opts.hide();
 	zerg = add(new Zergwnd(), Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
 	zerg.hide();
+	quickslots = add(new QuickSlotsWdg(), Utils.getprefc("wndc-quickslots", UI.scale(new Coord(426, 10))));
+	if (!Utils.getprefb("showQuickSlotsBar", true))
+		quickslots.hide();
     }
 
     protected void attached() {
@@ -815,6 +819,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    Utils.setprefc("wndc-chr", chrwdg.c);
 	if(zerg != null)
 	    Utils.setprefc("wndc-zerg", zerg.c);
+	if(quickslots != null)
+		Utils.setprefc("wndc-quickslots", quickslots.c);
 	if(mapfile != null) {
 		mapfile.savePos(!mapfile.compact);
 	}
@@ -1853,8 +1859,21 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 		return null;
 	}
+	public Equipory getequipory() {
+		if (equwnd != null) {
+			for (Widget w = equwnd.lchild; w != null; w = w.prev) {
+				if (w instanceof Equipory)
+					return (Equipory) w;
+			}
+		}
+		return null;
+	}
 	public static KeyBinding kb_drinkButton  = KeyBinding.get("DrinkButton",  KeyMatch.forcode(KeyEvent.VK_BACK_QUOTE, 0));
 	public static KeyBinding kb_aggroButton  = KeyBinding.get("AggroButton",  KeyMatch.nil);
+	public static KeyBinding kb_rightQuickSlotButton  = KeyBinding.get("rightQuickSlotButton",  KeyMatch.nil);
+	public static KeyBinding kb_leftQuickSlotButton  = KeyBinding.get("leftQuickSlotButton",  KeyMatch.nil);
+
+
 	public boolean keydown(KeyEvent ev) {
 		if(kb_drinkButton.key().match(ev)) {
 			wdgmsg("act", "drink");
@@ -1862,6 +1881,16 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 		if(kb_aggroButton.key().match(ev)) {
 			wdgmsg("act", "aggro");
+			return(true);
+		}
+		if(kb_rightQuickSlotButton.key().match(ev)) {
+			quickslots.drop(QuickSlotsWdg.rc, Coord.z);
+			quickslots.simulateclick(QuickSlotsWdg.rc);
+			return(true);
+		}
+		if(kb_leftQuickSlotButton.key().match(ev)) {
+			quickslots.drop(QuickSlotsWdg.lc, Coord.z);
+			quickslots.simulateclick(QuickSlotsWdg.lc);
 			return(true);
 		}
 		return(super.keydown(ev));
