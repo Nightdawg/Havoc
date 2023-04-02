@@ -167,4 +167,10 @@ public abstract class SSearchBox<I, W extends Widget> extends SListBox<I, W> {
 	parent.setfocus(this);
 	return(super.mousedown(c, button));
     }
+
+	public void research() {
+		if(searching!=null) {
+			search(searching);
+		}
+	}
 }

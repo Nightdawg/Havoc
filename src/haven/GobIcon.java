@@ -32,6 +32,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.awt.image.*;
 import java.awt.Color;
+import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.*;
 
@@ -235,6 +236,30 @@ public class GobIcon extends GAttrib {
 	    buf.addstring("");
 	}
 
+		public static void removeEnderCustomIcons(Map<String, GobIcon.Setting> settings) {
+			//System.out.println("Removing custom icons");
+			removeSetting(settings, "paginae/act/hearth");
+			removeSetting(settings, "radar/hearthfire");
+			removeSetting(settings, "radar/dugout");
+			removeSetting(settings, "radar/wheelbarrow");
+			removeSetting(settings, "radar/knarr");
+			removeSetting(settings, "radar/gem");
+			removeSetting(settings, "radar/horse/mare");
+			removeSetting(settings, "radar/horse/stallion");
+			removeSetting(settings, "radar/rowboat");
+			removeSetting(settings, "radar/snekkja");
+			removeSetting(settings, "radar/milestone-stone-m");
+			removeSetting(settings, "radar/milestone-stone-e");
+			removeSetting(settings, "radar/midgeswarm");
+		}
+
+		private static void removeSetting(Map<String, GobIcon.Setting> settings, String res) {
+			if(settings.containsKey(res)) {
+				settings.remove(res);
+				//System.out.println("Removed custom icon");
+			}
+		}
+
 	public static Settings load(Message buf) {
 	    if(!Arrays.equals(buf.bytes(sig.length), sig))
 		throw(new Message.FormatError("Invalid signature"));
@@ -286,6 +311,7 @@ public class GobIcon extends GAttrib {
 		    set.defshow = set.show;
 		ret.settings.put(res.name, set);
 	    }
+		removeEnderCustomIcons(ret.settings);
 	    return(ret);
 	}
     }
@@ -326,12 +352,33 @@ public class GobIcon extends GAttrib {
 	private final PackCont.LinPack cont;
 	private final IconList list;
 	private Widget setbox;
+	private final CheckBox toggleAll;
+	private GobIconCategoryList.GobCategory category = GobIconCategoryList.GobCategory.ALL;
 
 	public static class Icon {
 	    public final Setting conf;
 	    public String name;
+		public Text tname = null;
 
 	    public Icon(Setting conf) {this.conf = conf;}
+
+		private Tex img = null;
+		public Tex img() {
+			if(this.img == null) {
+				this.img = tex(conf.res.loadsaved(Resource.remote()).layer(Resource.imgc).img);
+			}
+			return(this.img);
+		}
+
+		public static Tex tex(BufferedImage img) {
+			Coord tsz;
+			if(img.getWidth() > img.getHeight())
+				tsz = new Coord(elh, (elh * img.getHeight()) / img.getWidth());
+			else
+				tsz = new Coord((elh * img.getWidth()) / img.getHeight(), elh);
+			return(new TexI(PUtils.convolve(img, tsz, filter)));
+		}
+
 	}
 
 	private <T> Consumer<T> andsave(Consumer<T> main) {
@@ -342,6 +389,7 @@ public class GobIcon extends GAttrib {
 	private static final int elh = elf.height() + UI.scale(2);
 	public class IconList extends SSearchBox<Icon, IconList.IconLine> {
 	    private List<Icon> ordered = Collections.emptyList();
+		private List<Icon> categorized = Collections.emptyList();
 	    private Map<String, Setting> cur = null;
 	    private boolean reorder = false;
 
@@ -353,9 +401,9 @@ public class GobIcon extends GAttrib {
 		public IconLine(Coord sz, Icon icon) {
 		    super(IconList.this, sz, icon);
 		    Widget prev;
-		    prev = adda(new CheckBox("").state(() -> icon.conf.notify).set(andsave(val -> icon.conf.notify = val)).settip("Notify"),
+		    prev = adda(new CheckBox("").state(() -> icon.conf.notify).set(andsave(val -> icon.conf.notify = val)).settip("Play selected alarm sound"),
 				sz.x - UI.scale(2) - (sz.y / 2), sz.y / 2, 0.5, 0.5);
-		    prev = adda(new CheckBox("").state(() -> icon.conf.show).set(andsave(val -> icon.conf.show = val)).settip("Display"),
+			prev = adda(new CheckBox("").state(() -> icon.conf.show).set(andsave(val -> {icon.conf.show = val;updateAllCheckbox();})).settip("Show icon on map"),
 				prev.c.x - UI.scale(2) - (sz.y / 2), sz.y / 2, 0.5, 0.5);
 		    add(SListWidget.IconText.of(Coord.of(prev.c.x - UI.scale(2), sz.y), () -> item.conf.res.loadsaved(Resource.remote())), Coord.z);
 		}
@@ -365,44 +413,49 @@ public class GobIcon extends GAttrib {
 		return((icon.name != null) &&
 		       (icon.name.toLowerCase().indexOf(text.toLowerCase()) >= 0));
 	    }
-	    protected List<Icon> allitems() {return(ordered);}
+		protected List<Icon> allitems() {return(categorized);}
 	    protected IconLine makeitem(Icon icon, int idx, Coord sz) {return(new IconLine(sz, icon));}
 
-	    public void tick(double dt) {
-		Map<String, Setting> cur = this.cur;
-		if(cur != conf.settings) {
-		    cur = conf.settings;
-		    ArrayList<Icon> ordered = new ArrayList<>(cur.size());
-		    for(Setting conf : cur.values())
-			ordered.add(new Icon(conf));
-		    this.cur = cur;
-		    this.ordered = ordered;
-		    reorder = true;
-		}
-		if(reorder) {
-		    reorder = false;
-		    for(Icon icon : ordered) {
-			if(icon.name == null) {
-			    try {
-				Resource.Tooltip name = icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip);
-				icon.name = (name == null) ? "???" : name.t;
-			    } catch(Loading l) {
+		public void tick(double dt) {
+			Map<String, Setting> cur = this.cur;
+			if(cur != conf.settings) {
+				cur = conf.settings;
+				ArrayList<Icon> ordered = new ArrayList<>(cur.size());
+				for(Setting conf : cur.values())
+					ordered.add(new Icon(conf));
+				this.cur = cur;
+				this.ordered = ordered;
 				reorder = true;
-			    }
 			}
-		    }
-		    Collections.sort(ordered, (a, b) -> {
-			    if((a.name == null) && (b.name == null))
-				return(0);
-			    if(a.name == null)
-				return(1);
-			    if(b.name == null)
-				return(-1);
-			    return(a.name.compareTo(b.name));
-			});
+			if(reorder) {
+				reorder = false;
+				for(Icon icon : ordered) {
+					if(icon.name == null) {
+						try {
+							Resource.Tooltip name = icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip);
+							icon.name = (name == null) ? "???" : name.t;
+						} catch(Loading l) {
+							reorder = true;
+						}
+					}
+				}
+				Collections.sort(ordered, (a, b) -> {
+					if((a.name == null) && (b.name == null))
+						return(0);
+					if(a.name == null)
+						return(1);
+					if(b.name == null)
+						return(-1);
+					return(a.name.compareTo(b.name));
+				});
+				categorized = list.ordered.stream()
+						.filter(category::matches)
+						.collect(Collectors.toList());
+				research();
+				updateAllCheckbox();
+			}
+			super.tick(dt);
 		}
-		super.tick(dt);
-	    }
 
 	    public boolean keydown(java.awt.event.KeyEvent ev) {
 		if(ev.getKeyCode() == java.awt.event.KeyEvent.VK_SPACE) {
@@ -435,9 +488,9 @@ public class GobIcon extends GAttrib {
 	    public IconSettings(int w, Setting conf) {
 		super(Coord.z);
 		this.conf = conf;
-		Widget prev = add(new CheckBox("Display").state(() -> conf.show).set(andsave(val -> conf.show = val)),
+		Widget prev = add(new CheckBox("Show icon on map").state(() -> conf.show).set(andsave(val -> conf.show = val)),
 				  0, 0);
-		add(new CheckBox("Notify").state(() -> conf.notify).set(andsave(val -> conf.notify = val)),
+		add(new CheckBox("Play selected alarm sound").state(() -> conf.notify).set(andsave(val -> conf.notify = val)),
 		    w / 2, 0);
 		Button pb = new Button(UI.scale(50), "Play") {
 			protected void depress() {}
@@ -516,25 +569,64 @@ public class GobIcon extends GAttrib {
 	    }
 	}
 
-	public SettingsWindow(Settings conf, Runnable save) {
-	    super(Coord.z, "Icon settings");
-	    this.conf = conf;
-	    this.save = save;
-	    add(this.cont = new PackCont.LinPack.VPack(), Coord.z).margin(UI.scale(5)).packpar(true);
-	    list = cont.last(new IconList(UI.scale(250, 500)), 0);
-	    cont.last(new HRuler(list.sz.x), 0);
-	    cont.last(new CheckBox("Notification on newly seen icons") {
-		    {this.a = conf.notify;}
+		public SettingsWindow(Settings conf, Runnable save) {
+			super(Coord.z, "Icon settings");
+			this.conf = conf;
+			this.save = save;
+			PackCont.LinPack.VPack left = new PackCont.LinPack.VPack();
+			PackCont.LinPack root;
+			add(root = new PackCont.LinPack.HPack(), Coord.z).margin(UI.scale(5)).packpar(true);
+			root.last(left, 0).margin(UI.scale(5)).packpar(true);
+			root.last(new VRuler(UI.scale(500)), 0);
+			root.last(this.cont = new PackCont.LinPack.VPack(), 0).margin(UI.scale(5)).packpar(true);
+			toggleAll = cont.last(new CheckBox("Select All") {
+				@Override
+				public void changed(boolean val) {
+					list.items().forEach(icon -> icon.conf.show = val);
+					if(save != null)
+						save.run();
+				}}, 0);
+			list = cont.last(new IconList(UI.scale(280, 500)), 0);
 
-		    public void changed(boolean val) {
-			conf.notify = val;
-			if(save != null)
-			    save.run();
-		    }
-		}, UI.scale(5));
-	    cont.pack();
+			left.last(new GobIconCategoryList(UI.scale(190), 10, elh){
+				@Override
+				public void change(GobIconCategoryList.GobCategory item) {
+					super.change(item);
+					SettingsWindow.this.category = item;
+					list.reorder = true;
+				}
+			}, 0).change(GobIconCategoryList.GobCategory.ALL);
+
+			left.last(new HRuler(190), 0);
+			left.last(new CheckBox("Notify new icon discovery") {
+				{this.a = conf.notify;}
+
+				public void changed(boolean val) {
+					conf.notify = val;
+					if(save != null)
+						save.run();
+				}
+			}, UI.scale(5));
+			left.last(new Button(UI.scale(170), "Remove Ender's Icons", false).action(() -> {
+				gameui().saveiconconf();
+			}).settip("Use this button to remove Ender's custom icons from your account.", true), UI.scale(10));
+			cont.pack();
+			left.pack();
+			root.pack();
+			updateAllCheckbox();
+		}
+
+		private void updateAllCheckbox() {
+			if(toggleAll == null) {
+				return;
+			}
+			List<? extends Icon> items = list != null ? list.items() : null;
+			toggleAll.a = items != null
+					&& !items.isEmpty()
+					&& items.stream().allMatch(icon -> icon.conf.show);
+		}
 	}
-    }
+
 
     @OCache.DeltaType(OCache.OD_ICON)
     public static class $icon implements OCache.Delta {
