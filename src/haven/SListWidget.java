@@ -32,6 +32,7 @@ import java.awt.image.BufferedImage;
 
 public abstract class SListWidget<I, W extends Widget> extends Widget {
     public I sel;
+	public int selindex;
 
     public SListWidget(Coord sz) {
 	super(sz);

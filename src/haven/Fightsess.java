@@ -34,6 +34,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 public class Fightsess extends Widget {
+	public static final Text.Foundry keybindsFoundry = new Text.Foundry(Text.sans.deriveFont(java.awt.Font.BOLD), 14);
     private static final Coord off = new Coord(UI.scale(32), UI.scale(32));
     public static final Tex cdframe = Resource.loadtex("gfx/hud/combat/cool");
     public static final Tex actframe = Buff.frame;
@@ -286,7 +287,16 @@ public class Fightsess extends Widget {
 						g.prect(ca.add(hsz), hsz.inv(), hsz, (1.0 - a) * Math.PI * 2);
 						g.chcolor();
 					}
-					if (showKeybindCombatSetting){g.aimage(Text.renderstroked((kb_acts[i].key().name())).tex(), ca.add(img.sz()), 0.95, 0.95);}
+					if (showKeybindCombatSetting) {
+					String keybindString = kb_acts[i].key().name();
+						if (keybindString.contains("Shift")) {
+							keybindString = keybindString.replace("Shift", "\u21e7");
+						}
+						if (keybindString.contains("Ctrl")) {
+							keybindString = keybindString.replace("Ctrl", "✲");
+						}
+						g.aimage(new TexI(Utils.outline2(keybindsFoundry.render(keybindString).img, Color.BLACK, true)), ca.add(img.sz()), 0.95, 0.95);
+					}
 					//
 					if(i == use) {
 						g.image(indframe, ca.sub(indframeo));

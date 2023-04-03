@@ -224,4 +224,12 @@ public abstract class SListBox<I, W extends Widget> extends SListWidget<I, W> im
     public void display() {
 	display(sel);
     }
+
+	// ensures that selected element is visible
+	public void showsel() {
+		if (sb.val + h - 1 < selindex)
+			sb.val = Math.max(0, selindex - h + 1);
+		if (sb.val > selindex)
+			sb.val = Math.max(0, selindex);
+	}
 }
