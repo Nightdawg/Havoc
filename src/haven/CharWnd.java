@@ -49,7 +49,7 @@ public class CharWnd extends Window {
     public static final Color buff = new Color(128, 255, 128);
     public static final Color tbuff = new Color(128, 128, 255);
     public static final Color every = new Color(255, 255, 255, 16), other = new Color(255, 255, 255, 32);
-    public static final int width = UI.scale(255);
+    public static final int width = UI.scale(305);
     public static final int height = UI.scale(260);
     public static final int margin1 = UI.scale(5);
     public static final int margin2 = 2 * margin1;
@@ -72,10 +72,10 @@ public class CharWnd extends Window {
     private final Tabs.Tab questtab;
     private final Tabs.Tab sattr, fgt;
     private final Coord studyc;
-    private int scost;
+    private long scost; // ND: Made this long so it doesn't flip over when adding way too many points for the memes
 
     public static class FoodMeter extends Widget {
-	public static final Tex frame =  Resource.loadtex("gfx/hud/chr/foodm");
+	public static final Tex frame =  Resource.loadtex("gfx/hud/chr/foodm"); // ND: The size of this image affects everything on the left side lmao
 	public static final Coord marg = new Coord(5, 5), trmg = new Coord(10, 10);
 	public double cap;
 	public List<El> els = new LinkedList<El>();
@@ -477,8 +477,20 @@ public class CharWnd extends Window {
 	    Coord cn = new Coord(0, sz.y / 2);
 	    g.aimage(img, cn.add(5, 0), 0, 0.5);
 	    g.aimage(rnm.tex(), cn.add(img.sz().x + margin2, 1), 0, 0.5);
-	    if(ct != null)
-		g.aimage(ct.tex(), cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
+//	    if(ct != null)
+//		g.aimage(ct.tex(), cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
+		cbv = attr.base;
+		ccv = attr.comp;
+		if (ccv > cbv) {
+			Text buffed = attrf.render(Integer.toString(ccv), buff);
+			g.aimage(buffed.tex(), cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
+		} else if (ccv < cbv) {
+			Text debuffed = attrf.render(Integer.toString(ccv), debuff);
+			g.aimage(debuffed.tex(), cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
+		}
+
+		Text base = attrf.render(Integer.toString(cbv), Color.WHITE);
+		g.aimage(base.tex(), cn.add(sz.x - UI.scale(50), 1), 1, 0.5);
 	}
 
 	public void lvlup() {
@@ -492,7 +504,8 @@ public class CharWnd extends Window {
 	public final Glob.CAttr attr;
 	public final Tex img;
 	public final Color bg;
-	public int tbv, cost;
+	public int tbv, tcv;
+	public long cost;
 	private Text ct;
 	private int cbv, ccv;
 
@@ -512,30 +525,35 @@ public class CharWnd extends Window {
 		}, sz.x - margin3, sz.y / 2, 1, 0.5);
 	}
 
-	public void tick(double dt) {
-	    if(attr.base != cbv) {
-		tbv = 0;
-		ccv = 0;
-		cbv = attr.base;
-	    }
-	    if(attr.comp != ccv) {
-		ccv = attr.comp;
-		Color c = Color.WHITE;
-		if(ccv > cbv) {
-		    c = buff;
-		    tooltip = Text.render(String.format("%d + %d", cbv, ccv - cbv));
-		} else if(ccv < cbv) {
-		    c = debuff;
-		    tooltip = Text.render(String.format("%d - %d", cbv, cbv - ccv));
-		} else {
-		    tooltip = null;
+		public void tick(double dt) {
+			if ((attr.base != cbv) ||
+					(attr.comp != ccv)) {
+				cbv = attr.base;
+			}
+			if (attr.comp != ccv) {
+				ccv = attr.comp;
+				if (tbv <= cbv) {
+					tbv = cbv;
+					tcv = ccv;
+					updcost();
+				}
+				Color c = Color.WHITE;
+				if (ccv > cbv) {
+					c = buff;
+					tooltip = Text.render(String.format("%d + %d", cbv, ccv - cbv));
+				} else if (ccv < cbv) {
+					c = debuff;
+					tooltip = Text.render(String.format("%d - %d", cbv, cbv - ccv));
+				} else {
+					tooltip = null;
+				}
+				if (tcv > ccv)
+					c = tbuff;
+				ct = attrf.render(Integer.toString(tcv), c);
+				cbv = tcv;
+			}
+			updcost();
 		}
-		if(tbv > 0)
-		    c = tbuff;
-		ct = attrf.render(Integer.toString(ccv + tbv), c);
-		updcost();
-	    }
-	}
 
 	public void draw(GOut g) {
 	    g.chcolor(bg);
@@ -545,31 +563,62 @@ public class CharWnd extends Window {
 	    Coord cn = new Coord(0, sz.y / 2);
 	    g.aimage(img, cn.add(5, 0), 0, 0.5);
 	    g.aimage(rnm.tex(), cn.add(img.sz().x + margin2, 1), 0, 0.5);
-	    g.aimage(ct.tex(), cn.add(sz.x - UI.scale(40), 1), 1, 0.5);
+		//g.aimage(ct.tex(), cn.add(sz.x - UI.scale(40), 1), 1, 0.5);
+		cbv = attr.base;
+		ccv = attr.comp;
+//                ccv + " " + tbv + " " + cbv    260 205 200
+		if (ccv > cbv) {
+			Text buffed;
+			if (tbv > cbv) {
+//                        buffed = attrf.render(Integer.toString(tbv + (ccv - cbv)), tbuff);
+				buffed = attrf.render(Integer.toString(ccv + (tbv - cbv)), tbuff);
+			} else {
+				buffed = attrf.render(Integer.toString(ccv), buff);
+			}
+			g.aimage(buffed.tex(), cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
+		} else if (ccv < cbv) {
+			if (tbv > cbv) {
+//                        Text buffed = attrf.render(Integer.toString(tbv + (cbv - ccv)), tbuff);
+				Text buffed = attrf.render(Integer.toString(ccv + (tbv - cbv)), tbuff);
+				g.aimage(buffed.tex(), cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
+			} else {
+				Text debuffed = attrf.render(Integer.toString(ccv), debuff);
+				g.aimage(debuffed.tex(), cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
+			}
+		}
+
+		Text base;
+		if (tbv > cbv) {
+			base = attrf.render(Integer.toString(tbv), tbuff);
+		} else {
+			base = attrf.render(Integer.toString(cbv), Color.WHITE);
+		}
+		g.aimage(base.tex(), cn.add(sz.x - UI.scale(75), 1), 1, 0.5);
 	}
 
 	private void updcost() {
-	    int cv = attr.base, nv = cv + tbv;
-	    int cost = 100 * ((nv + (nv * nv)) - (cv + (cv * cv))) / 2;
-	    scost += cost - this.cost;
-	    this.cost = cost;
+		long cost = 100 * ((tbv + ((long) tbv * tbv)) - (attr.base + ((long) attr.base * attr.base))) / 2;
+		scost += cost - this.cost;
+		this.cost = cost;
 	}
 
 	public void adj(int a) {
-	    if(tbv + a < 0) a = -tbv;
-	    tbv += a;
-	    ccv = 0;
-	    updcost();
+		if (tbv + a < attr.base) a = attr.base - tbv;
+		tbv += a;
+		tcv += a;
+		cbv = ccv = 0;
+		updcost();
 	}
 
 	public void reset() {
-	    tbv = 0;
-	    ccv = 0;
-	    updcost();
+		tbv = attr.base;
+		tcv = attr.comp;
+		cbv = ccv = 0;
+		updcost();
 	}
 
 	public boolean mousewheel(Coord c, int a) {
-	    adj(-a);
+		adj(-a);
 	    return(true);
 	}
     }
@@ -1926,13 +1975,13 @@ public class CharWnd extends Window {
 	    prev = sattr.add(new Label("Learning points:"), prev.pos("bl").adds(0, 2));
 	    sattr.adda(explabel(), new Coord(rx, prev.pos("ul").y), 1.0, 0.0);
 	    prev = sattr.add(new Label("Learning cost:"), prev.pos("bl").adds(0, 2));
-	    sattr.adda(new RLabel<Integer>(() -> scost, Utils::thformat, n -> (n > exp) ? debuff : Color.WHITE), new Coord(rx, prev.pos("ul").y), 1.0, 0.0);
+	    sattr.adda(new RLabel<Long>(() -> scost, Utils::thformat, n -> (n > exp) ? debuff : Color.WHITE), new Coord(rx, prev.pos("ul").y), 1.0, 0.0);
 	    prev = sattr.adda(new Button(UI.scale(75), "Buy").action(() -> {
 			ArrayList<Object> args = new ArrayList<>();
 			for (SAttr attr : skill) {
 			    if (attr.tbv > 0) {
-				args.add(attr.attr.nm);
-				args.add(attr.attr.base + attr.tbv);
+					args.add(attr.attr.nm);
+					args.add(attr.tbv);
 			    }
 			}
 			CharWnd.this.wdgmsg("sattr", args.toArray(new Object[0]));
