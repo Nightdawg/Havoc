@@ -69,7 +69,7 @@ public class QuickSlotsWdg extends Widget implements DTarget {
             return true;
         if (ui.modmeta)
             return true;
-        if (((ui.modctrl || ui.modshift) && button == 1) || button == 2 || button == 3) {
+        if (((ui.modctrl || ui.modshift) && button == 1) || button == 2) {
             if((dragging != null)) { // ND: I need to do this extra check and remove it in case you do another click before the mouseup. Idk why it has to be done like this, but it solves the issue.
                 dragging.remove();
                 dragging = null;
