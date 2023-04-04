@@ -114,7 +114,6 @@ public class GobIconCategoryList extends Listbox<GobIconCategoryList.GobCategory
 		"/invobjs/springbumblebee",
 		"/invobjs/brimstonebutterfly",
 		"/invobjs/irrbloss",
-		"/invobjs/graywacke",
 		"/invobjs/bayshrimp",
 		"/invobjs/lobster",
 	};
@@ -190,6 +189,7 @@ public class GobIconCategoryList extends Listbox<GobIconCategoryList.GobCategory
 		"gfx/invobjs/chert",
 		"gfx/invobjs/sunstone",
 		"gfx/invobjs/serpentine",
+		"/invobjs/graywacke",
 	};
 		private static final String[] LOCALIZEDRESOURCES_PATH = {
 		"/terobjs/mm/abyssalchasm",
