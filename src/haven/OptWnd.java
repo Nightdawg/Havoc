@@ -36,6 +36,7 @@ import java.util.List;
 
 public class OptWnd extends Window {
     public final Panel main;
+	public final Panel advancedSettings;
     public Panel current;
 	public static int cameraLmaoMessage = 1; // ND: Message for "cam" console command, idk where to put this lmao
 
@@ -436,6 +437,7 @@ public class OptWnd extends Window {
 	private Label granularityPositionLabel;
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
+	public static CheckBox toggleGobHealthDisplayCheckBox;
 	public static CheckBox alwaysOpenBeltCheckBox;
 	public static CheckBox showQuickSlotsBar;
     public class InterfacePanel extends Panel {
@@ -534,7 +536,30 @@ public class OptWnd extends Window {
 				}
 				a = val;
 			}
-		}, prev.pos("bl").adds(16, 6));
+		}, prev.pos("bl").adds(0, 6));
+		prev = add(alwaysOpenBeltCheckBox = new CheckBox("Always open belt on login"){
+			{a = (Utils.getprefb("alwaysOpenBeltOnLogin", false));}
+			public void set(boolean val) {
+				Utils.setprefb("alwaysOpenBeltOnLogin", val);
+				a = val;
+			}
+		}, prev.pos("bl").adds(0, 6));
+		prev = add(showQuickSlotsBar = new CheckBox("Show Quick Slots Widget"){
+			{a = (Utils.getprefb("showQuickSlotsBar", true));}
+			public void set(boolean val) {
+				if (val){
+					Utils.setprefb("showQuickSlotsBar", true);
+					if (gameui() != null && gameui().quickslots != null)
+						gameui().quickslots.show();
+				} else {
+					Utils.setprefb("showQuickSlotsBar", false);
+					if (gameui() != null && gameui().quickslots != null)
+						gameui().quickslots.hide();
+				}
+
+				a = val;
+			}
+		}, prev.pos("bl").adds(0, 6));
 		prev = add(toggleQualityDisplayCheckBox = new CheckBox("Display Quality on Items"){
 			{a = (Utils.getprefb("qtoggle", false));}
 			public void set(boolean val) {
@@ -549,29 +574,24 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 6));
-		prev = add(alwaysOpenBeltCheckBox = new CheckBox("Always open belt on login"){
-			{a = (Utils.getprefb("alwaysOpenBeltOnLogin", false));}
+		prev = add(toggleGobHealthDisplayCheckBox = new CheckBox("Display Health Percentage on Objects"){
+			{a = (Utils.getprefb("gobHealthDisplayToggle", true));}
 			public void set(boolean val) {
-				Utils.setprefb("alwaysOpenBeltOnLogin", val);
-				a = val;
-			}
-		}, prev.pos("bl").adds(0, 6));
-
-		prev = add(showQuickSlotsBar = new CheckBox("Show Quick Slots Widget"){
-			{a = (Utils.getprefb("showQuickSlotsBar", true));}
-			public void set(boolean val) {
-				if (val){
-					Utils.setprefb("showQuickSlotsBar", true);
-					gameui().quickslots.show();
-				} else {
-					Utils.setprefb("showQuickSlotsBar", false);
-					gameui().quickslots.hide();
+				if (val) {
+					Utils.setprefb("gobHealthDisplayToggle", true);
+					GobHealthInfo.displayHealthPercentage = true;
 				}
-
+				else {
+					Utils.setprefb("gobHealthDisplayToggle", false);
+					GobHealthInfo.displayHealthPercentage = false;
+				}
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 6));
-	    add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 30).x(0));
+
+
+
+		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 30).x(0));
 		setTooltipsForInterfaceSettingsStuff();
 	    pack();
 	}
@@ -711,7 +731,7 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 8));
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForGraphicsSettingsStuff();
 			pack();
 		}
@@ -914,7 +934,7 @@ public class OptWnd extends Window {
 			}
 
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), FreePrev.pos("bl").adds(0, 18).x(UI.scale(40)));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), FreePrev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForCameraSettingsStuff();
 			pack();
 		}
@@ -1014,7 +1034,7 @@ public class OptWnd extends Window {
 					}
 				}, prev.pos("bl").adds(80, -14));
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForGameplaySettingsStuff();
 			pack();
 		}
@@ -1232,7 +1252,7 @@ public class OptWnd extends Window {
 				GobDamageInfo.clearAllDamage(gameui());
 			}), prev.pos("bl").adds(0, -54).x(UI.scale(210)));
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForCombatSettingsStuff();
 			pack();
 		}
@@ -1383,30 +1403,40 @@ public class OptWnd extends Window {
 	}
     }
 
+
     public OptWnd(boolean gopts) {
 	super(Coord.z, "Options            ", true); // ND: Added a bunch of spaces to the caption(title) in order avoid text cutoff when changing it
 	main = add(new Panel());
 	Panel video = add(new VideoPanel(main));
 	Panel audio = add(new AudioPanel(main));
-	Panel iface = add(new InterfacePanel(main));
 	Panel keybind = add(new BindingPanel(main));
-	Panel graphicssettings = add(new NDGraphicsSettingsPanel(main));
-	Panel camsettings = add(new NDCamSettingsPanel(main));
-	Panel gameplaysettings = add(new NDGameplaySettingsPanel(main));
-	Panel combatsettings = add(new NDCombatSettingsPanel(main));
+	advancedSettings = add(new Panel());
+	// ND: Make the advanced settings panel here. Don't really understand why I have to do it like this, and I don't really care either at this point, it's just buttons.
+	// IF IT WORKS, IT WORKS.
+		Panel iface = add(new InterfacePanel(advancedSettings));
+		Panel graphicssettings = add(new NDGraphicsSettingsPanel(advancedSettings));
+		Panel camsettings = add(new NDCamSettingsPanel(advancedSettings));
+		Panel gameplaysettings = add(new NDGameplaySettingsPanel(advancedSettings));
+		Panel combatsettings = add(new NDCombatSettingsPanel(advancedSettings));
+		int y2 = UI.scale(6);
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Interface Settings", -1, iface, "Interface Settings"), 0, y2).pos("bl").adds(0, 5).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Graphics Settings", -1, graphicssettings, "Graphics Settings"), 0, y2).pos("bl").adds(0, 5).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Camera Settings", -1, camsettings, "Camera Settings"), 0, y2).pos("bl").adds(0, 5).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Gameplay Settings", -1, gameplaysettings, "Gameplay Settings"), 0, y2).pos("bl").adds(0, 5).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Combat Settings", -1, combatsettings, "Combat Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
-	int y = 0;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Back", 27, main, "Options            "), 0, y2).pos("bl").adds(0, 5).y;
+		this.advancedSettings.pack();
+	// ND: Continue with the main panel whatever
+	int y = UI.scale(6);
 	Widget prev;
-	y = main.add(new PButton(UI.scale(200), "Interface settings", -1, iface, "Interface Settings"), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Video settings", -1, video, "Video settings"), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Audio settings", -1, audio, "Audio settings"), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Keybindings", -1, keybind, "Keybindings"), 0, y).pos("bl").adds(0, 35).y;
+	y = main.add(new PButton(UI.scale(200), "Video Settings", -1, video, "Video Settings"), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Audio Settings", -1, audio, "Audio Settings"), 0, y).pos("bl").adds(0, 5).y;
+	y = main.add(new PButton(UI.scale(200), "Keybindings", -1, keybind, "Keybindings"), 0, y).pos("bl").adds(0, 25).y;
 
-	y = main.add(new PButton(UI.scale(200), "Graphics Settings", -1, graphicssettings, "Graphics Settings"), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Camera Settings", -1, camsettings, "Camera Settings"), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Gameplay Settings", -1, gameplaysettings, "Gameplay Settings"), 0, y).pos("bl").adds(0, 5).y;
-		y = main.add(new PButton(UI.scale(200), "Combat Settings", -1, combatsettings, "Combat Settings"), 0, y).pos("bl").adds(0, 5).y;
-	y += UI.scale(40);
+	y = main.add(new PButton(UI.scale(200), "Advanced Settings", -1, advancedSettings, "Advanced Settings"), 0, y).pos("bl").adds(0, 5).y;
+
+	y += UI.scale(20);
 	if(gopts) {
 	    y = main.add(new Button(UI.scale(200), "Switch character", false).action(() -> {
 			getparent(GameUI.class).act("lo", "cs");
@@ -1456,7 +1486,7 @@ public class OptWnd extends Window {
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){
-		toggleGobDamageInfoCheckBox.tooltip = RichText.render("Enabling this will display the amount of damage players and animals took.\nNote: The damage you will see saved above players/animals is the total damage you saw the entity take while inside of your view range. This is not all of the damage said entity might have taken recently.\n$col[185,185,185]{If you change any of the settings below, you will need a damage update in order to see the changes (for example, deal some damage to the player/animal).}", 300);
+		toggleGobDamageInfoCheckBox.tooltip = RichText.render("Enabling this will display the total amount of damage players and animals took.\nNote: The damage you will see saved above players/animals is the total damage you saw the entity take, while inside of your view range. This is not all of the damage said entity might have taken recently.\n$col[185,185,185]{If you change any of the settings below, you will need a damage update in order to see the changes (for example, deal some damage to the player/animal).}", 300);
 		damageInfoClearButton.tooltip = RichText.render("Clear all damage info", 300);
 	}
 

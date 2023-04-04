@@ -26,12 +26,15 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
 import haven.render.*;
 
 public class GobHealth extends GAttrib implements Gob.SetupMod {
     public final float hp;
     public final MixColor fx;
+	private static final Text.Foundry gobhpf = new Text.Foundry(Text.sans.deriveFont(Font.BOLD), 12);
     
     public GobHealth(Gob g, float hp) {
 	super(g);
@@ -50,6 +53,15 @@ public class GobHealth extends GAttrib implements Gob.SetupMod {
 	public void apply(Gob g, Message msg) {
 	    int hp = msg.uint8();
 	    g.setattr(new GobHealth(g, hp / 4.0f));
+		g.setattr(new GobHealthInfo(g));
 	}
     }
+
+	public BufferedImage text() {
+		if(hp < 1) {
+			int c = 15 + (int) Math.floor(hp * 240);
+			return Utils.outline2(Text.renderstroked(String.format("%d%%", Math.round(100 * hp)), new Color(255, c, c), Color.BLACK, gobhpf).img, Color.BLACK, true);
+		}
+		return null;
+	}
 }
