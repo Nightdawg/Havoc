@@ -904,6 +904,17 @@ public class FightWnd extends Widget {
 
 	pack();
     }
+	public void changebutton(Integer index) {
+		try {
+			if (!saves[index].text.equals("Unused save")) {
+				schoolsDropdown.change(new Pair(saves[index], index));
+				gameui().msg("Switched to deck : " + saves[index].text, Color.white);
+			} else
+			gameui().msg("This is not a saved deck, not switching.", Color.white);
+		} catch (Exception e) {
+			gameui().msg("Exception switching combat decks, exception ignored to avoid crash.", Color.white);
+		}
+	}
 
 	private Void actionTypeSelected(TabStrip.Button<ActionType> button) {
 		selectedType = button.tag;

@@ -76,7 +76,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	.add(GameUI.class, slot -> slot.wdg())
 	.add(Glob.class, slot -> slot.wdg().ui.sess.glob)
 	.add(Session.class, slot -> slot.wdg().ui.sess);
-    public class BeltSlot implements GSprite.Owner {
+
+
+	public class BeltSlot implements GSprite.Owner {
 	public final int idx, lst;
 	public final Indir<Resource> res;
 	public final Message sdt;
@@ -1894,6 +1896,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			return(true);
 		}
 		return(super.keydown(ev));
+	}
+
+	public void changeDecks(int deck) {
+		FightWnd fightwdg = ui.fightwnd.get();
+		if (fightwdg != null)
+			fightwdg.changebutton(deck);
 	}
 
 }

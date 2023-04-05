@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -55,6 +56,7 @@ public class UI {
     public Widget mouseon;
     public Console cons = new WidgetConsole();
     private Collection<AfterDraw> afterdraws = new LinkedList<AfterDraw>();
+	public WeakReference<FightWnd> fightwnd;
     private final Context uictx;
     public GSettings gprefs = GSettings.load(true);
     private boolean gprefsdirty = false;
@@ -251,6 +253,9 @@ public class UI {
 		pwdg.addchild(wdg, pargs);
 	    }
 	    bind(wdg, id);
+		if (wdg instanceof FightWnd) {
+			fightwnd = new WeakReference<>((FightWnd) wdg);
+		}
 	}
     }
 

@@ -33,6 +33,7 @@ import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class MenuGrid extends Widget implements KeyBinding.Bindable {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
@@ -330,6 +331,18 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	super(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)));
     }
 
+	@Override
+	protected void attach(UI ui) {
+		super.attach(ui);
+		synchronized (paginae) {
+			paginae.add(paginafor(Resource.local().load("paginae/nightdawg/CombatDecks/CombatDeck1")));
+			paginae.add(paginafor(Resource.local().load("paginae/nightdawg/CombatDecks/CombatDeck2")));
+			paginae.add(paginafor(Resource.local().load("paginae/nightdawg/CombatDecks/CombatDeck3")));
+			paginae.add(paginafor(Resource.local().load("paginae/nightdawg/CombatDecks/CombatDeck4")));
+			paginae.add(paginafor(Resource.local().load("paginae/nightdawg/CombatDecks/CombatDeck5")));
+		}
+	}
+
     private void updlayout() {
 	synchronized(paginae) {
 	    List<PagButton> cur = new ArrayList<>();
@@ -495,12 +508,28 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	if(sub.size() > 0) {
 	    change(r.pag);
 	} else {
+		Resource.AButton act = r.pag.act();
+		if(act != null) {
+			String[] ad = r.pag.act().ad;
+			if (ad[0].equals("@")) {
+				use(ad);
+			}
+		}
 	    r.pag.newp = 0;
 	    r.use(iact);
 	    if(reset)
 		change(null);
 	}
     }
+
+	public void use(String[] ad) {
+		GameUI gui = gameui();
+		if (gui == null)
+			return;
+		if (ad[1].equals("siwtchToCombatDeck")) {
+			gui.changeDecks(Integer.parseInt(ad[2]));
+		}
+	}
 
 	private boolean togglestuff = true;
 	public static boolean toggleTrackingOnLogin = Utils.getprefb("toggleTrackingOnLogin", false);
