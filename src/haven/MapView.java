@@ -2226,8 +2226,22 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			modflags = modflags & ~4;
 
 	    Object[] args = {pc, mc.floor(posres), clickb, modflags};
-	    if(inf != null)
-		args = Utils.extend(args, inf.clickargs());
+	    if(inf != null) {
+			args = Utils.extend(args, inf.clickargs());
+			Long gobid = new Long((Integer) inf.clickargs()[1]);
+			Gob gob = glob.oc.getgob(gobid);
+			if(gob != null) {
+				if (clickb == 3 && OptWnd.instantFlowerMenuCTRL) {
+					wdgmsg("click", args);
+					if (ui.modctrl) {
+						gameui().ui.rcvr.rcvmsg(gameui().ui.lastid+1, "cl", 0, gameui().ui.modflags());
+					}
+					return;
+				}
+				wdgmsg("click", args);
+				return;
+			}
+		}
 	    wdgmsg("click", args);
 	}
     }

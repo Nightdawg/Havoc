@@ -578,4 +578,15 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	    }
 	}
     }
+
+	public String getname() {
+		if (rawinfo == null) {
+			return "it's null";
+		}
+		try {
+			return ItemInfo.find(ItemInfo.Name.class, info()).str.text;
+		} catch (Exception ex) {
+			return "exception";
+		}
+	}
 }

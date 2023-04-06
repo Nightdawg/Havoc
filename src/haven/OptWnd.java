@@ -941,13 +941,15 @@ public class OptWnd extends Window {
 	}
 
 	private Label defaultSpeedLabel;
+	private CheckBox instantFlowerMenuCTRLCheckBox;
+	public static boolean instantFlowerMenuCTRL = Utils.getprefb("instantFlowerMenuCTRL", true);
 
 	public class NDGameplaySettingsPanel extends Panel {
 		private final List<String> runSpeeds = Arrays.asList("Crawl", "Walk", "Run", "Sprint");
 		private final int speedSetInt = Utils.getprefi("defaultSetSpeed", 2);
 		public NDGameplaySettingsPanel(Panel back) {
 			Widget prev;
-			add(new Label(""), 278, 0); // To fix window width
+			add(new Label(""), 298, 0); // To fix window width
 
 			prev = add(new Label("Toggle on Login:"), 0, 0);
 			prev = add(new CheckBox("Tracking"){
@@ -1034,7 +1036,23 @@ public class OptWnd extends Window {
 					}
 				}, prev.pos("bl").adds(80, -14));
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
+			prev = add(new Label("Altered gameplay behavior:"), prev.pos("bl").adds(0, 6).x(0));
+			prev = add(instantFlowerMenuCTRLCheckBox = new CheckBox("Instantly select 1st flower menu option when holding CTRL"){
+				{a = Utils.getprefb("instantFlowerMenuCTRL", true);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("instantFlowerMenuCTRL", true);
+						instantFlowerMenuCTRL = true;
+					}
+					else {
+						Utils.setprefb("instantFlowerMenuCTRL", false);
+						instantFlowerMenuCTRL = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(50)));
 			setTooltipsForGameplaySettingsStuff();
 			pack();
 		}
@@ -1492,6 +1510,7 @@ public class OptWnd extends Window {
 
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
+		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding CTRL before right clicking an item or object instantly select the first available option from the flower menu.", 300);
 	}
 
 	private void setTooltipsForGraphicsSettingsStuff(){

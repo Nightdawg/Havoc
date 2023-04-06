@@ -62,6 +62,8 @@ public class UI {
     private boolean gprefsdirty = false;
     public final ActAudio.Root audio = new ActAudio.Root();
     private static final double scalef;
+
+	public int lastid = 0;
     
     {
 	lastevent = lasttick = Utils.rtime();
@@ -240,6 +242,12 @@ public class UI {
     }
 	
     public void newwidget(int id, String type, int parent, Object[] pargs, Object... cargs) throws InterruptedException {
+
+	if (id > lastid) {
+		lastid = id;
+		//System.out.println("new widget : " + id + " - type: " + type);
+	}
+
 	Widget.Factory f = Widget.gettype2(type);
 	if(f == null)
 	    throw(new UIException("Bad widget name", type, cargs));

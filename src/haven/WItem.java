@@ -31,6 +31,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
+
 import haven.ItemInfo.AttrCache;
 import haven.resutil.Curiosity;
 
@@ -251,7 +253,7 @@ public class WItem extends Widget implements DTarget {
     public boolean mousedown(Coord c, int btn) {
 	if(btn == 1) {
 	    if(ui.modshift) {
-		int n = ui.modctrl ? -1 : 1;
+		int n = ui.modmeta ? -1 : 1;
 		item.wdgmsg("transfer", c, n);
 	    } else if(ui.modctrl) {
 		int n = ui.modmeta ? -1 : 1;
@@ -261,8 +263,19 @@ public class WItem extends Widget implements DTarget {
 	    }
 	    return(true);
 	} else if(btn == 3) {
-	    item.wdgmsg("iact", c, ui.modflags());
-	    return(true);
+		//System.out.println(item.getname());
+		if (ui.modctrl && OptWnd.instantFlowerMenuCTRL) {
+			String itemname = item.getname();
+			int option = 0;
+			if (itemname.toLowerCase().contains("lettuce")) {
+				option = 1;
+			}
+			item.wdgmsg("iact", c, ui.modflags());
+			ui.rcvr.rcvmsg(ui.lastid+1, "cl", option, 0);
+		} else {
+			item.wdgmsg("iact", c, ui.modflags());
+		}
+		return(true);
 	}
 	return(false);
     }
