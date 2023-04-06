@@ -1958,7 +1958,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	public void adjust(Plob plob, Coord pc, Coord2d mc, int modflags) {
 	    Coord2d nc;
-	    if((modflags & UI.MOD_SHIFT) == 0)
+	    if((modflags & UI.MOD_CTRL) == 0)
 		nc = mc.floor(tilesz).mul(tilesz).add(tilesz.div(2));
 	    else if(plobpgran > 0)
 		nc = mc.div(tilesz).mul(plobpgran).roundf().div(plobpgran).mul(tilesz);
@@ -1972,11 +1972,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public boolean rotate(Plob plob, int amount, int modflags) {
-	    if((modflags & (UI.MOD_CTRL | UI.MOD_SHIFT)) == 0)
+		if((modflags & UI.MOD_SHIFT) == 0)
 		return(false);
 	    freerot = true;
 	    double na;
-	    if((modflags & UI.MOD_SHIFT) == 0)
+	    if((modflags & UI.MOD_CTRL) == 0)
 		na = (Math.PI / 4) * Math.round((plob.a + (amount * Math.PI / 4)) / (Math.PI / 4));
 	    else
 		na = plob.a + amount * Math.PI / plobagran;
