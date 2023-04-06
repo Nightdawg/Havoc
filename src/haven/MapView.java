@@ -2219,7 +2219,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	
 	protected void hit(Coord pc, Coord2d mc, ClickData inf) {
-	    Object[] args = {pc, mc.floor(posres), clickb, ui.modflags()};
+
+		// reset alt so we could walk with alt+lmb while having item on the cursor
+		int modflags = ui.modflags();
+		if (gameui().vhand != null && clickb == 1)
+			modflags = modflags & ~4;
+
+	    Object[] args = {pc, mc.floor(posres), clickb, modflags};
 	    if(inf != null)
 		args = Utils.extend(args, inf.clickargs());
 	    wdgmsg("click", args);

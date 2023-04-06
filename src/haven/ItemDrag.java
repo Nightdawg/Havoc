@@ -81,13 +81,13 @@ public class ItemDrag extends WItem {
     }
 	
     public boolean mousedown(Coord c, int button) {
-	if(ui.modctrl && !ui.modshift && !ui.modmeta) {
-	    /* XXX */
-	    GameUI gui = getparent(GameUI.class);
-	    if((gui != null) && (gui.map != null)) {
-		ui.modctrl = false;
-		return(gui.map.mousedown(gui.map.rootxlate(c.add(rootpos())), button));
-	    }
+	if(/*ui.modctrl && !ui.modshift && !*/ui.modmeta) {
+		/* XXX */
+		GameUI gui = getparent(GameUI.class);
+		if((gui != null) && (gui.map != null)) {
+			//ui.modctrl = false;
+			return(gui.map.mousedown(gui.map.rootxlate(c.add(rootpos())), button));
+		}
 	}
 	if(button == 1) {
 	    dropon(parent, c.add(this.c));
