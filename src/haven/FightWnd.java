@@ -828,6 +828,7 @@ public class FightWnd extends Widget {
 				renwnd.remove();
 				renwnd = null;
 			}
+			acttypes.select(0); // ND: when switching decks, reset the combat moves category to "all", to avoid total cards used bug
 			super.change2(item);
 		}
 		@Override
@@ -836,6 +837,7 @@ public class FightWnd extends Widget {
 				renwnd.remove();
 				renwnd = null;
 			}
+			acttypes.select(0); // ND: when switching decks, reset the combat moves category to "all", to avoid total cards used bug
 			super.change2(item);
 			load(item.b);
 			use(item.b);
