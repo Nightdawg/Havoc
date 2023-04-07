@@ -39,7 +39,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public final String chrid, genus;
     public final long plid;
     private final Hidepanel ulpanel, umpanel, urpanel, brpanel, menupanel; //blpanel, mapmenupanel
-	public static AlignPanel questObjectivesPanel;
+	public static AlignPanel questObjectivesPanel = null;
     public Widget portrait;
     public MenuGrid menu;
     public MapView map;
