@@ -264,13 +264,15 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    return(button);
 	}
 
+	public void button(PagButton btn) {button = btn;}
+
 	public void state(State st) {
 	    this.st = st;
 	    this.img = st.img(this);
 	}
     }
 
-    public Map<Indir<Resource>, Pagina> pmap = new WeakHashMap<Indir<Resource>, Pagina>();
+    public final Map<Indir<Resource>, Pagina> pmap = new WeakHashMap<Indir<Resource>, Pagina>();
     public Pagina paginafor(Indir<Resource> res) {
 	if(res == null)
 	    return(null);
@@ -329,19 +331,26 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 
     public MenuGrid() {
 	super(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)));
+	initCustomActionButtons();
     }
 
-	@Override
-	protected void attach(UI ui) {
-		super.attach(ui);
-		synchronized (paginae) {
-			paginae.add(paginafor(Resource.local().load("paginae/nightdawg/CombatDecks/CombatDeck1")));
-			paginae.add(paginafor(Resource.local().load("paginae/nightdawg/CombatDecks/CombatDeck2")));
-			paginae.add(paginafor(Resource.local().load("paginae/nightdawg/CombatDecks/CombatDeck3")));
-			paginae.add(paginafor(Resource.local().load("paginae/nightdawg/CombatDecks/CombatDeck4")));
-			paginae.add(paginafor(Resource.local().load("paginae/nightdawg/CombatDecks/CombatDeck5")));
-		}
+	private void initCustomActionButtons() {
+		makeLocal("paginae/nightdawg/CombatDecks/CombatDeck1");
+		makeLocal("paginae/nightdawg/CombatDecks/CombatDeck2");
+		makeLocal("paginae/nightdawg/CombatDecks/CombatDeck3");
+		makeLocal("paginae/nightdawg/CombatDecks/CombatDeck4");
+		makeLocal("paginae/nightdawg/CombatDecks/CombatDeck5");
 	}
+
+
+	private void makeLocal(String path) {
+		Resource.Named res = Resource.local().loadwait(path).indir();
+		Pagina pagina = new Pagina(this, res);
+		pagina.button(new PagButton(pagina));
+		synchronized (pmap) { pmap.put(res, pagina); }
+		synchronized (paginae) { paginae.add(pagina); }
+	}
+
 
     private void updlayout() {
 	synchronized(paginae) {
