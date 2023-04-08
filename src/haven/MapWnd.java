@@ -161,7 +161,7 @@ public class MapWnd extends Window implements Console.Directory {
 			})
 			.settip("Display village claims").setgkey(kb_vil);
 	toolbar.add(new ICheckBox("gfx/hud/mmap/wnd", "", "-d", "-h", "-dh"))
-	    .state(() -> decohide()).set(a -> {
+	    .state(this::compact).set(a -> {
 			savePos(a);
 		    compact(a);
 		})
@@ -220,7 +220,7 @@ public class MapWnd extends Window implements Console.Directory {
 
 	public void draw(GOut g) {
 	    super.draw(g);
-	    if(decohide())
+	    if(compact())
 		g.image(sizer, sc);
 	}
 
@@ -228,10 +228,10 @@ public class MapWnd extends Window implements Console.Directory {
 	private Coord dragc;
 	public boolean mousedown(Coord c, int button) {
 	    Coord cc = c.sub(sc);
-	    if((button == 1) && decohide() && (cc.x < sizer.sz().x) && (cc.y < sizer.sz().y) && (cc.y >= sizer.sz().y - UI.scale(25) + (sizer.sz().x - cc.x))) {
+	    if((button == 1) && compact() && (cc.x < sizer.sz().x) && (cc.y < sizer.sz().y) && (cc.y >= sizer.sz().y - UI.scale(25) + (sizer.sz().x - cc.x))) {
 		if(drag == null) {
 		    drag = ui.grabmouse(this);
-		    dragc = asz.sub(parentpos(MapWnd.this, c));
+		    dragc = csz().sub(parentpos(MapWnd.this, c));
 		    return(true);
 		}
 	    }
@@ -358,7 +358,7 @@ public class MapWnd extends Window implements Console.Directory {
 
 	public boolean clickmarker(DisplayMarker mark, Location loc, int button, boolean press) {
 	    if(button == 1) {
-		if(!decohide() && !press && !domark) {
+		if(!compact() && !press && !domark) {
 		    focus(mark.m);
 		    return(true);
 		}
@@ -729,15 +729,16 @@ public class MapWnd extends Window implements Console.Directory {
 			    }
 			});
 		}
-		MapWnd.this.resize(asz);
+		MapWnd.this.resize(csz());
 	    }
 	}
     }
 
     public void resize(Coord sz) {
+	sz = sz.max(compact() ? UI.scale(150, 150) : UI.scale(440, 230));
 	super.resize(sz);
 	tool.resize(sz.y);
-	if(!decohide()) {
+	if(!compact()) {
 	    tool.c = new Coord(sz.x - tool.sz.x, 0);
 	    viewf.resize(tool.pos("bl").subs(10, 0));
 	} else {
@@ -748,26 +749,27 @@ public class MapWnd extends Window implements Console.Directory {
 	toolbar.c = viewf.c.add(0, viewf.sz.y - toolbar.sz.y).add(UI.scale(2), UI.scale(-2));
     }
 
-    public void compact(boolean a) {
-		tool.show(!a);
-		if(a)
-			delfocusable(tool);
-		else
-			newfocusable(tool);
-		decohide(a);
-		loadPos(a);
-		pack();
-		this.compact = a;
+    private boolean compact() {
+	return(deco == null);
     }
 
-	// ND: I had to modify the save position, to prevent the window from being saved outside of the screen.
-	//     I'm using negative numbers because the gameui "0, 0" coordinates don't actually start at the top-left corner of the window.
-	//     I don't know why it is like this... Maybe I'm using the wrong thing to base this on?
-	// ND:  ALSO, for some fucking reason, the big map window is larger than the size. Why? I don't know.
+    public void compact(boolean a) {
+	tool.show(!a);
+	if(a)
+	    delfocusable(tool);
+	else
+	    newfocusable(tool);
+	chdeco(a ? null : makedeco());
+	loadPos(a);
+	pack();
+	this.compact = a;
+    }
+
+	// ND: For some fucking reason, the big map window is larger than the size. Why? I don't know.
 	public void savePos(boolean compact) {
 		if (compact) {
 			bigmapc = this.c;
-			bigmapsz = this.asz;
+			bigmapsz = this.csz();
 			if (bigmapsz.x > (int) (0.98*gameui().sz.x)) bigmapsz.x = (int) (0.98*gameui().sz.x);
 			if (bigmapsz.y > (int) (0.965*gameui().sz.y)) bigmapsz.y = (int) (0.965*gameui().sz.y);
 
@@ -784,18 +786,18 @@ public class MapWnd extends Window implements Console.Directory {
 			Utils.setprefc("bigmapsz", bigmapsz);
 		} else {
 			smallmapc = this.c;
-			smallmapsz = this.asz;
+			smallmapsz = this.csz();
 			if (smallmapsz.x > gameui().sz.x) smallmapsz.x = gameui().sz.x;
 			if (smallmapsz.y > gameui().sz.y) smallmapsz.y = gameui().sz.y;
 
-			if (smallmapc.x < - UI.scale(41))
-				smallmapc.x = - UI.scale(41);
-			if (smallmapc.y < - UI.scale(44))
-				smallmapc.y = - UI.scale(44);
-			if (smallmapc.x > (gameui().sz.x - smallmapsz.x - UI.scale(41)))
-				smallmapc.x = gameui().sz.x - smallmapsz.x - UI.scale(41);
-			if (smallmapc.y > (gameui().sz.y - smallmapsz.y - UI.scale(44)))
-				smallmapc.y = gameui().sz.y - smallmapsz.y - UI.scale(44);
+			if (smallmapc.x < 0)
+				smallmapc.x = 0;
+			if (smallmapc.y < 0)
+				smallmapc.y = 0;
+			if (smallmapc.x > (gameui().sz.x - smallmapsz.x))
+				smallmapc.x = gameui().sz.x - smallmapsz.x;
+			if (smallmapc.y > (gameui().sz.y - smallmapsz.y))
+				smallmapc.y = gameui().sz.y - smallmapsz.y;
 
 			Utils.setprefc("smallmapc", smallmapc);
 			Utils.setprefc("smallmapsz", smallmapsz);
@@ -826,44 +828,27 @@ public class MapWnd extends Window implements Console.Directory {
 	}
     }
 
-    protected void drawframe(GOut g) {
-	g.image(sizer, ctl.add(csz).sub(sizer.sz()));
-	super.drawframe(g);
-    }
-
-    private UI.Grab drag;
-    private Coord dragc;
-    public boolean mousedown(Coord c, int button) {
-	Coord cc = c.sub(ctl);
-	if((button == 1) && (cc.x < csz.x) && (cc.y < csz.y) && (cc.y >= csz.y - UI.scale(25) + (csz.x - cc.x))) {
-	    if(drag == null) {
-		drag = ui.grabmouse(this);
-		dragc = asz.sub(c);
-		return(true);
-	    }
+    protected Deco makedeco() {
+	return(new DefaultDeco(true){
+		@Override
+		public boolean mouseup(Coord c, int button) {
+			savePos(!compact);
+			compact(compact);
+			if((button == 1) && (szdrag != null)) {
+				szdrag.remove();
+				szdrag = null;
+				return(true);
+			}
+			return(super.mouseup(c, button));
+		}
 	}
-	return(super.mousedown(c, button));
+			.dragsize(true));
     }
 
-    public void mousemove(Coord c) {
-	if(drag != null) {
-	    Coord nsz = c.add(dragc);
-	    nsz.x = Math.max(nsz.x, UI.scale(440));// ND: Width
-	    nsz.y = Math.max(nsz.y, UI.scale(230));// ND: Height
-	    resize(nsz);
-	}
-	super.mousemove(c);
-    }
-
-    public boolean mouseup(Coord c, int button) {
+	public boolean mouseup(Coord c, int button) {
 		savePos(!compact);
 		compact(compact);
-		if((button == 1) && (drag != null)) {
-			drag.remove();
-			drag = null;
-			return (true);
-		}
-		return (super.mouseup(c, button));
+		return(super.mouseup(c, button));
 	}
 
     public void markobj(long gobid, long oid, Indir<Resource> resid, String nm) {
@@ -925,7 +910,7 @@ public class MapWnd extends Window implements Console.Directory {
 
 	public ExportWindow() {
 	    super(UI.scale(new Coord(300, 65)), "Exporting map...", true);
-	    adda(new Button(UI.scale(100), "Cancel", false, this::cancel), asz.x / 2, UI.scale(40), 0.5, 0.0);
+	    adda(new Button(UI.scale(100), "Cancel", false, this::cancel), csz().x / 2, UI.scale(40), 0.5, 0.0);
 	}
 
 	public void run(Thread th) {
@@ -961,7 +946,7 @@ public class MapWnd extends Window implements Console.Directory {
 
 	public ImportWindow() {
 	    super(UI.scale(new Coord(300, 65)), "Importing map...", true);
-	    adda(new Button(UI.scale(100), "Cancel", false, this::cancel), asz.x / 2, UI.scale(40), 0.5, 0.0);
+	    adda(new Button(UI.scale(100), "Cancel", false, this::cancel), csz().x / 2, UI.scale(40), 0.5, 0.0);
 	}
 
 	public void run(Thread th) {

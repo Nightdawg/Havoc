@@ -19,7 +19,7 @@ public class Armor extends ItemInfo.Tip {
 
     public static class Fac implements ItemInfo.InfoFactory {
         public Fac() {}
-        public ItemInfo build(Owner owner, Object... args) {
+        public ItemInfo build(Owner owner, Raw raw, Object... args) {
             return mkinfo(owner, args);
         }
     }

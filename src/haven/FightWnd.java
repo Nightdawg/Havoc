@@ -894,7 +894,7 @@ public class FightWnd extends Widget {
 
 					@Override
 					public void wdgmsg(Widget sender, String msg, Object... args) {
-						if (sender == cbtn)
+						if (msg.equals("close"))
 							reqdestroy();
 						else
 							super.wdgmsg(sender, msg, args);

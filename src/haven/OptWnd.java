@@ -74,7 +74,7 @@ public class OptWnd extends Window {
 
 	public void click() {
 		chpanel(tgt);
-		OptWnd.this.cap = Window.cf.render(newWindowTitle);
+		OptWnd.this.cap = newWindowTitle;
 	}
 
 	public boolean keydown(java.awt.event.KeyEvent ev) {

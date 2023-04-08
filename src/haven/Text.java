@@ -135,11 +135,6 @@ public class Text implements Disposable {
 	    this(font.deriveFont(UI.scale((float)psz)));
 	}
 
-	@Deprecated
-	public Foundry(String font, int psz) {
-	    this(new Font(font, Font.PLAIN, psz));
-	}
-		
 	public Foundry aa(boolean aa) {
 	    this.aa = aa;
 	    return(this);
