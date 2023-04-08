@@ -497,10 +497,13 @@ public class FightWnd extends Widget {
 				g.chcolor(255, 255, 255, 255);
 				String keybindString = Fightsess.kb_acts[i].key().name();
 				if (keybindString.contains("Shift")) {
-					keybindString = keybindString.replace("Shift", "\u21e7");
+					keybindString = keybindString.replace("Shift", "s");
 				}
 				if (keybindString.contains("Ctrl")) {
-					keybindString = keybindString.replace("Ctrl", "✲");
+					keybindString = keybindString.replace("Ctrl", "c");
+				}
+				if (keybindString.contains("Alt")) {
+					keybindString = keybindString.replace("Alt", "a");
 				}
 				g.aimage(new TexI(Utils.outline2(keybindsFoundry.render(keybindString).img, Color.BLACK, true)), c.add(invsq.sz().sub(2, 0)), 0.95, 0.95);
 				g.chcolor();
