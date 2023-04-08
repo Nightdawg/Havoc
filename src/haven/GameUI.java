@@ -36,6 +36,7 @@ import static haven.Inventory.invsq;
 public class GameUI extends ConsoleHost implements Console.Directory, UI.MessageWidget {
     public static final Text.Foundry msgfoundry = RootWidget.msgfoundry;
     public static final int blpw = UI.scale(0), brpw = UI.scale(142); //ND: Changed this from private to public
+	public static final Text.Foundry actBarKeybindsFoundry = new Text.Foundry(Text.sans.deriveFont(java.awt.Font.BOLD), 12);
     public final String chrid, genus;
     public final long plid;
     private final Hidepanel ulpanel, umpanel, urpanel, brpanel, menupanel; //blpanel, mapmenupanel
@@ -67,7 +68,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public Progress prog = null;
     private boolean afk = false;
     public BeltSlot[] belt = new BeltSlot[144];
-    public Belt beltwdg;
+    public Belt beltwdg1 = null, beltwdg2 = null, beltwdg3 = null, beltwdg4 = null;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
 	public QuickSlotsWdg quickslots;
@@ -234,7 +235,11 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		chat.resize(chat.savedw,chat.savedh); // ND: Added this to set both sizes
 	    chat.show();
 	}
-	beltwdg.raise();
+	beltwdg1.raise();
+	beltwdg2.raise();
+	beltwdg3.raise();
+	beltwdg4.raise();
+
 //	blpanel = add(new Hidepanel("gui-bl", null, new Coord(-1,  1)) {
 //		public void move(double a) {
 //		    super.move(a);
@@ -953,7 +958,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
 		    protected Coord getc() {
 			//return(new Coord(10, mapmenupanel.c.y - this.sz.y - 10));
-				return(new Coord(10, GameUI.this.sz.y -chat.sz.y - beltwdg.sz.y - this.sz.y - 10));
+				return(new Coord(10, GameUI.this.sz.y - chat.sz.y - this.sz.y - UI.scale( 90)));
 		    }
 
 		    public void cdestroy(Widget ch) {
@@ -1070,15 +1075,20 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 
     public void draw(GOut g) {
-	beltwdg.c = new Coord(chat.c.x, Math.min(chat.c.y - beltwdg.sz.y, sz.y - beltwdg.sz.y));
+	beltwdg1.c = new Coord(chat.c.x, chat.c.y - beltwdg1.sz.y - UI.scale(5));
+	beltwdg2.c = new Coord(chat.c.x, chat.c.y - beltwdg1.sz.y - beltwdg2.sz.y - UI.scale(3));
+	beltwdg3.c = new Coord(sz.x - beltwdg3.sz.x - UI.scale(10), menupanel.c.y - beltwdg3.sz.y + UI.scale(20));
+	beltwdg4.c = new Coord(sz.x - beltwdg3.sz.x - beltwdg4.sz.x - UI.scale(5), menupanel.c.y - beltwdg4.sz.y + UI.scale(20));
 	super.draw(g);
 	int by = sz.y;
 	if(chat.visible())
 	    by = Math.min(by, chat.c.y);
-	if(beltwdg.visible())
-	    by = Math.min(by, beltwdg.c.y);
+	if(beltwdg1.visible())
+	    by = Math.min(by, beltwdg1.c.y);
+	if(beltwdg2.visible())
+		by = Math.min(by, beltwdg2.c.y);
 	if(cmdline != null) {
-	    drawcmd(g, new Coord(blpw + UI.scale(10), by -= UI.scale(20)));
+	    drawcmd(g, new Coord(blpw + UI.scale(10), by -= UI.scale(30)));
 	} else if(lastmsg != null) {
 	    if((Utils.rtime() - msgtime) > 3.0) {
 		lastmsg = null;
@@ -1582,7 +1592,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    map.resize(sz);
 	if(prog != null)
 	    prog.move(sz.sub(prog.sz).mul(0.5, 0.35));
-	beltwdg.c = new Coord(blpw + UI.scale(10), sz.y - beltwdg.sz.y - UI.scale(5));
+	beltwdg1.c = new Coord(blpw + UI.scale(10), sz.y - beltwdg1.sz.y - UI.scale(5));
+	beltwdg2.c = new Coord(blpw + UI.scale(10), sz.y - beltwdg1.sz.y - beltwdg2.sz.y - UI.scale(5));
     }
     
     public void presize() {
@@ -1774,18 +1785,207 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    return(true);
 	}
     }
+
+	public static final KeyBinding[] kb_actbar1 = {
+			KeyBinding.get("actbar1/1", KeyMatch.forcode(KeyEvent.VK_1, 0)),
+			KeyBinding.get("actbar1/2", KeyMatch.forcode(KeyEvent.VK_2, 0)),
+			KeyBinding.get("actbar1/3", KeyMatch.forcode(KeyEvent.VK_3, 0)),
+			KeyBinding.get("actbar1/4", KeyMatch.forcode(KeyEvent.VK_4, 0)),
+			KeyBinding.get("actbar1/5", KeyMatch.forcode(KeyEvent.VK_5, 0)),
+			KeyBinding.get("actbar1/6", KeyMatch.forcode(KeyEvent.VK_6, 0)),
+			KeyBinding.get("actbar1/7", KeyMatch.forcode(KeyEvent.VK_7, 0)),
+			KeyBinding.get("actbar1/8", KeyMatch.forcode(KeyEvent.VK_8, 0)),
+			KeyBinding.get("actbar1/9", KeyMatch.forcode(KeyEvent.VK_9, 0)),
+			KeyBinding.get("actbar1/0", KeyMatch.forcode(KeyEvent.VK_0, 0)),
+	};
+	public static final KeyBinding[] kb_actbar2 = {
+			KeyBinding.get("actbar2/1", KeyMatch.nil),
+			KeyBinding.get("actbar2/2", KeyMatch.nil),
+			KeyBinding.get("actbar2/3", KeyMatch.nil),
+			KeyBinding.get("actbar2/4", KeyMatch.nil),
+			KeyBinding.get("actbar2/5", KeyMatch.nil),
+			KeyBinding.get("actbar2/6", KeyMatch.nil),
+			KeyBinding.get("actbar2/7", KeyMatch.nil),
+			KeyBinding.get("actbar2/8", KeyMatch.nil),
+			KeyBinding.get("actbar2/9", KeyMatch.nil),
+			KeyBinding.get("actbar2/0", KeyMatch.nil),
+	};
+	public static final KeyBinding[] kb_actbar3 = {
+			KeyBinding.get("actbar3/1", KeyMatch.nil),
+			KeyBinding.get("actbar3/2", KeyMatch.nil),
+			KeyBinding.get("actbar3/3", KeyMatch.nil),
+			KeyBinding.get("actbar3/4", KeyMatch.nil),
+			KeyBinding.get("actbar3/5", KeyMatch.nil),
+			KeyBinding.get("actbar3/6", KeyMatch.nil),
+			KeyBinding.get("actbar3/7", KeyMatch.nil),
+			KeyBinding.get("actbar3/8", KeyMatch.nil),
+			KeyBinding.get("actbar3/9", KeyMatch.nil),
+			KeyBinding.get("actbar3/0", KeyMatch.nil),
+	};
+	public static final KeyBinding[] kb_actbar4 = {
+			KeyBinding.get("actbar4/1", KeyMatch.nil),
+			KeyBinding.get("actbar4/2", KeyMatch.nil),
+			KeyBinding.get("actbar4/3", KeyMatch.nil),
+			KeyBinding.get("actbar4/4", KeyMatch.nil),
+			KeyBinding.get("actbar4/5", KeyMatch.nil),
+			KeyBinding.get("actbar4/6", KeyMatch.nil),
+			KeyBinding.get("actbar4/7", KeyMatch.nil),
+			KeyBinding.get("actbar4/8", KeyMatch.nil),
+			KeyBinding.get("actbar4/9", KeyMatch.nil),
+			KeyBinding.get("actbar4/0", KeyMatch.nil),
+	};
+
+	public class NDVerticalActionBar extends Belt {
+		public KeyBinding[] beltkeys;
+		public int curbelt = 0;
+		final Coord pagoff = UI.scale(new Coord(10, 5));
+
+		public NDVerticalActionBar(KeyBinding[] keybindings, int beltNumber) {
+			super(UI.scale(new Coord(40, 400)));
+			beltkeys = keybindings;
+			if (beltNumber > 0) {
+				curbelt = beltNumber - 1;
+			} else {
+				curbelt = 0;
+			}
+		}
+
+		private Coord beltc(int i) {
+			return(pagoff.add(0, UI.scale(39 * i)));
+		}
+
+		public int beltslot(Coord c) {
+			for(int i = 0; i < 10; i++) {
+				if(c.isect(beltc(i), invsq.sz()))
+					return(i + (curbelt * 12));
+			}
+			return(-1);
+		}
+
+		public void draw(GOut g) {
+			for(int i = 0; i < 10; i++) {
+				int slot = i + (curbelt * 12);
+				Coord c = beltc(i);
+				g.image(invsq, beltc(i));
+				try {
+					if(belt[slot] != null) {
+						belt[slot].spr().draw(g.reclip(c.add(UI.scale(1), UI.scale(1)), invsq.sz().sub(UI.scale(2), UI.scale(2))));
+					}
+				} catch(Loading e) {}
+				String keybindString = beltkeys[i].key().name();
+				if (keybindString.contains("Shift")) {
+					keybindString = keybindString.replace("Shift", "s");
+				}
+				if (keybindString.contains("Ctrl")) {
+					keybindString = keybindString.replace("Ctrl", "c");
+				}
+				if (keybindString.contains("Alt")) {
+					keybindString = keybindString.replace("Alt", "a");
+				}
+				if (keybindString.contains("None")) {
+					keybindString = keybindString.replace("None", "");
+				}
+				g.aimage(new TexI(Utils.outline2(actBarKeybindsFoundry.render(keybindString).img, Color.BLACK, true)), c.add(invsq.sz().sub(UI.scale(2), 0)), 1, 1);
+			}
+			super.draw(g);
+		}
+
+		public boolean globtype(char key, KeyEvent ev) {
+			if (this.visible()) {
+				for (int i = 0; i < beltkeys.length; i++) {
+					if (beltkeys[i].key().match(ev)) {
+						keyact(i + (curbelt * 12));
+						return (true);
+					}
+				}
+			}
+			return(false);
+		}
+	}
+
+	public class NDHorizontalActionBar extends Belt {
+		public KeyBinding[] beltkeys;
+		public int curbelt = 0;
+		final Coord pagoff = UI.scale(new Coord(10, 5));
+
+		public NDHorizontalActionBar(KeyBinding[] keybindings, int beltNumber) {
+			super(UI.scale(new Coord(400, 40)));
+			beltkeys = keybindings;
+			if (beltNumber > 0) {
+				curbelt = beltNumber - 1;
+			} else {
+				curbelt = 0;
+			}
+		}
+
+		private Coord beltc(int i) {
+			return(pagoff.add(UI.scale(39 * i), 0));
+		}
+
+		public int beltslot(Coord c) {
+			for(int i = 0; i < 10; i++) {
+				if(c.isect(beltc(i), invsq.sz()))
+					return(i + (curbelt * 12));
+			}
+			return(-1);
+		}
+
+		public void draw(GOut g) {
+			for(int i = 0; i < 10; i++) {
+				int slot = i + (curbelt * 12);
+				Coord c = beltc(i);
+				g.image(invsq, beltc(i));
+				try {
+					if(belt[slot] != null) {
+						belt[slot].spr().draw(g.reclip(c.add(UI.scale(1), UI.scale(1)), invsq.sz().sub(UI.scale(2), UI.scale(2))));
+					}
+				} catch(Loading e) {}
+				String keybindString = beltkeys[i].key().name();
+				if (keybindString.contains("Shift")) {
+					keybindString = keybindString.replace("Shift", "s");
+				}
+				if (keybindString.contains("Ctrl")) {
+					keybindString = keybindString.replace("Ctrl", "c");
+				}
+				if (keybindString.contains("Alt")) {
+					keybindString = keybindString.replace("Alt", "a");
+				}
+				if (keybindString.contains("None")) {
+					keybindString = keybindString.replace("None", "");
+				}
+				g.aimage(new TexI(Utils.outline2(actBarKeybindsFoundry.render(keybindString).img, Color.BLACK, true)), c.add(invsq.sz().sub(UI.scale(2), 0)), 1, 1);
+			}
+			super.draw(g);
+		}
+
+		public boolean globtype(char key, KeyEvent ev) {
+			if (this.visible()) {
+				for (int i = 0; i < beltkeys.length; i++) {
+					if (beltkeys[i].key().match(ev)) {
+						keyact(i + (curbelt * 12));
+						return (true);
+					}
+				}
+			}
+			return(false);
+		}
+	}
     
     {
-	String val = Utils.getpref("belttype", "n");
-	if(val.equals("n")) {
-	    beltwdg = add(new NKeyBelt());
-	} else if(val.equals("f")) {
-	    beltwdg = add(new FKeyBelt());
-	} else {
-	    beltwdg = add(new NKeyBelt());
-	}
+		beltwdg1 = add(new NDHorizontalActionBar(kb_actbar1, 1));
+		beltwdg2 = add(new NDHorizontalActionBar(kb_actbar2, 2));
+		beltwdg3 = add(new NDVerticalActionBar(kb_actbar3, 3));
+		beltwdg4 = add(new NDVerticalActionBar(kb_actbar4, 4));
+		if (!Utils.getprefb("showActionBar1", true))
+			beltwdg1.hide();
+		if (!Utils.getprefb("showActionBar2", false))
+			beltwdg2.hide();
+		if (!Utils.getprefb("showActionBar3", false))
+			beltwdg3.hide();
+		if (!Utils.getprefb("showActionBar4", false))
+			beltwdg4.hide();
     }
-    
+
     private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
     {
 	cmdmap.put("afk", new Console.Command() {
@@ -1799,21 +1999,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		    Object[] ad = new Object[args.length - 1];
 		    System.arraycopy(args, 1, ad, 0, ad.length);
 		    wdgmsg("act", ad);
-		}
-	    });
-	cmdmap.put("belt", new Console.Command() {
-		public void run(Console cons, String[] args) {
-		    if(args[1].equals("f")) {
-			beltwdg.destroy();
-			beltwdg = add(new FKeyBelt());
-			Utils.setpref("belttype", "f");
-			resize(sz);
-		    } else if(args[1].equals("n")) {
-			beltwdg.destroy();
-			beltwdg = add(new NKeyBelt());
-			Utils.setpref("belttype", "n");
-			resize(sz);
-		    }
 		}
 	    });
 	cmdmap.put("chrmap", new Console.Command() {

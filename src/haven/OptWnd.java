@@ -668,6 +668,103 @@ public class OptWnd extends Window {
 		}
 	}
 
+	public class NDActionBarSettingsPanel extends Panel {
+		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
+			return (cont.addhl(new Coord(0, y), cont.sz.x,
+					new Label(nm), new SetButton(UI.scale(140), cmd))
+					+ UI.scale(2));
+		}
+
+		public NDActionBarSettingsPanel(Panel back) {
+			Widget prev;
+			prev = add(new CheckBox("Enable Horizontal Action Bar 1"){
+				{a = Utils.getprefb("showActionBar1", true);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("showActionBar1", true);
+						if (gameui() != null && gameui().beltwdg1 != null)
+							gameui().beltwdg1.show();
+					}
+					else {
+						Utils.setprefb("showActionBar1", false);
+						if (gameui() != null && gameui().beltwdg1 != null)
+							gameui().beltwdg1.hide();
+					}
+					a = val;
+				}
+			}, 0, 0);
+			prev = add(new CheckBox("Enable Horizontal Action Bar 2"){
+				{a = Utils.getprefb("showActionBar2", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("showActionBar2", true);
+						if (gameui() != null && gameui().beltwdg2 != null)
+							gameui().beltwdg2.show();
+					}
+					else {
+						Utils.setprefb("showActionBar2", false);
+						if (gameui() != null && gameui().beltwdg2 != null)
+							gameui().beltwdg2.hide();
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8));
+
+			prev = add(new CheckBox("Enable Vertical Action Bar 1"){
+				{a = Utils.getprefb("showActionBar3", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("showActionBar3", true);
+						if (gameui() != null && gameui().beltwdg3 != null)
+							gameui().beltwdg3.show();
+					}
+					else {
+						Utils.setprefb("showActionBar3", false);
+						if (gameui() != null && gameui().beltwdg3 != null)
+							gameui().beltwdg3.hide();
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8));
+
+			prev = add(new CheckBox("Enable Vertical Action Bar 2"){
+				{a = Utils.getprefb("showActionBar4", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("showActionBar4", true);
+						if (gameui() != null && gameui().beltwdg4 != null)
+							gameui().beltwdg4.show();
+					}
+					else {
+						Utils.setprefb("showActionBar4", false);
+						if (gameui() != null && gameui().beltwdg4 != null)
+							gameui().beltwdg4.hide();
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8));
+
+			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(280, 380))), prev.pos("bl").adds(0,10));
+			Widget cont = scroll.cont;
+
+			int y = 0;
+			y = cont.adda(new Label("Horizontal Action Bar 1 Keybinds"), cont.sz.x / 2, y, 0.5, 0.0).pos("bl").adds(0, 5).y;
+			for (int i = 0; i < GameUI.kb_actbar1.length; i++)
+				y = addbtn(cont, String.format("Button - %d", i + 1), GameUI.kb_actbar1[i], y);
+			y = cont.adda(new Label("Horizontal Action Bar 2 Keybinds"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
+			for (int i = 0; i < GameUI.kb_actbar2.length; i++)
+				y = addbtn(cont, String.format("Button - %d", i + 1), GameUI.kb_actbar2[i], y);
+			y = cont.adda(new Label("Vertical Action Bar 1"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
+			for (int i = 0; i < GameUI.kb_actbar3.length; i++)
+				y = addbtn(cont, String.format("Button - %d", i + 1), GameUI.kb_actbar3[i], y);
+			y = cont.adda(new Label("Vertical Action Bar 2"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
+			for (int i = 0; i < GameUI.kb_actbar4.length; i++)
+				y = addbtn(cont, String.format("Button - %d", i + 1), GameUI.kb_actbar4[i], y);
+			adda(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
+			pack();
+		}
+	}
+
 	private Label nightVisionLabel;
 	private HSlider nightVisionSlider;
 	private Button nightVisionResetButton;
@@ -1433,12 +1530,15 @@ public class OptWnd extends Window {
 	// IF IT WORKS, IT WORKS.
 		Panel iface = add(new InterfacePanel(advancedSettings));
 		Panel graphicssettings = add(new NDGraphicsSettingsPanel(advancedSettings));
+		Panel actionbarsettings = add(new NDActionBarSettingsPanel(advancedSettings));
 		Panel camsettings = add(new NDCamSettingsPanel(advancedSettings));
 		Panel gameplaysettings = add(new NDGameplaySettingsPanel(advancedSettings));
 		Panel combatsettings = add(new NDCombatSettingsPanel(advancedSettings));
 		int y2 = UI.scale(6);
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Interface Settings", -1, iface, "Interface Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Graphics Settings", -1, graphicssettings, "Graphics Settings"), 0, y2).pos("bl").adds(0, 5).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Action Bars Settings", -1, actionbarsettings, "Action Bars Settings"), 0, y2).pos("bl").adds(0, 25).y;
+
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Camera Settings", -1, camsettings, "Camera Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Gameplay Settings", -1, gameplaysettings, "Gameplay Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Combat Settings", -1, combatsettings, "Combat Settings"), 0, y2).pos("bl").adds(0, 25).y;
