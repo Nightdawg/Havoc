@@ -808,6 +808,9 @@ public class MCache implements MapSource {
     }
 
     public double getcz(double px, double py) {
+		if (OptWnd.flatWorldSetting) {
+			return 0;
+		}
 	double tw = tilesz.x, th = tilesz.y;
 	Coord ul = Coord.of(Utils.floordiv(px, tw), Utils.floordiv(py, th));
 	double sx = (px - (ul.x * tw)) / tw;
@@ -846,6 +849,9 @@ public class MCache implements MapSource {
     }
 
     public double getz(SurfaceID id, Coord2d pc) {
+	if (OptWnd.flatWorldSetting){
+		return 0;
+	}
 	Coord tc = pc.floor(tilesz);
 	Grid g = getgridt(tc);
 	MapMesh cut = g.getcut(tc.sub(g.ul).div(cutsz));

@@ -66,7 +66,11 @@ public abstract class Drawable extends GAttrib implements Skeleton.HasPose, Rend
 			break;
 		    }
 		    case "incline": {
-			placer = new Gob.InclinePlace(gob.glob.map, getsurf((String)desc[1]));
+			if (OptWnd.flatWorldSetting){
+				placer = new Gob.DefaultPlace(gob.glob.map, getsurf((String)desc[1]));
+			} else {
+				placer = new Gob.InclinePlace(gob.glob.map, getsurf((String)desc[1]));
+			}
 			break;
 		    }
 		    case "base": {

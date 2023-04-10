@@ -770,7 +770,9 @@ public class OptWnd extends Window {
 	private Button nightVisionResetButton;
 	private CheckBox disableWeatherEffectsCheckBox;
 	private CheckBox disableFlavourObjectsCheckBox;
+	private CheckBox flatWorldCheckBox;
 	public static boolean disableFlavourObjects = Utils.getprefb("disableFlavourObjects", false);
+	public static boolean flatWorldSetting = Utils.getprefb("flatWorld", false);
 	public class NDGraphicsSettingsPanel extends Panel {
 		public NDGraphicsSettingsPanel(Panel back) {
 			Widget prev;
@@ -823,6 +825,20 @@ public class OptWnd extends Window {
 					else {
 						Utils.setprefb("disableFlavourObjects", false);
 						disableFlavourObjects = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8));
+			prev = add(flatWorldCheckBox = new CheckBox("Flat World (Requires Relog)"){
+				{a = Utils.getprefb("flatWorld", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("flatWorld", true);
+						flatWorldSetting = true;
+					}
+					else {
+						Utils.setprefb("flatWorld", false);
+						flatWorldSetting = false;
 					}
 					a = val;
 				}
@@ -1618,6 +1634,7 @@ public class OptWnd extends Window {
 		nightVisionResetButton.tooltip = RichText.render("Reset to default", 300);
 		disableWeatherEffectsCheckBox.tooltip = RichText.render("Note: This disables *ALL* weather and camera effects, including rain effects, drunkenness distortion, drug high, valhalla gray overlay, camera shake, and any other similar effects.", 300);
 		disableFlavourObjectsCheckBox.tooltip = RichText.render("Note: This only disables random objects that appear in the world which you cannot interact with.\n$col[185,185,185]{Players usually disable flavour objects to improve visibility and/or performance.}", 300);
+		flatWorldCheckBox.tooltip = RichText.render("Enabling this will make the entire game world terrain flat.\n$col[185,185,185]{Cliffs will still be drawn with their relative height, scaled down.}", 300);
 	}
 
     public OptWnd() {

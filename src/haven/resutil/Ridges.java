@@ -190,7 +190,13 @@ public class Ridges implements MapMesh.ConsHooks {
 	float lo, hi; {
 	    Coord gc = tc.add(m.ul);
 	    float z1 = (float)m.map.getfz(gc.add(tccs[e])), z2 = (float)m.map.getfz(gc.add(tccs[(e + 1) % 4]));
-	    lo = Math.min(z1, z2); hi = Math.max(z1, z2);
+		if (OptWnd.flatWorldSetting) {
+			lo = 0;
+			hi = (float) (10f*Math.sqrt((Math.max(z1, z2)-Math.min(z1, z2))/10f));
+		} else {
+			lo = Math.min(z1, z2);
+			hi = Math.max(z1, z2);
+		}
 	}
 	int nseg = Math.max((int)Math.round((hi - lo) / segh), 2) - 1;
 	Vertex[] ret = new Vertex[nseg + 1];
@@ -533,7 +539,7 @@ public class Ridges implements MapMesh.ConsHooks {
 	    for(int i = 0; i < n; i++) {
 		col[i] = new Coord3f(tcx + ((rnd.nextFloat() - 0.5f) * 5.0f),
 				     tcy + ((rnd.nextFloat() - 0.5f) * 5.0f),
-				     zs[i]);
+				OptWnd.flatWorldSetting ? 10 :zs[i]);
 	    }
 	}
 
