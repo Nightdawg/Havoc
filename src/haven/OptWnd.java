@@ -772,9 +772,11 @@ public class OptWnd extends Window {
 	private CheckBox disableFlavourObjectsCheckBox;
 	private CheckBox flatWorldCheckBox;
 	private CheckBox tileSmoothingCheckBox;
+	private CheckBox tileTransitionsCheckBox;
 	public static boolean disableFlavourObjects = Utils.getprefb("disableFlavourObjects", false);
 	public static boolean flatWorldSetting = Utils.getprefb("flatWorld", false);
 	public static boolean noTileSmoothing = Utils.getprefb("noTileSmoothing", false);
+	public static boolean noTileTransitions = Utils.getprefb("noTileTransitions", false);
 	public class NDGraphicsSettingsPanel extends Panel {
 		public NDGraphicsSettingsPanel(Panel back) {
 			Widget prev;
@@ -856,6 +858,21 @@ public class OptWnd extends Window {
 					else {
 						Utils.setprefb("noTileSmoothing", false);
 						noTileSmoothing = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8));
+
+			prev = add(tileTransitionsCheckBox = new CheckBox("Disable Tile Transitions (Requires Relog)"){
+				{a = Utils.getprefb("noTileTransitions", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("noTileTransitions", true);
+						noTileTransitions = true;
+					}
+					else {
+						Utils.setprefb("noTileTransitions", false);
+						noTileTransitions = false;
 					}
 					a = val;
 				}
