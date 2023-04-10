@@ -771,8 +771,10 @@ public class OptWnd extends Window {
 	private CheckBox disableWeatherEffectsCheckBox;
 	private CheckBox disableFlavourObjectsCheckBox;
 	private CheckBox flatWorldCheckBox;
+	private CheckBox tileSmoothingCheckBox;
 	public static boolean disableFlavourObjects = Utils.getprefb("disableFlavourObjects", false);
 	public static boolean flatWorldSetting = Utils.getprefb("flatWorld", false);
+	public static boolean noTileSmoothing = Utils.getprefb("noTileSmoothing", false);
 	public class NDGraphicsSettingsPanel extends Panel {
 		public NDGraphicsSettingsPanel(Panel back) {
 			Widget prev;
@@ -839,6 +841,21 @@ public class OptWnd extends Window {
 					else {
 						Utils.setprefb("flatWorld", false);
 						flatWorldSetting = false;
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8));
+
+			prev = add(tileSmoothingCheckBox = new CheckBox("Disable Tile Smoothing (Requires Relog)"){
+				{a = Utils.getprefb("noTileSmoothing", false);}
+				public void set(boolean val) {
+					if (val) {
+						Utils.setprefb("noTileSmoothing", true);
+						noTileSmoothing = true;
+					}
+					else {
+						Utils.setprefb("noTileSmoothing", false);
+						noTileSmoothing = false;
 					}
 					a = val;
 				}
