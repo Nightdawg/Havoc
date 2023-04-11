@@ -58,6 +58,9 @@ public class LoginScreen extends Widget {
 	adda(login = new Credbox(), bgc.adds(0, 10), 0.5, 0.0).hide();
 	accounts = add(new AccountList(10));
 	adda(new StatusLabel(hostname, 0.5), bgc.x, bg.sz().y, 0.5, 1.4); // ND: This adds the server status and player count.
+	GameUI.swimon = false;
+	GameUI.trackon = false;
+	GameUI.crimeon = false;
     }
 
     //public static final KeyBinding kb_savtoken = KeyBinding.get("login/savtoken", KeyMatch.forchar('R', KeyMatch.M)); // ND: Why the fuck are there keybinds for these? Someone might press one of those by mistake.

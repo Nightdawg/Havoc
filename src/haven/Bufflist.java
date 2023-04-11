@@ -33,6 +33,11 @@ public class Bufflist extends Widget {
     public static final int margin = UI.scale(2);
     public static final int num = 5;
 
+	public final static Resource buffswim = Resource.local().loadwait("gfx/hud/buffs/toggles/swim");
+	public final static Resource bufftrack = Resource.local().loadwait("gfx/hud/buffs/toggles/tracking");
+	public final static Resource buffcrime = Resource.local().loadwait("gfx/hud/buffs/toggles/crime");
+	public final static Resource partyperm = Resource.local().loadwait("gfx/hud/buffs/toggles/partyperm");
+
     public interface Managed {
 	public void move(Coord c, double off);
     }
@@ -91,4 +96,20 @@ public class Bufflist extends Widget {
 	    wdg.draw(g.reclipl(xlate(wdg.c, true), wdg.sz));
 	}
     }
+
+	public Buff gettoggle(String name) {
+		for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+			if (wdg instanceof Buff) {
+				Buff buff = (Buff) wdg;
+				try {
+					Resource res = buff.res.get();
+					if (res.basename().equals(name))
+						return buff;
+				} catch (Loading l) {
+				}
+			}
+		}
+		return null;
+	}
+
 }

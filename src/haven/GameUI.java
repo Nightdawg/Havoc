@@ -71,6 +71,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public Belt beltwdg1 = null, beltwdg2 = null, beltwdg3 = null, beltwdg4 = null;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+	public static boolean swimon = false;
+	public static boolean crimeon = false;
+	public static boolean trackon = false;
+	public static boolean partyperm = false;
 	public QuickSlotsWdg quickslots;
 
     private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
@@ -873,6 +877,18 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		mapfile.show(true);
 		add(mapfile, Utils.getprefc("smallmapc", new Coord(0, 100)));
 	    }
+		if (trackon) {
+			buffs.addchild(new Buff(Bufflist.bufftrack.indir()));
+		}
+		if (crimeon) {
+			buffs.addchild(new Buff(Bufflist.buffcrime.indir()));
+		}
+		if (swimon) {
+			buffs.addchild(new Buff(Bufflist.buffswim.indir()));
+		}
+		if (partyperm) {
+			buffs.addchild(new Buff(Bufflist.partyperm.indir()));
+		}
 	} else if(place == "menu") {
 	    menu = (MenuGrid)brpanel.add(child, menugridc);
 	} else if(place == "fight") {
@@ -1253,6 +1269,29 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	}
 	mapfiletick();
     }
+
+	private void togglebuff(String err, Resource res) {
+		String name = res.basename();
+		if (err.endsWith("on.") && buffs.gettoggle(name) == null) {
+			buffs.addchild(new Buff(res.indir()));
+			if (name.equals("swim"))
+				swimon = true;
+			else if (name.equals("crime"))
+				crimeon = true;
+			else if (name.equals("tracking"))
+				trackon = true;
+		} else if (err.endsWith("off.")) {
+			Buff tgl = buffs.gettoggle(name);
+			if (tgl != null)
+				tgl.reqdestroy();
+			if (name.equals("swim"))
+				swimon = false;
+			else if (name.equals("crime"))
+				crimeon = false;
+			else if (name.equals("tracking"))
+				trackon = false;
+		}
+	}
     
     public void uimsg(String msg, Object... args) {
 	if(msg == "err") {
@@ -1622,6 +1661,15 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
     private double lastmsgsfx = 0;
     public void msg(String msg) {
+		if (msg.startsWith("Swimming is now turned")) {
+			togglebuff(msg, Bufflist.buffswim);
+		} else if (msg.startsWith("Tracking is now turned")) {
+			togglebuff(msg, Bufflist.bufftrack);
+		} else if (msg.startsWith("Criminal acts are now turned")) {
+			togglebuff(msg, Bufflist.buffcrime);
+		} else if (msg.startsWith("Party permissions are now")) {
+			togglebuff(msg, Bufflist.partyperm);
+		}
 	msg(msg, Color.WHITE, Color.WHITE);
 	double now = Utils.rtime();
 	if(now - lastmsgsfx > 0.1) {
