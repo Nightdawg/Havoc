@@ -26,8 +26,12 @@
 
 package haven;
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.awt.Color;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
+
 import haven.render.*;
 import haven.render.sl.*;
 
@@ -50,6 +54,15 @@ public class Glob {
     public double skyblend = 0.0;
     private final Map<String, CAttr> cattr = new HashMap<String, CAttr>();
     private Map<Indir<Resource>, Object> wmap = new HashMap<Indir<Resource>, Object>();
+	public String mservertime;
+	public String lservertime;
+	public String rservertime;
+	public String bservertime;
+	public final AtomicReference<Pair<String, Tex>> mservertimetex = new AtomicReference<>(new Pair<>(null, null));
+	public final AtomicReference<Pair<String, Tex>> lservertimetex = new AtomicReference<>(new Pair<>(null, null));
+	public final AtomicReference<Pair<String, Tex>> rservertimetex = new AtomicReference<>(new Pair<>(null, null));
+	public final AtomicReference<Pair<String, Tex>> bservertimetex = new AtomicReference<>(new Pair<>(null, null));
+	public boolean night = false; //true is night
     
     public Glob(Session sess) {
 	this.sess = sess;
@@ -151,6 +164,8 @@ public class Glob {
 	oc.ctick(dt);
 	map.ctick(dt);
 
+	servertimecalc();
+
 	lastctick = now;
     }
 
@@ -195,6 +210,64 @@ public class Glob {
     public double globtime() {
 	return(gtime);
     }
+
+	private static final long secinday = 60 * 60 * 24;
+	private static final long dewyladysmantletimemin = 4 * 60 * 60 + 45 * 60;
+	private static final long dewyladysmantletimemax = 7 * 60 * 60 + 15 * 60;
+	private static final String[] seasonNames = {"Spring", "Summer", "Autumn", "Winter"};
+	private static final String[] mPhaseNames = {
+			"New",
+			"Waxing Crescent",
+			"First Quarter",
+			"Waxing Gibbous",
+			"Full",
+			"Waning Gibbous",
+			"Last Quarter",
+			"Waning Crescent"
+	};
+
+	private void servertimecalc() {
+		long secs = (long) (globtime());
+		long day = secs / secinday;
+		long secintoday = secs % secinday;
+		long hours = secintoday / 3600;
+		long mins = (secintoday % 3600) / 60;
+		long seconds = secintoday % 60;
+
+		String dayOfMonth = "";
+		String phaseOfMoon = " ";
+		if (ast != null) {
+			int nextseason = (int) Math.ceil((1 - ast.sp) * (ast.is == 1 ? 35 : ast.is == 3 ? 5 : 10));
+
+			int sdt = (ast.is == 1 ? 105 : ast.is == 3 ? 15 : 30); //days of season total
+			int sdp = (int) (ast.sp * (sdt)); //days of season passed
+			int sdl = (int) Math.floor((1 - ast.sp) * (sdt));
+			if (sdl >= 1)
+				dayOfMonth = seasonNames[ast.is] + String.format(" %d (%d ", (sdp + 1), sdl) + "left" + String.format(" (%d RL))", nextseason);
+			else
+				dayOfMonth = String.format("Last day of %s", seasonNames[ast.is]);
+			int mp = (int) Math.round(ast.mp * mPhaseNames.length) % mPhaseNames.length;
+			phaseOfMoon = mPhaseNames[mp] + " Moon";
+		}
+
+		mservertime = "Day" + String.format(" %d, %02d:%02d:%02d", day, hours, mins, seconds);
+		lservertime = String.format("%s", dayOfMonth);
+		rservertime = phaseOfMoon;
+		if (secintoday >= dewyladysmantletimemin && secintoday <= dewyladysmantletimemax)
+			bservertime = "(Dewy Lady's Mantle)";
+		infoUpdate(mservertimetex, mservertime);
+		infoUpdate(lservertimetex, lservertime);
+		infoUpdate(rservertimetex, rservertime);
+		infoUpdate(bservertimetex, bservertime);
+	}
+
+	private void infoUpdate(AtomicReference<Pair<String, Tex>> t, String text) {
+		infoUpdate(t, text, () -> Text.renderstroked(text).tex());
+	}
+
+	private void infoUpdate(AtomicReference<Pair<String, Tex>> t, String text, Supplier<Tex> getter) {
+		if (text != null && (t.get().a == null || !t.get().a.equals(text))) t.set(new Pair<>(text, text.isEmpty() ? null : getter.get()));
+	}
 
     public void blob(Message msg) {
 	boolean inc = msg.uint8() != 0;

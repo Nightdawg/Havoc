@@ -39,6 +39,7 @@ public class Cal extends Widget {
     static final Resource.Image nsky = Resource.loadrimg("gfx/hud/calendar/nightsky");
     static final Resource.Anim sun = Resource.local().loadwait("gfx/hud/calendar/sun").layer(Resource.animc);
     static final Resource.Anim moon = Resource.local().loadwait("gfx/hud/calendar/moon").layer(Resource.animc);
+	private String tip = null;
 
     static {
 	for(int i = 0; i < dlnd.length; i++) {
@@ -86,8 +87,16 @@ public class Cal extends Widget {
 
     public Object tooltip(Coord c, Widget prev) {
 	if(checkhit(c)) {
-	    Astronomy a = ui.sess.glob.ast;
-	    return(String.format("%s day of the %s month of the %s year", ord((int)Math.floor(a.md) + 1), ord((int)Math.floor(a.ym) + 1), ord((int)Math.floor(a.years) + 1)));
+		Astronomy a = ui.sess.glob.ast;
+		int mp = (int)Math.round(a.mp * (double)moon.f.length) % moon.f.length;
+		String season = String.format("Season: %s, Day %d of %d", a.season(), a.scday + 1, a.season().length);
+		int day = (int) Math.floor(a.md) + 1, month = (int) Math.floor(a.ym) + 1, year = (int) Math.floor(a.years) + 1;
+		String tt = String.format("Day: %02d Month: %02d Year: %02d\n%s\nMoon: %s", day, month, year, season, Astronomy.phase[mp]);
+		if(!tt.equals(tip)) {
+			tip = tt;
+			tooltip = RichText.render(tt, UI.scale(250));
+		}
+		return tooltip;
 	}
 	return(super.tooltip(c, prev));
     }

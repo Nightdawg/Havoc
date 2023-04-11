@@ -285,6 +285,38 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	buffs = ulpanel.add(new Bufflist(), portrait.c.x + portrait.sz.x + UI.scale(10), portrait.c.y + ((IMeter.fsz.y + UI.scale(2)) * 2) + UI.scale(5 - 2));
 	umpanel.add(new Cal(), Coord.z);
 	syslog = chat.add(new ChatUI.Log("System"));
+
+		add(new Widget(new Coord(360, umpanel.sz.y)) {
+			@Override
+			public void draw(GOut g) {
+				if (c.x != umpanel.c.x - 360)
+					c.x = umpanel.c.x - 360;
+				Tex mtime = ui.sess.glob.mservertimetex.get().b;
+				Tex ltime = ui.sess.glob.lservertimetex.get().b;
+				Tex rtime = ui.sess.glob.rservertimetex.get().b;
+				Tex btime = ui.sess.glob.bservertimetex.get().b;
+
+				int y = 10;
+				if (mtime != null) {
+					g.aimage(mtime, new Coord(sz.x - 5, y), 1, 0);
+					y += mtime.sz().y;
+				}
+				if (ltime != null) {
+					g.aimage(ltime, new Coord(sz.x - 5, y), 1, 0);
+					y += ltime.sz().y;
+				}
+				if (rtime != null) {
+					g.aimage(rtime, new Coord(sz.x - 5, y), 1, 0);
+					y += rtime.sz().y;
+				}
+				if (btime != null) {
+					g.aimage(btime, new Coord(sz.x - 5, y), 1, 0);
+					y += btime.sz().y;
+				}
+				if (sz.y != y) resize(sz.x, y);
+			}
+		}, new Coord(umpanel.c.x - 360, 0));
+
 	opts = add(new OptWnd());
 	opts.hide();
 	zerg = add(new Zergwnd(), Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
