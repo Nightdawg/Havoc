@@ -289,8 +289,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		add(new Widget(new Coord(360, umpanel.sz.y)) {
 			@Override
 			public void draw(GOut g) {
-				if (c.x != umpanel.c.x - 360)
-					c.x = umpanel.c.x - 360;
+				if (c.x != umpanel.c.x - (int)(this.sz.x*0.98))
+					c.x = umpanel.c.x - (int)(this.sz.x*0.98);
 				Tex mtime = ui.sess.glob.mservertimetex.get().b;
 				Tex ltime = ui.sess.glob.lservertimetex.get().b;
 				Tex rtime = ui.sess.glob.rservertimetex.get().b;
@@ -298,24 +298,24 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
 				int y = 10;
 				if (mtime != null) {
-					g.aimage(mtime, new Coord(sz.x - 5, y), 1, 0);
+					g.aimage(mtime, new Coord(sz.x, y), 1, 0);
 					y += mtime.sz().y;
 				}
 				if (ltime != null) {
-					g.aimage(ltime, new Coord(sz.x - 5, y), 1, 0);
+					g.aimage(ltime, new Coord(sz.x, y), 1, 0);
 					y += ltime.sz().y;
 				}
 				if (rtime != null) {
-					g.aimage(rtime, new Coord(sz.x - 5, y), 1, 0);
+					g.aimage(rtime, new Coord(sz.x, y), 1, 0);
 					y += rtime.sz().y;
 				}
 				if (btime != null) {
-					g.aimage(btime, new Coord(sz.x - 5, y), 1, 0);
+					g.aimage(btime, new Coord(sz.x, y), 1, 0);
 					y += btime.sz().y;
 				}
 				if (sz.y != y) resize(sz.x, y);
 			}
-		}, new Coord(umpanel.c.x - 360, 0));
+		}, new Coord(umpanel.c.x - (int)(this.sz.x*0.98), UI.scale(1)));
 
 	opts = add(new OptWnd());
 	opts.hide();
