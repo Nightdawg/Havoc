@@ -42,7 +42,7 @@ public class Equipory extends Widget implements DTarget {
 	public boolean updateBottomText = false;
 	long delayBottomTextUpdate;
 	private Tex Detection = null;
-	private Tex Sneak = null;
+	private Tex Subtlety = null;
 	private Tex ArmorClass = null;
     public static final Coord ecoords[] = {
 		new Coord( 0, 0 * yo),
@@ -276,10 +276,10 @@ public class Equipory extends Widget implements DTarget {
 					det = prc * exp;
 					snk = intl * ste;
 					String DetectionString = String.format("%,d", det).replace(',', '.');
-					String SneakString = String.format("%,d", snk).replace(',', '.');
-					//Sneak = Text.renderstroked2("Sneak: " + x, Color.WHITE, Color.BLACK, acf).tex();
+					String SubtletyString = String.format("%,d", snk).replace(',', '.');
+					//Subtlety = Text.renderstroked2("Subtlety: " + x, Color.WHITE, Color.BLACK, acf).tex();
 					Detection = new TexI(Utils.outline2(Text.renderstroked2("Detection (Prc*Exp):  " + DetectionString, Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
-					Sneak = new TexI(Utils.outline2(Text.renderstroked2("Sneak (Int*Ste):  " + SneakString, Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
+					Subtlety = new TexI(Utils.outline2(Text.renderstroked2("Subtlety (Int*Ste):  " + SubtletyString, Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
 					ArmorClass = new TexI(Utils.outline2(Text.renderstroked2("Armor Class:  " + aHard + "/" + aSoft + " (" + (aHard + aSoft) + ")", Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
 					updateBottomText = false;
 				} catch (Exception e) { // fail silently
@@ -289,8 +289,8 @@ public class Equipory extends Widget implements DTarget {
 		}
 		if (Detection != null)
 			g.image(Detection, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - Detection.sz().x / 2, bg.sz().y - UI.scale(56)));
-		if (Sneak != null)
-			g.image(Sneak, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - Sneak.sz().x / 2, bg.sz().y - UI.scale(40)));
+		if (Subtlety != null)
+			g.image(Subtlety, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - Subtlety.sz().x / 2, bg.sz().y - UI.scale(40)));
 		if (ArmorClass != null)
 			g.image(ArmorClass, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - ArmorClass.sz().x / 2, bg.sz().y - UI.scale(20)));
 	}
