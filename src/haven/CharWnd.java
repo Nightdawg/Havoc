@@ -434,13 +434,14 @@ public class CharWnd extends Window {
 	public final Glob.CAttr attr;
 	public final Tex img;
 	public final Color bg;
+		public final Resource res;
 	private double lvlt = 0.0;
 	private Text ct;
 	private int cbv = -1, ccv = -1;
 
 	private Attr(Glob glob, String attr, Color bg) {
 	    super(new Coord(attrw, attrf.height() + UI.scale(2)));
-	    Resource res = Resource.local().loadwait("gfx/hud/chr/" + attr);
+	    res = Resource.local().loadwait("gfx/hud/chr/" + attr);
 	    this.nm = attr;
 	    this.rnm = attrf.render(res.flayer(Resource.tooltip).t);
 	    this.img = new TexI(convolve(res.flayer(Resource.imgc).img, new Coord(this.sz.y, this.sz.y), iconfilter));
@@ -504,6 +505,7 @@ public class CharWnd extends Window {
 	public final Glob.CAttr attr;
 	public final Tex img;
 	public final Color bg;
+	public final Resource res;
 	public int tbv, tcv;
 	public long cost;
 	private Text ct;
@@ -511,7 +513,7 @@ public class CharWnd extends Window {
 
 	private SAttr(Glob glob, String attr, Color bg) {
 	    super(new Coord(attrw, attrf.height() + UI.scale(2)));
-	    Resource res = Resource.local().loadwait("gfx/hud/chr/" + attr);
+	    res = Resource.local().loadwait("gfx/hud/chr/" + attr);
 	    this.nm = attr;
 	    this.img = new TexI(convolve(res.flayer(Resource.imgc).img, new Coord(this.sz.y, this.sz.y), iconfilter));
 	    this.rnm = attrf.render(res.flayer(Resource.tooltip).t);
@@ -2175,6 +2177,34 @@ public class CharWnd extends Window {
 
 	resize(contentsz().add(UI.scale(15, 10)));
     }
+
+	public Glob.CAttr findattr(String name) {
+		for (SAttr skill : this.skill) {
+			if(name.equals(skill.attr.nm)) {
+				return skill.attr;
+			}
+		}
+		for (Attr stat : base) {
+			if(name.equals(stat.attr.nm)) {
+				return stat.attr;
+			}
+		}
+		return null;
+	}
+
+	public Glob.CAttr findattr(Resource res) {
+		for (SAttr skill : this.skill) {
+			if(res == skill.res) {
+				return skill.attr;
+			}
+		}
+		for (Attr stat : base) {
+			if(res == stat.res) {
+				return stat.attr;
+			}
+		}
+		return null;
+	}
 
 	public int statIndex(Resource res) {
 		if (base != null) {
