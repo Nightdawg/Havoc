@@ -68,7 +68,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public Progress prog = null;
     private boolean afk = false;
     public BeltSlot[] belt = new BeltSlot[144];
-    public Belt beltwdg1 = null, beltwdg2 = null, beltwdg3 = null, beltwdg4 = null;
+	public NDActionBar actionBar1 = null, actionBar2 = null, actionBar3 = null, actionBar4 = null;
+	public boolean localActionBarsLoaded = false;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
 	public static boolean swimon = false;
@@ -239,10 +240,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		chat.resize(chat.savedw,chat.savedh); // ND: Added this to set both sizes
 	    chat.show();
 	}
-	beltwdg1.raise();
-	beltwdg2.raise();
-	beltwdg3.raise();
-	beltwdg4.raise();
+	actionBar1.raise();
+	actionBar2.raise();
+	actionBar3.raise();
+	actionBar4.raise();
 
 //	blpanel = add(new Hidepanel("gui-bl", null, new Coord(-1,  1)) {
 //		public void move(double a) {
@@ -1123,18 +1124,18 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 
     public void draw(GOut g) {
-	beltwdg1.c = new Coord(chat.c.x, chat.c.y - beltwdg1.sz.y - UI.scale(5));
-	beltwdg2.c = new Coord(chat.c.x, chat.c.y - beltwdg1.sz.y - beltwdg2.sz.y - UI.scale(3));
-	beltwdg3.c = new Coord(sz.x - beltwdg3.sz.x - UI.scale(10), menupanel.c.y - beltwdg3.sz.y + UI.scale(20));
-	beltwdg4.c = new Coord(sz.x - beltwdg3.sz.x - beltwdg4.sz.x - UI.scale(5), menupanel.c.y - beltwdg4.sz.y + UI.scale(20));
+	actionBar1.c = new Coord(chat.c.x, chat.c.y - actionBar1.sz.y - UI.scale(5));
+	actionBar2.c = new Coord(chat.c.x, chat.c.y - actionBar1.sz.y - actionBar2.sz.y - UI.scale(3));
+	actionBar3.c = new Coord(sz.x - actionBar3.sz.x - UI.scale(10), menupanel.c.y - actionBar3.sz.y + UI.scale(20));
+	actionBar4.c = new Coord(sz.x - actionBar3.sz.x - actionBar4.sz.x - UI.scale(5), menupanel.c.y - actionBar4.sz.y + UI.scale(20));
 	super.draw(g);
 	int by = sz.y;
 	if(chat.visible())
 	    by = Math.min(by, chat.c.y);
-	if(beltwdg1.visible())
-	    by = Math.min(by, beltwdg1.c.y);
-	if(beltwdg2.visible())
-		by = Math.min(by, beltwdg2.c.y);
+	if(actionBar1.visible())
+	    by = Math.min(by, actionBar1.c.y);
+	if(actionBar2.visible())
+		by = Math.min(by, actionBar2.c.y);
 	if(cmdline != null) {
 	    drawcmd(g, new Coord(blpw + UI.scale(10), by -= UI.scale(30)));
 	} else if(lastmsg != null) {
@@ -1358,6 +1359,15 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		if(args.length > 3)
 		    lst = (Integer)args[3];
 		belt[slot] = new BeltSlot(slot, res, sdt, lst);
+
+		// ND: I genuinely have no idea if there's a better place to put these.
+		if (!localActionBarsLoaded) { // ND: This only needs to run once.
+			actionBar1.loadLocal();
+			actionBar2.loadLocal();
+			actionBar3.loadLocal();
+			actionBar4.loadLocal();
+			localActionBarsLoaded = true;
+		}
 	    }
 	} else if(msg == "polowner") {
 	    int id = (Integer)args[0];
@@ -1663,8 +1673,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    map.resize(sz);
 	if(prog != null)
 	    prog.move(sz.sub(prog.sz).mul(0.5, 0.35));
-	beltwdg1.c = new Coord(blpw + UI.scale(10), sz.y - beltwdg1.sz.y - UI.scale(5));
-	beltwdg2.c = new Coord(blpw + UI.scale(10), sz.y - beltwdg1.sz.y - beltwdg2.sz.y - UI.scale(5));
+	actionBar1.c = new Coord(blpw + UI.scale(10), sz.y - actionBar1.sz.y - UI.scale(5));
+	actionBar2.c = new Coord(blpw + UI.scale(10), sz.y - actionBar1.sz.y - actionBar2.sz.y - UI.scale(5));
     }
     
     public void presize() {
@@ -1915,23 +1925,65 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			KeyBinding.get("actbar4/0", KeyMatch.nil),
 	};
 
-	public class NDVerticalActionBar extends Belt {
+	public class NDActionBar extends Belt {
 		public KeyBinding[] beltkeys;
-		public int curbelt = 0;
+		public int curbelt;
+		public int barNumber;
 		final Coord pagoff = UI.scale(new Coord(10, 5));
+		public final boolean isVertical;
+		private int SERVER_FSLOT_INDEX;
 
-		public NDVerticalActionBar(KeyBinding[] keybindings, int beltNumber) {
-			super(UI.scale(new Coord(40, 400)));
+		public NDActionBar(KeyBinding[] keybindings, int beltNumber, boolean vertical) {
+			super(UI.scale(vertical ? new Coord(40, 400) : new Coord(400, 40)));
+			isVertical = vertical;
 			beltkeys = keybindings;
+			barNumber = beltNumber;
 			if (beltNumber > 0) {
 				curbelt = beltNumber - 1;
 			} else {
 				curbelt = 0;
 			}
+			SERVER_FSLOT_INDEX = curbelt * 12;
+		}
+
+		public void loadLocal() {
+			if (chrid != "") {
+				String[] resnames = Utils.getprefsa("actionBar" + barNumber + "_" + chrid, null);
+				if (resnames != null) {
+					for (int i = (curbelt * 12); i < (curbelt * 12)+12; i++) {
+						String resname = resnames[i];
+						if (!resname.equals("null")) {
+							try {
+								belt[i] = ((GameUI)parent).new BeltSlot(i, Resource.local().load(resname), Message.nil, 0);
+							} catch (Exception e) {   // possibly a resource from another client
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private void saveLocally() {
+			String chrid = gameui().chrid;
+			if (chrid != "") {
+				String[] resnames = new String[144];
+				for (int i = (curbelt * 12); i < (curbelt * 12)+12; i++) {
+					try {
+						GameUI.BeltSlot res = belt[i];
+						if (res != null && res.getres().name.startsWith("paginae/nightdawg"))
+							resnames[i] = res.getres().name;
+					} catch (Exception e) {
+					}
+				}
+				Utils.setprefsa("actionBar" + barNumber + "_" + chrid, resnames);
+			}
 		}
 
 		private Coord beltc(int i) {
-			return(pagoff.add(0, UI.scale(39 * i)));
+			if (isVertical)
+				return(pagoff.add(0, UI.scale(39 * i)));
+			else
+				return(pagoff.add(UI.scale(39 * i), 0));
 		}
 
 		public int beltslot(Coord c) {
@@ -1981,89 +2033,118 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			}
 			return(false);
 		}
-	}
 
-	public class NDHorizontalActionBar extends Belt {
-		public KeyBinding[] beltkeys;
-		public int curbelt = 0;
-		final Coord pagoff = UI.scale(new Coord(10, 5));
-
-		public NDHorizontalActionBar(KeyBinding[] keybindings, int beltNumber) {
-			super(UI.scale(new Coord(400, 40)));
-			beltkeys = keybindings;
-			if (beltNumber > 0) {
-				curbelt = beltNumber - 1;
-			} else {
-				curbelt = 0;
+		public boolean drop(Coord c, Coord ul) {
+			int slot = beltslot(c);
+			if(slot != -1) {
+				GameUI gui = gameui();
+				WItem item = gui.vhand;
+				if (item != null && item.item != null) {
+					belt[slot] = gui.new BeltSlot(slot, item.item.res, Message.nil, 0);
+					GameUI.this.wdgmsg("setbelt", slot, null);
+					saveLocally();
+				}
+				return(true);
 			}
+			return(false);
 		}
 
-		private Coord beltc(int i) {
-			return(pagoff.add(UI.scale(39 * i), 0));
-		}
 
-		public int beltslot(Coord c) {
-			for(int i = 0; i < 10; i++) {
-				if(c.isect(beltc(i), invsq.sz()))
-					return(i + (curbelt * 12));
-			}
-			return(-1);
-		}
+		public boolean iteminteract(Coord c, Coord ul) {return(false);}
 
-		public void draw(GOut g) {
-			for(int i = 0; i < 10; i++) {
-				int slot = i + (curbelt * 12);
-				Coord c = beltc(i);
-				g.image(invsq, beltc(i));
-				try {
-					if(belt[slot] != null) {
-						belt[slot].spr().draw(g.reclip(c.add(UI.scale(1), UI.scale(1)), invsq.sz().sub(UI.scale(2), UI.scale(2))));
-					}
-				} catch(Loading e) {}
-				String keybindString = beltkeys[i].key().name();
-				if (keybindString.contains("Shift")) {
-					keybindString = keybindString.replace("Shift", "s");
-				}
-				if (keybindString.contains("Ctrl")) {
-					keybindString = keybindString.replace("Ctrl", "c");
-				}
-				if (keybindString.contains("Alt")) {
-					keybindString = keybindString.replace("Alt", "a");
-				}
-				if (keybindString.contains("None")) {
-					keybindString = keybindString.replace("None", "");
-				}
-				g.aimage(new TexI(Utils.outline2(actBarKeybindsFoundry.render(keybindString).img, Color.BLACK, true)), c.add(invsq.sz().sub(UI.scale(2), 0)), 1, 1);
-			}
-			super.draw(g);
-		}
-
-		public boolean globtype(char key, KeyEvent ev) {
-			if (this.visible()) {
-				for (int i = 0; i < beltkeys.length; i++) {
-					if (beltkeys[i].key().match(ev)) {
-						keyact(i + (curbelt * 12));
-						return (true);
+		public boolean dropthing(Coord c, Object thing) {
+			int slot = beltslot(c);
+			if(slot != -1) {
+				if(thing instanceof Resource) {
+					Resource res = (Resource)thing;
+					if(res.layer(Resource.action) != null) {
+						belt[slot] = this.gameui().new BeltSlot(slot, res.indir(), Message.nil, 0);
+						if (res.name.startsWith("paginae/nightdawg")) {
+							saveLocally();
+						} else {
+							GameUI.this.wdgmsg("setbelt", slot, res.name);
+							saveLocally();
+						}
+						return(true);
 					}
 				}
 			}
 			return(false);
+		}
+
+		@Override
+		public boolean mousedown(Coord c, int button) {
+			int slot = beltslot(c);
+			if (slot != -1) {
+				if (button == 1) {
+					use(slot);
+				} else if (button == 3) {
+					GameUI.this.wdgmsg("setbelt", slot, null);
+					belt[slot] = null;
+					saveLocally();
+				}
+				return true;
+			}
+			return false;
+		}
+
+		private void use(int slot) {
+			try {
+				Resource res = belt[slot].getres();
+				Resource.AButton act = res.layer(Resource.action);
+				if (act == null) {
+					GameUI.this.wdgmsg("belt", getServerSlot(slot), 1, ui.modflags());
+				} else {
+					if (res.name.startsWith("paginae/nightdawg"))
+						gameui().menu.use(act.ad);
+					else
+						gameui().act(act.ad);
+				}
+			} catch (Exception e) {
+			}
+		}
+
+		private int getServerSlot(int slot) {
+			return SERVER_FSLOT_INDEX + slot;
+		}
+
+		public void delete(int serverSlot) {
+			if (serverSlot < SERVER_FSLOT_INDEX)
+				return;
+
+			int slot = serverSlot - SERVER_FSLOT_INDEX;
+
+			GameUI.BeltSlot ires = belt[slot];
+			try {
+				if (ires == null || ires.getres().name.startsWith("paginae/nightdawg"))
+					return;
+			} catch (Exception e) {
+			}
+
+			belt[slot] = null;
+			saveLocally();
+		}
+
+		public void add(int serverSlot, GameUI.BeltSlot res) {
+			if (serverSlot < SERVER_FSLOT_INDEX)
+				return;
+			belt[serverSlot - SERVER_FSLOT_INDEX] = res;
 		}
 	}
     
     {
-		beltwdg1 = add(new NDHorizontalActionBar(kb_actbar1, 1));
-		beltwdg2 = add(new NDHorizontalActionBar(kb_actbar2, 2));
-		beltwdg3 = add(new NDVerticalActionBar(kb_actbar3, 3));
-		beltwdg4 = add(new NDVerticalActionBar(kb_actbar4, 4));
+		actionBar1 = add(new NDActionBar(kb_actbar1, 1, false));
+		actionBar2 = add(new NDActionBar(kb_actbar2, 2, false));
+		actionBar3 = add(new NDActionBar(kb_actbar3, 3, true));
+		actionBar4 = add(new NDActionBar(kb_actbar4, 4, true));
 		if (!Utils.getprefb("showActionBar1", true))
-			beltwdg1.hide();
+			actionBar1.hide();
 		if (!Utils.getprefb("showActionBar2", false))
-			beltwdg2.hide();
+			actionBar2.hide();
 		if (!Utils.getprefb("showActionBar3", false))
-			beltwdg3.hide();
+			actionBar3.hide();
 		if (!Utils.getprefb("showActionBar4", false))
-			beltwdg4.hide();
+			actionBar4.hide();
     }
 
     private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();

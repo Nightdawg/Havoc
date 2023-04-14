@@ -682,13 +682,13 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					if (val) {
 						Utils.setprefb("showActionBar1", true);
-						if (gameui() != null && gameui().beltwdg1 != null)
-							gameui().beltwdg1.show();
+						if (gameui() != null && gameui().actionBar1 != null)
+							gameui().actionBar1.show();
 					}
 					else {
 						Utils.setprefb("showActionBar1", false);
-						if (gameui() != null && gameui().beltwdg1 != null)
-							gameui().beltwdg1.hide();
+						if (gameui() != null && gameui().actionBar1 != null)
+							gameui().actionBar1.hide();
 					}
 					a = val;
 				}
@@ -698,13 +698,13 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					if (val) {
 						Utils.setprefb("showActionBar2", true);
-						if (gameui() != null && gameui().beltwdg2 != null)
-							gameui().beltwdg2.show();
+						if (gameui() != null && gameui().actionBar2 != null)
+							gameui().actionBar2.show();
 					}
 					else {
 						Utils.setprefb("showActionBar2", false);
-						if (gameui() != null && gameui().beltwdg2 != null)
-							gameui().beltwdg2.hide();
+						if (gameui() != null && gameui().actionBar2 != null)
+							gameui().actionBar2.hide();
 					}
 					a = val;
 				}
@@ -715,13 +715,13 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					if (val) {
 						Utils.setprefb("showActionBar3", true);
-						if (gameui() != null && gameui().beltwdg3 != null)
-							gameui().beltwdg3.show();
+						if (gameui() != null && gameui().actionBar3 != null)
+							gameui().actionBar3.show();
 					}
 					else {
 						Utils.setprefb("showActionBar3", false);
-						if (gameui() != null && gameui().beltwdg3 != null)
-							gameui().beltwdg3.hide();
+						if (gameui() != null && gameui().actionBar3 != null)
+							gameui().actionBar3.hide();
 					}
 					a = val;
 				}
@@ -732,13 +732,13 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					if (val) {
 						Utils.setprefb("showActionBar4", true);
-						if (gameui() != null && gameui().beltwdg4 != null)
-							gameui().beltwdg4.show();
+						if (gameui() != null && gameui().actionBar4 != null)
+							gameui().actionBar4.show();
 					}
 					else {
 						Utils.setprefb("showActionBar4", false);
-						if (gameui() != null && gameui().beltwdg4 != null)
-							gameui().beltwdg4.hide();
+						if (gameui() != null && gameui().actionBar4 != null)
+							gameui().actionBar4.hide();
 					}
 					a = val;
 				}

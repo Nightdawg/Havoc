@@ -41,6 +41,8 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.image.*;
 
+import org.json.JSONArray;
+
 public class Utils {
     public static final java.nio.charset.Charset utf8 = java.nio.charset.Charset.forName("UTF-8");
     public static final java.nio.charset.Charset ascii = java.nio.charset.Charset.forName("US-ASCII");
@@ -296,6 +298,38 @@ public class Utils {
 	} catch(SecurityException e) {
 	}
     }
+
+	static String[] getprefsa(String prefname, String[] def) {
+		try {
+			String jsonstr = Utils.getpref(prefname, null);
+			if (jsonstr == null)
+				return def;
+			JSONArray ja = new JSONArray(jsonstr);
+			String[] ra = new String[ja.length()];
+			for (int i = 0; i < ja.length(); i++)
+				ra[i] = ja.getString(i);
+			return ra;
+		} catch (SecurityException e) {
+			return def;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return def;
+		}
+	}
+
+	static void setprefsa(String prefname, String[] val) {
+		try {
+			String jsonarr = "";
+			for (String s : val)
+				jsonarr += "\"" + s + "\",";
+			if (jsonarr.length() > 0)
+				jsonarr = jsonarr.substring(0, jsonarr.length() - 1);
+			Utils.setpref(prefname, "[" + jsonarr + "]");
+		} catch (SecurityException e) {
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 
     public static int getprefi(String prefname, int def) {
 	try {
