@@ -309,6 +309,8 @@ public class GobIcon extends GAttrib {
 		}
 		if(!setdef)
 		    set.defshow = set.show;
+		if(set.res.name.equals("gfx/hud/mmap/plo")) // ND: Enable the Player Map Icon from the get-go.
+			set.defshow = set.show = true;
 		ret.settings.put(res.name, set);
 	    }
 		removeEnderCustomIcons(ret.settings);
@@ -403,7 +405,20 @@ public class GobIcon extends GAttrib {
 		    Widget prev;
 		    prev = adda(new CheckBox("").state(() -> icon.conf.notify).set(andsave(val -> icon.conf.notify = val)).settip("Play selected alarm sound"),
 				sz.x - UI.scale(2) - (sz.y / 2), sz.y / 2, 0.5, 0.5);
-			prev = adda(new CheckBox("").state(() -> icon.conf.show).set(andsave(val -> {icon.conf.show = val;updateAllCheckbox();})).settip("Show icon on map"),
+			prev = adda(new CheckBox(""){
+				@Override
+				public void set(boolean val) {
+					// ND: Check if the tooltip of the icon is "Player", and make sure to always set it to true.
+					if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Player")) {
+						icon.conf.show = true;
+						gameui().error("You're NOT disabling the player map icon. I don't care what you have to say.");
+					}
+					else
+						icon.conf.show = val;
+					if(save != null)
+						save.run();
+					updateAllCheckbox();
+				}}.state(() -> icon.conf.show).settip("Show icon on map"),
 				prev.c.x - UI.scale(2) - (sz.y / 2), sz.y / 2, 0.5, 0.5);
 		    add(SListWidget.IconText.of(Coord.of(prev.c.x - UI.scale(2), sz.y), () -> item.conf.res.loadsaved(Resource.remote())), Coord.z);
 		}
@@ -488,7 +503,21 @@ public class GobIcon extends GAttrib {
 	    public IconSettings(int w, Setting conf) {
 		super(Coord.z);
 		this.conf = conf;
-		Widget prev = add(new CheckBox("Show icon on map").state(() -> conf.show).set(andsave(val -> conf.show = val)),
+		Widget prev = add(new CheckBox("Show icon on map"){
+					@Override
+					public void set(boolean val) {
+						// ND: Check if the tooltip of the icon is "Player", and make sure to always set it to true.
+						if (conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Player")) {
+							conf.show = true;
+							gameui().error("You're NOT disabling the player map icon. I don't care what you have to say.");
+						}
+						else
+							conf.show = val;
+						if(save != null)
+							save.run();
+						updateAllCheckbox();
+					}
+				}.state(() -> conf.show),
 				  0, 0);
 		add(new CheckBox("Play selected alarm sound").state(() -> conf.notify).set(andsave(val -> conf.notify = val)),
 		    w / 2, 0);
@@ -582,7 +611,13 @@ public class GobIcon extends GAttrib {
 			toggleAll = cont.last(new CheckBox("Select All") {
 				@Override
 				public void changed(boolean val) {
-					list.items().forEach(icon -> icon.conf.show = val);
+					list.items().forEach(icon -> {
+						// ND: Check if the tooltip of the icon is "Player", and make sure to always set it to true.
+						if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Player"))
+							icon.conf.show = true;
+						else
+							icon.conf.show = val;
+					});
 					if(save != null)
 						save.run();
 				}}, 0);
