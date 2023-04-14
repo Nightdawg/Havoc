@@ -906,12 +906,15 @@ public class MiniMap extends Widget {
 
 	private void setBiome(Location loc) {
 		try {
+			Resource res = null;
 			String newbiome = biome;
 			if(loc == null) {
 				Gob player = gameui().map.player();
 				MCache mCache = ui.sess.glob.map;
-				int tile = mCache.gettile(player.rc.div(tilesz).floor());
-				Resource res = mCache.tilesetr(tile);
+				if (player != null) { // ND: Do this to avoid Nullpointer crash when switching maps? (Like going from character creation zone to valhalla or the real world)
+					int tile = mCache.gettile(player.rc.div(tilesz).floor());
+					res = mCache.tilesetr(tile);
+				}
 				if(res != null) {
 					newbiome = res.name;
 				}
