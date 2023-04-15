@@ -1886,6 +1886,7 @@ public class Resource implements Serializable {
 	return(o.name.equals(this.name) && (o.ver == this.ver));
     }
 
+	//private static final List<String> ignoreResVersionList = Arrays.asList("gfx/terobjs/cupboard", "gfx/terobjs/crate");
     private static final byte[] RESOURCE_SIG = "Haven Resource 1".getBytes(Utils.ascii);
     private void load(InputStream st) throws IOException {
 	Message in = new StreamMessage(st);
@@ -1895,8 +1896,11 @@ public class Resource implements Serializable {
 	List<Layer> layers = new LinkedList<Layer>();
 	if(this.ver == -1)
 	    this.ver = ver;
-	else if(ver != this.ver)
-	    throw(new LoadException("Wrong res version (" + ver + " != " + this.ver + ")", this));
+	else if(ver != this.ver) {
+		System.out.printf("Wrong res version (%d != %d) %s%n", ver, this.ver, this);
+		//if (ignoreResVersionList.stream().noneMatch(name::matches))
+			throw (new LoadException("Wrong res version (" + ver + " != " + this.ver + ")", this));
+	}
 	while(!in.eom()) {
 	    LayerFactory<?> lc = ltypes.get(in.string());
 	    int len = in.int32();
