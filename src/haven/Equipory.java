@@ -216,7 +216,7 @@ public class Equipory extends Widget implements DTarget {
 	}
 	for(int i = 0; i < ecoords.length; i++) {
 	    if((slots & (1 << i)) != 0) {
-		g.chcolor(255, 255, 0, 64);
+		g.chcolor(0, 200, 0, 96);
 		g.frect(ecoords[i].add(1, 1), invsq.sz().sub(2, 2));
 		g.chcolor();
 	    }

@@ -83,7 +83,7 @@ public abstract class SListMenu<I, W extends Widget> extends Widget {
 
 	protected void drawbg(GOut g, I item, int idx, Area area) {
 	    if(area.contains(mc)) {
-		g.chcolor(255, 255, 0, 128);
+		g.chcolor(100, 100, 100, 128);
 		g.frect2(area.ul, area.br);
 		g.chcolor();
 	    } else {
