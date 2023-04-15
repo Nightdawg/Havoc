@@ -520,6 +520,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 			if (ad[0].equals("@")) {
 				use(ad);
 			}
+			if (ad.length > 0 && (ad[0].equals("craft") || ad[0].equals("bp"))) {
+				if((ad[0].equals("craft")))
+					gameui().makewnd.setLastAction(r.pag);
+			}
 		}
 	    r.pag.newp = 0;
 	    r.use(iact);

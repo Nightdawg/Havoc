@@ -50,7 +50,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     private List<Widget> meters = new LinkedList<Widget>();
     private Text lastmsg;
     private double msgtime;
-    private Window invwnd, equwnd, makewnd, srchwnd, iconwnd;
+    private Window invwnd, equwnd, /*makewnd,*/ srchwnd, iconwnd;
+	public CraftWindow makewnd;
     private Coord makewndc = Utils.getprefc("makewndc", new Coord(400, 200));
     public Inventory maininv;
     public CharWnd chrwdg;
@@ -322,6 +323,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	opts.hide();
 	zerg = add(new Zergwnd(), Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
 	zerg.hide();
+	makewnd = add(new CraftWindow(), UI.scale(400, 200));
+	makewnd.hide();
 	quickslots = add(new QuickSlotsWdg(), Utils.getprefc("wndc-quickslots", UI.scale(new Coord(426, 10))));
 	if (!Utils.getprefb("showQuickSlotsBar", true))
 		quickslots.hide();
@@ -953,34 +956,14 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    chrwdg = add((CharWnd)child, Utils.getprefc("wndc-chr", new Coord(300, 50)));
 	    chrwdg.hide();
 	} else if(place == "craft") {
-	    String cap = "";
-	    Widget mkwdg = child;
-	    if(mkwdg instanceof Makewindow)
-		cap = ((Makewindow)mkwdg).rcpnm;
-	    if(cap.equals(""))
-		cap = "Crafting";
-	    makewnd = new Window(Coord.z, cap, true) {
-		    public void wdgmsg(Widget sender, String msg, Object... args) {
-			if((sender == this) && msg.equals("close")) {
-			    mkwdg.wdgmsg("close");
-			    return;
-			}
-			super.wdgmsg(sender, msg, args);
-		    }
-		    public void cdestroy(Widget w) {
-			if(w == mkwdg) {
-			    ui.destroy(this);
-			    makewnd = null;
-			}
-		    }
-		    public void destroy() {
-			Utils.setprefc("makewndc", makewndc = this.c);
-			super.destroy();
-		    }
-		};
-	    makewnd.add(mkwdg, Coord.z);
-	    makewnd.pack();
-	    fitwdg(add(makewnd, makewndc));
+		String cap = "";
+		Widget mkwdg = child;
+		if(mkwdg instanceof Makewindow)
+			cap = ((Makewindow)mkwdg).rcpnm;
+		makewnd.add(child);
+		makewnd.pack();
+		makewnd.show();
+		makewnd.cap = cap;
 	} else if(place == "buddy") {
 	    zerg.ntab(buddies = (BuddyWnd)child, zerg.kin);
 	} else if(place == "pol") {
