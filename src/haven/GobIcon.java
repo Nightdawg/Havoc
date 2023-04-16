@@ -260,6 +260,7 @@ public class GobIcon extends GAttrib {
 			}
 		}
 
+	private static final List<String> mandatoryEnabledIcons = Arrays.asList("gfx/hud/mmap/plo", "gfx/hud/mmap/cave", "gfx/terobjs/mm/watervortex", "gfx/terobjs/mm/boostspeed");
 	public static Settings load(Message buf) {
 	    if(!Arrays.equals(buf.bytes(sig.length), sig))
 		throw(new Message.FormatError("Invalid signature"));
@@ -309,14 +310,10 @@ public class GobIcon extends GAttrib {
 		}
 		if(!setdef)
 		    set.defshow = set.show;
-		if(set.res.name.equals("gfx/hud/mmap/plo")) // ND: Enable the Player Map Icon from the get-go.
+
+		if (mandatoryEnabledIcons.stream().anyMatch(set.res.name::matches))
 			set.defshow = set.show = true;
-		if(set.res.name.equals("gfx/hud/mmap/cave")) // ND: Enable the Cave Map Icon from the get-go.
-			set.defshow = set.show = true;
-		if(set.res.name.equals("gfx/terobjs/mm/watervortex")) // ND: Enable the Vortex Map Icon from the get-go.
-			set.defshow = set.show = true;
-		if(set.res.name.equals("gfx/terobjs/mm/boostspeed")) // ND: Enable the Boost Speed Icon from the get-go.
-			set.defshow = set.show = true;
+
 		ret.settings.put(res.name, set);
 	    }
 		removeEnderCustomIcons(ret.settings);
@@ -414,28 +411,27 @@ public class GobIcon extends GAttrib {
 			prev = adda(new CheckBox(""){
 				@Override
 				public void set(boolean val) {
-					// ND: Check if the tooltip of the icon is "Player", and make sure to always set it to true.
-					if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Player")) {
-						icon.conf.show = true;
-						gameui().error("You're NOT disabling the player map icon. I don't care what you have to say.");
+					String iconTooltipName = icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t;
+					switch(iconTooltipName){
+						case("Player"):
+							icon.conf.show = true;
+							gameui().error("You're NOT disabling the player map icon. I don't care what you have to say.");
+							break;
+						case("Cave Passage"):
+							icon.conf.show = true;
+							gameui().error("Let's keep Caves visible, yeah?");
+							break;
+						case("Swirling Vortex"):
+							icon.conf.show = true;
+							gameui().error("Vortexes can be dangerous. You don't want to miss them, right?");
+							break;
+						case("Boost Speed"):
+							icon.conf.show = true;
+							gameui().error("You need to see Speed Boosts at all times. Keep them enabled.");
+							break;
+						default:
+							icon.conf.show = val;
 					}
-					// ND: Check if the tooltip of the icon is "Cave Passage", and make sure to always set it to true.
-					else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Cave Passage")) {
-						icon.conf.show = true;
-						gameui().error("Let's keep Caves visible, yeah?");
-					}
-					// ND: Check if the tooltip of the icon is "Swirling Vortex", and make sure to always set it to true.
-					else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Swirling Vortex")) {
-						icon.conf.show = true;
-						gameui().error("Vortexes can be dangerous. You don't want to miss them, right?");
-					}
-					// ND: Check if the tooltip of the icon is "Boost Speed", and make sure to always set it to true.
-					else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Boost Speed")) {
-						icon.conf.show = true;
-						gameui().error("You need to see Speed Boosts at all times. Keep them enabled.");
-					}
-					else
-						icon.conf.show = val;
 					if(save != null)
 						save.run();
 					updateAllCheckbox();
@@ -527,28 +523,27 @@ public class GobIcon extends GAttrib {
 		Widget prev = add(new CheckBox("Show icon on map"){
 					@Override
 					public void set(boolean val) {
-						// ND: Check if the tooltip of the icon is "Player", and make sure to always set it to true.
-						if (conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Player")) {
-							conf.show = true;
-							gameui().error("You're NOT disabling the player map icon. I don't care what you have to say.");
+						String iconTooltipName = conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t;
+						switch(iconTooltipName){
+							case("Player"):
+								conf.show = true;
+								gameui().error("You're NOT disabling the player map icon. I don't care what you have to say.");
+								break;
+							case("Cave Passage"):
+								conf.show = true;
+								gameui().error("Let's keep Caves visible, yeah?");
+								break;
+							case("Swirling Vortex"):
+								conf.show = true;
+								gameui().error("Vortexes can be dangerous. You don't want to miss them, right?");
+								break;
+							case("Boost Speed"):
+								conf.show = true;
+								gameui().error("You need to see Speed Boosts at all times. Keep them enabled.");
+								break;
+							default:
+								conf.show = val;
 						}
-						// ND: Check if the tooltip of the icon is "Cave Passage", and make sure to always set it to true.
-						else if (conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Cave Passage")) {
-							conf.show = true;
-							gameui().error("Let's keep Caves visible, yeah?");
-						}
-						// ND: Check if the tooltip of the icon is "Swirling Vortex", and make sure to always set it to true.
-						else if (conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Swirling Vortex")) {
-							conf.show = true;
-							gameui().error("Vortexes can be dangerous. You don't want to miss them, right?");
-						}
-						// ND: Check if the tooltip of the icon is "Boost Speed", and make sure to always set it to true.
-						else if (conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Boost Speed")) {
-							conf.show = true;
-							gameui().error("You need to see Speed Boosts at all times. Keep them enabled.");
-						}
-						else
-							conf.show = val;
 						if(save != null)
 							save.run();
 						updateAllCheckbox();
