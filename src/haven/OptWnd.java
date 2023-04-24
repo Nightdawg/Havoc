@@ -443,12 +443,7 @@ public class OptWnd extends Window {
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
-		if (Utils.getprefb("CornerFPSSettingBool", false)){
-			JOGLPanel.enableCornerFPSSetting = true;
-		}
-		else {
-			JOGLPanel.enableCornerFPSSetting = false;
-		}
+		JOGLPanel.enableCornerFPSSetting = Utils.getprefb("CornerFPSSettingBool", false);
 
 	    Widget prev = add(new Label("Interface scale (requires restart)"), 0, 0);
 	    {
@@ -526,14 +521,8 @@ public class OptWnd extends Window {
 		prev = add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
 			{a = (Utils.getprefb("CornerFPSSettingBool", false));}
 			public void set(boolean val) {
-				if (val) {
-					JOGLPanel.enableCornerFPSSetting = true;
-					Utils.setprefb("CornerFPSSettingBool", true);
-				}
-				else {
-					JOGLPanel.enableCornerFPSSetting = false;
-					Utils.setprefb("CornerFPSSettingBool", false);
-				}
+				JOGLPanel.enableCornerFPSSetting = val;
+				Utils.setprefb("CornerFPSSettingBool", val);
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 6));
@@ -547,49 +536,32 @@ public class OptWnd extends Window {
 		prev = add(showQuickSlotsBar = new CheckBox("Show Quick Slots Widget"){
 			{a = (Utils.getprefb("showQuickSlotsBar", true));}
 			public void set(boolean val) {
-				if (val){
-					Utils.setprefb("showQuickSlotsBar", true);
-					if (gameui() != null && gameui().quickslots != null)
+				Utils.setprefb("showQuickSlotsBar", val);
+				if (gameui() != null && gameui().quickslots != null){
+					if (val)
 						gameui().quickslots.show();
-				} else {
-					Utils.setprefb("showQuickSlotsBar", false);
-					if (gameui() != null && gameui().quickslots != null)
+					else
 						gameui().quickslots.hide();
 				}
-
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 6));
 		prev = add(toggleQualityDisplayCheckBox = new CheckBox("Display Quality on Items"){
-			{a = (Utils.getprefb("qtoggle", false));}
+			{a = (Utils.getprefb("qtoggle", true));}
 			public void set(boolean val) {
-				if (val) {
-					Utils.setprefb("qtoggle", true);
-					Quality.show = true;
-				}
-				else {
-					Utils.setprefb("qtoggle", false);
-					Quality.show = false;
-				}
+				Utils.setprefb("qtoggle", val);
+				Quality.show = val;
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 6));
 		prev = add(toggleGobHealthDisplayCheckBox = new CheckBox("Display Health Percentage on Objects"){
 			{a = (Utils.getprefb("gobHealthDisplayToggle", true));}
 			public void set(boolean val) {
-				if (val) {
-					Utils.setprefb("gobHealthDisplayToggle", true);
-					GobHealthInfo.displayHealthPercentage = true;
-				}
-				else {
-					Utils.setprefb("gobHealthDisplayToggle", false);
-					GobHealthInfo.displayHealthPercentage = false;
-				}
+				Utils.setprefb("gobHealthDisplayToggle", val);
+				GobHealthInfo.displayHealthPercentage = val;
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 6));
-
-
 
 		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 30).x(0));
 		setTooltipsForInterfaceSettingsStuff();
@@ -628,7 +600,15 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Toggle UI", GameUI.kb_hide, y);
 			y = addbtn(cont, "Log out", GameUI.kb_logout, y);
 			y = addbtn(cont, "Switch character", GameUI.kb_switchchr, y);
-			y = cont.adda(new Label("Map options"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
+			y = cont.adda(new Label("Map Buttons"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
+			y = addbtn(cont, "Reset view", MapWnd.kb_home, y);
+			y = addbtn(cont, "Compact mode", MapWnd.kb_compact, y);
+			y = addbtn(cont, "Show personal claims", MapWnd.kb_claim, y);
+			y = addbtn(cont, "Show village claims", MapWnd.kb_vil, y);
+			y = addbtn(cont, "Show provinces", MapWnd.kb_prov, y);
+			y = addbtn(cont, "Hide markers", MapWnd.kb_hmark, y);
+			y = addbtn(cont, "Add marker", MapWnd.kb_mark, y);
+			y = cont.adda(new Label("World Toggles"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
 			y = addbtn(cont, "Display claims", GameUI.kb_claim, y);
 			y = addbtn(cont, "Display villages", GameUI.kb_vil, y);
 			y = addbtn(cont, "Display realms", GameUI.kb_rlm, y);
@@ -643,11 +623,6 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Snap East", MapView.kb_camSnapEast, y);
 			y = addbtn(cont, "Snap West", MapView.kb_camSnapWest, y);
 			y = addbtn(cont, "Reset", MapView.kb_camreset, y);
-			y = cont.adda(new Label("Map window"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
-			y = addbtn(cont, "Reset view", MapWnd.kb_home, y);
-			y = addbtn(cont, "Place marker", MapWnd.kb_mark, y);
-			y = addbtn(cont, "Toggle markers", MapWnd.kb_hmark, y);
-			y = addbtn(cont, "Compact mode", MapWnd.kb_compact, y);
 			y = cont.adda(new Label("Walking speed"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
 			y = addbtn(cont, "Increase speed", Speedget.kb_speedup, y);
 			y = addbtn(cont, "Decrease speed", Speedget.kb_speeddn, y);
@@ -657,7 +632,7 @@ public class OptWnd extends Window {
 			for (int i = 0; i < Fightsess.kb_acts.length; i++)
 				y = addbtn(cont, String.format("Combat action %d", i + 1), Fightsess.kb_acts[i], y);
 			y = addbtn(cont, "Switch targets", Fightsess.kb_relcycle, y);
-			y = cont.adda(new Label("Custom features"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
+			y = cont.adda(new Label("Other Custom features"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
 			y = addbtn(cont, "Drink Button", GameUI.kb_drinkButton, y);
 			y = addbtn(cont, "Attack! Button", GameUI.kb_aggroButton, y);
 			y = addbtn(cont, "Right Hand (Quick switch)", GameUI.kb_rightQuickSlotButton, y);
@@ -680,14 +655,11 @@ public class OptWnd extends Window {
 			prev = add(new CheckBox("Enable Horizontal Action Bar 1"){
 				{a = Utils.getprefb("showActionBar1", true);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("showActionBar1", true);
-						if (gameui() != null && gameui().actionBar1 != null)
+					Utils.setprefb("showActionBar1", val);
+					if (gameui() != null && gameui().actionBar1 != null){
+						if (val)
 							gameui().actionBar1.show();
-					}
-					else {
-						Utils.setprefb("showActionBar1", false);
-						if (gameui() != null && gameui().actionBar1 != null)
+						else
 							gameui().actionBar1.hide();
 					}
 					a = val;
@@ -696,14 +668,11 @@ public class OptWnd extends Window {
 			prev = add(new CheckBox("Enable Horizontal Action Bar 2"){
 				{a = Utils.getprefb("showActionBar2", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("showActionBar2", true);
-						if (gameui() != null && gameui().actionBar2 != null)
+					Utils.setprefb("showActionBar2", val);
+					if (gameui() != null && gameui().actionBar2 != null){
+						if (val)
 							gameui().actionBar2.show();
-					}
-					else {
-						Utils.setprefb("showActionBar2", false);
-						if (gameui() != null && gameui().actionBar2 != null)
+						else
 							gameui().actionBar2.hide();
 					}
 					a = val;
@@ -713,14 +682,11 @@ public class OptWnd extends Window {
 			prev = add(new CheckBox("Enable Vertical Action Bar 1"){
 				{a = Utils.getprefb("showActionBar3", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("showActionBar3", true);
-						if (gameui() != null && gameui().actionBar3 != null)
+					Utils.setprefb("showActionBar3", val);
+					if (gameui() != null && gameui().actionBar3 != null){
+						if (val)
 							gameui().actionBar3.show();
-					}
-					else {
-						Utils.setprefb("showActionBar3", false);
-						if (gameui() != null && gameui().actionBar3 != null)
+						else
 							gameui().actionBar3.hide();
 					}
 					a = val;
@@ -730,14 +696,11 @@ public class OptWnd extends Window {
 			prev = add(new CheckBox("Enable Vertical Action Bar 2"){
 				{a = Utils.getprefb("showActionBar4", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("showActionBar4", true);
-						if (gameui() != null && gameui().actionBar4 != null)
+					Utils.setprefb("showActionBar4", val);
+					if (gameui() != null && gameui().actionBar4 != null){
+						if (val)
 							gameui().actionBar4.show();
-					}
-					else {
-						Utils.setprefb("showActionBar4", false);
-						if (gameui() != null && gameui().actionBar4 != null)
+						else
 							gameui().actionBar4.hide();
 					}
 					a = val;
@@ -808,42 +771,24 @@ public class OptWnd extends Window {
 			prev = add(disableWeatherEffectsCheckBox = new CheckBox("Disable Weather (Requires Relog)"){
 				{a = Utils.getprefb("isWeatherDisabled", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("isWeatherDisabled", true);
-						MapView.isWeatherDisabled = true;
-					}
-					else {
-						Utils.setprefb("isWeatherDisabled", false);
-						MapView.isWeatherDisabled = false;
-					}
+					Utils.setprefb("isWeatherDisabled", val);
+					MapView.isWeatherDisabled = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
 			prev = add(disableFlavourObjectsCheckBox = new CheckBox("Disable Flavour Objects (Requires Relog)"){
 				{a = Utils.getprefb("disableFlavourObjects", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("disableFlavourObjects", true);
-						disableFlavourObjects = true;
-					}
-					else {
-						Utils.setprefb("disableFlavourObjects", false);
-						disableFlavourObjects = false;
-					}
+					Utils.setprefb("disableFlavourObjects", val);
+					disableFlavourObjects = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
 			prev = add(flatWorldCheckBox = new CheckBox("Flat World (Requires Relog)"){
 				{a = Utils.getprefb("flatWorld", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("flatWorld", true);
-						flatWorldSetting = true;
-					}
-					else {
-						Utils.setprefb("flatWorld", false);
-						flatWorldSetting = false;
-					}
+					Utils.setprefb("flatWorld", val);
+					flatWorldSetting = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
@@ -851,14 +796,8 @@ public class OptWnd extends Window {
 			prev = add(tileSmoothingCheckBox = new CheckBox("Disable Tile Smoothing (Requires Relog)"){
 				{a = Utils.getprefb("noTileSmoothing", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("noTileSmoothing", true);
-						noTileSmoothing = true;
-					}
-					else {
-						Utils.setprefb("noTileSmoothing", false);
-						noTileSmoothing = false;
-					}
+					Utils.setprefb("noTileSmoothing", val);
+					noTileSmoothing = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
@@ -866,14 +805,8 @@ public class OptWnd extends Window {
 			prev = add(tileTransitionsCheckBox = new CheckBox("Disable Tile Transitions (Requires Relog)"){
 				{a = Utils.getprefb("noTileTransitions", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("noTileTransitions", true);
-						noTileTransitions = true;
-					}
-					else {
-						Utils.setprefb("noTileTransitions", false);
-						noTileTransitions = false;
-					}
+					Utils.setprefb("noTileTransitions", val);
+					noTileTransitions = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
@@ -900,59 +833,30 @@ public class OptWnd extends Window {
 	public class NDCamSettingsPanel extends Panel {
 
 		public NDCamSettingsPanel(Panel back) {
-			Widget prev; // this will be visible with both camera type settings
-			Widget FreePrev; // used to calculate the positions for the NDFree camera settings
-			Widget OrthoPrev; // used to calculate the positions for the NDOrtho camera settings
-			if (Utils.getprefb("CamAxisSettingBool", true)){
-				Utils.setprefb("CamAxisSettingBool", true);
-				MapView.cameraAxisReverter = -1;
-			}
-			else {
-				Utils.setprefb("CamAxisSettingBool", false);
-				MapView.cameraAxisReverter = 1;
-			}
+			Widget prev; // ND: this will be visible with both camera type settings
+			Widget FreePrev; // ND: used to calculate the positions for the NDFree camera settings
+			Widget OrthoPrev; // ND: used to calculate the positions for the NDOrtho camera settings
 
-			if (Utils.getprefb("unlockedNDOrtho", true)){
-				MapView.isometricNDOrtho = false;
-			}
-			else {
-				MapView.isometricNDOrtho = true;
-			}
+			MapView.NDrevertTheAxis(Utils.getprefb("CamAxisSettingBool", true));
+			MapView.isometricNDOrtho = !Utils.getprefb("unlockedNDOrtho", true);
+			MapView.freeCamTiltBool = Utils.getprefb("allowLowerTiltBool", false);
 
-			if (Utils.getprefb("allowLowerTiltBool", false)){
-				MapView.freeCamTiltBool = true;
-			}
-			else {
-				MapView.freeCamTiltBool = false;
-			}
 			prev = add(new Label(""), 0, 0);
 
 			prev = add(new Label("Selected Camera Settings:"), prev.pos("bl").adds(0, 50));
 			prev = add(revertCameraAxisCheckBox = new CheckBox("Revert Camera Look Axes"){
 				{a = (Utils.getprefb("CamAxisSettingBool", true));}
 				public void set(boolean val) {
-					if (val) {
-						MapView.cameraAxisReverter = -1;
-						Utils.setprefb("CamAxisSettingBool", true);
-					}
-					else {
-						MapView.cameraAxisReverter = 1;
-						Utils.setprefb("CamAxisSettingBool", false);
-					}
+					Utils.setprefb("CamAxisSettingBool", val);
+					MapView.NDrevertTheAxis(val);
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
 			OrthoPrev = add(unlockedOrthoCamCheckBox = new CheckBox("Unlocked Ortho Camera"){
 				{a = Utils.getprefb("unlockedNDOrtho", true);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("unlockedNDOrtho", true);
-						MapView.isometricNDOrtho = false;
-					}
-					else {
-						Utils.setprefb("unlockedNDOrtho", false);
-						MapView.isometricNDOrtho = true;
-					}
+					Utils.setprefb("unlockedNDOrtho", val);
+					MapView.isometricNDOrtho = !val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
@@ -978,14 +882,8 @@ public class OptWnd extends Window {
 			FreePrev = add(allowLowerFreeCamTilt = new CheckBox("Enable Lower Tilting Angle"){
 				{a = (Utils.getprefb("allowLowerTiltBool", false));}
 				public void set(boolean val) {
-					if (val) {
-						MapView.freeCamTiltBool = true;
-						Utils.setprefb("allowLowerTiltBool", true);
-					}
-					else {
-						MapView.freeCamTiltBool = false;
-						Utils.setprefb("allowLowerTiltBool", false);
-					}
+					MapView.freeCamTiltBool = val;
+					Utils.setprefb("allowLowerTiltBool", val);
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
@@ -1024,7 +922,7 @@ public class OptWnd extends Window {
 				freeCamHeightSlider.val = 150;
 				Utils.setprefd("cameraHeightDistance", 15f);
 			}), FreePrev.pos("bl").adds(210, -20));
-			add(new Label(""), 278, 0); // added this so the window's width does not change when switching camera type and closing/reopening the panel
+			add(new Label(""), 278, 0); // ND: added this so the window's width does not change when switching camera type and closing/reopening the panel
 			prev = add(new Label("Selected Camera Type:"), 0, 0);{
 				boolean[] done = {false};
 				RadioGroup camGrp = new RadioGroup(this) {
@@ -1096,62 +994,38 @@ public class OptWnd extends Window {
 		private final int speedSetInt = Utils.getprefi("defaultSetSpeed", 2);
 		public NDGameplaySettingsPanel(Panel back) {
 			Widget prev;
-			add(new Label(""), 298, 0); // To fix window width
+			add(new Label(""), 298, 0); // ND: To fix window width
 
 			prev = add(new Label("Toggle on Login:"), 0, 0);
 			prev = add(new CheckBox("Tracking"){
 				{a = Utils.getprefb("toggleTrackingOnLogin", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("toggleTrackingOnLogin", true);
-						MenuGrid.toggleTrackingOnLogin = true;
-					}
-					else {
-						Utils.setprefb("toggleTrackingOnLogin", false);
-						MenuGrid.toggleTrackingOnLogin = false;
-					}
+					Utils.setprefb("toggleTrackingOnLogin", val);
+					MenuGrid.toggleTrackingOnLogin = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
 			prev = add(new CheckBox("Swimming"){
 				{a = Utils.getprefb("toggleSwimmingOnLogin", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("toggleSwimmingOnLogin", true);
-						MenuGrid.toggleSwimmingOnLogin = true;
-					}
-					else {
-						Utils.setprefb("toggleSwimmingOnLogin", false);
-						MenuGrid.toggleSwimmingOnLogin = false;
-					}
+					Utils.setprefb("toggleSwimmingOnLogin", val);
+					MenuGrid.toggleSwimmingOnLogin = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
 			prev = add(new CheckBox("Criminal Acts"){
 				{a = Utils.getprefb("toggleCriminalActsOnLogin", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("toggleCriminalActsOnLogin", true);
-						MenuGrid.toggleCriminalActsOnLogin = true;
-					}
-					else {
-						Utils.setprefb("toggleCriminalActsOnLogin", false);
-						MenuGrid.toggleCriminalActsOnLogin = false;
-					}
+					Utils.setprefb("toggleCriminalActsOnLogin", val);
+					MenuGrid.toggleCriminalActsOnLogin = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
 			prev = add(new CheckBox("Check for Siege Engines"){
 				{a = Utils.getprefb("toggleSiegeEnginesOnLogin", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("toggleSiegeEnginesOnLogin", true);
-						MenuGrid.toggleSiegeEnginesOnLogin = true;
-					}
-					else {
-						Utils.setprefb("toggleSiegeEnginesOnLogin", false);
-						MenuGrid.toggleSiegeEnginesOnLogin = false;
-					}
+					Utils.setprefb("toggleSiegeEnginesOnLogin", val);
+					MenuGrid.toggleSiegeEnginesOnLogin = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
@@ -1187,14 +1061,8 @@ public class OptWnd extends Window {
 			prev = add(instantFlowerMenuCTRLCheckBox = new CheckBox("Instantly select 1st flower menu option when holding CTRL"){
 				{a = Utils.getprefb("instantFlowerMenuCTRL", true);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("instantFlowerMenuCTRL", true);
-						instantFlowerMenuCTRL = true;
-					}
-					else {
-						Utils.setprefb("instantFlowerMenuCTRL", false);
-						instantFlowerMenuCTRL = false;
-					}
+					Utils.setprefb("instantFlowerMenuCTRL", val);
+					instantFlowerMenuCTRL = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
@@ -1212,82 +1080,21 @@ public class OptWnd extends Window {
 	public class NDCombatSettingsPanel extends Panel {
 		public NDCombatSettingsPanel(Panel back) {
 			Widget prev;
-			if (Utils.getprefb("useProperCombatUI", true)){
-				Utils.setprefb("useProperCombatUI", true);
-				Fightsess.altui = true;
-			}
-			else {
-				Utils.setprefb("useProperCombatUI", false);
-				Fightsess.altui = false;
-			}
 
-			if (Utils.getprefb("showCombatHotkeysUI", true)){
-				Utils.setprefb("showCombatHotkeysUI", true);
-				Fightsess.showKeybindCombatSetting = true;
-			}
-			else {
-				Utils.setprefb("showCombatHotkeysUI", false);
-				Fightsess.showKeybindCombatSetting = false;
-			}
+			Fightsess.altui = Utils.getprefb("useProperCombatUI", true);
+			Fightsess.showKeybindCombatSetting = Utils.getprefb("showCombatHotkeysUI", true);
+			Fightsess.markCombatTargetSetting = Utils.getprefb("markCurrentCombatTarget", true);
+			GobDamageInfo.toggleGobDamageInfo = Utils.getprefb("GobDamageInfoToggled", true);
+			GobDamageInfo.toggleGobDamageInfoWounds = Utils.getprefb("GobDamageInfoWoundsToggled", true);
+			GobDamageInfo.toggleGobDamageInfoArmor = Utils.getprefb("GobDamageInfoArmorToggled", true);
+			GobDamageInfo.setDamageBackgroundColor(Utils.getprefb("GobDamageInfoBackgroundToggled", false));
 
-			if (Utils.getprefb("markCurrentCombatTarget", true)){
-				Utils.setprefb("markCurrentCombatTarget", true);
-				Fightsess.markCombatTargetSetting = true;
-			}
-			else {
-				Utils.setprefb("markCurrentCombatTarget", false);
-				Fightsess.markCombatTargetSetting = false;
-			}
-
-			if (Utils.getprefb("GobDamageInfoToggled", true)){
-				Utils.setprefb("GobDamageInfoToggled", true);
-				GobDamageInfo.toggleGobDamageInfo = true;
-			}
-			else {
-				Utils.setprefb("GobDamageInfoToggled", false);
-				GobDamageInfo.toggleGobDamageInfo = false;
-			}
-
-			if (Utils.getprefb("GobDamageInfoWoundsToggled", true)){
-				Utils.setprefb("GobDamageInfoWoundsToggled", true);
-				GobDamageInfo.toggleGobDamageInfoWounds = true;
-			}
-			else {
-				Utils.setprefb("GobDamageInfoWoundsToggled", false);
-				GobDamageInfo.toggleGobDamageInfoWounds = false;
-			}
-
-			if (Utils.getprefb("GobDamageInfoArmorToggled", true)){
-				Utils.setprefb("GobDamageInfoArmorToggled", true);
-				GobDamageInfo.toggleGobDamageInfoArmor = true;
-			}
-			else {
-				Utils.setprefb("GobDamageInfoArmorToggled", false);
-				GobDamageInfo.toggleGobDamageInfoArmor = false;
-			}
-
-			if (Utils.getprefb("GobDamageInfoBackgroundToggled", false)){
-				Utils.setprefb("GobDamageInfoBackgroundToggled", true);
-				GobDamageInfo.toggleGobDamageInfoBackground = true;
-				GobDamageInfo.BG = new Color(0, 0, 0, 150);
-			}
-			else {
-				Utils.setprefb("GobDamageInfoBackgroundToggled", false);
-				GobDamageInfo.toggleGobDamageInfoBackground = false;
-				GobDamageInfo.BG = new Color(0, 0, 0, 0);
-			}
 			prev = add(new Label("Combat UI:"), 0, 0);
 			prev = add(new CheckBox("Use Improved Combat UI"){
 				{a = Utils.getprefb("useProperCombatUI", true);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("useProperCombatUI", true);
-						Fightsess.altui = true;
-					}
-					else {
-						Utils.setprefb("useProperCombatUI", false);
-						Fightsess.altui = false;
-					}
+					Utils.setprefb("useProperCombatUI", val);
+					Fightsess.altui = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
@@ -1328,14 +1135,8 @@ public class OptWnd extends Window {
 			prev = add(new CheckBox("Show hotkeys"){
 				{a = Utils.getprefb("showCombatHotkeysUI", true);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("showCombatHotkeysUI", true);
-						Fightsess.showKeybindCombatSetting = true;
-					}
-					else {
-						Utils.setprefb("showCombatHotkeysUI", false);
-						Fightsess.showKeybindCombatSetting = false;
-					}
+					Utils.setprefb("showCombatHotkeysUI", val);
+					Fightsess.showKeybindCombatSetting = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
@@ -1343,28 +1144,16 @@ public class OptWnd extends Window {
 			prev = add(new CheckBox("Mark current target"){
 				{a = Utils.getprefb("markCurrentCombatTarget", true);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("markCurrentCombatTarget", true);
-						Fightsess.markCombatTargetSetting = true;
-					}
-					else {
-						Utils.setprefb("markCurrentCombatTarget", false);
-						Fightsess.markCombatTargetSetting = false;
-					}
+					Utils.setprefb("markCurrentCombatTarget", val);
+					Fightsess.markCombatTargetSetting = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
 			prev = add(toggleGobDamageInfoCheckBox = new CheckBox("Show damage info:"){
 				{a = Utils.getprefb("GobDamageInfoToggled", true);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("GobDamageInfoToggled", true);
-						GobDamageInfo.toggleGobDamageInfo = true;
-					}
-					else {
-						Utils.setprefb("GobDamageInfoToggled", false);
-						GobDamageInfo.toggleGobDamageInfo = false;
-					}
+					Utils.setprefb("GobDamageInfoToggled", val);
+					GobDamageInfo.toggleGobDamageInfo = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
@@ -1372,44 +1161,24 @@ public class OptWnd extends Window {
 			prev = add(new CheckBox("Wounds"){
 				{a = Utils.getprefb("GobDamageInfoWoundsToggled", true);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("GobDamageInfoWoundsToggled", true);
-						GobDamageInfo.toggleGobDamageInfoWounds = true;
-					}
-					else {
-						Utils.setprefb("GobDamageInfoWoundsToggled", false);
-						GobDamageInfo.toggleGobDamageInfoWounds = false;
-					}
+					Utils.setprefb("GobDamageInfoWoundsToggled", val);
+					GobDamageInfo.toggleGobDamageInfoWounds = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(56, -13));
 			prev = add(new CheckBox("Armor"){
 				{a = Utils.getprefb("GobDamageInfoArmorToggled", true);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("GobDamageInfoArmorToggled", true);
-						GobDamageInfo.toggleGobDamageInfoArmor = true;
-					}
-					else {
-						Utils.setprefb("GobDamageInfoArmorToggled", false);
-						GobDamageInfo.toggleGobDamageInfoArmor = false;
-					}
+					Utils.setprefb("GobDamageInfoArmorToggled", val);
+					GobDamageInfo.toggleGobDamageInfoArmor = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(62, -14));
 			prev = add(new CheckBox("Show damage background"){
 				{a = Utils.getprefb("GobDamageInfoBackgroundToggled", false);}
 				public void set(boolean val) {
-					if (val) {
-						Utils.setprefb("GobDamageInfoBackgroundToggled", true);
-						GobDamageInfo.toggleGobDamageInfoBackground = true;
-						GobDamageInfo.BG = new Color(0, 0, 0, 150);
-					}
-					else {
-						Utils.setprefb("GobDamageInfoBackgroundToggled", false);
-						GobDamageInfo.toggleGobDamageInfoBackground = false;
-						GobDamageInfo.BG = new Color(0, 0, 0, 0);
-					}
+					Utils.setprefb("GobDamageInfoBackgroundToggled", val);
+					GobDamageInfo.setDamageBackgroundColor(val);
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4).x(UI.scale(34)));

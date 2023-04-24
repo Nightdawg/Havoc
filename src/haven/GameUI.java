@@ -35,17 +35,16 @@ import static haven.Inventory.invsq;
 
 public class GameUI extends ConsoleHost implements Console.Directory, UI.MessageWidget {
     public static final Text.Foundry msgfoundry = RootWidget.msgfoundry;
-    public static final int blpw = UI.scale(0), brpw = UI.scale(142); //ND: Changed this from private to public
+    public static final int blpw = UI.scale(0), brpw = UI.scale(142);
 	public static final Text.Foundry actBarKeybindsFoundry = new Text.Foundry(Text.sans.deriveFont(java.awt.Font.BOLD), 12);
     public final String chrid, genus;
     public final long plid;
-    private final Hidepanel ulpanel, umpanel, urpanel, brpanel, menupanel; //blpanel, mapmenupanel
+    private final Hidepanel ulpanel, umpanel, urpanel, brpanel, menupanel;
 	public static AlignPanel questObjectivesPanel = null;
     public Widget portrait;
     public MenuGrid menu;
     public MapView map;
     public GobIcon.Settings iconconf;
-    //public MiniMap mmap;
     public Fightview fv;
     private List<Widget> meters = new LinkedList<Widget>();
     private Text lastmsg;
@@ -237,7 +236,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	setfocusctl(true);
 	chat = add(new ChatUI(0, 0));
 	if(Utils.getprefb("chatvis", true)) {
-	    chat.hresize(chat.savedh); // ND: I think i need to keep this cause of "clearanims(Spring.class);", whatever that is.
+	    chat.hresize(chat.savedh); // ND: I think I need to keep this cause of "clearanims(Spring.class);", whatever that is.
 		chat.resize(chat.savedw,chat.savedh); // ND: Added this to set both sizes
 	    chat.show();
 	}
@@ -245,19 +244,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	actionBar2.raise();
 	actionBar3.raise();
 	actionBar4.raise();
-
-//	blpanel = add(new Hidepanel("gui-bl", null, new Coord(-1,  1)) {
-//		public void move(double a) {
-//		    super.move(a);
-//		    mapmenupanel.move();
-//		}
-//	    });
-//	mapmenupanel = add(new Hidepanel("mapmenu", new Indir<Coord>() {
-//		public Coord get() {
-//		    //return(new Coord(0, Math.min(blpanel.c.y - mapmenupanel.sz.y + UI.scale(33), GameUI.this.sz.y - mapmenupanel.sz.y)));
-//			return(new Coord(0,0));
-//		}
-//	    }, new Coord(-1, 0)));
 
 	brpanel = add(new Hidepanel("gui-br", null, new Coord( 1,  1)) {
 		public void move(double a) {
@@ -273,8 +259,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	ulpanel = add(new Hidepanel("gui-ul", null, new Coord(-1, -1)));
 	umpanel = add(new Hidepanel("gui-um", null, new Coord( 0, -1)));
 	urpanel = add(new Hidepanel("gui-ur", null, new Coord( 1, -1)));
-	//mapmenupanel.add(new MapMenu(), 0, 0);
-	//blpanel.add(new Img(Resource.loadtex("gfx/hud/blframe")), 0, 0);
 	minimapc = new Coord(UI.scale(4), UI.scale(34));
 	Tex rbtnbg = Resource.loadtex("gfx/hud/csearch-bg");
 	Img brframe = brpanel.add(new Img(Resource.loadtex("gfx/hud/brframe")), rbtnbg.sz().x - UI.scale(22), 0);
@@ -282,7 +266,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	Img rbtnimg = brpanel.add(new Img(rbtnbg), 0, brpanel.sz.y - rbtnbg.sz().y);
 	menupanel.add(new MainMenu(), 0, 0);
 	menubuttons(rbtnimg);
-	//foldbuttons();
 	portrait = ulpanel.add(Frame.with(new Avaview(Avaview.dasz, plid, "avacam"), false), UI.scale(10, 10));
 	buffs = ulpanel.add(new Bufflist(), portrait.c.x + portrait.sz.x + UI.scale(10), portrait.c.y + ((IMeter.fsz.y + UI.scale(2)) * 2) + UI.scale(5 - 2));
 	umpanel.add(new Cal(), Coord.z);
@@ -348,26 +331,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 		return false;
 	}
-    public static final KeyBinding kb_srch = KeyBinding.get("scm-srch", KeyMatch.forchar('Z', KeyMatch.C));
+    public static final KeyBinding kb_srch = KeyBinding.get("scm-srch", KeyMatch.forchar('F', KeyMatch.C));
     private void menubuttons(Widget bg) {
-//	brpanel.add(new MenuButton("csearch", kb_srch, "Search actions...") {
-//		public void click() {
-//		    if(menu == null)
-//			return;
-//		    if(srchwnd == null) {
-//			srchwnd = new MenuSearch(menu);
-//			fitwdg(GameUI.this.add(srchwnd, Utils.getprefc("wndc-srch", new Coord(200, 200))));
-//		    } else {
-//			if(!srchwnd.hasfocus) {
-//			    this.setfocus(srchwnd);
-//			} else {
-//				Utils.setprefc("wndc-srch",srchwnd.c); // ND: Add this to save the search window location
-//				ui.destroy(srchwnd);
-//			    srchwnd = null;
-//			}
-//		    }
-//		}
-//	    }, bg.c);
 		brpanel.add(new MenuCheckBox("csearch", kb_srch, "Search actions..."), bg.c).state(() -> wndstate(srchwnd)).click(() -> { // ND: Made the action search be a checkbox, rather than just a button. Why isn't it like this in the first place?
 			if(menu == null)
 				return;
@@ -428,120 +393,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			}
 		});
     }
-
-    /* Ice cream */
-//    private final IButton[] fold_br = new IButton[4];
-//    private final IButton[] fold_bl = new IButton[4];
-//    private void updfold(boolean reset) {
-//	int br;
-//	if(brpanel.tvis && menupanel.tvis)
-//	    br = 0;
-//	else if(brpanel.tvis && !menupanel.tvis)
-//	    br = 1;
-//	else if(!brpanel.tvis && !menupanel.tvis)
-//	    br = 2;
-//	else
-//	    br = 3;
-//	for(int i = 0; i < fold_br.length; i++)
-//	    fold_br[i].show(i == br);
-//
-//	int bl;
-//	if(blpanel.tvis && mapmenupanel.tvis)
-//	    bl = 0;
-//	else if(blpanel.tvis && !mapmenupanel.tvis)
-//	    bl = 1;
-//	else if(!blpanel.tvis && !mapmenupanel.tvis)
-//	    bl = 2;
-//	else
-//	    bl = 3;
-//	for(int i = 0; i < fold_bl.length; i++)
-//	    fold_bl[i].show(i == bl);
-//
-//	if(reset)
-//	    resetui();
-//    }
-//
-//    private void foldbuttons() {
-//	final Tex rdnbg = Resource.loadtex("gfx/hud/rbtn-maindwn");
-//	final Tex rupbg = Resource.loadtex("gfx/hud/rbtn-upbg");
-//	fold_br[0] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
-//		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
-//		public void click() {
-//		    menupanel.cshow(false);
-//		    updfold(true);
-//		}
-//	    };
-//	fold_br[1] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
-//		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
-//		public void click() {
-//		    brpanel.cshow(false);
-//		    updfold(true);
-//		}
-//	    };
-//	fold_br[2] = new IButton("gfx/hud/rbtn-up", "", "-d", "-h") {
-//		public void draw(GOut g) {g.image(rupbg, Coord.z); super.draw(g);}
-//		public void click() {
-//		    menupanel.cshow(true);
-//		    updfold(true);
-//		}
-//		public void presize() {
-//		    this.c = parent.sz.sub(this.sz);
-//		}
-//	    };
-//	fold_br[3] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
-//		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
-//		public void click() {
-//		    brpanel.cshow(true);
-//		    updfold(true);
-//		}
-//	    };
-//	menupanel.add(fold_br[0], 0, 0);
-//	fold_br[0].lower();
-//	brpanel.adda(fold_br[1], brpanel.sz.x, UI.scale(32), 1, 1);
-//	adda(fold_br[2], 1, 1);
-//	fold_br[2].lower();
-//	menupanel.add(fold_br[3], 0, 0);
-//	fold_br[3].lower();
-//
-//	final Tex ldnbg = Resource.loadtex("gfx/hud/lbtn-bgs");
-//	final Tex lupbg = Resource.loadtex("gfx/hud/lbtn-upbg");
-//	fold_bl[0] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
-//		public void click() {
-//		    mapmenupanel.cshow(false);
-//		    updfold(true);
-//		}
-//	    };
-//	fold_bl[1] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
-//		public void draw(GOut g) {g.image(ldnbg, Coord.z); super.draw(g);}
-//		public void click() {
-//		    blpanel.cshow(false);
-//		    updfold(true);
-//		}
-//	    };
-//	fold_bl[2] = new IButton("gfx/hud/lbtn-up", "", "-d", "-h") {
-//		public void draw(GOut g) {g.image(lupbg, Coord.z); super.draw(g);}
-//		public void click() {
-//		    mapmenupanel.cshow(true);
-//		    updfold(true);
-//		}
-//		public void presize() {
-//		    this.c = new Coord(0, parent.sz.y - sz.y);
-//		}
-//	    };
-//	fold_bl[3] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
-//		public void click() {
-//		    blpanel.cshow(true);
-//		    updfold(true);
-//		}
-//	    };
-//	mapmenupanel.add(fold_bl[0], 0, 0);
-//	blpanel.adda(fold_bl[1], 0, UI.scale(33), 0, 1);
-//	adda(fold_bl[2], 0, 1);
-//	fold_bl[2].lower();
-//	mapmenupanel.add(fold_bl[3], 0, 0);
-//
-//	updfold(false);
-//    }
 
     protected void added() {
 	resize(parent.sz);
@@ -646,7 +497,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 	    };
 	    tvis = vis;
-	    //updfold(false);
 	    return(vis);
 	}
 
@@ -884,8 +734,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		if (Utils.getprefb("lbtn-claimWorldState", false)) toggleol("cplot", true);
 		if (Utils.getprefb("lbtn-vilWorldState", false)) toggleol("vlg", true);
 		if (Utils.getprefb("lbtn-rlmWorldState", false)) toggleol("prov", true);
-//	    if(mmap != null)
-//		ui.destroy(mmap);
 	    if(mapfile != null) {
 		ui.destroy(mapfile);
 		mapfile = null;
@@ -907,8 +755,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		     * existing mapfile with a new one is better. */
 		    throw(new RuntimeException("failed to load mapfile", e));
 		}
-//		mmap = blpanel.add(new CornerMap(UI.scale(new Coord(133, 133)), file), minimapc);
-//		mmap.lower();
 		mapfile = new MapWnd(file, map, Utils.getprefc("smallmapsz", new Coord(230,230)), "Map");
 		mapfile.show(true);
 		add(mapfile, Utils.getprefc("smallmapc", new Coord(0, 100)));
@@ -989,7 +835,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		    {add(cref);}
 
 		    protected Coord getc() {
-			//return(new Coord(10, mapmenupanel.c.y - this.sz.y - 10));
 				return(new Coord(10, GameUI.this.sz.y - chat.sz.y - this.sz.y - UI.scale( 90)));
 		    }
 
@@ -1248,7 +1093,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     private int lastsaveseq = -1;
     private void mapfiletick() {
 	MapView map = this.map;
-//	MiniMap mmap = this.mmap;
 	if((map == null) /*|| (mmap == null)*/)
 	    return;
 	Gob pl = ui.sess.glob.oc.getgob(map.plgob);
@@ -1520,7 +1364,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public static final KeyBinding kb_claim = KeyBinding.get("ol-claim", KeyMatch.nil);
     public static final KeyBinding kb_vil = KeyBinding.get("ol-vil", KeyMatch.nil);
     public static final KeyBinding kb_rlm = KeyBinding.get("ol-rlm", KeyMatch.nil);
-    public static final KeyBinding kb_ico = KeyBinding.get("map-icons", KeyMatch.nil);
+    public static final KeyBinding kb_ico = KeyBinding.get("map-icons", KeyMatch.forchar('I', KeyMatch.C));
     private static final Tex mapmenubg = Resource.loadtex("gfx/hud/lbtn-bg");
     public class MapMenu extends Widget {
 	private void toggleol(String tag, boolean a) {
@@ -1532,49 +1376,14 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    }
 	}
 
-//	public MapMenu() {
-//	    super(mapmenubg.sz());
-//	    add(new MenuCheckBox("lbtn-claim", kb_claim, "Display personal claims"), 0, 0).changed(a -> toggleol("cplot", a));
-//	    add(new MenuCheckBox("lbtn-vil", kb_vil, "Display village claims"), 0, 0).changed(a -> toggleol("vlg", a));
-//	    add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display provinces"), 0, 0).changed(a -> toggleol("prov", a));
-//
-//		add(new MenuCheckBox("lbtn-claim", kb_claim, "Display personal claims"), 0, 0).state(() -> visol("cplot")).changed(a -> {
-//			toggleol("cplot", a);
-//			Utils.setprefb("lbtn-claimMapState", a);
-//		});
-//		add(new MenuCheckBox("lbtn-vil", kb_vil, "Display village claims"), 0, 0).state(() -> visol("vlg")).changed(a -> {
-//			toggleol("vlg", a);
-//			Utils.setprefb("lbtn-vilMapState", a);
-//		});
-//		add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display provinces"), 0, 0).state(() -> visol("prov")).changed(a -> {
-//			toggleol("prov", a);
-//			Utils.setprefb("lbtn-rlmMapState", a);
-//		});
-//
-//	    add(new MenuCheckBox("lbtn-map", kb_map, "Map")).state(() -> wndstate(mapfile)).click(() -> {
-//		    togglewnd(mapfile);
-//		});
-//	    add(new MenuCheckBox("lbtn-ico", kb_ico, "Icon settings"), 0, 0).state(() -> wndstate(iconwnd)).click(() -> {
-//		    if(iconconf == null)
-//			return;
-//		    if(iconwnd == null) {
-//			iconwnd = new GobIcon.SettingsWindow(iconconf, () -> Utils.defer(GameUI.this::saveiconconf));
-//			fitwdg(GameUI.this.add(iconwnd, Utils.getprefc("wndc-icon", new Coord(200, 200))));
-//		    } else {
-//			ui.destroy(iconwnd);
-//			iconwnd = null;
-//		    }
-//		});
-//	}
-
 	public void draw(GOut g) {
 	    g.image(mapmenubg, Coord.z);
 	    super.draw(g);
 	}
     }
 
-    public static final KeyBinding kb_shoot = KeyBinding.get("screenshot", KeyMatch.forchar('S', KeyMatch.M));
-    public static final KeyBinding kb_chat = KeyBinding.get("chat-toggle", KeyMatch.forchar('C', KeyMatch.C));
+    public static final KeyBinding kb_shoot = KeyBinding.get("screenshot", KeyMatch.nil);
+    public static final KeyBinding kb_chat = KeyBinding.get("chat-toggle", KeyMatch.forchar('C', KeyMatch.C)); // ND: Does this work? Has it ever?
     public static final KeyBinding kb_hide = KeyBinding.get("ui-toggle", KeyMatch.nil);
     public static final KeyBinding kb_logout = KeyBinding.get("logout", KeyMatch.nil);
     public static final KeyBinding kb_switchchr = KeyBinding.get("logout-cs", KeyMatch.nil);
@@ -1650,7 +1459,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
     public void resize(Coord sz) {
 	super.resize(sz);
-	//chat.resize(sz.x - blpw - brpw); // ND: commented this
 	chat.move(new Coord(blpw, sz.y));
 	if(map != null)
 	    map.resize(sz);

@@ -492,6 +492,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
     static {camtypes.put("ortho", SOrthoCam.class);}
 
 	public static int cameraAxisReverter = 1;
+	public static void NDrevertTheAxis(boolean reverted){
+		if (reverted) cameraAxisReverter = -1;
+		else cameraAxisReverter = 1;
+	}
 	public static boolean freeCamTiltBool = false;
 	public static float cameraHeightDistance = 15f;
 	public static int freeCameraZoomSpeed = 25;

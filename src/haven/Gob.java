@@ -47,7 +47,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     private Loader.Future<?> deferral = null;
 
 	private GobDamageInfo damage;
-	public StatusUpdates status = new StatusUpdates();
 
     public static class Overlay implements RenderTree.Node {
 	public final int id;
@@ -116,7 +115,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public void remove() {
 	    remove(true);
-		gob.overlaysUpdated();
 	}
 
 	public void added(RenderTree.Slot slot) {
@@ -430,7 +428,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	ol.add0();
 	ols.add(ol);
 	overlayAdded(ol);
-	overlaysUpdated();
     }
     public void addol(Overlay ol) {
 	addol(ol, true);
@@ -916,32 +913,4 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     }
     public final Placed placed = new Placed();
 
-	public void overlaysUpdated() { status.update(StatusType.overlay); }
-
-	private static class StatusUpdates {
-		private final Set<StatusType> updated = new HashSet<>();
-
-		private void update(StatusType type) {
-			synchronized (updated) {
-				updated.add(type);
-			}
-		}
-
-		private boolean updated(StatusType... types) {
-			synchronized (updated) {
-				for (StatusType type : types) {
-					if(updated.contains(type)) {return true;}
-				}
-			}
-			return false;
-		}
-
-		private boolean updated() {
-			return !updated.isEmpty();
-		}
-	}
-
-	private enum StatusType {
-		drawable, overlay, tags, pose, id, info, kin, hitbox, icon, visibility, marker
-	}
 }

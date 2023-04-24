@@ -78,7 +78,7 @@ public class MapWnd extends Window implements Console.Directory {
 
     public static final KeyBinding kb_home = KeyBinding.get("mapwnd/home", KeyMatch.forcode(KeyEvent.VK_HOME, 0));
     public static final KeyBinding kb_mark = KeyBinding.get("mapwnd/mark", KeyMatch.nil);
-    public static final KeyBinding kb_hmark = KeyBinding.get("mapwnd/hmark", KeyMatch.forchar('M', KeyMatch.C));
+    public static final KeyBinding kb_hmark = KeyBinding.get("mapwnd/hmark", KeyMatch.nil);
     public static final KeyBinding kb_compact = KeyBinding.get("mapwnd/compact", KeyMatch.forchar('A', KeyMatch.M));
     public static final KeyBinding kb_prov = KeyBinding.get("mapwnd/prov", KeyMatch.nil);
 	public static final KeyBinding kb_claim = KeyBinding.get("mapwnd/pclaim", KeyMatch.nil);
@@ -139,7 +139,7 @@ public class MapWnd extends Window implements Console.Directory {
 					Utils.setprefb("pclaim-claimMapState", false);
 				}
 			})
-			.settip("Display personal claims").setgkey(kb_claim);
+			.settip("Show personal claims").setgkey(kb_claim);
 	if(Utils.getprefb("vclaim-claimMapState", false)) overlays.add("vlg");
 	toolbar.add(new ICheckBox("gfx/hud/mmap/vclaim", "", "-d", "-h", "-dh") {
 				public boolean mousewheel(Coord c, int amount) {
@@ -159,7 +159,7 @@ public class MapWnd extends Window implements Console.Directory {
 					Utils.setprefb("vclaim-claimMapState", false);
 				}
 			})
-			.settip("Display village claims").setgkey(kb_vil);
+			.settip("Show village claims").setgkey(kb_vil);
 	toolbar.add(new ICheckBox("gfx/hud/mmap/wnd", "", "-d", "-h", "-dh"))
 	    .state(this::compact).set(a -> {
 			savePos(a);
@@ -185,7 +185,7 @@ public class MapWnd extends Window implements Console.Directory {
 					Utils.setprefb("prov-claimMapState", false);
 				}
 			})
-	    .settip("Display provinces").setgkey(kb_prov);
+	    .settip("Show provinces").setgkey(kb_prov);
 	toolbar.pack();
 	tool = add(new Toolbox());
 	compact(true);

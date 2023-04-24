@@ -19,7 +19,10 @@ public class GobDamageInfo extends GobInfo {
     public static boolean toggleGobDamageInfo = true;
     public static boolean toggleGobDamageInfoWounds = true;
     public static boolean toggleGobDamageInfoArmor = true;
-    public static boolean toggleGobDamageInfoBackground = false;
+    public static void setDamageBackgroundColor(boolean enableBackground){
+        if (enableBackground) BG = new Color(0, 0, 0, 150);
+        else BG = new Color(0, 0, 0, 0);
+    }
 
     private static final Map<Long, DamageVO> gobDamage = new LinkedHashMap<Long, DamageVO>() {
         @Override

@@ -194,7 +194,7 @@ public class GSettings extends State implements Serializable {
 	    public Float defval() {return(Float.POSITIVE_INFINITY);}
 	};
     public FloatSetting bghz = new HertzSetting("bghz") {
-	    public Float defval() {return(5f);}
+	    public Float defval() {return(30f);}
 	};
     public FloatSetting rscale = new FloatSetting("rscale") {
 	    public Float defval() {return(1.0f);}

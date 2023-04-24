@@ -412,8 +412,10 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	    this.id = cont.contentsid;
 	    this.tick(0);
 	    Coord c = null;
-	    if(Utils.getprefb(String.format("cont-wndvis/%s", id), false))
-		c = Utils.getprefc(String.format("cont-wndc/%s", id), null);
+		if (Utils.getprefb("alwaysOpenBeltOnLogin", false) && String.format("%s",this.id).equals("toolbelt")) {
+			c = Utils.getprefc(String.format("cont-wndc/%s", this.id), null);
+		} else if(Utils.getprefb(String.format("cont-wndvis/%s", id), false))
+			c = Utils.getprefc(String.format("cont-wndc/%s", id), null);
 	    if(c != null) {
 		this.c = c;
 		chstate("wnd");
