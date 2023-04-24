@@ -308,7 +308,7 @@ public class WaterTile extends Tiler {
 	/* XXXRENDER
 	public static final Expression mfogcolor = mul(col3(fogcolor), pick(fref(idx(ProgramContext.gl_LightSource.ref(), MapView.amblight.ref()), "diffuse"), "rgb"));
 	*/
-	public static final Expression mfogcolor = col3(fogcolor);
+	public final Expression mfogcolor;
 	public static Function rgbmix = new Function.Def(Type.VEC4) {{
 	    Expression a = param(PDir.IN, Type.VEC4).ref();
 	    Expression b = param(PDir.IN, Type.VEC3).ref();
@@ -322,18 +322,24 @@ public class WaterTile extends Tiler {
 		}
 	    };
 
-	private final ShaderMacro shader = prog -> {
-	    FragColor.fragcol(prog.fctx).mod(in -> rgbmix.call(in, mfogcolor, min(div(fragd.ref(), l(maxdepth)), l(1.0))), 1000);
-	};
+	private final ShaderMacro shader;
 
-	private BottomFog() {
+	private BottomFog(final Color fogcolor) {
 	    super(Slot.Type.DRAW);
+		mfogcolor = col3(fogcolor);
+		shader = prog -> FragColor.fragcol(prog.fctx).mod(in -> rgbmix.call(in, mfogcolor, min(div(fragd.ref(), l(maxdepth)), l(1.0))), 1000);
 	}
 
 	public ShaderMacro shader() {return(shader);}
     }
-    public static final BottomFog waterfog = new BottomFog();
-    private static final Pipe.Op botmat = Pipe.Op.compose(waterfog, new States.DepthBias(4, 4));
+	public static final BottomFog allwaterfog = new BottomFog(new Color(0, 16, 48));
+    public static final BottomFog waterfog = new BottomFog(new Color(0, 15, 55));
+	public static final BottomFog deepwaterfog = new BottomFog(new Color(0, 10, 50));
+	public static final BottomFog owaterfog = new BottomFog(new Color(0, 35, 55));
+	public static final BottomFog odeepwaterfog = new BottomFog(new Color(0, 30, 50));
+	public static final BottomFog odeeperwaterfog = new BottomFog(new Color(0, 20, 40));
+    private Pipe.Op botmat;
+	private static final States.DepthBias boff = new States.DepthBias(4, 4);
 
     public static class ObFog extends State implements InstanceBatch.AttribState {
 	public static final Slot<ObFog> slot = new Slot<>(State.Slot.Type.DRAW, ObFog.class)
@@ -360,7 +366,7 @@ public class WaterTile extends Tiler {
 		}
 	    };
 	private static final ShaderMacro shader = prog -> {
-	    FragColor.fragcol(prog.fctx).mod(in -> BottomFog.rgbmix.call(in, BottomFog.mfogcolor, clamp(div(fragd.ref(), l(BottomFog.maxdepth)), l(0.0), l(1.0))), 1000);
+	    FragColor.fragcol(prog.fctx).mod(in -> BottomFog.rgbmix.call(in, allwaterfog.mfogcolor, clamp(div(fragd.ref(), l(BottomFog.maxdepth)), l(0.0), l(1.0))), 1000);
 	};
 	public ShaderMacro shader() {return(shader);}
 
@@ -397,15 +403,37 @@ public class WaterTile extends Tiler {
 		    bottom = (Tiler.MCons)b;
 		}
 	    }
-	    return(new WaterTile(id, bottom, depth));
+	    return(new WaterTile(id, bottom, depth, set.getres()));
 	}
     }
 
-    public WaterTile(int id, Tiler.MCons bottom, int depth) {
-	super(id);
-	this.bottom = bottom;
-	this.depth = depth;
+    public WaterTile(int id, Tiler.MCons bottom, int depth, Resource res) {
+	this(id, bottom, depth);
+		switch (res.name) {
+			case "gfx/tiles/water":
+				this.botmat = Pipe.Op.compose(waterfog, boff);
+				break;
+			case "gfx/tiles/deep":
+				this.botmat = Pipe.Op.compose(deepwaterfog, boff);
+				break;
+			case "gfx/tiles/owater":
+				this.botmat = Pipe.Op.compose(owaterfog, boff);
+				break;
+			case "gfx/tiles/odeep":
+				this.botmat = Pipe.Op.compose(odeepwaterfog, boff);
+				break;
+			case "gfx/tiles/odeeper":
+				this.botmat = Pipe.Op.compose(odeeperwaterfog, boff);
+				break;
+		}
     }
+
+	public WaterTile(int id, Tiler.MCons bottom, int depth) {
+		super(id);
+		this.bottom = bottom;
+		this.depth = depth;
+		this.botmat = Pipe.Op.compose(allwaterfog, boff);
+	}
 
     public void lay(MapMesh m, Random rnd, Coord lc, Coord gc) {
 	MapMesh.MapSurface ms = m.data(MapMesh.gnd);
