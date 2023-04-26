@@ -883,13 +883,17 @@ public class MiniMap extends Widget {
 		mv.wdgmsg("click", mc,
 			  loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres),
 			  button, ui.modflags());
-	    else
-		mv.wdgmsg("click", mc,
-			  loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres),
-			  button, ui.modflags(), 0,
-			  (int)gob.id,
-			  gob.rc.floor(posres),
-			  0, -1);
+	    else {
+			Object[] args = {mc, loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres), button, ui.modflags(), 0, (int) gob.id, gob.rc.floor(posres), 0, -1};
+			if (button == 3 && OptWnd.instantFlowerMenuCTRL) {
+				mv.wdgmsg("click", args);
+				if (ui.modctrl) {
+					gameui().ui.rcvr.rcvmsg(gameui().ui.lastid+1, "cl", 0, gameui().ui.modflags());
+				}
+				return;
+			}
+			mv.wdgmsg("click", args);
+		}
 	}
     }
 
