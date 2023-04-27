@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.awt.event.KeyEvent;
 import java.util.*;
 import java.util.function.*;
 import haven.render.*;
@@ -47,6 +48,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     private Loader.Future<?> deferral = null;
 
 	private GobDamageInfo damage;
+
+	public StatusUpdates status = new StatusUpdates();
+	private CollisionBoxGobSprite<Hitbox> collisionBox = null;
 
     public static class Overlay implements RenderTree.Node {
 	public final int id;
@@ -346,6 +350,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	if(GobDamageInfo.has(this)) {
 			addDmg();
 		}
+	updwait(this::drawableUpdated, waiting -> {});
     }
 
     public Gob(Glob glob, Coord2d c) {
@@ -372,6 +377,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	updstate();
 	if(virtual && ols.isEmpty() && (getattr(Drawable.class) == null))
 	    glob.oc.remove(this);
+	updateState();
     }
 
     public void gtick(Render g) {
@@ -569,6 +575,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	    if(a instanceof SetupMod)
 		setupmods.add((SetupMod)a);
 	    attr.put(ac, a);
+	}
+	if(ac == Drawable.class) {
+		if (a != prev) drawableUpdated();
 	}
 	if(prev != null)
 	    prev.dispose();
@@ -913,4 +922,81 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     }
     public final Placed placed = new Placed();
 
+	public String resid() {
+		Drawable d = getattr(Drawable.class);
+		if(d != null)
+			return d.resId();
+		return null;
+	}
+
+	//Useful for getting stage information or model type
+	public int sdt() {
+		Drawable d = getattr(Drawable.class);
+		if(d instanceof ResDrawable) {
+			ResDrawable dw = (ResDrawable) d;
+			return dw.sdtnum();
+		}
+		return 0;
+	}
+
+	private static class StatusUpdates {
+		private final Set<StatusType> updated = new HashSet<>();
+
+		private void update(StatusType type) {
+			synchronized (updated) {
+				updated.add(type);
+			}
+		}
+
+		private boolean updated(StatusType... types) {
+			synchronized (updated) {
+				for (StatusType type : types) {
+					if(updated.contains(type)) {return true;}
+				}
+			}
+			return false;
+		}
+
+		private boolean updated() {
+			return !updated.isEmpty();
+		}
+	}
+
+	private enum StatusType {
+		collisionBox, drawable
+	}
+
+	public void collisionBoxUpdated() {
+		status.update(StatusType.collisionBox);
+	}
+	public void drawableUpdated() { status.update(StatusType.drawable); }
+	private void updateState() {
+		if(updateseq == 0 || !status.updated()) {return;}
+		StatusUpdates status = this.status;
+		this.status = new StatusUpdates();
+
+		if(status.updated(StatusType.collisionBox, StatusType.drawable)) {
+			updateCollisionBox();
+		}
+	}
+
+	public static boolean showCollisionBoxes = Utils.getprefb("gobCollisionBoxesDisplayToggle", false);
+	private void updateCollisionBox() {
+		if(updateseq == 0) {return;}
+		if(showCollisionBoxes) {
+			if(collisionBox != null) {
+				if(!collisionBox.show(true)) {
+					collisionBox.fx.updateState();
+				}
+			} else if(!virtual || this instanceof MapView.Plob) {
+				Hitbox hitbox = Hitbox.forGob(this);
+				if(hitbox != null) {
+					this.collisionBox = new CollisionBoxGobSprite<>(this, hitbox);
+					addol(this.collisionBox);
+				}
+			}
+		} else if(collisionBox != null) {
+			collisionBox.show(false);
+		}
+	}
 }

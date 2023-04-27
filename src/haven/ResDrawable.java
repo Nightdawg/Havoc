@@ -30,17 +30,21 @@ import java.util.*;
 import java.util.function.*;
 import haven.render.*;
 
+import static haven.Sprite.decnum;
+
 public class ResDrawable extends Drawable implements EquipTarget {
     public final Indir<Resource> res;
     public final Sprite spr;
     MessageBuf sdt;
     // private double delay = 0; XXXRENDER
+	private final String resid;
 
     public ResDrawable(Gob gob, Indir<Resource> res, Message sdt) {
 	super(gob);
 	this.res = res;
 	this.sdt = new MessageBuf(sdt);
 	spr = Sprite.create(gob, res.get(), this.sdt.clone());
+	resid = makeResId();
     }
 
     public ResDrawable(Gob gob, Resource res) {
@@ -106,6 +110,29 @@ public class ResDrawable extends Drawable implements EquipTarget {
 	    } else if((d == null) || (d.res != res) || !d.sdt.equals(sdt)) {
 		g.setattr(new ResDrawable(g, res, sdt));
 	    }
+		g.drawableUpdated();
 	}
     }
+
+	@Override
+	public String resId() {return resid;}
+
+	public String makeResId() {
+		String name = res.get().name;
+		String extra = null;
+		int state =  sdtnum();
+		if(name.endsWith("/pow")) {//fire
+			if(state == 17 || state == 33) { // this fire is actually hearth fire
+				extra = "hearth";
+			}
+		}
+		return extra == null ? name : String.format("%s[%s]", name, extra);
+	}
+	public int sdtnum() {
+		if (sdt != null) {
+			Message msg = sdt.clone();
+			return msg.eom() ? 0xffff000 : decnum(msg);
+		}
+		return 0;
+	}
 }

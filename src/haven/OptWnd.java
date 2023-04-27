@@ -438,6 +438,7 @@ public class OptWnd extends Window {
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
 	public static CheckBox toggleGobHealthDisplayCheckBox;
+	public static CheckBox toggleGobCollisionBoxesDisplayCheckBox;
 	public static CheckBox alwaysOpenBeltCheckBox;
 	public static CheckBox showQuickSlotsBar;
     public class InterfacePanel extends Panel {
@@ -561,6 +562,16 @@ public class OptWnd extends Window {
 				GobHealthInfo.displayHealthPercentage = val;
 				a = val;
 			}
+		}, prev.pos("bl").adds(0, 16));
+		prev = add(toggleGobCollisionBoxesDisplayCheckBox = new CheckBox("Display Collision Box on Objects"){
+			{a = (Utils.getprefb("gobCollisionBoxesDisplayToggle", false));}
+			public void set(boolean val) {
+				Utils.setprefb("gobCollisionBoxesDisplayToggle", val);
+				Gob.showCollisionBoxes = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated);
+				a = val;
+			}
 		}, prev.pos("bl").adds(0, 6));
 
 		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 30).x(0));
@@ -637,6 +648,7 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Attack! Button", GameUI.kb_aggroButton, y);
 			y = addbtn(cont, "Right Hand (Quick switch)", GameUI.kb_rightQuickSlotButton, y);
 			y = addbtn(cont, "Left Hand (Quick switch)", GameUI.kb_leftQuickSlotButton, y);
+			y = addbtn(cont, "Toggle Collision Boxes", GameUI.kb_toggleCollisionBoxes, y);
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			prev = adda(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			pack();

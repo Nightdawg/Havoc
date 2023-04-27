@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.res.ui.tt.q.quality.Quality;
+
 import java.util.*;
 import java.util.function.*;
 import java.awt.Color;
@@ -2012,6 +2014,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_rightQuickSlotButton  = KeyBinding.get("rightQuickSlotButton",  KeyMatch.nil);
 	public static KeyBinding kb_leftQuickSlotButton  = KeyBinding.get("leftQuickSlotButton",  KeyMatch.nil);
 
+	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxes",  KeyMatch.nil);
 
 	public boolean keydown(KeyEvent ev) {
 		if(kb_drinkButton.key().match(ev)) {
@@ -2030,6 +2033,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		if(kb_leftQuickSlotButton.key().match(ev)) {
 			quickslots.drop(QuickSlotsWdg.lc, Coord.z);
 			quickslots.simulateclick(QuickSlotsWdg.lc);
+			return(true);
+		}
+		if(kb_toggleCollisionBoxes.key().match(ev)) {
+			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(!Gob.showCollisionBoxes);
 			return(true);
 		}
 		return(super.keydown(ev));

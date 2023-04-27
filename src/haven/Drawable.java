@@ -110,4 +110,13 @@ public abstract class Drawable extends GAttrib implements Skeleton.HasPose, Rend
     public Skeleton.Pose getpose() {
 	return(null);
     }
+
+	public String resId() {
+		try {
+			Resource res = getres();
+			return res == null ? null : res.name;
+
+		} catch (Loading ignored) {}
+		return null;
+	}
 }
