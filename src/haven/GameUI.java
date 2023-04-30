@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.automated.ClickNearestGate;
 import haven.res.ui.tt.q.quality.Quality;
 
 import java.util.*;
@@ -79,8 +80,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean trackon = false;
 	public static boolean partyperm = false;
 	public QuickSlotsWdg quickslots;
+	public Thread keyboundActionThread;
 
-    private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
+
+	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(GameUI.class, slot -> slot.wdg())
 	.add(Glob.class, slot -> slot.wdg().ui.sess.glob)
 	.add(Session.class, slot -> slot.wdg().ui.sess);
@@ -2015,14 +2018,15 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_leftQuickSlotButton  = KeyBinding.get("leftQuickSlotButton",  KeyMatch.nil);
 
 	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxes",  KeyMatch.nil);
+	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("kb_clickNearestGate",  KeyMatch.forchar('Q', 0));
 
 	public boolean keydown(KeyEvent ev) {
 		if(kb_drinkButton.key().match(ev)) {
 			wdgmsg("act", "drink");
 			return(true);
 		}
-		if(kb_aggroButton.key().match(ev)) {
-			wdgmsg("act", "aggro");
+		if(kb_clickNearestGate.key().match(ev)) {
+			this.runActionThread(new Thread(new ClickNearestGate(this), "ClickNearestGate"));
 			return(true);
 		}
 		if(kb_rightQuickSlotButton.key().match(ev)) {
@@ -2039,6 +2043,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(!Gob.showCollisionBoxes);
 			return(true);
 		}
+		if(kb_aggroButton.key().match(ev)) {
+			wdgmsg("act", "aggro");
+			return(true);
+		}
 		return(super.keydown(ev));
 	}
 
@@ -2046,6 +2054,20 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		FightWnd fightwdg = ui.fightwnd.get();
 		if (fightwdg != null)
 			fightwdg.changebutton(deck);
+	}
+
+	public void runActionThread(Thread t) {
+		if (this.keyboundActionThread != null && keyboundActionThread.isAlive()) {
+			keyboundActionThread.interrupt();
+		}
+		this.keyboundActionThread = t;
+		t.start();
+	}
+
+	public void stopActionThread() {
+		if (keyboundActionThread != null && keyboundActionThread.isAlive()) {
+			keyboundActionThread.interrupt();
+		}
 	}
 
 }

@@ -592,7 +592,7 @@ public class OptWnd extends Window {
 
 		public BindingPanel(Panel back) {
 			super();
-			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(280, 380))), 0, 0);
+			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(300, 380))), 0, 0);
 			Widget cont = scroll.cont;
 			Widget prev;
 			int y = 0;
@@ -649,6 +649,7 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Right Hand (Quick switch)", GameUI.kb_rightQuickSlotButton, y);
 			y = addbtn(cont, "Left Hand (Quick switch)", GameUI.kb_leftQuickSlotButton, y);
 			y = addbtn(cont, "Toggle Collision Boxes", GameUI.kb_toggleCollisionBoxes, y);
+			y = addbtn(cont, "Click Nearest Non-Visitor Gate", GameUI.kb_clickNearestGate, y);
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			prev = adda(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			pack();
