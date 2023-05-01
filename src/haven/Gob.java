@@ -963,13 +963,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	private enum StatusType {
-		collisionBox, drawable
+		collisionBox, drawable, icon
 	}
 
 	public void collisionBoxUpdated() {
 		status.update(StatusType.collisionBox);
 	}
 	public void drawableUpdated() { status.update(StatusType.drawable); }
+	public void iconUpdated() { status.update(StatusType.icon);}
 	private void updateState() {
 		if(updateseq == 0 || !status.updated()) {return;}
 		StatusUpdates status = this.status;
@@ -977,6 +978,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 		if(status.updated(StatusType.collisionBox, StatusType.drawable)) {
 			updateCollisionBox();
+		}
+		if(status.updated(StatusType.drawable, StatusType.icon)) {
+			updateIcon();
 		}
 	}
 
@@ -997,6 +1001,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			}
 		} else if(collisionBox != null) {
 			collisionBox.show(false);
+		}
+	}
+	private void updateIcon() {
+		if(getattr(GobIcon.class) == null) {
+			GobIcon icon = CustomMapIcons.getIcon(this);
+			if(icon != null) {
+				setattr(icon);
+			}
 		}
 	}
 }

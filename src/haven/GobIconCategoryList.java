@@ -67,6 +67,9 @@ public class GobIconCategoryList extends Listbox<GobIconCategoryList.GobCategory
 	BUSHES("bushes"),
 	LOCALIZEDRESOURCES("localizedresources"),
 	CRIMESCENTS("crimescents"),
+	TRANSPORTATION("transportation"),
+	TOOLS("tools"),
+	SIEGEENGINES("siegeengines"),
 	OTHER("other");
 	
 	private final String resname;
@@ -116,6 +119,10 @@ public class GobIconCategoryList extends Listbox<GobIconCategoryList.GobCategory
 		"/invobjs/irrbloss",
 		"/invobjs/bayshrimp",
 		"/invobjs/lobster",
+		"customMapIcons/tamedHorse",
+		"customMapIcons/opiumdragon",
+		"customMapIcons/dryad",
+		"customMapIcons/treant",
 	};
 	
 	private static final String[] HERB_PATHS = {
@@ -125,6 +132,13 @@ public class GobIconCategoryList extends Listbox<GobIconCategoryList.GobCategory
 	    "/invobjs/small/thornythistle",
 		"/invobjs/small/tangledbramble",
 		"/invobjs/champignon-small",
+		"/invobjs/clay-gray",
+		"/invobjs/clay-cave",
+		"/invobjs/whirlingsnowflake",
+		"/invobjs/small/yulestar",
+		"/invobjs/small/yulelights",
+		"customMapIcons/mandrakespirited",
+		"customMapIcons/stalagoomba",
 	};
 	
 	private static final String[] ORE_PATHS = {
@@ -211,6 +225,27 @@ public class GobIconCategoryList extends Listbox<GobIconCategoryList.GobCategory
 		"/terobjs/mm/fairystone",
 		"/terobjs/mm/tidepool",
 		};
+		private static final String[] TRANSPORTATION_PATH = {
+			"customMapIcons/knarr",
+			"customMapIcons/snekkja",
+			"customMapIcons/rowboat",
+			"customMapIcons/dugout",
+			"customMapIcons/coracle",
+			"customMapIcons/kicksled",
+			"customMapIcons/skis",
+			"customMapIcons/wagon",
+		};
+		private static final String[] TOOLS_PATH = {
+			"customMapIcons/wheelbarrow",
+			"customMapIcons/cart",
+			"customMapIcons/woodenplow",
+			"customMapIcons/metalplow",
+		};
+		private static final String[] SIEGEENGINES_PATH = {
+			"customMapIcons/bram",
+			"customMapIcons/catapult",
+			"customMapIcons/wreckingball",
+		};
 	
 	GobCategory(String category) {
 	    resname = "gfx/hud/mmap/categories/" + category;
@@ -239,21 +274,27 @@ public class GobIconCategoryList extends Listbox<GobIconCategoryList.GobCategory
 	public static GobCategory categorize(GobIcon.Setting conf) {
 	    String name = conf.res.name;
 	    if(name.contains("mm/trees/")) {
-		return GobCategory.TREE;
+			return GobCategory.TREE;
 	    } else if(Arrays.stream(ANIMAL_PATHS).anyMatch(name::contains)) {
-		return GobCategory.ANIMALS;
+			return GobCategory.ANIMALS;
 	    } else if(Arrays.stream(ROCK_PATHS).anyMatch(name::contains)) {
-		return GobCategory.ROCKS;
+			return GobCategory.ROCKS;
 	    } else if(Arrays.stream(ORE_PATHS).anyMatch(name::contains)) {
-		return GobCategory.ORES;
+			return GobCategory.ORES;
 	    } else if(Arrays.stream(HERB_PATHS).anyMatch(name::contains)) {
-		return GobCategory.HERBS;
+			return GobCategory.HERBS;
 	    } else if(name.contains("mm/bushes/")) {
-		return GobCategory.BUSHES;
+			return GobCategory.BUSHES;
 		} else if(Arrays.stream(LOCALIZEDRESOURCES_PATH).anyMatch(name::contains)) {
 			return GobCategory.LOCALIZEDRESOURCES;
 	    } else if(name.contains("/invobjs/clue-")) {
-		return GobCategory.CRIMESCENTS;
+			return GobCategory.CRIMESCENTS;
+		} else if(Arrays.stream(TRANSPORTATION_PATH).anyMatch(name::contains)) {
+			return GobCategory.TRANSPORTATION;
+		} else if(Arrays.stream(TOOLS_PATH).anyMatch(name::contains)) {
+			return GobCategory.TOOLS;
+		} else if(Arrays.stream(SIEGEENGINES_PATH).anyMatch(name::contains)) {
+			return GobCategory.SIEGEENGINES;
 		}
 	    //System.out.println(name); // ND: Use this to print resource name in console
 	    return GobCategory.OTHER;

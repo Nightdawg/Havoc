@@ -261,7 +261,7 @@ public class GobIcon extends GAttrib {
 		}
 
 	private static final List<String> mandatoryEnabledIcons = Arrays.asList("gfx/hud/mmap/plo", "gfx/hud/mmap/cave", "gfx/terobjs/mm/watervortex", "gfx/terobjs/mm/boostspeed");
-	public static Settings load(Message buf) {
+	public static Settings load(Message buf, UI ui) {
 	    if(!Arrays.equals(buf.bytes(sig.length), sig))
 		throw(new Message.FormatError("Invalid signature"));
 	    int ver = buf.uint8();
@@ -317,6 +317,7 @@ public class GobIcon extends GAttrib {
 		ret.settings.put(res.name, set);
 	    }
 		removeEnderCustomIcons(ret.settings);
+		CustomMapIcons.addCustomSettings(ret.settings, ui);
 	    return(ret);
 	}
     }
@@ -406,7 +407,7 @@ public class GobIcon extends GAttrib {
 		public IconLine(Coord sz, Icon icon) {
 		    super(IconList.this, sz, icon);
 		    Widget prev;
-		    prev = adda(new CheckBox("").state(() -> icon.conf.notify).set(andsave(val -> icon.conf.notify = val)).settip("Play selected alarm sound"),
+		    prev = adda(new CheckBox("").state(() -> icon.conf.notify).set(andsave(val -> icon.conf.notify = val)).settip("Notify"),
 				sz.x - UI.scale(2) - (sz.y / 2), sz.y / 2, 0.5, 0.5);
 			prev = adda(new CheckBox(""){
 				@Override
@@ -428,6 +429,10 @@ public class GobIcon extends GAttrib {
 						case("Boost Speed"):
 							icon.conf.show = true;
 							gameui().error("You need to see Speed Boosts at all times. Keep them enabled.");
+							break;
+						case("Burrow"):
+							icon.conf.show = true;
+							gameui().error("Let's keep Burrows visible, yeah?");
 							break;
 						default:
 							icon.conf.show = val;
@@ -541,6 +546,10 @@ public class GobIcon extends GAttrib {
 								conf.show = true;
 								gameui().error("You need to see Speed Boosts at all times. Keep them enabled.");
 								break;
+							case("Burrow"):
+								conf.show = true;
+								gameui().error("Let's keep Burrows visible, yeah?");
+								break;
 							default:
 								conf.show = val;
 						}
@@ -550,7 +559,7 @@ public class GobIcon extends GAttrib {
 					}
 				}.state(() -> conf.show),
 				  0, 0);
-		add(new CheckBox("Play selected alarm sound").state(() -> conf.notify).set(andsave(val -> conf.notify = val)),
+		add(new CheckBox("Notify").state(() -> conf.notify).set(andsave(val -> conf.notify = val)),
 		    w / 2, 0);
 		Button pb = new Button(UI.scale(50), "Play") {
 			protected void depress() {}
@@ -655,6 +664,9 @@ public class GobIcon extends GAttrib {
 							// ND: Check if the tooltip of the icon is "Boost Speed", and make sure to always set it to true.
 						else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Boost Speed"))
 							icon.conf.show = true;
+							// ND: Check if the tooltip of the icon is "Burrow", and make sure to always set it to true.
+						else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Burrow"))
+							icon.conf.show = true;
 						else
 							icon.conf.show = val;
 					});
@@ -663,7 +675,7 @@ public class GobIcon extends GAttrib {
 				}}, 0);
 			list = cont.last(new IconList(UI.scale(280, 500)), 0);
 
-			left.last(new GobIconCategoryList(UI.scale(190), 10, elh){
+			left.last(new GobIconCategoryList(UI.scale(190), 13, elh){
 				@Override
 				public void change(GobIconCategoryList.GobCategory item) {
 					super.change(item);

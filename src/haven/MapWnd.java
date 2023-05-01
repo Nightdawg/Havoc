@@ -57,7 +57,7 @@ public class MapWnd extends Window implements Console.Directory {
     private final Widget toolbar;
     private final Frame viewf;
     private GroupSelector colsel;
-    private Button mremove;
+	protected Button mremove;
     private Predicate<Marker> mflt = pmarkers;
     private Comparator<ListMarker> mcmp = namecmp;
     private List<ListMarker> markers = Collections.emptyList();
@@ -326,8 +326,9 @@ public class MapWnd extends Window implements Console.Directory {
 		namesel.c = listf.c.add(0, listf.sz.y + UI.scale(10));
 		if(colsel != null) {
 		    colsel.c = namesel.c.add(0, namesel.sz.y + UI.scale(10));
-		    mremove.c = colsel.c.add(0, colsel.sz.y + UI.scale(10));
 		}
+		int y = namesel.sz.y + BuddyWnd.margin3 + UI.scale(20);
+		mremove.c = namesel.c.add(0, y);
 	    }
 	}
     }
@@ -693,11 +694,12 @@ public class MapWnd extends Window implements Console.Directory {
 		if(colsel != null) {
 		    ui.destroy(colsel);
 		    colsel = null;
-		    ui.destroy(mremove);
-		    mremove = null;
+		}
+		if(mremove != null) {
+			ui.destroy(mremove);
+			mremove = null;
 		}
 	    }
-
 	    if(lm != null) {
 		Marker mark = lm.mark;
 		if(tool.namesel == null) {
@@ -722,13 +724,13 @@ public class MapWnd extends Window implements Console.Directory {
 				view.file.update(mark);
 			    }
 			});
-		    mremove = tool.add(new Button(UI.scale(200), "Remove", false) {
-			    public void click() {
+		}
+		mremove = tool.add(new Button(UI.scale(200), "Remove", false) {
+			public void click() {
 				view.file.remove(mark);
 				change2(null);
-			    }
-			});
-		}
+			}
+		});
 		MapWnd.this.resize(csz());
 	    }
 	}
