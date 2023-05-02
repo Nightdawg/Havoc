@@ -71,8 +71,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public Progress prog = null;
     private boolean afk = false;
     public BeltSlot[] belt = new BeltSlot[144];
-	public NDActionBar actionBar1 = null, actionBar2 = null, actionBar3 = null, actionBar4 = null;
+	public NDActionBar actionBar1 = null, actionBar2 = null, actionBar3 = null, actionBar4 = null, currentActionBar = null;
 	public boolean localActionBarsLoaded = false;
+	public Resource customActionRes = null;
+	public boolean changeCustomSlot = false;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
 	public static boolean swimon = false;
@@ -1182,6 +1184,15 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    int slot = (Integer)args[0];
 	    if(args.length < 2) {
 		belt[slot] = null;
+		if (changeCustomSlot){
+			if (customActionRes != null && currentActionBar != null) {
+				belt[slot] = new BeltSlot(slot, customActionRes.indir(), Message.nil, 0);
+				currentActionBar.saveLocally();
+				customActionRes = null;
+				currentActionBar = null;
+			}
+		changeCustomSlot = false;
+		}
 	    } else {
 		Indir<Resource> res = ui.sess.getres((Integer)args[1]);
 		Message sdt = Message.nil;
@@ -1727,7 +1738,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		public int barNumber;
 		final Coord pagoff = UI.scale(new Coord(10, 5));
 		public final boolean isVertical;
-		private int SERVER_FSLOT_INDEX;
 
 		public NDActionBar(KeyBinding[] keybindings, int beltNumber, boolean vertical) {
 			super(UI.scale(vertical ? new Coord(40, 400) : new Coord(400, 40)));
@@ -1739,7 +1749,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			} else {
 				curbelt = 0;
 			}
-			SERVER_FSLOT_INDEX = curbelt * 12;
 		}
 
 		public void loadLocal() {
@@ -1822,7 +1831,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			if (this.visible()) {
 				for (int i = 0; i < beltkeys.length; i++) {
 					if (beltkeys[i].key().match(ev)) {
-						keyact(i + (curbelt * 12));
+						///keyact(i + (curbelt * 12));
+						use(i + (curbelt * 12));
 						return (true);
 					}
 				}
@@ -1837,7 +1847,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				WItem item = gui.vhand;
 				if (item != null && item.item != null) {
 					belt[slot] = gui.new BeltSlot(slot, item.item.res, Message.nil, 0);
-					GameUI.this.wdgmsg("setbelt", slot, null);
+					GameUI.this.wdgmsg("setbelt", slot, 0);
 					saveLocally();
 				}
 				return(true);
@@ -1852,11 +1862,13 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			int slot = beltslot(c);
 			if(slot != -1) {
 				if(thing instanceof Resource) {
-					Resource res = (Resource)thing;
+					Resource res = customActionRes = (Resource)thing;
 					if(res.layer(Resource.action) != null) {
-						belt[slot] = this.gameui().new BeltSlot(slot, res.indir(), Message.nil, 0);
 						if (res.name.startsWith("paginae/nightdawg")) {
+							changeCustomSlot = true;
+							currentActionBar = this;
 							saveLocally();
+							GameUI.this.wdgmsg("setbelt", slot, null);
 						} else {
 							GameUI.this.wdgmsg("setbelt", slot, res.name);
 							saveLocally();
@@ -1889,7 +1901,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				Resource res = belt[slot].getres();
 				Resource.AButton act = res.layer(Resource.action);
 				if (act == null) {
-					GameUI.this.wdgmsg("belt", getServerSlot(slot), 1, ui.modflags());
+					GameUI.this.wdgmsg("belt", slot, 1, ui.modflags());
 				} else {
 					if (res.name.startsWith("paginae/nightdawg"))
 						gameui().menu.use(act.ad);
@@ -1898,33 +1910,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				}
 			} catch (Exception e) {
 			}
-		}
-
-		private int getServerSlot(int slot) {
-			return SERVER_FSLOT_INDEX + slot;
-		}
-
-		public void delete(int serverSlot) {
-			if (serverSlot < SERVER_FSLOT_INDEX)
-				return;
-
-			int slot = serverSlot - SERVER_FSLOT_INDEX;
-
-			GameUI.BeltSlot ires = belt[slot];
-			try {
-				if (ires == null || ires.getres().name.startsWith("paginae/nightdawg"))
-					return;
-			} catch (Exception e) {
-			}
-
-			belt[slot] = null;
-			saveLocally();
-		}
-
-		public void add(int serverSlot, GameUI.BeltSlot res) {
-			if (serverSlot < SERVER_FSLOT_INDEX)
-				return;
-			belt[serverSlot - SERVER_FSLOT_INDEX] = res;
 		}
 	}
     
