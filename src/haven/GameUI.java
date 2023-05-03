@@ -1997,14 +1997,24 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 		return null;
 	}
-	public static KeyBinding kb_drinkButton  = KeyBinding.get("DrinkButton",  KeyMatch.forcode(KeyEvent.VK_BACK_QUOTE, 0));
-	public static KeyBinding kb_aggroButton  = KeyBinding.get("AggroButton",  KeyMatch.nil);
-	public static KeyBinding kb_rightQuickSlotButton  = KeyBinding.get("rightQuickSlotButton",  KeyMatch.nil);
-	public static KeyBinding kb_leftQuickSlotButton  = KeyBinding.get("leftQuickSlotButton",  KeyMatch.nil);
+	public void peaceCurrentTarget() {
+		try {
+			if (fv != null && fv.curdisp != null && fv.curdisp.give != null) {
+				fv.curdisp.give.wdgmsg("click", 1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static KeyBinding kb_drinkButton  = KeyBinding.get("DrinkButtonKB",  KeyMatch.forcode(KeyEvent.VK_BACK_QUOTE, 0));
+	public static KeyBinding kb_aggroButton  = KeyBinding.get("AggroButtonKB",  KeyMatch.nil);
+	public static KeyBinding kb_rightQuickSlotButton  = KeyBinding.get("rightQuickSlotButtonKB",  KeyMatch.forchar('X', KeyMatch.M));
+	public static KeyBinding kb_leftQuickSlotButton  = KeyBinding.get("leftQuickSlotButtonKB",  KeyMatch.forchar('Z', KeyMatch.M));
 
-	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxes",  KeyMatch.nil);
-	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("kb_clickNearestGate",  KeyMatch.forchar('Q', 0));
-	public static KeyBinding kb_toggleCombatAutoPeace  = KeyBinding.get("toggleCombatAutoPeace",  KeyMatch.forchar('P', KeyMatch.C | KeyMatch.S));
+	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxesKB",  KeyMatch.forchar('B', KeyMatch.S));
+	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("clickNearestGateKB",  KeyMatch.forchar('Q', 0));
+	public static KeyBinding kb_toggleCombatAutoPeace  = KeyBinding.get("toggleCombatAutoPeaceKB",  KeyMatch.forchar('P', KeyMatch.C | KeyMatch.S));
+	public static KeyBinding kb_peaceCurrentTarget  = KeyBinding.get("peaceCurrentTargetKB",  KeyMatch.forchar('P', KeyMatch.M));
 
 	public boolean keydown(KeyEvent ev) {
 		if(kb_drinkButton.key().match(ev)) {
@@ -2037,6 +2047,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			boolean val = !Fightview.autoPeaceSetting;
 			OptWnd.toggleAutoPeaceCheckbox.set(val);
 			GameUI.this.msg("Autopeace when combat starts is now turned " + (val ? "ON" : "OFF") + ".");
+			return(true);
+		}
+		if(kb_peaceCurrentTarget.key().match(ev)) {
+			peaceCurrentTarget();
 			return(true);
 		}
 		return(super.keydown(ev));
