@@ -189,6 +189,7 @@ public class Fightsess extends Widget {
 	public static Boolean altui = true;
 	public static int combaty0HeightInt = 400;
 	public static int combatbottomHeightInt = 100;
+
 	public static boolean markCombatTargetSetting = true;
 	public static boolean showKeybindCombatSetting = true;
 	public void draw(GOut g) {

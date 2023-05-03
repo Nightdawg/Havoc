@@ -49,6 +49,7 @@ public class Fightview extends Widget {
     public double lastuse = 0;
     public Mainrel curdisp;
     private List<Relation> nonmain = Collections.emptyList();
+	public static boolean autoPeaceSetting = false;
 
     public class Relation {
         public final long gobid;
@@ -321,6 +322,9 @@ public class Fightview extends Widget {
 	    rel.oip = (Integer)args[3];
             lsrel.addFirst(rel);
 	    updrel();
+		if(rel.gst == 0 && autoPeaceSetting) {
+			wdgmsg("give", (int)rel.gobid, 1);
+		}
             return;
         } else if(msg == "del") {
             Relation rel = getrel(uint32((Integer)args[0]));

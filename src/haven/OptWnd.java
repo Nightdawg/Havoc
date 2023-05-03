@@ -650,6 +650,7 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Left Hand (Quick switch)", GameUI.kb_leftQuickSlotButton, y);
 			y = addbtn(cont, "Toggle Collision Boxes", GameUI.kb_toggleCollisionBoxes, y);
 			y = addbtn(cont, "Click Nearest Non-Visitor Gate", GameUI.kb_clickNearestGate, y);
+			y = addbtn(cont, "Toggle Combat Autopeace", GameUI.kb_toggleCombatAutoPeace, y);
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			prev = adda(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			pack();
@@ -1089,6 +1090,7 @@ public class OptWnd extends Window {
 	private HSlider combatUITopPanelHeightSlider;
 	private HSlider combatUIBottomPanelHeightSlider;
 	public static CheckBox toggleGobDamageInfoCheckBox;
+	public static CheckBox toggleAutoPeaceCheckbox;
 	private Button damageInfoClearButton;
 	public class NDCombatSettingsPanel extends Panel {
 		public NDCombatSettingsPanel(Panel back) {
@@ -1097,6 +1099,7 @@ public class OptWnd extends Window {
 			Fightsess.altui = Utils.getprefb("useProperCombatUI", true);
 			Fightsess.showKeybindCombatSetting = Utils.getprefb("showCombatHotkeysUI", true);
 			Fightsess.markCombatTargetSetting = Utils.getprefb("markCurrentCombatTarget", true);
+			Fightview.autoPeaceSetting = Utils.getprefb("autoPeaceCombat", false);
 			GobDamageInfo.toggleGobDamageInfo = Utils.getprefb("GobDamageInfoToggled", true);
 			GobDamageInfo.toggleGobDamageInfoWounds = Utils.getprefb("GobDamageInfoWoundsToggled", true);
 			GobDamageInfo.toggleGobDamageInfoArmor = Utils.getprefb("GobDamageInfoArmorToggled", true);
@@ -1154,6 +1157,14 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(16, 6));
 			prev = add(new Label("Other Combat Settings:"), prev.pos("bl").adds(-16, 10));
+			prev = add(toggleAutoPeaceCheckbox = new CheckBox("Autopeace when combat starts"){
+				{a = Utils.getprefb("autoPeaceCombat", false);}
+				public void set(boolean val) {
+					Utils.setprefb("autoPeaceCombat", val);
+					Fightview.autoPeaceSetting = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(16, 6));
 			prev = add(new CheckBox("Mark current target"){
 				{a = Utils.getprefb("markCurrentCombatTarget", true);}
 				public void set(boolean val) {
@@ -1161,7 +1172,7 @@ public class OptWnd extends Window {
 					Fightsess.markCombatTargetSetting = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(16, 6));
+			}, prev.pos("bl").adds(0, 6));
 			prev = add(toggleGobDamageInfoCheckBox = new CheckBox("Show damage info:"){
 				{a = Utils.getprefb("GobDamageInfoToggled", true);}
 				public void set(boolean val) {
@@ -1438,6 +1449,7 @@ public class OptWnd extends Window {
 	private void setTooltipsForCombatSettingsStuff(){
 		toggleGobDamageInfoCheckBox.tooltip = RichText.render("Enabling this will display the total amount of damage players and animals took.\nNote: The damage you will see saved above players/animals is the total damage you saw the entity take, while inside of your view range. This is not all of the damage said entity might have taken recently.\n$col[185,185,185]{If you change any of the settings below, you will need a damage update in order to see the changes (for example, deal some damage to the player/animal).}", 300);
 		damageInfoClearButton.tooltip = RichText.render("Clear all damage info", 300);
+		toggleAutoPeaceCheckbox.tooltip = RichText.render("Enabling this will automatically set your status to 'Peace' when combat is initiated with a new target. This does not affect targets you are already in combat with.\n$col[185,185,185]{Note: This option can also be turned on/off using a Keybinding.}", 300);
 	}
 
 	private void setTooltipsForGameplaySettingsStuff(){

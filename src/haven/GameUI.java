@@ -2004,6 +2004,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
 	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxes",  KeyMatch.nil);
 	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("kb_clickNearestGate",  KeyMatch.forchar('Q', 0));
+	public static KeyBinding kb_toggleCombatAutoPeace  = KeyBinding.get("toggleCombatAutoPeace",  KeyMatch.forchar('P', KeyMatch.C | KeyMatch.S));
 
 	public boolean keydown(KeyEvent ev) {
 		if(kb_drinkButton.key().match(ev)) {
@@ -2030,6 +2031,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 		if(kb_aggroButton.key().match(ev)) {
 			wdgmsg("act", "aggro");
+			return(true);
+		}
+		if(kb_toggleCombatAutoPeace.key().match(ev)) {
+			boolean val = !Fightview.autoPeaceSetting;
+			OptWnd.toggleAutoPeaceCheckbox.set(val);
+			GameUI.this.msg("Autopeace when combat starts is now turned " + (val ? "ON" : "OFF") + ".");
 			return(true);
 		}
 		return(super.keydown(ev));
