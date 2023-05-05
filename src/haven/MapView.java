@@ -2230,10 +2230,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	
 	protected void hit(Coord pc, Coord2d mc, ClickData inf) {
-
+		GameUI gui = gameui();
 		// reset alt so we could walk with alt+lmb while having item on the cursor
 		int modflags = ui.modflags();
-		if (gameui().vhand != null && clickb == 1)
+		if (gui.vhand != null && clickb == 1)
 			modflags = modflags & ~4;
 
 	    Object[] args = {pc, mc.floor(posres), clickb, modflags};
@@ -2242,15 +2242,61 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			Long gobid = new Long((Integer) inf.clickargs()[1]);
 			Gob gob = glob.oc.getgob(gobid);
 			if(gob != null) {
-				if (clickb == 3 && OptWnd.instantFlowerMenuCTRL) {
+				if (clickb == 3) {
+					if (OptWnd.autoswitchBunnyPlateBoots) {
+						try {
+							WItem eqboots = gui.getequipory().slots[Equipory.SLOTS.BOOTS.idx];
+							List<WItem> invboots;
+							if (gob.getres().name.contains("/rabbit/")) {
+								invboots = gui.maininv.getItemsExact("Bunny Slippers");
+								if (invboots.size() > 0) {
+									if (eqboots != null && !eqboots.item.getname().equals("Bunny Slippers")) {
+										eqboots.item.wdgmsg("transfer", new Coord(eqboots.sz.x / 2, eqboots.sz.y / 2));
+									}
+									WItem slipper = invboots.get(0);
+									slipper.item.wdgmsg("transfer", new Coord(slipper.sz.x / 2, slipper.sz.y / 2));
+								}
+							} else {
+								invboots = gui.maininv.getItemsExact("Plate Boots");
+								if (eqboots != null && eqboots.item.getname().equals("Bunny Slippers")) {
+									if (invboots.size() > 0) {
+										eqboots.item.wdgmsg("transfer", new Coord(eqboots.sz.x / 2, eqboots.sz.y / 2));
+										WItem boots = invboots.get(0);
+										boots.item.wdgmsg("transfer", new Coord(boots.sz.x / 2, boots.sz.y / 2));
+									}
+								}
+							}
+						} catch (Exception ignored) {
+						}
+					}
 					wdgmsg("click", args);
-					if (ui.modctrl) {
-						gameui().ui.rcvr.rcvmsg(gameui().ui.lastid+1, "cl", 0, gameui().ui.modflags());
+					if (OptWnd.instantFlowerMenuCTRL) {
+						if (ui.modctrl) {
+							gameui().ui.rcvr.rcvmsg(gameui().ui.lastid + 1, "cl", 0, gameui().ui.modflags());
+						}
 					}
 					return;
 				}
 				wdgmsg("click", args);
 				return;
+			}
+		} else {
+			if(clickb == 1) {
+				if (OptWnd.autoswitchBunnyPlateBoots) {
+					try {
+						if (gui.getequipory() != null && gui.getequipory().slots != null) {
+							WItem eqboots = gui.getequipory().slots[Equipory.SLOTS.BOOTS.idx];
+							if (eqboots != null && eqboots.item.getname().equals("Bunny Slippers")) {
+								List<WItem> invboots = gui.maininv.getItemsExact("Plate Boots");
+								if (invboots.size() > 0) {
+									eqboots.item.wdgmsg("transfer", new Coord(eqboots.sz.x / 2, eqboots.sz.y / 2));
+									WItem boots = invboots.get(0);
+									boots.item.wdgmsg("transfer", new Coord(boots.sz.x / 2, boots.sz.y / 2));
+								}
+							}
+						}
+					} catch (Exception e) {}
+				}
 			}
 		}
 	    wdgmsg("click", args);

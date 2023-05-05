@@ -879,11 +879,51 @@ public class MiniMap extends Widget {
     public void mvclick(MapView mv, Coord mc, Location loc, Gob gob, int button) {
 	if(mc == null) mc = ui.mc;
 	if((sessloc != null) && (sessloc.seg == loc.seg)) {
-	    if(gob == null)
-		mv.wdgmsg("click", mc,
-			  loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres),
-			  button, ui.modflags());
-	    else {
+		GameUI gui = gameui();
+		if (gob == null) {
+			if (OptWnd.autoswitchBunnyPlateBoots) {
+				try {
+					if (gui.getequipory() != null && gui.getequipory().slots != null) {
+						WItem eqboots = gui.getequipory().slots[Equipory.SLOTS.BOOTS.idx];
+						if (eqboots != null && eqboots.item.getname().equals("Bunny Slippers")) {
+							List<WItem> invboots = gui.maininv.getItemsExact("Plate Boots");
+							if (invboots.size() > 0) {
+								eqboots.item.wdgmsg("transfer", new Coord(eqboots.sz.x / 2, eqboots.sz.y / 2));
+								WItem boots = invboots.get(0);
+								boots.item.wdgmsg("transfer", new Coord(boots.sz.x / 2, boots.sz.y / 2));
+							}
+						}
+					}
+				} catch (Exception e) {}
+			}
+			mv.wdgmsg("click", mc, loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres), button, ui.modflags());
+		} else {
+			if (OptWnd.autoswitchBunnyPlateBoots) {
+				try {
+					WItem eqboots = gui.getequipory().slots[Equipory.SLOTS.BOOTS.idx];
+					List<WItem> invboots;
+					if (gob.getres().name.contains("/rabbit/")) {
+						invboots = gui.maininv.getItemsExact("Bunny Slippers");
+						if (invboots.size() > 0) {
+							if (eqboots != null && !eqboots.item.getname().equals("Bunny Slippers")) {
+								eqboots.item.wdgmsg("transfer", new Coord(eqboots.sz.x / 2, eqboots.sz.y / 2));
+							}
+							WItem slipper = invboots.get(0);
+							slipper.item.wdgmsg("transfer", new Coord(slipper.sz.x / 2, slipper.sz.y / 2));
+						}
+					} else {
+						invboots = gui.maininv.getItemsExact("Plate Boots");
+						if (eqboots != null && eqboots.item.getname().equals("Bunny Slippers")) {
+							if (invboots.size() > 0) {
+								eqboots.item.wdgmsg("transfer", new Coord(eqboots.sz.x / 2, eqboots.sz.y / 2));
+								WItem boots = invboots.get(0);
+								boots.item.wdgmsg("transfer", new Coord(boots.sz.x / 2, boots.sz.y / 2));
+							}
+						}
+					}
+				} catch (Exception ignored) {
+			}
+		}
 			Object[] args = {mc, loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres), button, ui.modflags(), 0, (int) gob.id, gob.rc.floor(posres), 0, -1};
 			if (button == 3 && OptWnd.instantFlowerMenuCTRL) {
 				mv.wdgmsg("click", args);

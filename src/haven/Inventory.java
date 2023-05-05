@@ -148,4 +148,126 @@ public class Inventory extends Widget implements DTarget {
 	    super.uimsg(msg, args);
 	}
     }
+
+	public List<WItem> getItemsPartial(String... names) {
+		List<WItem> items = new ArrayList<WItem>();
+		for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+			if (wdg instanceof WItem) {
+				String wdgname = ((WItem)wdg).item.getname();
+				for (String name : names) {
+					if (name == null)
+						continue;
+					if (wdgname.contains(name)) {
+						items.add((WItem) wdg);
+						break;
+					}
+				}
+			}
+		}
+		return items;
+	}
+
+	public List<WItem> getItemsExact(String... names) {
+		List<WItem> items = new ArrayList<WItem>();
+		for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+			if (wdg instanceof WItem) {
+				String wdgname = ((WItem)wdg).item.getname();
+				for (String name : names) {
+					if (wdgname.equals(name)) {
+						items.add((WItem) wdg);
+						break;
+					}
+				}
+			}
+		}
+		return items;
+	}
+
+	public List<WItem> getAllItems() {
+		List<WItem> items = new ArrayList<WItem>();
+		for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+			if (wdg instanceof WItem) {
+				items.add((WItem) wdg);
+			}
+		}
+		return items;
+	}
+
+	public WItem getItemPartial(String name) {
+		if (name == null)
+			return null;
+		for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+			if (wdg instanceof WItem) {
+				String wdgname = ((WItem)wdg).item.getname();
+				if (wdgname.contains(name))
+					return (WItem) wdg;
+			}
+		}
+		return null;
+	}
+
+	public int getItemPartialCount(String name) {
+		if (name == null)
+			return 0;
+		int count = 0;
+		for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+			if (wdg instanceof WItem) {
+				String wdgname = ((WItem)wdg).item.getname();
+				if (wdgname.contains(name))
+					count++;
+			}
+		}
+		return count;
+	}
+
+	public int getFreeSpace() {
+		int feespace = isz.x * isz.y;
+		for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+			if (wdg instanceof WItem)
+				feespace -= (wdg.sz.x * wdg.sz.y) / (sqsz.x * sqsz.y);
+		}
+		return feespace;
+	}
+
+	public Coord isRoom(int x, int y) {
+		//check if there is a space for an x times y item, return coordinate where.
+		Coord freespot = null;
+		boolean[][] occumap = new boolean[isz.x][isz.y];
+		for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+			if (wdg instanceof WItem) {
+				for (int i = 0; i < wdg.sz.x; i++) {
+					for (int j = 0; j < wdg.sz.y; j++) {
+						occumap[(wdg.c.x/sqsz.x+i/sqsz.x)][(wdg.c.y/sqsz.y+j/sqsz.y)] = true;
+					}
+				}
+			}
+		}
+		//(NICE LOOPS)
+		//Iterate through all spots in inventory
+		superloop:
+		for (int i = 0; i < isz.x; i++) {
+			for (int j = 0; j < isz.y; j++) {
+				boolean itsclear = true;
+				//Check if there is X times Y free slots
+				try {
+					for (int k = 0; k < x; k++) {
+						for (int l = 0; l < y; l++) {
+							if (occumap[i+k][j+l] == true) {
+								itsclear = false;
+							}
+						}
+					}
+				} catch (IndexOutOfBoundsException e) {
+					itsclear = false;
+				}
+
+				if (itsclear) {
+					freespot = new Coord(i,j);
+					break superloop;
+				}
+			}
+		}
+
+		return freespot;
+	}
 }

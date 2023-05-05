@@ -1002,7 +1002,10 @@ public class OptWnd extends Window {
 
 	private Label defaultSpeedLabel;
 	private CheckBox instantFlowerMenuCTRLCheckBox;
+	private CheckBox autoswitchBunnyPlateBootsCheckBox;
+
 	public static boolean instantFlowerMenuCTRL = Utils.getprefb("instantFlowerMenuCTRL", true);
+	public static boolean autoswitchBunnyPlateBoots = Utils.getprefb("autoswitchBunnyPlateBoots", true);
 
 	public class NDGameplaySettingsPanel extends Panel {
 		private final List<String> runSpeeds = Arrays.asList("Crawl", "Walk", "Run", "Sprint");
@@ -1078,6 +1081,14 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("instantFlowerMenuCTRL", val);
 					instantFlowerMenuCTRL = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			prev = add(autoswitchBunnyPlateBootsCheckBox = new CheckBox("Autoswitch Bunny Slippers and Plate Boots from inventory"){
+				{a = Utils.getprefb("autoswitchBunnyPlateBoots", true);}
+				public void set(boolean val) {
+					Utils.setprefb("autoswitchBunnyPlateBoots", val);
+					autoswitchBunnyPlateBoots = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
@@ -1456,6 +1467,7 @@ public class OptWnd extends Window {
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
 		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding CTRL before right clicking an item or object instantly select the first available option from the flower menu.", 300);
+		autoswitchBunnyPlateBootsCheckBox.tooltip = RichText.render("Enabling this will cause your currently equipped Plate Boots to automatically swap with a pair of bunny slippers from your inventory, whenever you right click to chase a rabbit, and vice versa if you click on anything else or just left click to walk.\n$col[185,185,185]{I don't see many reason for which you'd ever want to disable this setting, but alas, I made it an option.}", 300);
 	}
 
 	private void setTooltipsForGraphicsSettingsStuff(){
