@@ -7,23 +7,25 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Hitbox extends SlottedNode implements Rendered {
+public class Hitbox2 extends SlottedNode implements Rendered {
 	private static final VertexArray.Layout LAYOUT = new VertexArray.Layout(new VertexArray.Layout.Input(Homo3D.vertex, new VectorFormat(3, NumberFormat.FLOAT32), 0, 0, 12));
 	private Model model;
 	private final Gob gob;
 	private static final Map<Resource, Model> MODEL_CACHE = new HashMap<>();
 	private static final float Z = 0.1f;
-	private static final Color SOLID_COLOR = new Color(255, 255, 255, 235);
-	private static final Color CLOSEDGATE_COLOR = new Color(218, 0, 0, 235);
-	private static final Color OPENVISITORGATE_COLOR = new Color(255, 233, 0, 235);
-	private static final Color PASSABLE_COLOR = new Color(0, 217, 30, 230);
-	private static final float WIDTH = 2f;
-	private static final Pipe.Op TOP = Pipe.Op.compose(Rendered.last, States.Depthtest.none, States.maskdepth);
-	private static final Pipe.Op SOLID = Pipe.Op.compose(new BaseColor(SOLID_COLOR), new States.LineWidth(WIDTH));
+
+	public static String[] savedColorSetting = Utils.getprefsa("hitboxFilled" + "_colorSetting", new String[]{"0", "225", "255", "200"});
+	public static Color SOLID_COLOR = new Color(Integer.parseInt(savedColorSetting[0]), Integer.parseInt(savedColorSetting[1]), Integer.parseInt(savedColorSetting[2]), 140);
+	private static final Color CLOSEDGATE_COLOR = new Color(218, 0, 0, 100);
+	private static final Color OPENVISITORGATE_COLOR = new Color(255, 233, 0, 100);
+	private static final Color PASSABLE_COLOR = new Color(0, 217, 30, 100);
+	public static final float WIDTH = 2f;
+	public static final Pipe.Op TOP = Pipe.Op.compose(Rendered.last, States.Depthtest.none, States.maskdepth);
+	public static Pipe.Op SOLID = Pipe.Op.compose(new BaseColor(SOLID_COLOR), new States.LineWidth(WIDTH));
 	private static final Pipe.Op CLOSEDGATE = Pipe.Op.compose(new BaseColor(CLOSEDGATE_COLOR), new States.LineWidth(WIDTH));
 	private static final Pipe.Op OPENVISITORGATE = Pipe.Op.compose(new BaseColor(OPENVISITORGATE_COLOR), new States.LineWidth(WIDTH));
 	private static final Pipe.Op PASSABLE = Pipe.Op.compose(new BaseColor(PASSABLE_COLOR), new States.LineWidth(WIDTH));
-	private static final Pipe.Op SOLID_TOP = Pipe.Op.compose(SOLID, TOP);
+	public static Pipe.Op SOLID_TOP = Pipe.Op.compose(SOLID, TOP);
 	private static final Pipe.Op CLOSEDGATE_TOP = Pipe.Op.compose(CLOSEDGATE, TOP);
 	private static final Pipe.Op OPENVISITORGATE_TOP = Pipe.Op.compose(OPENVISITORGATE, TOP);
 	private static final Pipe.Op PASSABLE_TOP = Pipe.Op.compose(PASSABLE, TOP);
@@ -31,15 +33,15 @@ public class Hitbox extends SlottedNode implements Rendered {
 	private boolean issaGate = false;
 	private boolean issaVisitorGate = false;
 
-	private Hitbox(Gob gob) {
+	private Hitbox2(Gob gob) {
 		model = getModel(gob);
 		this.gob = gob;
 		updateState();
 	}
 
-	public static Hitbox forGob(Gob gob) {
+	public static Hitbox2 forGob(Gob gob) {
 		try {
-			return new Hitbox(gob);
+			return new Hitbox2(gob);
 		} catch (Loading ignored) { }
 		return null;
 	}

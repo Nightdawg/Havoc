@@ -2012,6 +2012,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_leftQuickSlotButton  = KeyBinding.get("leftQuickSlotButtonKB",  KeyMatch.forchar('Z', KeyMatch.M));
 
 	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxesKB",  KeyMatch.forchar('B', KeyMatch.S));
+	public static KeyBinding kb_toggleHidingBoxes  = KeyBinding.get("toggleHidingBoxesKB",  KeyMatch.forchar('H', KeyMatch.C));
 	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("clickNearestGateKB",  KeyMatch.forchar('Q', 0));
 	public static KeyBinding kb_toggleCombatAutoPeace  = KeyBinding.get("toggleCombatAutoPeaceKB",  KeyMatch.forchar('P', KeyMatch.C | KeyMatch.S));
 	public static KeyBinding kb_peaceCurrentTarget  = KeyBinding.get("peaceCurrentTargetKB",  KeyMatch.forchar('P', KeyMatch.M));
@@ -2037,6 +2038,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 		if(kb_toggleCollisionBoxes.key().match(ev)) {
 			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(!Gob.showCollisionBoxes);
+			return(true);
+		}
+		if(kb_toggleHidingBoxes.key().match(ev)) {
+			OptWnd.toggleGobHidingCheckBox.set(!Gob.hideObjects);
 			return(true);
 		}
 		if(kb_aggroButton.key().match(ev)) {

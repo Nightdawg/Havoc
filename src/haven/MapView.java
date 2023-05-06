@@ -740,6 +740,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	clmaptree.add(clickmap);
 	setcanfocus(true);
 	if (Gob.showCollisionBoxes) updatePlobDrawable();
+	if (Gob.hideObjects) updatePlobDrawable();
     }
 
 	private void updatePlobDrawable() {

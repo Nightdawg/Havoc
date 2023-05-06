@@ -29,7 +29,10 @@ package haven;
 import haven.render.*;
 import haven.res.ui.tt.q.quality.Quality;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.List;
@@ -651,6 +654,7 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Toggle Combat Autopeace", GameUI.kb_toggleCombatAutoPeace, y+6);
 			y = addbtn(cont, "Peace Current Target", GameUI.kb_peaceCurrentTarget, y);
 			y = addbtn(cont, "Toggle Collision Boxes", GameUI.kb_toggleCollisionBoxes, y+6);
+			y = addbtn(cont, "Toggle Object Hiding", GameUI.kb_toggleHidingBoxes, y);
 			y = addbtn(cont, "Click Nearest Non-Visitor Gate", GameUI.kb_clickNearestGate, y);
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			prev = adda(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
@@ -1228,6 +1232,163 @@ public class OptWnd extends Window {
 		}
 	}
 
+	public static CheckBox toggleGobHidingCheckBox;
+	public static CheckBox hideTreesCheckbox;
+	public static boolean hideTreesSetting = Utils.getprefb("hideTrees", true);
+	public static CheckBox hideBushesCheckbox;
+	public static boolean hideBushesSetting = Utils.getprefb("hideBushes", true);
+	public static CheckBox hideBouldersCheckbox;
+	public static boolean hideBouldersSetting = Utils.getprefb("hideBoulders", true);
+	public static CheckBox hideTreeLogsCheckbox;
+	public static boolean hideTreeLogsSetting = Utils.getprefb("hideTreeLogs", true);
+	public static CheckBox hideWallsCheckbox;
+	public static boolean hideWallsSetting = Utils.getprefb("hideWalls", false);
+	public static CheckBox hideHousesCheckbox;
+	public static boolean hideHousesSetting = Utils.getprefb("hideHouses", false);
+	public static CheckBox hideCropsCheckbox;
+	public static boolean hideCropsSetting = Utils.getprefb("hideCrops", false);
+	public static CheckBox hideStockpilesCheckbox;
+	public static boolean hideStockpilesSetting = Utils.getprefb("hideStockpiles", false);
+
+
+	public class NDHidingSettingsPanel extends Panel {
+		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
+			return (cont.addhl(new Coord(0, y), cont.sz.x,
+					new Label(nm), new SetButton(UI.scale(140), cmd))
+					+ UI.scale(2));
+		}
+
+		public NDHidingSettingsPanel(Panel back) {
+			Widget prev;
+			//add(new Label(""), 298, 0); // ND: To fix window width
+			prev = add(toggleGobHidingCheckBox = new CheckBox("Hide Objects"){
+				{a = (Utils.getprefb("gobHideObjectsToggle", false));}
+				public void set(boolean val) {
+					Utils.setprefb("gobHideObjectsToggle", val);
+					Gob.hideObjects = val;
+					if (gameui() != null)
+						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					a = val;
+				}
+			}, 0, 10);
+
+			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(300, 40))), prev.pos("bl").adds(14, 16));
+			Widget cont = scroll.cont;
+			addbtn(cont, "Toggle object hiding hotkey:", GameUI.kb_toggleHidingBoxes, 0);
+
+			prev = add(new ColorOptionWidget("Hiding box color:", "hitboxFilled", 100, 0, 200, 255, 200, (Color col) -> {
+
+				//ND: Update the inner filled box
+				HitboxFilled.SOLID_COLOR = col;
+				HitboxFilled.SOLID = Pipe.Op.compose(new BaseColor(col), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+
+				// ND: Update the outer box lines
+				Color col2 = Hitbox2.SOLID_COLOR = new Color(col.getRed(), col.getGreen(), col.getBlue(), 140);
+				Hitbox2.SOLID = Pipe.Op.compose(new BaseColor(col2), new States.LineWidth(Hitbox2.WIDTH));
+				Hitbox2.SOLID_TOP = Pipe.Op.compose(new BaseColor(col2), new States.LineWidth(Hitbox2.WIDTH), Hitbox2.TOP);
+
+				// ND: Reload the boxes
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+
+			}){}, scroll.pos("bl").adds(0, -10));
+
+			prev = add(new Label("Objects that will be hidden:"), prev.pos("bl").adds(0, 20).x(0));
+
+			prev = add(hideTreesCheckbox = new CheckBox("Trees"){
+				{a = Utils.getprefb("hideTrees", true);}
+				public void set(boolean val) {
+					Utils.setprefb("hideTrees", val);
+					hideTreesSetting = val;
+					if (gameui() != null)
+						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					a = val;
+				}
+			}, prev.pos("bl").adds(16, 4));
+
+			prev = add(hideBushesCheckbox = new CheckBox("Bushes"){
+				{a = Utils.getprefb("hideBushes", true);}
+				public void set(boolean val) {
+					Utils.setprefb("hideBushes", val);
+					hideBushesSetting = val;
+					if (gameui() != null)
+						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+			prev = add(hideBouldersCheckbox = new CheckBox("Boulders"){
+				{a = Utils.getprefb("hideBoulders", true);}
+				public void set(boolean val) {
+					Utils.setprefb("hideBoulders", val);
+					hideBouldersSetting = val;
+					if (gameui() != null)
+						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+			prev = add(hideTreeLogsCheckbox = new CheckBox("Tree Logs"){
+				{a = Utils.getprefb("hideTreeLogs", false);}
+				public void set(boolean val) {
+					Utils.setprefb("hideTreeLogs", val);
+					hideTreeLogsSetting = val;
+					if (gameui() != null)
+						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+			prev = add(hideWallsCheckbox = new CheckBox("Palisades and Brick Walls"){
+				{a = Utils.getprefb("hideWalls", false);}
+				public void set(boolean val) {
+					Utils.setprefb("hideWalls", val);
+					hideWallsSetting = val;
+					if (gameui() != null)
+						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+			prev = add(hideHousesCheckbox = new CheckBox("Houses"){
+				{a = Utils.getprefb("hideHouses", false);}
+				public void set(boolean val) {
+					Utils.setprefb("hideHouses", val);
+					hideHousesSetting = val;
+					if (gameui() != null)
+						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+			prev = add(hideCropsCheckbox = new CheckBox("Crops (no hiding box)"){
+				{a = Utils.getprefb("hideCrops", false);}
+				public void set(boolean val) {
+					Utils.setprefb("hideCrops", val);
+					hideCropsSetting = val;
+					if (gameui() != null)
+						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+			prev = add(hideStockpilesCheckbox = new CheckBox("Stockpiles"){
+				{a = Utils.getprefb("hideStockpiles", false);}
+				public void set(boolean val) {
+					Utils.setprefb("hideStockpiles", val);
+					hideStockpilesSetting = val;
+					if (gameui() != null)
+						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(50)));
+
+			pack();
+		}
+	}
+
 	public class SetButton extends KeyMatch.Capture {
 	    public final KeyBinding cmd;
 
@@ -1389,6 +1550,8 @@ public class OptWnd extends Window {
 		Panel camsettings = add(new NDCamSettingsPanel(advancedSettings));
 		Panel gameplaysettings = add(new NDGameplaySettingsPanel(advancedSettings));
 		Panel combatsettings = add(new NDCombatSettingsPanel(advancedSettings));
+		Panel hidingsettings = add(new NDHidingSettingsPanel(advancedSettings));
+
 		int y2 = UI.scale(6);
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Interface Settings", -1, iface, "Interface Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Graphics Settings", -1, graphicssettings, "Graphics Settings"), 0, y2).pos("bl").adds(0, 5).y;
@@ -1397,6 +1560,8 @@ public class OptWnd extends Window {
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Camera Settings", -1, camsettings, "Camera Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Gameplay Settings", -1, gameplaysettings, "Gameplay Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Combat Settings", -1, combatsettings, "Combat Settings"), 0, y2).pos("bl").adds(0, 25).y;
+
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Hiding Settings", -1, hidingsettings, "Hiding Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Back", 27, main, "Options            "), 0, y2).pos("bl").adds(0, 5).y;
 		this.advancedSettings.pack();

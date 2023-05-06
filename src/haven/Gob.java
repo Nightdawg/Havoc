@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
 import java.util.function.*;
@@ -51,6 +52,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public StatusUpdates status = new StatusUpdates();
 	private CollisionBoxGobSprite<Hitbox> collisionBox = null;
+	private CollisionBoxGobSprite<Hitbox2> collisionBox2 = null;
+	private CollisionBoxGobSprite<HitboxFilled> hidingBox = null;
 
     public static class Overlay implements RenderTree.Node {
 	public final int id;
@@ -357,7 +360,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	this(glob, c, -1);
     }
 
+	private Map<Class<? extends GAttrib>, GAttrib> cloneattrs() {
+		synchronized (this.attr) {
+			return new HashMap<>(this.attr);
+		}
+	}
+
     public void ctick(double dt) {
+	Map<Class<? extends GAttrib>, GAttrib> attr = cloneattrs();
 	for(GAttrib a : attr.values())
 	    a.ctick(dt);
 	for(Iterator<Overlay> i = ols.iterator(); i.hasNext();) {
@@ -494,6 +504,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
     public void dispose() {
+	Map<Class<? extends GAttrib>, GAttrib> attr = cloneattrs();
 	for(GAttrib a : attr.values())
 	    a.dispose();
     }
@@ -559,11 +570,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		setupmods.remove(prev);
 	}
 	if(a != null) {
-	    if(a instanceof RenderTree.Node) {
+	    if(a instanceof RenderTree.Node && !a.skipRender) {
 		try {
 		    RUtils.multiadd(this.slots, (RenderTree.Node)a);
 		} catch(Loading l) {
-		    if(prev instanceof RenderTree.Node) {
+		    if(prev instanceof RenderTree.Node && !prev.skipRender) {
 			RUtils.multiadd(this.slots, (RenderTree.Node)prev);
 			attr.put(ac, prev);
 		    }
@@ -690,8 +701,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	    if(ol.slots != null)
 		slot.add(ol);
 	}
+	Map<Class<? extends GAttrib>, GAttrib> attr = cloneattrs();
 	for(GAttrib a : attr.values()) {
-	    if(a instanceof RenderTree.Node)
+	    if(a instanceof RenderTree.Node && !a.skipRender)
 		slot.add((RenderTree.Node)a);
 	}
 	slots.add(slot);
@@ -963,11 +975,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	private enum StatusType {
-		collisionBox, drawable, icon
+		collisionBox, drawable, icon, hidingBox
 	}
 
 	public void collisionBoxUpdated() {
 		status.update(StatusType.collisionBox);
+	}
+	public void hidingBoxUpdated() {
+		status.update(StatusType.hidingBox);
 	}
 	public void drawableUpdated() { status.update(StatusType.drawable); }
 	public void iconUpdated() { status.update(StatusType.icon);}
@@ -979,12 +994,17 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if(status.updated(StatusType.collisionBox, StatusType.drawable)) {
 			updateCollisionBox();
 		}
+		if(status.updated(StatusType.hidingBox, StatusType.drawable)) {
+			updateHidingBox();
+		}
 		if(status.updated(StatusType.drawable, StatusType.icon)) {
 			updateIcon();
 		}
 	}
 
 	public static boolean showCollisionBoxes = Utils.getprefb("gobCollisionBoxesDisplayToggle", false);
+	public static boolean hideObjects = Utils.getprefb("gobHideObjectsToggle", false);
+
 	private void updateCollisionBox() {
 		if(updateseq == 0) {return;}
 		if(showCollisionBoxes) {
@@ -1003,6 +1023,97 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			collisionBox.show(false);
 		}
 	}
+
+	private static final String[] HIDINGHOUSES = {
+			"gfx/terobjs/arch/logcabin",
+			"gfx/terobjs/arch/timberhouse",
+			"gfx/terobjs/arch/stonestead",
+			"gfx/terobjs/arch/stonemansion",
+			"gfx/terobjs/arch/greathall",
+			"gfx/terobjs/arch/stonetower",
+			"gfx/terobjs/arch/windmill",
+	};
+
+	private void updateHidingBox() {
+		if (updateseq == 0) {
+			return;
+		}
+		boolean doHide = false;
+		boolean doShowHidingBox = false;
+		Resource res = Gob.this.getres();
+		if (res != null) {
+			if (OptWnd.hideTreesSetting && res.name.startsWith("gfx/terobjs/trees") && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk")) {
+				doHide = hideObjects;
+				doShowHidingBox = true;
+			} else if (OptWnd.hideBushesSetting && res.name.startsWith("gfx/terobjs/bushes")) {
+				doHide = hideObjects;
+				doShowHidingBox = true;
+			} else if (OptWnd.hideBouldersSetting && res.name.startsWith("gfx/terobjs/bumlings")) {
+				doHide = hideObjects;
+				doShowHidingBox = true;
+			} else if (OptWnd.hideTreeLogsSetting && res.name.startsWith("gfx/terobjs/trees") && (res.name.endsWith("log") || res.name.endsWith("oldtrunk"))) {
+				doHide = hideObjects;
+				doShowHidingBox = true;
+			} else if (OptWnd.hideWallsSetting && (res.name.startsWith("gfx/terobjs/arch/palisade") || res.name.startsWith("gfx/terobjs/arch/brickwall")) && !res.name.endsWith("gate")) {
+				doHide = hideObjects;
+				doShowHidingBox = true;
+			} else if (OptWnd.hideHousesSetting && Arrays.stream(HIDINGHOUSES).anyMatch(res.name::contains)) {
+				doHide = hideObjects;
+				doShowHidingBox = true;
+			} else if (OptWnd.hideCropsSetting && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
+				doHide = hideObjects;
+				doShowHidingBox = true;
+			} else if (OptWnd.hideStockpilesSetting && res.name.startsWith("gfx/terobjs/stockpile")) {
+				doHide = hideObjects;
+				doShowHidingBox = true;
+			} else if (res.name.startsWith("gfx/terobjs/arch") && res.name.endsWith("gate")) {//gates
+				doShowHidingBox = true;
+			}
+			Drawable d = getattr(Drawable.class);
+			if (d != null && d.skipRender != doHide) {
+				d.skipRender = doHide;
+				if (doHide) {
+					if (d.slots != null) {
+						ArrayList<RenderTree.Slot> tmpSlots = new ArrayList<>(d.slots);
+						glob.loader.defer(() -> RUtils.multiremSafe(tmpSlots), null);
+					}
+				} else {
+					ArrayList<RenderTree.Slot> tmpSlots = new ArrayList<>(slots);
+					glob.loader.defer(() -> RUtils.multiadd(tmpSlots, d), null);
+				}
+			}
+			if (hideObjects && doShowHidingBox) {
+				if (hidingBox != null) {
+					if (!hidingBox.show(true)) {
+						hidingBox.fx.updateState();
+					}
+				} else if (!virtual || this instanceof MapView.Plob) {
+					HitboxFilled hitbox = HitboxFilled.forGob(this);
+					if (hitbox != null) {
+						this.hidingBox = new CollisionBoxGobSprite<>(this, hitbox);
+						addol(this.hidingBox);
+					}
+				}
+				if(collisionBox2 != null) {
+					if(!collisionBox2.show(true)) {
+						collisionBox2.fx.updateState();
+					}
+				} else if(!virtual || this instanceof MapView.Plob) {
+					Hitbox2 hitbox = Hitbox2.forGob(this);
+					if(hitbox != null) {
+						this.collisionBox2 = new CollisionBoxGobSprite<>(this, hitbox);
+						addol(this.collisionBox2);
+					}
+				}
+			} else if (hidingBox != null) {
+				hidingBox.show(false);
+				if(collisionBox2 != null) {
+					collisionBox2.show(false);
+				}
+			}
+		}
+	}
+
 	private void updateIcon() {
 		if(getattr(GobIcon.class) == null) {
 			GobIcon icon = CustomMapIcons.getIcon(this);
