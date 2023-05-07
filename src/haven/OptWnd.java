@@ -1382,7 +1382,7 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 4));
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(50)));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(57)));
 
 			pack();
 		}
