@@ -216,7 +216,7 @@ public class MiniMap extends Widget {
 	}
 
 	icons = findicons(icons);
-	if (JOGLPanel.bgmode) {
+	if (GLPanel.Loop.bgmode) {
 			zoomMomentum = 0.0f;
 		} else if (Math.abs(zoomMomentum) > 0.15) {
 			double delta = dt*zoomMomentum*(zoomlevel/6f);

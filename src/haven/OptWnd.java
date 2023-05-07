@@ -447,7 +447,6 @@ public class OptWnd extends Window {
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
-		JOGLPanel.enableCornerFPSSetting = Utils.getprefb("CornerFPSSettingBool", false);
 
 	    Widget prev = add(new Label("Interface scale (requires restart)"), 0, 0);
 	    {
@@ -525,7 +524,7 @@ public class OptWnd extends Window {
 		prev = add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
 			{a = (Utils.getprefb("CornerFPSSettingBool", false));}
 			public void set(boolean val) {
-				JOGLPanel.enableCornerFPSSetting = val;
+				GLPanel.Loop.enableCornerFPSSetting = val;
 				Utils.setprefb("CornerFPSSettingBool", val);
 				a = val;
 			}
