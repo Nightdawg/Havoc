@@ -54,6 +54,7 @@ public class Fightview extends Widget {
     public class Relation {
         public final long gobid;
 	public final Bufflist buffs = add(new Bufflist()); {buffs.hide();}
+	public boolean autopeaced = false;
 	public final Bufflist relbuffs = add(new Bufflist()); {relbuffs.hide();}
 	public int gst, ip, oip;
 	public Indir<Resource> lastact = null;
@@ -288,6 +289,15 @@ public class Fightview extends Widget {
 	    Widget inf = obinfo(rel.gobid, false);
 	    if(inf != null)
 		inf.tick(dt);
+		if (autoPeaceSetting && !rel.autopeaced && curdisp.give.state != 1) {
+			synchronized (ui.sess.glob) {
+				Gob curgob = ui.sess.glob.oc.getgob(rel.gobid);
+				if (curgob != null && !curgob.getres().name.contains("gfx/borka")) {
+					wdgmsg("give", (int)rel.gobid, 1);
+				}
+				rel.autopeaced = true;
+			}
+		}
 	}
     }
 
@@ -322,9 +332,6 @@ public class Fightview extends Widget {
 	    rel.oip = (Integer)args[3];
             lsrel.addFirst(rel);
 	    updrel();
-		if(rel.gst == 0 && autoPeaceSetting) {
-			wdgmsg("give", (int)rel.gobid, 1);
-		}
             return;
         } else if(msg == "del") {
             Relation rel = getrel(uint32((Integer)args[0]));

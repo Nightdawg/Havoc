@@ -650,7 +650,7 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Attack! Button", GameUI.kb_aggroButton, y);
 			y = addbtn(cont, "Left Hand (Quick switch)", GameUI.kb_leftQuickSlotButton, y+6);
 			y = addbtn(cont, "Right Hand (Quick switch)", GameUI.kb_rightQuickSlotButton, y);
-			y = addbtn(cont, "Toggle Combat Autopeace", GameUI.kb_toggleCombatAutoPeace, y+6);
+			y = addbtn(cont, "Toggle Animal Autopeace", GameUI.kb_toggleCombatAutoPeace, y+6);
 			y = addbtn(cont, "Peace Current Target", GameUI.kb_peaceCurrentTarget, y);
 			y = addbtn(cont, "Toggle Collision Boxes", GameUI.kb_toggleCollisionBoxes, y+6);
 			y = addbtn(cont, "Toggle Object Hiding", GameUI.kb_toggleHidingBoxes, y);
@@ -1108,6 +1108,11 @@ public class OptWnd extends Window {
 	public static CheckBox toggleAutoPeaceCheckbox;
 	private Button damageInfoClearButton;
 	public class NDCombatSettingsPanel extends Panel {
+		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
+			return (cont.addhl(new Coord(0, y), cont.sz.x,
+					new Label(nm), new SetButton(UI.scale(140), cmd))
+					+ UI.scale(2));
+		}
 		public NDCombatSettingsPanel(Panel back) {
 			Widget prev;
 
@@ -1171,15 +1176,18 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
-			prev = add(new Label("Other Combat Settings:"), prev.pos("bl").adds(-16, 10));
-			prev = add(toggleAutoPeaceCheckbox = new CheckBox("Autopeace when combat starts"){
+			prev = add(new Label("Other Combat Settings:"), prev.pos("bl").adds(0, 14).x(0));
+			prev = add(toggleAutoPeaceCheckbox = new CheckBox("Autopeace animals when combat starts"){
 				{a = Utils.getprefb("autoPeaceCombat", false);}
 				public void set(boolean val) {
 					Utils.setprefb("autoPeaceCombat", val);
 					Fightview.autoPeaceSetting = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(16, 6));
+			}, prev.pos("bl").adds(16, 8));
+			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(277, 40))), prev.pos("bl").adds(-2, 2));
+			Widget cont = scroll.cont;
+			addbtn(cont, "Toggle autopeace hotkey:", GameUI.kb_toggleCombatAutoPeace, 0);
 			prev = add(new CheckBox("Mark current target"){
 				{a = Utils.getprefb("markCurrentCombatTarget", true);}
 				public void set(boolean val) {
@@ -1187,7 +1195,7 @@ public class OptWnd extends Window {
 					Fightsess.markCombatTargetSetting = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 6));
+			}, scroll.pos("bl").adds(2, -6));
 			prev = add(toggleGobDamageInfoCheckBox = new CheckBox("Show damage info:"){
 				{a = Utils.getprefb("GobDamageInfoToggled", true);}
 				public void set(boolean val) {
@@ -1195,7 +1203,7 @@ public class OptWnd extends Window {
 					GobDamageInfo.toggleGobDamageInfo = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 6));
+			}, prev.pos("bl").adds(0, 14));
 			prev = add(new Label("> Include:"), prev.pos("bl").adds(18, 3));
 			prev = add(new CheckBox("Wounds"){
 				{a = Utils.getprefb("GobDamageInfoWoundsToggled", true);}
@@ -1225,7 +1233,7 @@ public class OptWnd extends Window {
 				GobDamageInfo.clearAllDamage(gameui());
 			}), prev.pos("bl").adds(0, -54).x(UI.scale(210)));
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(46)));
 			setTooltipsForCombatSettingsStuff();
 			pack();
 		}
@@ -1259,6 +1267,7 @@ public class OptWnd extends Window {
 
 		public NDHidingSettingsPanel(Panel back) {
 			Widget prev;
+			Widget prev2;
 			//add(new Label(""), 298, 0); // ND: To fix window width
 			prev = add(toggleGobHidingCheckBox = new CheckBox("Hide Objects"){
 				{a = (Utils.getprefb("gobHideObjectsToggle", false));}
@@ -1275,7 +1284,7 @@ public class OptWnd extends Window {
 			Widget cont = scroll.cont;
 			addbtn(cont, "Toggle object hiding hotkey:", GameUI.kb_toggleHidingBoxes, 0);
 
-			prev = add(new ColorOptionWidget("Hiding box color:", "hitboxFilled", 100, 0, 200, 255, 200, (Color col) -> {
+			prev = add(new ColorOptionWidget("Hidden object box color:", "hitboxFilled", 126, 0, 200, 255, 200, (Color col) -> {
 
 				//ND: Update the inner filled box
 				HitboxFilled.SOLID_COLOR = col;
@@ -1290,11 +1299,11 @@ public class OptWnd extends Window {
 				if (gameui() != null)
 					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
 
-			}){}, scroll.pos("bl").adds(0, -10));
+			}){}, scroll.pos("bl").adds(1, -2));
 
 			prev = add(new Label("Objects that will be hidden:"), prev.pos("bl").adds(0, 20).x(0));
 
-			prev = add(hideTreesCheckbox = new CheckBox("Trees"){
+			prev2 = add(hideTreesCheckbox = new CheckBox("Trees"){
 				{a = Utils.getprefb("hideTrees", true);}
 				public void set(boolean val) {
 					Utils.setprefb("hideTrees", val);
@@ -1303,7 +1312,7 @@ public class OptWnd extends Window {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
 					a = val;
 				}
-			}, prev.pos("bl").adds(16, 4));
+			}, prev.pos("bl").adds(16, 10));
 
 			prev = add(hideBushesCheckbox = new CheckBox("Bushes"){
 				{a = Utils.getprefb("hideBushes", true);}
@@ -1314,7 +1323,7 @@ public class OptWnd extends Window {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 4));
+			}, prev2.pos("bl").adds(0, 4));
 
 			prev = add(hideBouldersCheckbox = new CheckBox("Boulders"){
 				{a = Utils.getprefb("hideBoulders", true);}
@@ -1328,7 +1337,7 @@ public class OptWnd extends Window {
 			}, prev.pos("bl").adds(0, 4));
 
 			prev = add(hideTreeLogsCheckbox = new CheckBox("Tree Logs"){
-				{a = Utils.getprefb("hideTreeLogs", false);}
+				{a = Utils.getprefb("hideTreeLogs", true);}
 				public void set(boolean val) {
 					Utils.setprefb("hideTreeLogs", val);
 					hideTreeLogsSetting = val;
@@ -1347,7 +1356,7 @@ public class OptWnd extends Window {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 4));
+			}, prev2.pos("bl").adds(140, -14));
 
 			prev = add(hideHousesCheckbox = new CheckBox("Houses"){
 				{a = Utils.getprefb("hideHouses", false);}
@@ -1360,7 +1369,7 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 4));
 
-			prev = add(hideCropsCheckbox = new CheckBox("Crops (no hiding box)"){
+			prev = add(hideCropsCheckbox = new CheckBox("Crops"){
 				{a = Utils.getprefb("hideCrops", false);}
 				public void set(boolean val) {
 					Utils.setprefb("hideCrops", val);
@@ -1383,7 +1392,7 @@ public class OptWnd extends Window {
 			}, prev.pos("bl").adds(0, 4));
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(57)));
-
+			setTooltipsForHidingSettingsStuff();
 			pack();
 		}
 	}
@@ -1625,7 +1634,7 @@ public class OptWnd extends Window {
 	private void setTooltipsForCombatSettingsStuff(){
 		toggleGobDamageInfoCheckBox.tooltip = RichText.render("Enabling this will display the total amount of damage players and animals took.\nNote: The damage you will see saved above players/animals is the total damage you saw the entity take, while inside of your view range. This is not all of the damage said entity might have taken recently.\n$col[185,185,185]{If you change any of the settings below, you will need a damage update in order to see the changes (for example, deal some damage to the player/animal).}", 300);
 		damageInfoClearButton.tooltip = RichText.render("Clear all damage info", 300);
-		toggleAutoPeaceCheckbox.tooltip = RichText.render("Enabling this will automatically set your status to 'Peace' when combat is initiated with a new target. This does not affect targets you are already in combat with.\n$col[185,185,185]{Note: This option can also be turned on/off using a Keybinding.}", 300);
+		toggleAutoPeaceCheckbox.tooltip = RichText.render("Enabling this will automatically set your status to 'Peace' when combat is initiated with a new target (animals only). Toggling this on while in combat will also autopeace all animals you are currently fighting.\n$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
 	}
 
 	private void setTooltipsForGameplaySettingsStuff(){
@@ -1640,6 +1649,10 @@ public class OptWnd extends Window {
 		disableWeatherEffectsCheckBox.tooltip = RichText.render("Note: This disables *ALL* weather and camera effects, including rain effects, drunkenness distortion, drug high, valhalla gray overlay, camera shake, and any other similar effects.", 300);
 		disableFlavourObjectsCheckBox.tooltip = RichText.render("Note: This only disables random objects that appear in the world which you cannot interact with.\n$col[185,185,185]{Players usually disable flavour objects to improve visibility and/or performance.}", 300);
 		flatWorldCheckBox.tooltip = RichText.render("Enabling this will make the entire game world terrain flat.\n$col[185,185,185]{Cliffs will still be drawn with their relative height, scaled down.}", 300);
+	}
+
+	private void setTooltipsForHidingSettingsStuff(){
+		toggleGobHidingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.", 300);
 	}
 
     public OptWnd() {

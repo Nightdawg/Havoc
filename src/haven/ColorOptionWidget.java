@@ -17,7 +17,7 @@ public class ColorOptionWidget extends Widget{
     Consumer<Color> function;
 
     public ColorOptionWidget(String text, String key, int horizontalButtonDistance, int Red, int Green, int Blue, int Alpha, Consumer<Color> function){
-        cb = new ColorOptionButton(key, UI.scale(20), UI.scale(20), Red, Green, Blue, Alpha);
+        cb = new ColorOptionButton(key, UI.scale(22), UI.scale(22), Red, Green, Blue, Alpha);
         label = new Label(text);
         this.function = function;
         add(label, new Coord(0,4));

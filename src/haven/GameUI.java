@@ -2051,7 +2051,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		if(kb_toggleCombatAutoPeace.key().match(ev)) {
 			boolean val = !Fightview.autoPeaceSetting;
 			OptWnd.toggleAutoPeaceCheckbox.set(val);
-			GameUI.this.msg("Autopeace when combat starts is now turned " + (val ? "ON" : "OFF") + ".");
+			GameUI.this.msg("Autopeace animals when combat starts is now turned " + (val ? "ON" : "OFF") + ".");
 			return(true);
 		}
 		if(kb_peaceCurrentTarget.key().match(ev)) {
