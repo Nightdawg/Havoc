@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.res.ui.tt.wear.Wear;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.awt.Font;
@@ -269,12 +270,37 @@ public class UI {
 		}
 	}
     }
-
+	private static HashMap<String, Long> recentlyTakenCutlery = new HashMap<>();
 	private void processWindowContent(Window pwdg, Widget wdg) {
 		String cap = pwdg.cap;
 		if (wdg instanceof Inventory && cap.equals("Study Desk")) {
 			initStudydeskUi(pwdg, (Inventory) wdg);
+		} if (wdg instanceof Inventory && cap.equals("Table")) {
+			if (((Inventory)wdg).isz.equals(6, 6))
+				initTableUi(pwdg, (Inventory) wdg);
+			if (((Inventory)wdg).isz.equals(3, 3) || ((Inventory)wdg).isz.equals(1, 2) ) {
+				wdg.add(new WidgetChildActor<Inventory>((Inventory)wdg) {
+					@Override
+					public void act(Inventory parent) {
+						try {
+							for (WItem item : parent.wmap.values()) {
+								for (ItemInfo ii : item.item.info()) {
+									if (ii instanceof Wear) {
+										Wear wear = (Wear) ii;
+										if (OptWnd.antiCutleryBreakage && wear.d == wear.m - 1&& item.item.getres() != null && (!recentlyTakenCutlery.containsKey(item.item.getres().name) || System.currentTimeMillis() - recentlyTakenCutlery.get(item.item.getres().name) > 500 )) { // About to break
+											gameui().error("The " + item.item.getname() + " is almost broken! Anti cutlery breakage system moved it to your inventory. Polish it or replace it.");
+											item.item.wdgmsg("transfer", Coord.z);
+											recentlyTakenCutlery.put(item.item.getres().name, System.currentTimeMillis());
+										}
+									}
+								}
+							}
+						} catch (Exception ignored){};
+					}
+				});
+			}
 		}
+
 	}
 
 	public static void initStudydeskUi(Window pwdg, Inventory inv) {
@@ -282,6 +308,12 @@ public class UI {
 		pwdg.add(studyDeskInfo, new Coord(UI.scale(10), inv.sz.y+UI.scale(20)));
         /*Label label = new Label("testLabel");
         pwdg.add(label, new Coord(10, inv.sz.y+20));*/
+		pwdg.pack();
+	}
+	public static void initTableUi(Window pwdg, Inventory inv) {
+		TableInfo tableInfo = new TableInfo(inv.sz.x, UI.scale(20));
+		pwdg.add(tableInfo, new Coord(UI.scale(0), inv.sz.y + UI.scale(160)));
+
 		pwdg.pack();
 	}
 

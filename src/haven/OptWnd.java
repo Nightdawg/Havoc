@@ -836,18 +836,18 @@ public class OptWnd extends Window {
 	}
 
 	//ND: Set the variables for the camera menu things
-	private Label freeCamZoomSpeedLabel;
-	private HSlider freeCamZoomSpeedSlider;
-	private Button freeCamZoomSpeedResetButton;
-	private Label freeCamHeightLabel;
-	private HSlider freeCamHeightSlider;
-	private Button freeCamHeightResetButton;
-	private CheckBox unlockedOrthoCamCheckBox;
-	private Label orthoCamZoomSpeedLabel;
-	private HSlider orthoCamZoomSpeedSlider;
-	private Button orthoCamZoomSpeedResetButton;
-	private CheckBox revertCameraAxisCheckBox;
-	private CheckBox allowLowerFreeCamTilt;
+	private static Label freeCamZoomSpeedLabel;
+	private static HSlider freeCamZoomSpeedSlider;
+	private static Button freeCamZoomSpeedResetButton;
+	private static Label freeCamHeightLabel;
+	private static HSlider freeCamHeightSlider;
+	private static Button freeCamHeightResetButton;
+	private static CheckBox unlockedOrthoCamCheckBox;
+	private static Label orthoCamZoomSpeedLabel;
+	private static HSlider orthoCamZoomSpeedSlider;
+	private static Button orthoCamZoomSpeedResetButton;
+	private static CheckBox revertCameraAxisCheckBox;
+	private static CheckBox allowLowerFreeCamTilt;
 	public class NDCamSettingsPanel extends Panel {
 
 		public NDCamSettingsPanel(Panel back) {
@@ -1003,12 +1003,14 @@ public class OptWnd extends Window {
 		}
 	}
 
-	private Label defaultSpeedLabel;
-	private CheckBox instantFlowerMenuCTRLCheckBox;
-	private CheckBox autoswitchBunnyPlateBootsCheckBox;
+	private static Label defaultSpeedLabel;
+	private static CheckBox instantFlowerMenuCTRLCheckBox;
+	private static CheckBox autoswitchBunnyPlateBootsCheckBox;
+	public static CheckBox saveCutleryCheckBox = null;
 
 	public static boolean instantFlowerMenuCTRL = Utils.getprefb("instantFlowerMenuCTRL", true);
 	public static boolean autoswitchBunnyPlateBoots = Utils.getprefb("autoswitchBunnyPlateBoots", true);
+	public static boolean antiCutleryBreakage = Utils.getprefb("antiCutleryBreakage", true);
 
 	public class NDGameplaySettingsPanel extends Panel {
 		private final List<String> runSpeeds = Arrays.asList("Crawl", "Walk", "Run", "Sprint");
@@ -1092,6 +1094,16 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("autoswitchBunnyPlateBoots", val);
 					autoswitchBunnyPlateBoots = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+
+			prev = add(saveCutleryCheckBox = new CheckBox("Anti Cutlery Breakage (move to inventory before it breaks)"){
+				{a = Utils.getprefb("antiCutleryBreakage", true);}
+				public void set(boolean val) {
+					Utils.setprefb("antiCutleryBreakage", val);
+					antiCutleryBreakage = val;
+					TableInfo.saveCutleryCheckBox.a = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
@@ -1641,6 +1653,7 @@ public class OptWnd extends Window {
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
 		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding CTRL before right clicking an item or object instantly select the first available option from the flower menu.", 300);
 		autoswitchBunnyPlateBootsCheckBox.tooltip = RichText.render("Enabling this will cause your currently equipped Plate Boots to automatically swap with a pair of bunny slippers from your inventory, whenever you right click to chase a rabbit, and vice versa if you click on anything else or just left click to walk.\n$col[185,185,185]{I don't see many reason for which you'd ever want to disable this setting, but alas, I made it an option.}", 300);
+		saveCutleryCheckBox.tooltip = RichText.render("Enabling this will cause any cutlery that has 1 wear left to be instantly transferred from the table into your inventory.\n$col[185,185,185]{A warning message will be shown, to let you know that the item has been transferred.}", 300);
 	}
 
 	private void setTooltipsForGraphicsSettingsStuff(){
