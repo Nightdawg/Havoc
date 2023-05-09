@@ -259,6 +259,9 @@ public class UI {
 		if(pwdg == null)
 		    throw(new UIException("Null parent widget " + parent + " for " + id, type, cargs));
 		pwdg.addchild(wdg, pargs);
+		if (pwdg instanceof Window) {
+			processWindowContent((Window) pwdg, wdg);
+		}
 	    }
 	    bind(wdg, id);
 		if (wdg instanceof FightWnd) {
@@ -266,6 +269,21 @@ public class UI {
 		}
 	}
     }
+
+	private void processWindowContent(Window pwdg, Widget wdg) {
+		String cap = pwdg.cap;
+		if (wdg instanceof Inventory && cap.equals("Study Desk")) {
+			initStudydeskUi(pwdg, (Inventory) wdg);
+		}
+	}
+
+	public static void initStudydeskUi(Window pwdg, Inventory inv) {
+		StudydeskInfo studyDeskInfo = new StudydeskInfo(inv.sz.x, UI.scale(100), inv);
+		pwdg.add(studyDeskInfo, new Coord(UI.scale(10), inv.sz.y+UI.scale(20)));
+        /*Label label = new Label("testLabel");
+        pwdg.add(label, new Coord(10, inv.sz.y+20));*/
+		pwdg.pack();
+	}
 
     public void addwidget(int id, int parent, Object[] pargs) {
 	synchronized(this) {
