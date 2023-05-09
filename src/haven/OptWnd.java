@@ -746,14 +746,14 @@ public class OptWnd extends Window {
 		}
 	}
 
-	private Label nightVisionLabel;
-	private HSlider nightVisionSlider;
-	private Button nightVisionResetButton;
-	private CheckBox disableWeatherEffectsCheckBox;
-	private CheckBox disableFlavourObjectsCheckBox;
-	private CheckBox flatWorldCheckBox;
-	private CheckBox tileSmoothingCheckBox;
-	private CheckBox tileTransitionsCheckBox;
+	private static Label nightVisionLabel;
+	private static HSlider nightVisionSlider;
+	private static Button nightVisionResetButton;
+	private static CheckBox disableWeatherEffectsCheckBox;
+	private static CheckBox disableFlavourObjectsCheckBox;
+	private static CheckBox flatWorldCheckBox;
+	private static CheckBox tileSmoothingCheckBox;
+	private static CheckBox tileTransitionsCheckBox;
 	public static boolean disableFlavourObjects = Utils.getprefb("disableFlavourObjects", false);
 	public static boolean flatWorldSetting = Utils.getprefb("flatWorld", false);
 	public static boolean noTileSmoothing = Utils.getprefb("noTileSmoothing", false);
@@ -1007,7 +1007,6 @@ public class OptWnd extends Window {
 	private static CheckBox instantFlowerMenuCTRLCheckBox;
 	private static CheckBox autoswitchBunnyPlateBootsCheckBox;
 	public static CheckBox saveCutleryCheckBox = null;
-
 	public static boolean instantFlowerMenuCTRL = Utils.getprefb("instantFlowerMenuCTRL", true);
 	public static boolean autoswitchBunnyPlateBoots = Utils.getprefb("autoswitchBunnyPlateBoots", true);
 	public static boolean antiCutleryBreakage = Utils.getprefb("antiCutleryBreakage", true);
@@ -1114,11 +1113,11 @@ public class OptWnd extends Window {
 		}
 	}
 
-	private HSlider combatUITopPanelHeightSlider;
-	private HSlider combatUIBottomPanelHeightSlider;
+	private static HSlider combatUITopPanelHeightSlider;
+	private static HSlider combatUIBottomPanelHeightSlider;
 	public static CheckBox toggleGobDamageInfoCheckBox;
 	public static CheckBox toggleAutoPeaceCheckbox;
-	private Button damageInfoClearButton;
+	private static Button damageInfoClearButton;
 	public class NDCombatSettingsPanel extends Panel {
 		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
 			return (cont.addhl(new Coord(0, y), cont.sz.x,
