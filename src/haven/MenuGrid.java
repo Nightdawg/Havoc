@@ -553,13 +553,13 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		if (togglestuff) {
 			GameUI gui = getparent(GameUI.class);
 			if (gui != null) {
-				if (toggleTrackingOnLogin){
+				if (toggleTrackingOnLogin && !GameUI.trackon){
 					wdgmsg("act", "tracking");
 				}
-				if (toggleSwimmingOnLogin){
+				if (toggleSwimmingOnLogin && !GameUI.swimon){
 					wdgmsg("act", "swim");
 				}
-				if (toggleCriminalActsOnLogin){
+				if (toggleCriminalActsOnLogin && !GameUI.crimeon){
 					wdgmsg("act", "crime");
 				}
 				if (toggleSiegeEnginesOnLogin){
