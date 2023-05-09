@@ -273,7 +273,7 @@ public class GobIconCategoryList extends Listbox<GobIconCategoryList.GobCategory
 	
 	public static GobCategory categorize(GobIcon.Setting conf) {
 	    String name = conf.res.name;
-	    if(name.contains("mm/trees/")) {
+	    if(name.contains("mm/trees/") || name.contains("customMapIcons/mirkwoodlog")) {
 			return GobCategory.TREE;
 	    } else if(Arrays.stream(ANIMAL_PATHS).anyMatch(name::contains)) {
 			return GobCategory.ANIMALS;
