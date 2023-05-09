@@ -6,6 +6,8 @@ import haven.*;
 import haven.res.ui.tt.q.qbuff.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+
 import haven.MenuGrid.Pagina;
 
 /* >tt: Quality */
@@ -22,8 +24,35 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
 	return(new Quality(owner, ((Number)args[1]).doubleValue()));
     }
 
+    private static final String[] EMPTY_INDICATOR = { // ND: Only show the quality as "Empty" for these specific containers
+            "Birchbark Kuksa", "Bucket", "Waterskin", "Waterflask", "Glass Jug",
+    };
+
     public Tex overlay() {
-	return(new TexI(GItem.NumberInfo.numrenderStroked(q, new Color(255, 255, 255, 255), true)));
+        boolean irrelevantQuality = false; // ND: Use this to show the quality of some containers quality as "Empty", rather than their actual quality.
+        for (ItemInfo info : owner.info()) {
+            if (info instanceof ItemInfo.Name){
+                if (Arrays.stream(EMPTY_INDICATOR).anyMatch(((Name) info).str.text::contains)){
+                    irrelevantQuality = true;
+                }
+            }
+            if (info instanceof ItemInfo.Contents) {
+                for (ItemInfo info2 : ((ItemInfo.Contents) info).sub) {
+                    if (info2 instanceof QBuff) {
+                        if (((Contents) info).content.name.equals("Water")) {
+                            return (new TexI(GItem.NumberInfo.numrenderStroked(((QBuff) info2).q, new Color(54, 175, 255, 255), true)));
+                        } else {
+                            return (new TexI(GItem.NumberInfo.numrenderStroked(((QBuff) info2).q, new Color(255, 255, 255, 255), true)));
+                        }
+                    }
+                }
+            }
+        }
+        if (!irrelevantQuality) {
+            return (new TexI(GItem.NumberInfo.numrenderStroked(q, new Color(255, 255, 255, 255), true)));
+        } else {
+            return (new TexI(GItem.NumberInfo.textrenderStroked("Empty", new Color(255, 78, 0, 255), true)));
+        }
     }
 
     public void drawoverlay(GOut g, Tex ol) {

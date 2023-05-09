@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.function.*;
 import java.lang.reflect.*;
 import java.awt.image.BufferedImage;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public abstract class ItemInfo {
@@ -176,10 +178,16 @@ public abstract class ItemInfo {
 
     public static class Name extends Tip {
 	public final Text str;
+	public final String original;
+
+	public Name(Owner owner, Text str, String orig) {
+		super(owner);
+		original = orig;
+		this.str = str;
+	}
 
 	public Name(Owner owner, Text str) {
-	    super(owner);
-	    this.str = str;
+		this(owner, str, str.text);
 	}
 
 	public Name(Owner owner, String str) {
@@ -243,12 +251,14 @@ public abstract class ItemInfo {
     }
 
     public static class Contents extends Tip {
+	private static final Pattern PARSE = Pattern.compile("([\\d.]*) ([\\w]+) of ([\\w\\s]+)\\.?");
 	public final List<ItemInfo> sub;
 	private static final Text.Line ch = Text.render("Contents:");
-	
+	public Content content;
 	public Contents(Owner owner, List<ItemInfo> sub) {
 	    super(owner);
 	    this.sub = sub;
+		this.content = content();
 	}
 	
 	public BufferedImage tipimg() {
@@ -267,6 +277,42 @@ public abstract class ItemInfo {
 		    public int order() {return(100);}
 		});
 	}
+		public Content content() {
+			for (ItemInfo i : sub) {
+				if(i instanceof Name) {
+					Matcher m = PARSE.matcher(((Name) i).original);
+					if(m.find()) {
+						float count = 0;
+						try {
+							count = Float.parseFloat(m.group(1));
+						} catch (Exception ignored) {}
+						return new Content(m.group(3), m.group(2), count);
+					}
+				}
+			}
+			return Content.EMPTY;
+		}
+
+		public static class Content {
+			public final String name;
+			public final String unit;
+			public final float count;
+
+			public Content(String name, String unit, float count) {
+				this.name = name;
+				this.unit = unit;
+				this.count = count;
+			}
+
+			public boolean is(String what) {
+				if(name == null || what == null) {
+					return false;
+				}
+				return name.contains(what);
+			}
+
+			public static final Content EMPTY = new Content(null, null, 0);
+		}
     }
 
     public static BufferedImage catimgs(int margin, BufferedImage... imgs) {
