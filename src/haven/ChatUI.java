@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.awt.datatransfer.*;
 
 public class ChatUI extends Widget {
-    public static final RichText.Foundry fnd = new RichText.Foundry(new ChatParser(TextAttribute.FONT, Text.dfont.deriveFont(UI.scale(10f)), TextAttribute.FOREGROUND, Color.BLACK));
+    public static final RichText.Foundry fnd = new RichText.Foundry(new ChatParser(TextAttribute.FONT, Text.dfont.deriveFont(UI.scale(12f)), TextAttribute.FOREGROUND, Color.BLACK));
     public static final Text.Foundry qfnd = new Text.Foundry(Text.dfont, 12, new java.awt.Color(192, 255, 192));
     public static final int selw = UI.scale(130);
     public static final Coord marg = UI.scale(new Coord(9, 9));
@@ -154,8 +154,10 @@ public class ChatUI extends Widget {
 	
 	public static class SimpleMessage extends Message {
 	    private final Text t;
+		private final String timestamp = Utils.timestamp();
 	    
 	    public SimpleMessage(String text, Color col, int w) {
+		text = "[" + timestamp + "] " + text;
 		if(col == null)
 		    this.t = fnd.render(RichText.Parser.quote(text), w);
 		else
@@ -691,6 +693,7 @@ public class ChatUI extends Widget {
 	    public final Color col;
 	    private String cn;
 	    private Text r = null;
+		private final String timestamp = Utils.timestamp();
 	    
 	    public NamedMessage(int from, String text, Color col, int w) {
 		this.from = from;
@@ -703,7 +706,9 @@ public class ChatUI extends Widget {
 		BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
 		String nm = (b == null)?"???":(b.name);
 		if((r == null) || !nm.equals(cn)) {
-		    r = fnd.render(RichText.Parser.quote(String.format("%s: %s", nm, text)), w, TextAttribute.FOREGROUND, col);
+			String line = RichText.Parser.quote(String.format("%s: %s", nm, text));
+			line = "[" + timestamp + "] " + line;
+		    r = fnd.render(line, w, TextAttribute.FOREGROUND, col);
 		    cn = nm;
 		}
 		return(r);

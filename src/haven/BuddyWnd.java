@@ -132,16 +132,7 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	    online = status;
 	    GameUI gui = getparent(GameUI.class);
 	    if(gui != null) {
-			int hourInt = LocalTime.now().getHour();
-			int minuteInt = LocalTime.now().getMinute();
-			String hour;
-			String minute;
-			if (hourInt < 10) hour = "0" + hourInt;
-			else hour = Integer.toString(hourInt);
-			if (minuteInt < 10) minute = "0" + minuteInt;
-			else minute = Integer.toString(minuteInt);
-
-			gameui().msg("[" + hour + ":" + minute + "] "+ name + (online > 0 ? " is now ONLINE" : " has gone Offline"), BuddyWnd.gc[group]);
+			gameui().msg(name + (online > 0 ? " is now ONLINE" : " has gone Offline"), BuddyWnd.gc[group]);
 //		if(status == 1)
 //		    gui.msg(String.format("%s is now online.", name));
 	    }

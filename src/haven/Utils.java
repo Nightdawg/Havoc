@@ -34,6 +34,7 @@ import java.nio.file.*;
 import java.net.*;
 import java.lang.ref.*;
 import java.lang.reflect.*;
+import java.text.SimpleDateFormat;
 import java.util.prefs.*;
 import java.util.*;
 import java.util.function.*;
@@ -2297,6 +2298,10 @@ public class Utils {
 	    }
 	}
     };
+
+	public static String timestamp() {
+		return new SimpleDateFormat("HH:mm").format(new Date());
+	}
 
 	public static String stream2str(InputStream is) {
 		StringBuilder buffer = new StringBuilder();
