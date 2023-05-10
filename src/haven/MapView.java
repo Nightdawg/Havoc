@@ -2322,8 +2322,18 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    }
 	} else if((placing_l != null) && placing_l.done()) {
 	    Plob placing = placing_l.get();
-	    if(placing.lastmc != null)
-		wdgmsg("place", placing.rc.floor(posres), (int)Math.round(placing.a * 32768 / Math.PI), button, ui.modflags());
+	    if(placing.lastmc != null) {
+			int modflags = ui.modflags(); // ND: These are the "mod" buttons you're holding down: CTRL, SHIFT, ALT, and god knows wtf "modsuper" means.
+			// ND: Loftar checks on the serverside if we're holding CTRL while placing an item, which causes us to walk to that position if we do.
+			// ND: I'm doing the following to switch that with ALT instead, by switching the information we send to the server.
+			// ND: "2" is the value of "modctrl"
+			if (ui.modctrl && !ui.modmeta) { // ND: Only extract this if we're holding CTRL while also not holding ALT
+				modflags = modflags - 2;
+			} else if (ui.modmeta && !ui.modctrl) { // ND: But also add it if we're holding ALT but not holding CTRL
+				modflags = modflags + 2;
+			}
+			wdgmsg("place", placing.rc.floor(posres), (int) Math.round(placing.a * 32768 / Math.PI), button, modflags);
+		}
 	} else if((grab != null) && grab.mmousedown(c, button)) {
 	} else {
 	    new Click(c, button).run();
