@@ -1403,39 +1403,82 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public static final KeyBinding kb_hide = KeyBinding.get("ui-toggle", KeyMatch.nil);
     public static final KeyBinding kb_logout = KeyBinding.get("logout", KeyMatch.nil);
     public static final KeyBinding kb_switchchr = KeyBinding.get("logout-cs", KeyMatch.nil);
-    public boolean globtype(char key, KeyEvent ev) {
-	if(key == ':') {
-	    entercmd();
-	    return(true);
-	} else if((Screenshooter.screenurl.get() != null) && kb_shoot.key().match(ev)) {
-	    Screenshooter.take(this, Screenshooter.screenurl.get());
-	    return(true);
-	} else if(kb_hide.key().match(ev)) {
-	    toggleui();
-	    return(true);
-	} else if(kb_logout.key().match(ev)) {
-	    act("lo");
-	    return(true);
-	} else if(kb_switchchr.key().match(ev)) {
-	    act("lo", "cs");
-	    return(true);
-	} else if(kb_chat.key().match(ev)) {
-	    if(chat.visible() && !chat.hasfocus) {
-		setfocus(chat);
-	    } else {
-		if(chat.targeth == 0) {
-		    chat.sresize(chat.savedh);
-		    setfocus(chat);
-		} else {
-		    chat.sresize(0);
+
+	public static KeyBinding kb_drinkButton  = KeyBinding.get("DrinkButtonKB",  KeyMatch.forcode(KeyEvent.VK_BACK_QUOTE, 0));
+	public static KeyBinding kb_aggroButton  = KeyBinding.get("AggroButtonKB",  KeyMatch.nil);
+	public static KeyBinding kb_rightQuickSlotButton  = KeyBinding.get("rightQuickSlotButtonKB",  KeyMatch.forchar('X', KeyMatch.M));
+	public static KeyBinding kb_leftQuickSlotButton  = KeyBinding.get("leftQuickSlotButtonKB",  KeyMatch.forchar('Z', KeyMatch.M));
+
+	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxesKB",  KeyMatch.forchar('B', KeyMatch.S));
+	public static KeyBinding kb_toggleHidingBoxes  = KeyBinding.get("toggleHidingBoxesKB",  KeyMatch.forchar('H', KeyMatch.C));
+	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("clickNearestGateKB",  KeyMatch.forchar('Q', 0));
+	public static KeyBinding kb_toggleCombatAutoPeace  = KeyBinding.get("toggleCombatAutoPeaceKB",  KeyMatch.forchar('P', KeyMatch.C | KeyMatch.S));
+	public static KeyBinding kb_peaceCurrentTarget  = KeyBinding.get("peaceCurrentTargetKB",  KeyMatch.forchar('P', KeyMatch.M));
+
+	public boolean globtype(char key, KeyEvent ev) {
+		if(key == ':') {
+			entercmd();
+			return(true);
+		} else if((Screenshooter.screenurl.get() != null) && kb_shoot.key().match(ev)) {
+			Screenshooter.take(this, Screenshooter.screenurl.get());
+			return(true);
+		} else if(kb_hide.key().match(ev)) {
+			toggleui();
+			return(true);
+		} else if(kb_logout.key().match(ev)) {
+			act("lo");
+			return(true);
+		} else if(kb_switchchr.key().match(ev)) {
+			act("lo", "cs");
+			return(true);
+		} else if(kb_chat.key().match(ev)) {
+			if(chat.visible() && !chat.hasfocus) {
+			setfocus(chat);
+			} else {
+			if(chat.targeth == 0) {
+				chat.sresize(chat.savedh);
+				setfocus(chat);
+			} else {
+				chat.sresize(0);
+			}
+			}
+			Utils.setprefb("chatvis", chat.targeth != 0);
+			return(true);
+		} else if(kb_drinkButton.key().match(ev)) {
+			wdgmsg("act", "drink");
+			return(true);
+		} else if(kb_clickNearestGate.key().match(ev)) {
+			this.runActionThread(new Thread(new ClickNearestGate(this), "ClickNearestGate"));
+			return(true);
+		} else if(kb_rightQuickSlotButton.key().match(ev)) {
+			quickslots.drop(QuickSlotsWdg.rc, Coord.z);
+			quickslots.simulateclick(QuickSlotsWdg.rc);
+			return(true);
+		} else if(kb_leftQuickSlotButton.key().match(ev)) {
+			quickslots.drop(QuickSlotsWdg.lc, Coord.z);
+			quickslots.simulateclick(QuickSlotsWdg.lc);
+			return(true);
+		} else if(kb_toggleCollisionBoxes.key().match(ev)) {
+			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(!Gob.showCollisionBoxes);
+			return(true);
+		} else if(kb_toggleHidingBoxes.key().match(ev)) {
+			OptWnd.toggleGobHidingCheckBox.set(!Gob.hideObjects);
+			return(true);
+		} else if(kb_aggroButton.key().match(ev)) {
+			wdgmsg("act", "aggro");
+			return(true);
+		} else if(kb_toggleCombatAutoPeace.key().match(ev)) {
+			boolean val = !Fightview.autoPeaceSetting;
+			OptWnd.toggleAutoPeaceCheckbox.set(val);
+			GameUI.this.msg("Autopeace animals when combat starts is now turned " + (val ? "ON" : "OFF") + ".");
+			return(true);
+		} else if(kb_peaceCurrentTarget.key().match(ev)) {
+			peaceCurrentTarget();
+			return(true);
+		} else if((key == 27) && (map != null) && !map.hasfocus) {
+			setfocus(map);
+		return(true);
 		}
-	    }
-	    Utils.setprefb("chatvis", chat.targeth != 0);
-	    return(true);
-	} else if((key == 27) && (map != null) && !map.hasfocus) {
-	    setfocus(map);
-	    return(true);
-	}
 	return(super.globtype(key, ev));
     }
     
@@ -2005,60 +2048,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	public static KeyBinding kb_drinkButton  = KeyBinding.get("DrinkButtonKB",  KeyMatch.forcode(KeyEvent.VK_BACK_QUOTE, 0));
-	public static KeyBinding kb_aggroButton  = KeyBinding.get("AggroButtonKB",  KeyMatch.nil);
-	public static KeyBinding kb_rightQuickSlotButton  = KeyBinding.get("rightQuickSlotButtonKB",  KeyMatch.forchar('X', KeyMatch.M));
-	public static KeyBinding kb_leftQuickSlotButton  = KeyBinding.get("leftQuickSlotButtonKB",  KeyMatch.forchar('Z', KeyMatch.M));
-
-	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxesKB",  KeyMatch.forchar('B', KeyMatch.S));
-	public static KeyBinding kb_toggleHidingBoxes  = KeyBinding.get("toggleHidingBoxesKB",  KeyMatch.forchar('H', KeyMatch.C));
-	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("clickNearestGateKB",  KeyMatch.forchar('Q', 0));
-	public static KeyBinding kb_toggleCombatAutoPeace  = KeyBinding.get("toggleCombatAutoPeaceKB",  KeyMatch.forchar('P', KeyMatch.C | KeyMatch.S));
-	public static KeyBinding kb_peaceCurrentTarget  = KeyBinding.get("peaceCurrentTargetKB",  KeyMatch.forchar('P', KeyMatch.M));
-
-	public boolean keydown(KeyEvent ev) {
-		if(kb_drinkButton.key().match(ev)) {
-			wdgmsg("act", "drink");
-			return(true);
-		}
-		if(kb_clickNearestGate.key().match(ev)) {
-			this.runActionThread(new Thread(new ClickNearestGate(this), "ClickNearestGate"));
-			return(true);
-		}
-		if(kb_rightQuickSlotButton.key().match(ev)) {
-			quickslots.drop(QuickSlotsWdg.rc, Coord.z);
-			quickslots.simulateclick(QuickSlotsWdg.rc);
-			return(true);
-		}
-		if(kb_leftQuickSlotButton.key().match(ev)) {
-			quickslots.drop(QuickSlotsWdg.lc, Coord.z);
-			quickslots.simulateclick(QuickSlotsWdg.lc);
-			return(true);
-		}
-		if(kb_toggleCollisionBoxes.key().match(ev)) {
-			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(!Gob.showCollisionBoxes);
-			return(true);
-		}
-		if(kb_toggleHidingBoxes.key().match(ev)) {
-			OptWnd.toggleGobHidingCheckBox.set(!Gob.hideObjects);
-			return(true);
-		}
-		if(kb_aggroButton.key().match(ev)) {
-			wdgmsg("act", "aggro");
-			return(true);
-		}
-		if(kb_toggleCombatAutoPeace.key().match(ev)) {
-			boolean val = !Fightview.autoPeaceSetting;
-			OptWnd.toggleAutoPeaceCheckbox.set(val);
-			GameUI.this.msg("Autopeace animals when combat starts is now turned " + (val ? "ON" : "OFF") + ".");
-			return(true);
-		}
-		if(kb_peaceCurrentTarget.key().match(ev)) {
-			peaceCurrentTarget();
-			return(true);
-		}
-		return(super.keydown(ev));
 	}
 
 	public void changeDecks(int deck) {
