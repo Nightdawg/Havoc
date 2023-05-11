@@ -537,4 +537,21 @@ public abstract class Message {
 		}
 	    });
     }
+
+	public boolean same(Object obj) {
+		if(obj instanceof Message) {
+			Message other = (Message) obj;
+			if(this.rbuf.length != other.rbuf.length) {
+				return false;
+			} else {
+				for(int i = 0; i < this.rbuf.length; i++) {
+					if(this.rbuf[i] != other.rbuf[i]) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 }

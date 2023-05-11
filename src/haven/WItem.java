@@ -251,18 +251,32 @@ public class WItem extends Widget implements DTarget {
 	public final AttrCache<Pair<String, String>> study = new AttrCache<Pair<String, String>>(this::info, AttrCache.map1(Curiosity.class, curio -> curio::remainingTip));
 
     public boolean mousedown(Coord c, int btn) {
+	boolean inv = parent instanceof Inventory;
 	if(btn == 1) {
-	    if(ui.modshift) {
-		int n = ui.modmeta ? -1 : 1;
-		item.wdgmsg("transfer", c, n);
-	    } else if(ui.modctrl) {
-		int n = ui.modmeta ? -1 : 1;
-		item.wdgmsg("drop", c, n);
+		if (ui.modmeta && !ui.modctrl) {
+			if (inv) {
+				wdgmsg("transfer-identical", item, false);
+				return true;
+			}
+		}
+	    if (ui.modshift) {
+			item.wdgmsg("transfer", c, 1);
+			return(true);
+	    } else if (ui.modctrl) {
+			int n = ui.modmeta ? -1 : 1;
+			item.wdgmsg("drop", c, n);
+			return(true);
 	    } else {
-		item.wdgmsg("take", c);
+			item.wdgmsg("take", c);
 	    }
 	    return(true);
 	} else if(btn == 3) {
+		if (ui.modmeta && !ui.modctrl) {
+			if (inv) {
+				wdgmsg("transfer-identical", item, true);
+				return true;
+			}
+		}
 		//System.out.println(item.getname());
 		if (ui.modctrl && OptWnd.instantFlowerMenuCTRL) {
 			String itemname = item.getname();
