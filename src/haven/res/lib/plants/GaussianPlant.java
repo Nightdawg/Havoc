@@ -22,12 +22,17 @@ public class GaussianPlant implements Sprite.Factory {
 
     public Sprite create(Sprite.Owner owner, Resource res, Message sdt) {
 	ArrayList<FastMesh.MeshRes> var = new ArrayList<FastMesh.MeshRes>(res.layers(FastMesh.MeshRes.class));
-	Random rnd = owner.mkrandoom();
-	CSprite spr = new CSprite(owner, res);
-	int num = rnd.nextInt(numh - numl + 1) + numl;
-	for(int i = 0; i < num; i++) {
-	    FastMesh.MeshRes v = var.get(rnd.nextInt(var.size()));
-	    spr.addpart((float)rnd.nextGaussian() * r, (float)rnd.nextGaussian() * r, v.mat.get(), v.m);
+		CSprite spr = new CSprite(owner, res);
+	if (OptWnd.simplifiedForageables){
+		FastMesh.MeshRes mesh = var.get(0);
+		spr.addpart(0, 0, mesh.mat.get(), mesh.m);
+	} else {
+		Random rnd = owner.mkrandoom();
+		int num = rnd.nextInt(numh - numl + 1) + numl;
+		for (int i = 0; i < num; i++) {
+			FastMesh.MeshRes v = var.get(rnd.nextInt(var.size()));
+			spr.addpart((float) rnd.nextGaussian() * r, (float) rnd.nextGaussian() * r, v.mat.get(), v.m);
+		}
 	}
 	return(spr);
     }
