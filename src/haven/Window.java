@@ -335,6 +335,10 @@ public class Window extends Widget implements DTarget {
 	return(max);
     }
 
+	public String caption() {
+		return (cap != null) ? cap : null;
+	}
+
     public Area ca() {
 	if(deco == null)
 	    return(Area.sized(this.sz));
