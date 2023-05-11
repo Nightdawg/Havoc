@@ -749,6 +749,8 @@ public class OptWnd extends Window {
 	private static Label nightVisionLabel;
 	private static HSlider nightVisionSlider;
 	private static Button nightVisionResetButton;
+	private static CheckBox simpleCropsCheckBox;
+	public static boolean simplifiedCrops = Utils.getprefb("simplifiedCrops", false);
 	private static CheckBox disableWeatherEffectsCheckBox;
 	private static CheckBox disableFlavourObjectsCheckBox;
 	private static CheckBox flatWorldCheckBox;
@@ -786,6 +788,14 @@ public class OptWnd extends Window {
 					ui.sess.glob.brighten();
 				}
 			}), prev.pos("bl").adds(210, -20));
+			prev = add(simpleCropsCheckBox = new CheckBox("Simplified crops (Requires Relog)"){
+				{a = Utils.getprefb("simplifiedCrops", false);}
+				public void set(boolean val) {
+					Utils.setprefb("simplifiedCrops", val);
+					simplifiedCrops = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8));
 			prev = add(disableWeatherEffectsCheckBox = new CheckBox("Disable Weather (Requires Relog)"){
 				{a = Utils.getprefb("isWeatherDisabled", false);}
 				public void set(boolean val) {
@@ -809,7 +819,7 @@ public class OptWnd extends Window {
 					flatWorldSetting = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 8));
+			}, prev.pos("bl").adds(0, 16));
 
 			prev = add(tileSmoothingCheckBox = new CheckBox("Disable Tile Smoothing (Requires Relog)"){
 				{a = Utils.getprefb("noTileSmoothing", false);}
