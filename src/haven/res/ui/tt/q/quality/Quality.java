@@ -30,23 +30,29 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
 
     public Tex overlay() {
         boolean irrelevantQuality = false; // ND: Use this to show the quality of some containers quality as "Empty", rather than their actual quality.
-        for (ItemInfo info : owner.info()) {
-            if (info instanceof ItemInfo.Name){
-                if (Arrays.stream(EMPTY_INDICATOR).anyMatch(((Name) info).str.text::contains)){
-                    irrelevantQuality = true;
+        try {
+            for (ItemInfo info : owner.info()) {
+                if (info instanceof Name){
+                    if (Arrays.stream(EMPTY_INDICATOR).anyMatch(((Name) info).str.text::contains)){
+                        irrelevantQuality = true;
+                    }
                 }
-            }
-            if (info instanceof ItemInfo.Contents) {
-                for (ItemInfo info2 : ((ItemInfo.Contents) info).sub) {
-                    if (info2 instanceof QBuff) {
-                        if (((Contents) info).content.name.equals("Water")) {
-                            return (new TexI(GItem.NumberInfo.numrenderStroked(((QBuff) info2).q, new Color(54, 175, 255, 255), true)));
-                        } else {
+                if (info instanceof Contents) {
+                    for (ItemInfo info2 : ((Contents) info).sub) {
+                        if (info2 instanceof QBuff) {
+                            if ((((Contents) info).content != null) && (((Contents) info).content.name != null)){
+                                if (((Contents) info).content.name.equals("Water")) {
+                                    return (new TexI(GItem.NumberInfo.numrenderStroked(((QBuff) info2).q, new Color(54, 175, 255, 255), true)));
+                                } else if (((Contents) info).content.name.equals("Tea")) {
+                                    return (new TexI(GItem.NumberInfo.numrenderStroked(((QBuff) info2).q, new Color(83, 161, 0, 255), true)));
+                                }
+                            }
                             return (new TexI(GItem.NumberInfo.numrenderStroked(((QBuff) info2).q, new Color(255, 255, 255, 255), true)));
                         }
                     }
                 }
             }
+        } catch (Exception ignored) {
         }
         if (!irrelevantQuality) {
             return (new TexI(GItem.NumberInfo.numrenderStroked(q, new Color(255, 255, 255, 255), true)));
