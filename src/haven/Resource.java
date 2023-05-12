@@ -1890,6 +1890,27 @@ public class Resource implements Serializable {
     }
 
 	//private static final List<String> ignoreResVersionList = Arrays.asList("gfx/terobjs/cupboard", "gfx/terobjs/crate");
+	private static final List<String> ignoreCustomIconResVersionList =
+			Arrays.asList(
+					"customMapIcons/metalplow",
+					"customMapIcons/wellspring",
+					"customMapIcons/opiumdragon",
+					"customMapIcons/stalagoomba",
+					"customMapIcons/dryad",
+					"customMapIcons/wreckingball",
+					"customMapIcons/mandrakespirited",
+					"customMapIcons/wagon",
+					"customMapIcons/pclaim",
+					"customMapIcons/catapult",
+					"customMapIcons/mirkwoodlog",
+					"customMapIcons/coracle",
+					"customMapIcons/burrow",
+					"customMapIcons/vclaim",
+					"customMapIcons/snekkja",
+					"customMapIcons/treant",
+					"customMapIcons/bram",
+					"customMapIcons/knarr"
+			);
     private static final byte[] RESOURCE_SIG = "Haven Resource 1".getBytes(Utils.ascii);
     private void load(InputStream st) throws IOException {
 	Message in = new StreamMessage(st);
@@ -1900,9 +1921,10 @@ public class Resource implements Serializable {
 	if(this.ver == -1)
 	    this.ver = ver;
 	else if(ver != this.ver) {
-		System.out.printf("Wrong res version (%d != %d) %s%n", ver, this.ver, this);
-		//if (ignoreResVersionList.stream().noneMatch(name::matches))
+		if (ignoreCustomIconResVersionList.stream().noneMatch(name::matches)) {
+			System.out.printf("Wrong res version (%d != %d) %s%n", ver, this.ver, this);
 			throw (new LoadException("Wrong res version (" + ver + " != " + this.ver + ")", this));
+		}
 	}
 	while(!in.eom()) {
 	    LayerFactory<?> lc = ltypes.get(in.string());
