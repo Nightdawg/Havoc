@@ -594,7 +594,7 @@ public class OptWnd extends Window {
 
 		public BindingPanel(Panel back) {
 			super();
-			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(300, 380))), 0, 0);
+			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(300, 360))), 0, 0);
 			Widget cont = scroll.cont;
 			Widget prev;
 			int y = 0;
@@ -606,8 +606,7 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Kith & Kin", GameUI.kb_bud, y);
 			y = addbtn(cont, "Options", GameUI.kb_opt, y);
 			y = addbtn(cont, "Search actions", GameUI.kb_srch, y);
-			y = addbtn(cont, "Toggle chat", GameUI.kb_chat, y);
-			y = addbtn(cont, "Quick chat", ChatUI.kb_quick, y);
+			y = addbtn(cont, "Focus chat window", GameUI.kb_chat, y);
 			y = addbtn(cont, "Take screenshot", GameUI.kb_shoot, y);
 			y = addbtn(cont, "Minimap icons", GameUI.kb_ico, y);
 			y = addbtn(cont, "Toggle UI", GameUI.kb_hide, y);

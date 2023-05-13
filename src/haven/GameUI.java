@@ -242,11 +242,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	setcanfocus(true);
 	setfocusctl(true);
 	chat = add(new ChatUI(0, 0));
-	if(Utils.getprefb("chatvis", true)) {
-	    chat.hresize(chat.savedh); // ND: I think I need to keep this cause of "clearanims(Spring.class);", whatever that is.
-		chat.resize(chat.savedw,chat.savedh); // ND: Added this to set both sizes
-	    chat.show();
-	}
+	chat.hresize(chat.savedh); // ND: I think I need to keep this cause of "clearanims(Spring.class);", whatever that is.
+	chat.resize(chat.savedw,chat.savedh); // ND: Added this to set both sizes
+	chat.show();
 	actionBar1.raise();
 	actionBar2.raise();
 	actionBar3.raise();
@@ -1399,7 +1397,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 
     public static final KeyBinding kb_shoot = KeyBinding.get("screenshot", KeyMatch.nil);
-    public static final KeyBinding kb_chat = KeyBinding.get("chat-toggle", KeyMatch.forchar('C', KeyMatch.C)); // ND: Does this work? Has it ever?
+    public static final KeyBinding kb_chat = KeyBinding.get("chat-focus", KeyMatch.forchar('C', KeyMatch.C));
     public static final KeyBinding kb_hide = KeyBinding.get("ui-toggle", KeyMatch.nil);
     public static final KeyBinding kb_logout = KeyBinding.get("logout", KeyMatch.nil);
     public static final KeyBinding kb_switchchr = KeyBinding.get("logout-cs", KeyMatch.nil);
@@ -1434,15 +1432,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if(kb_chat.key().match(ev)) {
 			if(chat.visible() && !chat.hasfocus) {
 			setfocus(chat);
-			} else {
-			if(chat.targeth == 0) {
-				chat.sresize(chat.savedh);
-				setfocus(chat);
-			} else {
-				chat.sresize(0);
 			}
-			}
-			Utils.setprefb("chatvis", chat.targeth != 0);
 			return(true);
 		} else if(kb_drinkButton.key().match(ev)) {
 			wdgmsg("act", "drink");

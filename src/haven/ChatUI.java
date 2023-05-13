@@ -1283,7 +1283,6 @@ public class ChatUI extends Widget {
     private UI.Grab dm = null;
     private Coord doff;
     private static final int minh = 96; //ND: Decreased from 111 to 96
-    //public int savedh = UI.scale(Math.max(minh, Utils.getprefi("chatsize", minh)));
 	public int savedh = UI.scale(Math.max(minh, Utils.getprefc("chatsize", new Coord(UI.scale(410), minh)).y));
 	public int savedw = UI.scale(Math.max(minh, Utils.getprefc("chatsize", new Coord(UI.scale(410), minh)).x));
 	private boolean resizehoriz = false;
@@ -1374,15 +1373,15 @@ public class ChatUI extends Widget {
 	}
     }
 
-    public static final KeyBinding kb_quick = KeyBinding.get("chat-quick", KeyMatch.forcode(KeyEvent.VK_ENTER, 0));
+    public static final KeyBinding kb_quick = KeyBinding.get("chat-quick", KeyMatch.nil);
     public boolean globtype(char key, KeyEvent ev) {
-	if(kb_quick.key().match(ev)) {
-	    if(!visible && (sel instanceof EntryChannel)) {
-		qgrab = ui.grabkeys(this);
-		qline = new QuickLine((EntryChannel)sel);
-		return(true);
-	    }
-	}
+//	if(kb_quick.key().match(ev)) {
+//	    if(!visible && (sel instanceof EntryChannel)) {
+//		qgrab = ui.grabkeys(this);
+//		qline = new QuickLine((EntryChannel)sel);
+//		return(true);
+//	    }
+//	}
 	return(super.globtype(key, ev));
     }
 }
