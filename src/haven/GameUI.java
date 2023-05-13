@@ -29,6 +29,7 @@ package haven;
 import haven.automated.ClickNearestGate;
 import haven.res.ui.tt.q.quality.Quality;
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.*;
 import java.awt.Color;
@@ -947,9 +948,14 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    WritableRaster buf = PUtils.imgraster(progt.f[fr][0].ssz);
 	    PUtils.blit(buf, progt.f[fr][0].scaled().getRaster(), Coord.z);
 	    PUtils.blendblit(buf, progt.f[fr + 1][0].scaled().getRaster(), Coord.z, bf);
+
+		BufferedImage img = PUtils.rasterimg(buf);
+		BufferedImage txt = Text.renderstroked(String.format("%d%%", (int) (100 * prog))).img;
+		img.getGraphics().drawImage(txt, (img.getWidth() - txt.getWidth()) / 2, UI.scale(8) - txt.getHeight() / 2, null);
+
 	    if(this.curi != null)
 		this.curi.dispose();
-	    this.curi = new TexI(PUtils.rasterimg(buf));
+	    this.curi = new TexI(img);
 
 	    double d = Math.abs(prog - this.prog);
 	    int dec = Math.max(0, (int)Math.round(-Math.log10(d)) - 2);
