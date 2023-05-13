@@ -54,6 +54,7 @@ public class MCache implements MapSource {
     Set<Overlay> ols = new HashSet<Overlay>();
     public int olseq = 0, chseq = 0;
     Map<Integer, Defrag> fragbufs = new TreeMap<Integer, Defrag>();
+	public static final Coord sgridsz = new Coord(100, 100);
 
     public static class LoadingMap extends Loading {
 	public final Coord gc;

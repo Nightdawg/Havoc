@@ -55,6 +55,7 @@ public class MapWnd extends Window implements Console.Directory {
     public MarkerConfig markcfg = MarkerConfig.showall, cmarkers = null;
     private final Locator player;
     private final Widget toolbar;
+	private final Widget toolbarTop;
     private final Frame viewf;
     private GroupSelector colsel;
 	protected Button mremove;
@@ -91,6 +92,45 @@ public class MapWnd extends Window implements Console.Directory {
 	viewf = add(new ViewFrame());
 	view = viewf.add(new View(file));
 	recenter();
+	toolbarTop = add(new Widget(Coord.z));
+	toolbarTop.add(new Img(Resource.loadtex("gfx/hud/mmap/topfgwdg")) {
+		public boolean mousedown(Coord c, int button) {
+			if((button == 1) && checkhit(c)) {
+				MapWnd.this.drag(parentpos(MapWnd.this, c));
+				return(true);
+			}
+			return(super.mousedown(c, button));
+		}
+	}, Coord.z);
+	toolbarTop.add(new ICheckBox("gfx/hud/mmap/viewrange", "", "-d", "-h", "-dh") {
+			})
+			.state(() -> Utils.getprefb("showMapViewRange", true))
+			.click(() -> {
+				if (!MiniMap.showMapViewRange) {
+					MiniMap.showMapViewRange = true;
+					Utils.setprefb("showMapViewRange", true);
+				} else{
+					MiniMap.showMapViewRange = false;
+					Utils.setprefb("showMapViewRange", false);
+				}
+			})
+			.settip("Show Sight Range");
+		toolbarTop.add(new ICheckBox("gfx/hud/mmap/gridlines", "", "-d", "-h", "-dh") {
+				})
+				.state(() -> Utils.getprefb("showMapGridLines", false))
+				.click(() -> {
+					if (!MiniMap.showMapGridLines) {
+						MiniMap.showMapGridLines = true;
+						Utils.setprefb("showMapGridLines", true);
+					} else{
+						MiniMap.showMapGridLines = false;
+						Utils.setprefb("showMapGridLines", false);
+					}
+				})
+				.settip("Show Grid Lines");
+
+	toolbarTop.c = new Coord(UI.scale(2), UI.scale(2));
+	toolbarTop.pack();
 	toolbar = add(new Widget(Coord.z));
 	toolbar.add(new Img(Resource.loadtex("gfx/hud/mmap/fgwdg")) {
 		public boolean mousedown(Coord c, int button) {

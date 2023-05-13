@@ -61,6 +61,8 @@ public class MiniMap extends Widget {
     protected Location dloc;
 	private String biome;
 	private Tex biometex;
+	public static boolean showMapViewRange = Utils.getprefb("showMapViewRange", true);
+	public static boolean showMapGridLines = Utils.getprefb("showMapGridLines", false);
 
     public MiniMap(Coord sz, MapFile file) {
 	super(sz);
@@ -686,6 +688,8 @@ public class MiniMap extends Widget {
     public void drawparts(GOut g){
 	drawmap(g);
 	drawmarkers(g);
+	if(showMapViewRange) {drawview(g);}
+	if(showMapGridLines && dlvl <= 6) {drawgridlines(g);}
 	if(dlvl <= 3) {
 		drawicons(g);
 	}
@@ -998,5 +1002,66 @@ public class MiniMap extends Widget {
 			return improvedTileNames.get(biome);
 		}
 		return biome;
+	}
+
+	public static final Coord VIEW_SZ = UI.scale(MCache.sgridsz.mul(9).div(tilesz.floor()));// view radius is 9x9 "server" grids
+	public static final Color VIEW_BG_COLOR = new Color(255, 255, 255, 60);
+	public static final Color VIEW_BORDER_COLOR = new Color(0, 0, 0, 128);
+	void drawview(GOut g) {
+		Coord2d sgridsz = new Coord2d(MCache.sgridsz);
+		Gob player = gameui().map.player();
+		if(player != null) {
+			Coord rc = p2c(player.rc.floor(sgridsz).sub(4, 4).mul(sgridsz));
+			Coord viewsz = VIEW_SZ.div(zoomlevel);
+			g.chcolor(VIEW_BG_COLOR);
+			g.frect(rc, viewsz);
+			if (zoomlevel >= 0.4) {
+				g.chcolor(VIEW_BORDER_COLOR);
+				g.rect(rc, viewsz);
+			}
+			g.chcolor();
+		}
+	}
+
+	private static final Color gridColor = new Color(180, 0, 0);
+	void drawgridlines(GOut g) {
+		Coord2d zmaps = new Coord2d(cmaps).div(scalef());
+		Coord2d offset = new Coord2d(sz.div(2)).sub(new Coord2d(dloc.tc).div(scalef())).mod(zmaps);
+		double width = UI.scale(2f/zoomlevel);
+		double width2 = UI.scale((2f/zoomlevel) + 2f);
+		Color col = g.getcolor();
+		Coord gridlines = sz.div(zmaps);
+		Coord2d ulgrid = dgext.ul.mul(zmaps).mod(zmaps);
+		g.chcolor(Color.BLACK);
+		for (int x = -1; x < gridlines.x+1; x++) {
+			Coord up = new Coord2d((zmaps.x*x+ulgrid.x+offset.x), 0).floor();
+			Coord dn = new Coord2d((zmaps.x*x+ulgrid.x+offset.x), sz.y).floor();
+			if(up.x >= 0 && up.x <= sz.x) {
+				g.line(up, dn, width2);
+			}
+		}
+		for (int y = -1; y < gridlines.y+1; y++) {
+			Coord le = new Coord2d(0, (zmaps.y*y+ulgrid.y+offset.y)).floor();
+			Coord ri = new Coord2d(sz.x, (zmaps.y*y+ulgrid.y+offset.y)).floor();
+			if(le.y >= 0 && le.y <= sz.y) {
+				g.line(le, ri, width2);
+			}
+		}
+		g.chcolor(gridColor);
+		for (int x = -1; x < gridlines.x+1; x++) {
+			Coord up = new Coord2d((zmaps.x*x+ulgrid.x+offset.x), 0).floor();
+			Coord dn = new Coord2d((zmaps.x*x+ulgrid.x+offset.x), sz.y).floor();
+			if(up.x >= 0 && up.x <= sz.x) {
+				g.line(up, dn, width);
+			}
+		}
+		for (int y = -1; y < gridlines.y+1; y++) {
+			Coord le = new Coord2d(0, (zmaps.y*y+ulgrid.y+offset.y)).floor();
+			Coord ri = new Coord2d(sz.x, (zmaps.y*y+ulgrid.y+offset.y)).floor();
+			if(le.y >= 0 && le.y <= sz.y) {
+				g.line(le, ri, width);
+			}
+		}
+		g.chcolor(col);
 	}
 }
