@@ -2243,6 +2243,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			Long gobid = new Long((Integer) inf.clickargs()[1]);
 			Gob gob = glob.oc.getgob(gobid);
 			if(gob != null) {
+				if(ui.isCursor("gfx/hud/curs/study")) {
+					gameui().setDetectGob(gob);
+				}
 				if (clickb == 3) {
 					if (OptWnd.autoswitchBunnyPlateBoots) {
 						try {

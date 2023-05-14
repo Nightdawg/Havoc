@@ -551,6 +551,15 @@ public class UI {
 	return(root.getcurs(c));
     }
 
+	public boolean isCursor(String name) {
+		Resource curs = null;
+		try {
+			curs = root.cursor != null ? root.cursor.get() : null;
+		} catch (Loading ignored) {
+		}
+		return curs != null && curs.name.equals(name);
+	}
+
     public static int modflags(InputEvent ev) {
 	int mod = ev.getModifiersEx();
 	return((((mod & InputEvent.SHIFT_DOWN_MASK) != 0) ? MOD_SHIFT : 0) |

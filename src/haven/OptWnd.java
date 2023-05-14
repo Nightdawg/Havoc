@@ -441,6 +441,7 @@ public class OptWnd extends Window {
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
 	public static CheckBox toggleGobHealthDisplayCheckBox;
+	public static CheckBox toggleGobGrowthInfoCheckBox;
 	public static CheckBox toggleGobCollisionBoxesDisplayCheckBox;
 	public static CheckBox alwaysOpenBeltCheckBox;
 	public static CheckBox showQuickSlotsBar;
@@ -565,6 +566,26 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 16));
+		prev = add(toggleGobGrowthInfoCheckBox = new CheckBox("Show Object Quality when Inspected"){
+			{a = (Utils.getprefb("showGobGrowthInfo", true));}
+			public void set(boolean val) {
+				Utils.setprefb("showGobQualityInfo", val);
+				GobQualityInfo.showGobQualityInfo = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::qualityInfoUpdated);
+				a = val;
+			}
+		}, prev.pos("bl").adds(0, 6));
+		prev = add(toggleGobGrowthInfoCheckBox = new CheckBox("Display Growth Info on Plants"){
+			{a = (Utils.getprefb("showGobGrowthInfo", false));}
+			public void set(boolean val) {
+				Utils.setprefb("showGobGrowthInfo", val);
+				GobGrowthInfo.showGobGrowthInfo = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
+				a = val;
+			}
+		}, prev.pos("bl").adds(0, 6));
 		prev = add(toggleGobCollisionBoxesDisplayCheckBox = new CheckBox("Display Collision Box on Objects"){
 			{a = (Utils.getprefb("gobCollisionBoxesDisplayToggle", false));}
 			public void set(boolean val) {
@@ -1304,8 +1325,10 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("gobHideObjectsToggle", val);
 					Gob.hideObjects = val;
-					if (gameui() != null)
+					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+						ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
+					}
 					a = val;
 				}
 			}, 0, 10);
@@ -1338,8 +1361,10 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("hideTrees", val);
 					hideTreesSetting = val;
-					if (gameui() != null)
+					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+						ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 10));
@@ -1349,8 +1374,10 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("hideBushes", val);
 					hideBushesSetting = val;
-					if (gameui() != null)
+					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+						ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
+					}
 					a = val;
 				}
 			}, prev2.pos("bl").adds(0, 4));
@@ -1659,6 +1686,7 @@ public class OptWnd extends Window {
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
 		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in. \n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
 		showQuickSlotsBar.tooltip = RichText.render("Note: The Quick Switch keybinds ('Right Hand' and 'Left Hand') will still work, regardless of this widget being visible or not.", 300);
+		toggleGobGrowthInfoCheckBox.tooltip = RichText.render("Enabling this will show the following growth information:\n$col[185,185,185]{> Trees and Bushes will display their current growth percentage\n> Crops will display their growth stage as \"Current / Final\"\n}Note: If a Tree or Bush is not showing a percentage, that means it is fully grown, and can be harvested.", 300);
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){

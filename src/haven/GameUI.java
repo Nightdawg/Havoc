@@ -35,6 +35,8 @@ import java.util.function.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.WritableRaster;
+import java.util.regex.Matcher;
+
 import static haven.Inventory.invsq;
 
 public class GameUI extends ConsoleHost implements Console.Directory, UI.MessageWidget {
@@ -84,7 +86,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean partyperm = false;
 	public QuickSlotsWdg quickslots;
 	public Thread keyboundActionThread;
-	public StatusWdg statuswindow;
+	private Gob detectGob;
 
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
@@ -1542,10 +1544,25 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public void presize() {
 	resize(parent.sz);
     }
+
+	public void setDetectGob(Gob gob) {
+		detectGob = gob;
+	}
     
     public void msg(String msg, Color color, Color logcol) {
 	msgtime = Utils.rtime();
 	lastmsg = msgfoundry.render(msg, color);
+	Gob g = detectGob;
+	if(g != null) {
+		Matcher m = GobQualityInfo.GOB_Q.matcher(msg);
+		if(m.matches()) {
+			try {
+				int q = Integer.parseInt(m.group(1));
+				g.setQuality(q);
+			} catch (Exception ignored) {}
+			detectGob = null;
+		}
+	}
 	syslog.append(msg, logcol);
     }
 

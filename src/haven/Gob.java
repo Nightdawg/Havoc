@@ -54,6 +54,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private CollisionBoxGobSprite<Hitbox> collisionBox = null;
 	private CollisionBoxGobSprite<Hitbox2> collisionBox2 = null;
 	private CollisionBoxGobSprite<HitboxFilled> hidingBox = null;
+	private GobGrowthInfo growthInfo;
+	private GobQualityInfo qualityInfo;
 
     public static class Overlay implements RenderTree.Node {
 	public final int id;
@@ -351,8 +353,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	if(id < 0)
 	    virtual = true;
 	if(GobDamageInfo.has(this)) {
-			addDmg();
-		}
+		addDmg();
+	}
+	growthInfo = new GobGrowthInfo(this);
+	setattr(GobGrowthInfo.class, growthInfo);
+	qualityInfo = new GobQualityInfo(this);
+	setattr(GobQualityInfo.class, qualityInfo);
 	updwait(this::drawableUpdated, waiting -> {});
     }
 
@@ -975,9 +981,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	private enum StatusType {
-		collisionBox, drawable, icon, hidingBox
+		collisionBox, drawable, icon, hidingBox, growthInfo, qualityInfo
 	}
 
+	public void setQuality(int q) {
+		qualityInfo.setQ(q);
+		status.update(StatusType.qualityInfo);
+	}
+	public void qualityInfoUpdated() {
+		status.update(StatusType.qualityInfo);
+	}
+	public void growthInfoUpdated() {
+		status.update(StatusType.growthInfo);
+	}
 	public void collisionBoxUpdated() {
 		status.update(StatusType.collisionBox);
 	}
@@ -999,6 +1015,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 		if(status.updated(StatusType.drawable, StatusType.icon)) {
 			updateIcon();
+		}
+		if(status.updated(StatusType.growthInfo)) {
+			growthInfo.clean();
+		}
+		if(status.updated(StatusType.qualityInfo)) {
+			qualityInfo.clean();
 		}
 	}
 
