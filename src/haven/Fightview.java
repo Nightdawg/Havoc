@@ -289,15 +289,17 @@ public class Fightview extends Widget {
 	    Widget inf = obinfo(rel.gobid, false);
 	    if(inf != null)
 		inf.tick(dt);
-		if (autoPeaceSetting && !rel.autopeaced && curdisp.give.state != 1) {
-			synchronized (ui.sess.glob) {
-				Gob curgob = ui.sess.glob.oc.getgob(rel.gobid);
-				if (curgob != null && !curgob.getres().name.contains("gfx/borka")) {
-					wdgmsg("give", (int)rel.gobid, 1);
+		try { // ND: "curdisp.give.state != 1" can throw nullpointer for a frame or something, but the functionality still works using try/catch block
+			if (autoPeaceSetting && !rel.autopeaced && curdisp.give.state != 1) {
+				synchronized (ui.sess.glob) {
+					Gob curgob = ui.sess.glob.oc.getgob(rel.gobid);
+					if (curgob != null && !curgob.getres().name.contains("gfx/borka")) {
+						wdgmsg("give", (int)rel.gobid, 1);
+					}
+					rel.autopeaced = true;
 				}
-				rel.autopeaced = true;
 			}
-		}
+		} catch (Exception ignored) {}
 	}
     }
 
