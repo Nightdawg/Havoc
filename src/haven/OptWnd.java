@@ -445,6 +445,7 @@ public class OptWnd extends Window {
 	public static CheckBox toggleQualityDisplayCheckBox;
 	public static CheckBox toggleGobHealthDisplayCheckBox;
 	public static CheckBox toggleGobGrowthInfoCheckBox;
+	public static CheckBox toggleGobQualityInfoCheckBox;
 	public static CheckBox toggleGobCollisionBoxesDisplayCheckBox;
 	public static CheckBox alwaysOpenBeltCheckBox;
 	public static CheckBox showQuickSlotsBar;
@@ -569,8 +570,8 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 16));
-		prev = add(toggleGobGrowthInfoCheckBox = new CheckBox("Show Object Quality when Inspected"){
-			{a = (Utils.getprefb("showGobGrowthInfo", true));}
+		prev = add(toggleGobQualityInfoCheckBox = new CheckBox("Show Object Quality when Inspected"){
+			{a = (Utils.getprefb("showGobQualityInfo", true));}
 			public void set(boolean val) {
 				Utils.setprefb("showGobQualityInfo", val);
 				GobQualityInfo.showGobQualityInfo = val;

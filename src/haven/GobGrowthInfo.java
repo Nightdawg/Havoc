@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class GobGrowthInfo extends GobInfo {
-	public static boolean showGobGrowthInfo = Utils.getprefb("showGrowthInfo", false);
+	public static boolean showGobGrowthInfo = Utils.getprefb("showGobGrowthInfo", false);
     private static final int TREE_START = 10;
     private static final int BUSH_START = 30;
     private static final double TREE_MULT = 100.0 / (100.0 - TREE_START);
