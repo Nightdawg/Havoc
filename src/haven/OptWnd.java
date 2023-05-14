@@ -109,6 +109,7 @@ public class OptWnd extends Window {
 	public VideoPanel(Panel prev) {
 	    super();
 	    back = add(new PButton(UI.scale(200), "Back", 27, prev, "Options            "));
+		pack(); // ND: Fixes top bar not being fully draggable the first time I open the video panel. Idfk.
 	}
 
 	public class CPanel extends Widget {
