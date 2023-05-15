@@ -34,7 +34,7 @@ import haven.render.*;
 
 public class Material implements Pipe.Op {
     public final Pipe.Op states, dynstates;
-
+	public final Pipe.Op[] statesForTiles; // ND: Added this to yoink the wall texture for cave wall tiles. Idk if there's a better way to do this.
     public static final Pipe.Op nofacecull = (p -> p.put(States.facecull, null));
     @ResName("nofacecull")
     public static class $nofacecull implements ResCons {
@@ -137,6 +137,7 @@ public class Material implements Pipe.Op {
     public Material(Pipe.Op[] states, Pipe.Op[] dynstates) {
 	this.states = Pipe.Op.compose(states);
 	this.dynstates = Pipe.Op.compose(dynstates);
+	this.statesForTiles = states;
     }
 
     public Material(Pipe.Op... states) {

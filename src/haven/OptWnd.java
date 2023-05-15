@@ -782,10 +782,12 @@ public class OptWnd extends Window {
 	private static CheckBox flatWorldCheckBox;
 	private static CheckBox tileSmoothingCheckBox;
 	private static CheckBox tileTransitionsCheckBox;
+	private static CheckBox flatCaveWallsCheckBox;
 	public static boolean disableFlavourObjects = Utils.getprefb("disableFlavourObjects", false);
 	public static boolean flatWorldSetting = Utils.getprefb("flatWorld", false);
 	public static boolean noTileSmoothing = Utils.getprefb("noTileSmoothing", false);
 	public static boolean noTileTransitions = Utils.getprefb("noTileTransitions", false);
+	public static boolean flatCaveWalls = Utils.getprefb("flatCaveWalls", false);
 	public class NDGraphicsSettingsPanel extends Panel {
 		public NDGraphicsSettingsPanel(Panel back) {
 			Widget prev;
@@ -846,29 +848,46 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
-			prev = add(flatWorldCheckBox = new CheckBox("Flat World (Requires Relog)"){
+			prev = add(flatWorldCheckBox = new CheckBox("Flat World"){
 				{a = Utils.getprefb("flatWorld", false);}
 				public void set(boolean val) {
 					Utils.setprefb("flatWorld", val);
 					flatWorldSetting = val;
+					if (ui.sess != null)
+						ui.sess.glob.map.invalidateAll();
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 16));
 
-			prev = add(tileSmoothingCheckBox = new CheckBox("Disable Tile Smoothing (Requires Relog)"){
+			prev = add(tileSmoothingCheckBox = new CheckBox("Disable Tile Smoothing"){
 				{a = Utils.getprefb("noTileSmoothing", false);}
 				public void set(boolean val) {
 					Utils.setprefb("noTileSmoothing", val);
 					noTileSmoothing = val;
+					if (ui.sess != null)
+						ui.sess.glob.map.invalidateAll();
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
 
-			prev = add(tileTransitionsCheckBox = new CheckBox("Disable Tile Transitions (Requires Relog)"){
+			prev = add(tileTransitionsCheckBox = new CheckBox("Disable Tile Transitions"){
 				{a = Utils.getprefb("noTileTransitions", false);}
 				public void set(boolean val) {
 					Utils.setprefb("noTileTransitions", val);
 					noTileTransitions = val;
+					if (ui.sess != null)
+						ui.sess.glob.map.invalidateAll();
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8));
+
+			prev = add(flatCaveWallsCheckBox = new CheckBox("Flat Cave Walls"){
+				{a = Utils.getprefb("flatCaveWalls", false);}
+				public void set(boolean val) {
+					Utils.setprefb("flatCaveWalls", val);
+					flatCaveWalls = val;
+					if (ui.sess != null)
+						ui.sess.glob.map.invalidateAll();
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));

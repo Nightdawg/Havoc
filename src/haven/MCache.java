@@ -747,6 +747,12 @@ public class MCache implements MapSource {
 	    g.tick(dt);
     }
 
+	public void invalidateAll() {
+		Collection<Grid> copy = new ArrayList<>(grids.values());
+		for (Grid gr : copy)
+			gr.invalidate();
+	}
+
     public void gtick(Render g) {
 	Collection<Grid> copy;
 	synchronized(grids) {

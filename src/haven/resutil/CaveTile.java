@@ -30,6 +30,8 @@ import java.util.*;
 import haven.*;
 import haven.MapMesh.Scan;
 import haven.Surface.Vertex;
+import haven.render.BufPipe;
+import haven.render.Pipe;
 
 public class CaveTile extends Tiler {
     public static final float h = 16;
@@ -51,16 +53,25 @@ public class CaveTile extends Tiler {
 
 	public Vertex[] fortile(Coord tc) {
 	    if(wv[cs.o(tc)] == null) {
-		Random rnd = m.grnd(tc.add(m.ul));
-		Vertex[] buf = wv[cs.o(tc)] = new Vertex[4];
-		buf[0] = ms.new Vertex(ms.fortile(tc));
-		for(int i = 1; i < buf.length; i++) {
-		    buf[i] = ms.new Vertex(buf[0].x, buf[0].y, buf[0].z + (i * h / (buf.length - 1)));
-		    buf[i].x += (rnd.nextFloat() - 0.5f) * 3.0f;
-		    buf[i].y += (rnd.nextFloat() - 0.5f) * 3.0f;
-		    buf[i].z += (rnd.nextFloat() - 0.5f) * 3.5f;
+			if (OptWnd.flatCaveWalls) {
+				Vertex[] buf = wv[cs.o(tc)] = new Vertex[4];
+				buf[0] = ms.fortile(tc);
+				buf[1] = ms.new Vertex(buf[0].x, buf[0].y, buf[0].z + 5f);
+				buf[2] = ms.new Vertex(buf[0].x + 0.01f, buf[0].y + 0.01f, buf[0].z + 5f);
+				buf[3] = ms.new Vertex(buf[0].x, buf[0].y, buf[0].z);
+
+			} else {
+				Random rnd = m.grnd(tc.add(m.ul));
+				Vertex[] buf = wv[cs.o(tc)] = new Vertex[4];
+				buf[0] = ms.new Vertex(ms.fortile(tc));
+				for (int i = 1; i < buf.length; i++) {
+					buf[i] = ms.new Vertex(buf[0].x, buf[0].y, buf[0].z + (i * h / (buf.length - 1)));
+					buf[i].x += (rnd.nextFloat() - 0.5f) * 3.0f;
+					buf[i].y += (rnd.nextFloat() - 0.5f) * 3.0f;
+					buf[i].z += (rnd.nextFloat() - 0.5f) * 3.5f;
+				}
+			}
 		}
-	    }
 	    return(wv[cs.o(tc)]);
 	}
     }
@@ -82,6 +93,8 @@ public class CaveTile extends Tiler {
 		    ground = ts.tfac().create(id, ts);
 		}
 	    }
+		if (OptWnd.flatCaveWalls)
+			return (new CaveTile(id, wtex, ground));
 	    return(new CaveTile(id, set, wtex, ground));
 	}
     }
@@ -91,6 +104,12 @@ public class CaveTile extends Tiler {
 	this.wtex = wtex;
 	this.ground = ground;
     }
+
+	public CaveTile(int id, Material wtex, Tiler ground) {
+		super(id);
+		this.wtex = wtex;
+		this.ground = ground;
+	}
 
     private static final Coord[] tces = {new Coord(0, -1), new Coord(1, 0), new Coord(0, 1), new Coord(-1, 0)};
     private static final Coord[] tccs = {new Coord(0, 0), new Coord(1, 0), new Coord(1, 1), new Coord(0, 1)};
@@ -133,6 +152,8 @@ public class CaveTile extends Tiler {
 	}
     }
 
+	public static final Map<Material, Tex> tiles = new HashMap<>();
+
     public void lay(MapMesh m, Random rnd, Coord lc, Coord gc) {
 	Walls w = null;
 	for(int i = 0; i < 4; i++) {
@@ -142,8 +163,31 @@ public class CaveTile extends Tiler {
 	    if(w == null) w = m.data(walls);
 	    mkwall(m, w, lc.add(tccs[(i + 1) % 4]), lc.add(tccs[i]));
 	}
-	if(ground != null)
-	    ground.lay(m, rnd, lc, gc);
+		if (ground != null) {
+			Tex tex = tiles.get(wtex);
+			if (tex == null && OptWnd.flatCaveWalls) {
+				for (Pipe.Op gs : wtex.statesForTiles) {
+					if (gs instanceof TexRender.TexDraw) {
+						if (gs.toString().contains("gfx/tiles/mountain-tex"))
+							break;
+						tiles.put(wtex, tex = ((TexRender.TexDraw) gs).tex);
+						break;
+					}
+				}
+			}
+			if (tex != null && OptWnd.flatCaveWalls) {
+				if (ground instanceof GroundTile) {
+					MapMesh.MapSurface s = m.data(m.gnd);
+					GroundTile grn = ((GroundTile) ground);
+					MPart d = MPart.splitquad(lc, gc, s.fortilea(lc), s.split[s.ts.o(lc)]);
+					grn._faces(m, tex, 0, d.v, d.tcx, d.tcy, d.f);
+				} else {
+					ground.lay(m, rnd, lc, gc);
+				}
+			} else {
+				ground.lay(m, rnd, lc, gc);
+			}
+		}
     }
 
     public void trans(MapMesh m, Random rnd, Tiler gt, Coord lc, Coord gc, int z, int bmask, int cmask) {}
