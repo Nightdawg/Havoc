@@ -938,6 +938,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public TickList.Ticking ticker() {return(this);}
     }
+
+	public void highlight(Color c) {
+		GobHighlight h = getattr(GobHighlight.class);
+		if (h != null) {
+			delattr(h.getClass());
+		}
+		try {
+			System.out.println("highlighting " + this.getres().name + " id: " + id);
+		} catch (Loading ignored) {} catch (Exception ignored) {}
+		h = new GobHighlight(this, c);
+		setattr(h);
+		h.start();
+	}
+
     public final Placed placed = new Placed();
 
 	public String resid() {
