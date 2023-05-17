@@ -69,6 +69,17 @@ public class ChatUI extends Widget {
 	    hide();
     }
 
+	public Map<String, ChatUI.MultiChat> getMultiChannels() {
+		Map<String, ChatUI.MultiChat> channels = new HashMap<>();
+		for (Widget w = gameui().chat.lchild; w != null; w = w.prev) {
+			if (w instanceof ChatUI.MultiChat) {
+				ChatUI.MultiChat chat = ((ChatUI.MultiChat) w);
+				channels.put(chat.name, chat);
+			}
+		}
+		return channels;
+	}
+
     protected void added() {
 	base = this.c;
 	//resize(this.sz); // ND: Changed this
@@ -752,18 +763,43 @@ public class ChatUI extends Widget {
 	    }
 	}
 
+		public boolean process(String msg) {
+			if (msg.startsWith("@")) {
+				Pattern highlight = Pattern.compile("^@(-?\\d+)$");
+				Matcher matcher = highlight.matcher(msg);
+				if(matcher.matches()){
+					try {
+						Gob gob = gameui().map.glob.oc.getgob(Long.parseLong(matcher.group(1)));
+						if (gob != null) {
+							if (name.equals("Party")) {
+//								gob.highlightTarget();
+								gob.highlight(new Color(64, 255, 64, 255));
+							} else if (name.equals("Area Chat")) {
+								gob.highlight(new Color(64, 255, 64, 255));
+							}
+						}
+						return false;
+					} catch (Exception ignored){}
+				}
+				return true;
+			}
+			return true;
+		}
+
 	public void uimsg(String msg, Object... args) {
 	    if(msg == "msg") {
 		Integer from = (Integer)args[0];
 		String line = (String)args[1];
-		if(from == null) {
-		    append(new MyMessage(line, iw()));
-		} else {
-		    Message cmsg = new NamedMessage(from, line, fromcolor(from), iw());
-		    append(cmsg);
-		    if(urgency > 0)
-			notify(cmsg, urgency);
-		}
+			if(process(line)) {
+				if (from == null) {
+					append(new MyMessage(line, iw()));
+				} else {
+					Message cmsg = new NamedMessage(from, line, fromcolor(from), iw());
+					append(cmsg);
+					if (urgency > 0)
+						notify(cmsg, urgency);
+				}
+			}
 	    } else {
 		super.uimsg(msg, args);
 	    }

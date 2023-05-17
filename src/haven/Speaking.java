@@ -70,7 +70,7 @@ public class Speaking extends GAttrib implements RenderTree.Node, PView.Render2D
 	public void apply(Gob g, Message msg) {
 	    float zo = msg.int16() / 100.0f;
 	    String text = msg.string();
-	    if(text.length() < 1) {
+	    if(text.length() < 1 || text.startsWith("@")) {
 		g.delattr(Speaking.class);
 	    } else {
 		Speaking m = g.getattr(Speaking.class);

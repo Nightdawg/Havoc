@@ -2246,43 +2246,54 @@ public class MapView extends PView implements DTarget, Console.Directory {
 				if(ui.isCursor("gfx/hud/curs/study")) {
 					gameui().setDetectGob(gob);
 				}
-				if (clickb == 3) {
-					if (OptWnd.autoswitchBunnyPlateBoots) {
-						try {
-							WItem eqboots = gui.getequipory().slots[Equipory.SLOTS.BOOTS.idx];
-							List<WItem> invboots;
-							if (gob.getres().name.contains("/rabbit/")) {
-								invboots = gui.maininv.getItemsExact("Bunny Slippers");
-								if (invboots.size() > 0) {
-									if (eqboots != null && !eqboots.item.getname().equals("Bunny Slippers")) {
-										eqboots.item.wdgmsg("transfer", new Coord(eqboots.sz.x / 2, eqboots.sz.y / 2));
-									}
-									WItem slipper = invboots.get(0);
-									slipper.item.wdgmsg("transfer", new Coord(slipper.sz.x / 2, slipper.sz.y / 2));
-								}
-							} else {
-								invboots = gui.maininv.getItemsExact("Plate Boots");
-								if (eqboots != null && eqboots.item.getname().equals("Bunny Slippers")) {
-									if (invboots.size() > 0) {
-										eqboots.item.wdgmsg("transfer", new Coord(eqboots.sz.x / 2, eqboots.sz.y / 2));
-										WItem boots = invboots.get(0);
-										boots.item.wdgmsg("transfer", new Coord(boots.sz.x / 2, boots.sz.y / 2));
-									}
-								}
-							}
-						} catch (Exception ignored) {
-						}
-					}
-					wdgmsg("click", args);
-					if (OptWnd.instantFlowerMenuCTRL) {
-						if (ui.modctrl) {
-							gameui().ui.rcvr.rcvmsg(gameui().ui.lastid + 1, "cl", 0, gameui().ui.modflags());
-						}
+				if (ui.modmeta && gui.vhand == null) {
+					Map<String, ChatUI.MultiChat> chats = gui.chat.getMultiChannels();
+					if (clickb == 1) {
+						chats.get("Area Chat").send("@" + gob.id);
+					} else if (clickb == 3) {
+						chats.get("Party").send("@" + gob.id);
 					}
 					return;
+				} else {
+					if (clickb == 3) {
+						if (OptWnd.autoswitchBunnyPlateBoots) {
+							try {
+								WItem eqboots = gui.getequipory().slots[Equipory.SLOTS.BOOTS.idx];
+								List<WItem> invboots;
+								if (gob.getres().name.contains("/rabbit/")) {
+									invboots = gui.maininv.getItemsExact("Bunny Slippers");
+									if (invboots.size() > 0) {
+										if (eqboots != null && !eqboots.item.getname().equals("Bunny Slippers")) {
+											eqboots.item.wdgmsg("transfer", new Coord(eqboots.sz.x / 2, eqboots.sz.y / 2));
+										}
+										WItem slipper = invboots.get(0);
+										slipper.item.wdgmsg("transfer", new Coord(slipper.sz.x / 2, slipper.sz.y / 2));
+									}
+								} else {
+									invboots = gui.maininv.getItemsExact("Plate Boots");
+									if (eqboots != null && eqboots.item.getname().equals("Bunny Slippers")) {
+										if (invboots.size() > 0) {
+											eqboots.item.wdgmsg("transfer", new Coord(eqboots.sz.x / 2, eqboots.sz.y / 2));
+											WItem boots = invboots.get(0);
+											boots.item.wdgmsg("transfer", new Coord(boots.sz.x / 2, boots.sz.y / 2));
+										}
+									}
+								}
+							} catch (Exception ignored) {
+							}
+						}
+						wdgmsg("click", args);
+						if (OptWnd.instantFlowerMenuCTRL) {
+							if (ui.modctrl) {
+								gameui().ui.rcvr.rcvmsg(gameui().ui.lastid + 1, "cl", 0, gameui().ui.modflags());
+							}
+						}
+						return;
+					}
+					wdgmsg("click", args);
+					return;
 				}
-				wdgmsg("click", args);
-				return;
+
 			}
 		} else {
 			if(clickb == 1) {
