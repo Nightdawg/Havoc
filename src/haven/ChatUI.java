@@ -820,19 +820,21 @@ public class ChatUI extends Widget {
 		Integer from = (Integer)args[0];
 		long gobid = Utils.uint32((Integer)args[1]);
 		String line = (String)args[2];
-		Color col = Color.WHITE;
-		synchronized(ui.sess.glob.party.memb) {
-		    Party.Member pm = ui.sess.glob.party.memb.get(gobid);
-		    if(pm != null)
-			col = pm.col;
-		}
-		if(from == null) {
-		    append(new MyMessage(line, iw()));
-		} else {
-		    Message cmsg = new NamedMessage(from, line, Utils.blendcol(col, Color.WHITE, 0.5), iw());
-		    append(cmsg);
-		    if(urgency > 0)
-			notify(cmsg, urgency);
+		if(process(line)) {
+			Color col = Color.WHITE;
+			synchronized (ui.sess.glob.party.memb) {
+				Party.Member pm = ui.sess.glob.party.memb.get(gobid);
+				if (pm != null)
+					col = pm.col;
+			}
+			if (from == null) {
+				append(new MyMessage(line, iw()));
+			} else {
+				Message cmsg = new NamedMessage(from, line, Utils.blendcol(col, Color.WHITE, 0.5), iw());
+				append(cmsg);
+				if (urgency > 0)
+					notify(cmsg, urgency);
+			}
 		}
 	    } else {
 		super.uimsg(msg, args);
