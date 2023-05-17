@@ -1437,6 +1437,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleCombatAutoPeace  = KeyBinding.get("toggleCombatAutoPeaceKB",  KeyMatch.forchar('P', KeyMatch.C | KeyMatch.S));
 	public static KeyBinding kb_peaceCurrentTarget  = KeyBinding.get("peaceCurrentTargetKB",  KeyMatch.forchar('P', KeyMatch.M));
 
+	public static KeyBinding kb_toggleDangerRadii  = KeyBinding.get("toggleDangerRadii",  KeyMatch.nil);
+	public static KeyBinding kb_toggleCritterAuras  = KeyBinding.get("toggleCritterAuras ",  KeyMatch.nil);
+
 	public boolean globtype(char key, KeyEvent ev) {
 		if(key == ':') {
 			entercmd();
@@ -1489,7 +1492,14 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if(kb_peaceCurrentTarget.key().match(ev)) {
 			peaceCurrentTarget();
 			return(true);
-		} else if((key == 27) && (map != null) && !map.hasfocus) {
+		} else if(kb_toggleDangerRadii.key().match(ev)) { // ND: Toggle Danger Radius Here
+
+			return(true);
+		}
+		else if(kb_toggleCritterAuras.key().match(ev)) { // ND: Toggle Critter Auras Here
+
+			return(true);
+		}else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
 		}
