@@ -56,6 +56,50 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private CollisionBoxGobSprite<HitboxFilled> hidingBox = null;
 	private GobGrowthInfo growthInfo;
 	private GobQualityInfo qualityInfo;
+	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
+	private static final HashSet<Long> alarmPlayed = new HashSet<Long>();
+
+	/**
+	 * This method is run after all gob attributes has been loaded first time
+	 * throwloading=true causes the loader/thread that ran the init to try again
+	 */
+	public void init(boolean throwLoading) {
+		Resource res = getres();
+		if (res != null) {
+			if (getattr(Drawable.class) instanceof Composite) {
+				try {
+					initComp((Composite)getattr(Drawable.class));
+					if(!alarmPlayed.contains(id)) {
+						if(AlarmManager.play(res.name, Gob.this))
+							alarmPlayed.add(id);
+					}
+				} catch (Loading e) {
+					if (!throwLoading) {
+						glob.loader.syncdefer(() -> this.init(true), null, this);
+					} else {
+						throw e;
+					}
+				}
+			} else {
+				if(!alarmPlayed.contains(id)) {
+					if(AlarmManager.play(res.name, Gob.this))
+						alarmPlayed.add(id);
+				}
+			}
+		}
+	}
+
+	public void updPose(HashSet<String> poses) {
+		if (poses.contains("knock") || poses.contains("dead") || poses.contains("waterdead")) {
+			knocked = true;
+		} else {
+			knocked = false;
+		}
+	}
+
+	public void initComp(Composite c) {
+		c.cmpinit(this);
+	}
 
     public static class Overlay implements RenderTree.Node {
 	public final int id;

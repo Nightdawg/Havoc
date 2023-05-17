@@ -242,6 +242,15 @@ public class Loader {
 		}, false));
     }
 
+	public <T> Future<T> syncdefer(Runnable task, T result, Object synced) {
+		return(defer(() -> {
+			synchronized (synced) {
+				task.run();
+			}
+			return(result);
+		}, false));
+	}
+
     public String stats() {
 	synchronized(queue) {
 	    return(String.format("%d+%d %d/%d", queue.size(), loading.size(), busy.get(), pool.size()));

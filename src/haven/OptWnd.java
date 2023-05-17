@@ -42,6 +42,7 @@ public class OptWnd extends Window {
 	public final Panel advancedSettings;
     public Panel current;
 	public static int cameraLmaoMessage = 1; // ND: Message for "cam" console command, idk where to put this lmao
+	AlarmWindow alarmWindow;
 
     public void chpanel(Panel p) {
 	if(current != null)
@@ -1649,7 +1650,15 @@ public class OptWnd extends Window {
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Gameplay Settings", -1, gameplaysettings, "Gameplay Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Combat Settings", -1, combatsettings, "Combat Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
-		y2 = advancedSettings.add(new PButton(UI.scale(200), "Hiding Settings", -1, hidingsettings, "Hiding Settings"), 0, y2).pos("bl").adds(0, 25).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Hiding Settings", -1, hidingsettings, "Hiding Settings"), 0, y2).pos("bl").adds(0, 5).y;
+		y2 = advancedSettings.add(new Button(UI.scale(200), "Alarm Manager", () -> {
+			if(alarmWindow == null) {
+				alarmWindow = this.parent.add(new AlarmWindow());
+				alarmWindow.show();
+			} else {
+				alarmWindow.show(!alarmWindow.visible);
+			}
+		}),0 ,y2-5).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Back", 27, main, "Options            "), 0, y2).pos("bl").adds(0, 5).y;
 		this.advancedSettings.pack();

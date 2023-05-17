@@ -34,7 +34,7 @@ import dolda.xiphutil.*;
 
 public class Audio {
     public static boolean enabled = true;
-    private static Player player;
+    public static Player player;
     public static final AudioFormat fmt = new AudioFormat(44100, 16, 2, true, false);
     private static int bufsize = Utils.getprefi("audiobuf", 2048) * 4;
     public static double volume = Double.parseDouble(Utils.getpref("sfxvol", "1.0"));
@@ -543,8 +543,8 @@ public class Audio {
 	}
     }
 
-    private static class Player extends HackThread {
-	private final CS stream;
+    public static class Player extends HackThread {
+	public final CS stream;
 	private final int nch;
 	private volatile boolean reopen = false;
 
