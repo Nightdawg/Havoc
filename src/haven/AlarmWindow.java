@@ -4,9 +4,15 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class AlarmWindow extends Window {
 
@@ -17,22 +23,28 @@ public class AlarmWindow extends Window {
 	private Label soundFileLabel;
 	private Label dontTriggerCheckboxLabel;
 	private Label dontTriggerCheckboxLabel2;
+	private final Text.Foundry warningFoundry = new Text.Foundry(Text.sans, 14);
+	static Label bottomNote;
+	static Label saveReminder;
+	private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+	private Future<?> future;
+
 
 	public AlarmWindow() {
 		super(UI.scale(825, 400), "Alarm Manager");
 		Widget prev;
 		prev = add(enabledLabel = new Label("Enabled"), UI.scale(38,10));
 		enabledLabel.tooltip = RichText.render("This checkbox determines whether the alarm will be triggered, or not.\n$col[185,185,185]{I added this checkbox so you don't have to delete the entire alarm if you just want to turn it off for a while.}", 300);
-		prev = add(alarmNameLabel = new Label("Alarm Name"), prev.pos("ul").adds(UI.scale(73, 0)));
-				//UI.scale(100, 10));
+		prev = add(alarmNameLabel = new Label("Alarm Name"), prev.pos("ul").adds(73, 0));
+
 		alarmNameLabel.tooltip = RichText.render("You can set this to whatever you want, or even leave empty. It's here just to help you find your alarms easier in the list.", 300);
-		prev = add(resPathLabel = new Label("Resource Path"), prev.pos("ul").adds(UI.scale(170, 0)));
-		resPathLabel.tooltip = RichText.render("This is the resource path of the entity type for which you want to throw an alarm.", 300);
-		prev = add(soundFileLabel = new Label("Sound File"), prev.pos("ul").adds(UI.scale(180, 0)));
+		prev = add(resPathLabel = new Label("Resource Path"), prev.pos("ul").adds(170, 0));
+		resPathLabel.tooltip = RichText.render("This is the resource path of the entity type for which you want to throw an alarm.\n$col[200,0,0]{Note: This field can not be changed after the alarm has been added!}", 300);
+		prev = add(soundFileLabel = new Label("Sound File"), prev.pos("ul").adds(180, 0));
 		soundFileLabel.tooltip = RichText.render("This is the name of the .wav sound file that will be played when the alarm is triggered.\nThe file must be present in the \"Alarms\" folder.\n$col[185,185,185]{You don't need to include the file extension in this box, but it must always be a .wav file!}", 300);
-		prev = add(new Label("Volume"), prev.pos("ul").adds(UI.scale(120, 0)));
-		prev = add(dontTriggerCheckboxLabel = new Label("Also trigger for"), prev.pos("ul").adds(UI.scale(73, -6)));
-		prev = add(dontTriggerCheckboxLabel2 = new Label("KO'd or Dead"), prev.pos("ul").adds(UI.scale(2, 14)));
+		prev = add(new Label("Volume"), prev.pos("ul").adds(120, 0));
+		prev = add(dontTriggerCheckboxLabel = new Label("Also trigger for"), prev.pos("ul").adds(73, -6));
+		prev = add(dontTriggerCheckboxLabel2 = new Label("KO'd or Dead"), prev.pos("ul").adds(2, 14));
 		dontTriggerCheckboxLabel.tooltip = dontTriggerCheckboxLabel2.tooltip = RichText.render("This checkbox only affects entities that can be knocked out or dead (for example, animals).", 300);
 
 
@@ -42,58 +54,89 @@ public class AlarmWindow extends Window {
 		}
 		add(al, UI.scale(25, 35));
 
-		prev = add(new HRuler(800), al.pos("bl").adds(UI.scale(0, 20)));
-		add(new Label("Create new alarm:"), prev.pos("ul").adds(UI.scale(0, 12)).x(360));
+		prev = add(new HRuler(UI.scale(850)), UI.scale(0, 350));
+		add(new Label("Create new alarm:", warningFoundry), prev.pos("ul").adds(0, 12).x(UI.scale(370)));
 
 
 		Label enabledLabel;
-		prev = add(enabledLabel = new Label("Enabled"), prev.pos("ul").adds(UI.scale(0, 38)).x(38));
+		prev = add(enabledLabel = new Label("Enabled"), prev.pos("ul").adds(0, 43).x(UI.scale(38)));
 		Label alarmNameLabel2;
-		prev = add(alarmNameLabel2 = new Label("Alarm Name"), prev.pos("ul").adds(UI.scale(73, 0)));
+		prev = add(alarmNameLabel2 = new Label("Alarm Name"), prev.pos("ul").adds(73, 0));
 		alarmNameLabel2.tooltip = RichText.render("You can set this to whatever you want, or even leave empty. It's here just to help you find your alarms easier in the list.", 300);
 		Label resPathLabel2;
-		prev = add(resPathLabel2 = new Label("Resource Path"), prev.pos("ul").adds(UI.scale(170, 0)));
-		resPathLabel2.tooltip = RichText.render("This is the resource path of the entity type for which you want to throw an alarm.", 300);
+		prev = add(resPathLabel2 = new Label("Resource Path"), prev.pos("ul").adds(170, 0));
+		resPathLabel2.tooltip = RichText.render("This is the resource path of the entity type for which you want to throw an alarm.\n$col[200,0,0]{Note: This field can not be changed after the alarm has been added!}", 300);
 		Label soundFileLabel2;
-		prev = add(soundFileLabel2 = new Label("Sound File"), prev.pos("ul").adds(UI.scale(180, 0)));
+		prev = add(soundFileLabel2 = new Label("Sound File"), prev.pos("ul").adds(180, 0));
 		soundFileLabel2.tooltip = RichText.render("This is the name of the .wav sound file that will be played when the alarm is triggered.\nThe file must be present in the \"Alarms\" folder.\n$col[185,185,185]{You don't need to include the file extension in this box, but it must always be a .wav file!}", 300);
-		prev = add(new Label("Volume"), prev.pos("ul").adds(UI.scale(120, 0)));
+		prev = add(new Label("Volume"), prev.pos("ul").adds(120, 0));
 		Label dontTriggerCheckboxLabel0;
-		prev = add(dontTriggerCheckboxLabel0 = new Label("Also trigger for"), prev.pos("ul").adds(UI.scale(73, -6)));
+		prev = add(dontTriggerCheckboxLabel0 = new Label("Also trigger for"), prev.pos("ul").adds(73, -6));
 		Label dontTriggerCheckboxLabel02;
-		prev = add(dontTriggerCheckboxLabel02 = new Label("KO'd or Dead"), prev.pos("ul").adds(UI.scale(2, 14)));
+		prev = add(dontTriggerCheckboxLabel02 = new Label("KO'd or Dead"), prev.pos("ul").adds(2, 14));
 		dontTriggerCheckboxLabel0.tooltip = dontTriggerCheckboxLabel02.tooltip = RichText.render("This checkbox only affects entities that can be knocked out or dead (for example, animals).", 300);
 
 		CheckBox enabled;
 		prev = add(enabled = new CheckBox("") {
 			{a = true;}
-		}, UI.scale(50,418));
+		}, UI.scale(50,421));
 		TextEntry alarmName = new TextEntry(UI.scale(120), "");
-		prev = add(alarmName, prev.pos("ul").adds(UI.scale(30, -2)));
-		add(new Label("NOTE: You can add your own alarm sound files in the \"Alarms\" folder. (The file extension must be .wav)"), prev.pos("ul").adds(UI.scale(100, 34)));
+		prev = add(alarmName, prev.pos("ul").adds(30, -2));
+		add(bottomNote = new Label("NOTE: You can add your own alarm sound files in the \"Alarms\" folder. (The file extension must be .wav)", new Text.Foundry(Text.sans, 12)), prev.pos("ul").adds(0, 34).x(UI.scale(140)));
 		TextEntry addGobResname = new TextEntry(UI.scale(200), "");
-		prev = add(addGobResname, prev.pos("ul").adds(UI.scale(138, 0)));
+		prev = add(addGobResname, prev.pos("ul").adds(138, 0));
 		TextEntry addAlarmFilename = new TextEntry(UI.scale(100), "");
-		prev = add(addAlarmFilename, prev.pos("ul").adds(UI.scale(218, 0)));
+		prev = add(addAlarmFilename, prev.pos("ul").adds(218, 0));
 		HSlider addVolume = new HSlider(UI.scale(100),0, 100,50);
-		prev =  add(addVolume, prev.pos("ul").adds(UI.scale(114, 3)));
+		prev =  add(addVolume, prev.pos("ul").adds(114, 3));
 		CheckBox knocked;
 		prev = add(knocked = new CheckBox("") {
 			{a = false;}
-		}, prev.pos("ul").adds(UI.scale(130,0)));
+		}, prev.pos("ul").adds(130,0));
 
 		add(new Button(UI.scale(100), "Add Alarm") {
 			@Override
 			public void click() {
-				al.addItem(new AlarmItem(addGobResname.buf.line(), enabled.a, alarmName.buf.line(), addAlarmFilename.buf.line(), addVolume.val, knocked.a));
-				enabled.a = true;
-				alarmName.settext("");
-				addGobResname.settext("");
-				addAlarmFilename.settext("");
-				addVolume.val = 50;
-				knocked.a = false;
+				if (future != null)
+					future.cancel(true);
+				boolean alreadyExists = false;
+				for (int i = 0; i < al.items.size(); i++)
+					if (al.items.get(i).gobResname.buf.line().equals(addGobResname.buf.line()))
+						alreadyExists = true;
+				if (!alreadyExists) {
+					al.addItem(new AlarmItem(addGobResname.buf.line(), enabled.a, alarmName.buf.line(), addAlarmFilename.buf.line(), addVolume.val, knocked.a));
+					enabled.a = true;
+					alarmName.settext("");
+					addGobResname.settext("");
+					addAlarmFilename.settext("");
+					addVolume.val = 50;
+					knocked.a = false;
+					bottomNote.settext("Alarm added successfully!");
+					bottomNote.setcolor(Color.GREEN);
+					bottomNote.c.x = UI.scale(340);
+					saveReminder.settext("Don't forget to save!");
+					saveReminder.setcolor(Color.RED);
+					future = executor.scheduleWithFixedDelay(this::resetBottomNote, 3, 5, TimeUnit.SECONDS);
+				} else {
+					bottomNote.settext("Resource Path already in use! Can't have two alarms for the same object!");
+					bottomNote.setcolor(Color.RED);
+					bottomNote.c.x = UI.scale(230);
+					future = executor.scheduleWithFixedDelay(this::resetBottomNote, 4, 5, TimeUnit.SECONDS);
+				}
+
 			}
-		}, prev.pos("ul").adds(UI.scale(50, -10)));
+
+			public void resetBottomNote() {
+				System.out.println("Reset bottom note");
+				bottomNote.settext("NOTE: You can add your own alarm sound files in the \"Alarms\" folder. (The file extension must be .wav)");
+				bottomNote.setcolor(Color.WHITE);
+				bottomNote.c.x = UI.scale(140);
+				future.cancel(true);
+			}
+		}, prev.pos("ul").adds(50, -10));
+
+		add(saveReminder = new Label("Don't forget to Save!", warningFoundry), UI.scale(510, 488));
+		saveReminder.setcolor(Color.RED);
 
 		add(new Button(UI.scale(180), "Save Alarm Settings") {
 			@Override
@@ -102,6 +145,8 @@ public class AlarmWindow extends Window {
 				AlarmManager.save();
 				if (gameui() != null)
 					gameui().msg("Alarm settings saved!");
+				saveReminder.settext("Alarm settings saved!");
+				saveReminder.setcolor(Color.GREEN);
 			}
 		}, UI.scale(652, 480));
 
@@ -114,6 +159,8 @@ public class AlarmWindow extends Window {
 				for(AlarmItem ai : AlarmManager.getAlarmItems()) {
 					al.addItem(ai);
 				}
+				saveReminder.settext("Don't forget to save!");
+				saveReminder.setcolor(Color.RED);
 				if (gameui() != null)
 					gameui().msg("Default alarms restored!");
 			}
@@ -122,10 +169,17 @@ public class AlarmWindow extends Window {
 		pack();
 	}
 
+
+
 	@Override
 	public void wdgmsg(Widget sender, String msg, Object... args) {
 		if((sender == this) && (msg == "close")) {
 			hide();
+			saveReminder.settext("Don't forget to save!");
+			saveReminder.setcolor(Color.RED);
+			bottomNote.settext("NOTE: You can add your own alarm sound files in the \"Alarms\" folder. (The file extension must be .wav)");
+			bottomNote.setcolor(Color.WHITE);
+			bottomNote.c.x = UI.scale(140);
 		} else {
 			super.wdgmsg(sender, msg, args);
 		}
@@ -133,7 +187,7 @@ public class AlarmWindow extends Window {
 
 	public class AlarmList extends Widget {
 
-		ArrayList<AlarmItem> items = new ArrayList<>();
+		ArrayList<AlarmItem> items = new ArrayList<AlarmItem>();
 		Scrollbar sb;
 		int rowHeight = UI.scale(30);
 		int rows, w;
@@ -215,7 +269,7 @@ public class AlarmWindow extends Window {
 
 	public static class AlarmItem extends Widget {
 
-		private TextEntry alarmName, gobResname, alarmFilename;
+		private TextEntry gobResname, alarmName, alarmFilename;
 		private HSlider volume;
 		private CheckBox enabled, knocked;
 
@@ -223,15 +277,54 @@ public class AlarmWindow extends Window {
 			Widget prev;
 			prev = add(this.enabled = new CheckBox("") {
 				{a = enabled;}
+				@Override
+				public void changed(boolean val) {
+					saveReminder.settext("Don't forget to save!");
+					saveReminder.setcolor(Color.RED);
+					super.changed(val);
+				}
 			}, UI.scale(10,2));
-			this.alarmName = new TextEntry(UI.scale(120), alarmName);
-			prev = add(this.alarmName, prev.pos("ul").adds(UI.scale(30,-2)));
-			this.gobResname = new TextEntry(UI.scale(200), gobResname);
-			prev = add(this.gobResname, prev.pos("ul").adds(UI.scale(138,0)));
-			this.alarmFilename = new TextEntry(UI.scale(100), alarmFilename);
-			prev = add(this.alarmFilename, prev.pos("ul").adds(UI.scale(218,0)));
-			this.volume = new HSlider(UI.scale(100), 0, 100, volume);
-			prev = add(this.volume, prev.pos("ul").adds(UI.scale(114,3)));
+			this.alarmName = new TextEntry(UI.scale(120), alarmName){
+				@Override
+				protected void changed() {
+					saveReminder.settext("Don't forget to save!");
+					saveReminder.setcolor(Color.RED);
+					super.changed();
+				}
+			};
+			prev = add(this.alarmName, prev.pos("ul").adds(30,-2));
+			this.gobResname = new TextEntry(UI.scale(200), gobResname){
+				@Override
+				protected void changed() {
+					saveReminder.settext("Don't forget to save!");
+					saveReminder.setcolor(Color.RED);
+					super.changed();
+				}
+
+				@Override
+				public boolean keydown(KeyEvent e) {
+					return false;
+				}
+			};
+			prev = add(this.gobResname, prev.pos("ul").adds(138,0));
+			this.alarmFilename = new TextEntry(UI.scale(100), alarmFilename){
+				@Override
+				protected void changed() {
+					saveReminder.settext("Don't forget to save!");
+					saveReminder.setcolor(Color.RED);
+					super.changed();
+				}
+			};
+			prev = add(this.alarmFilename, prev.pos("ul").adds(218,0));
+			this.volume = new HSlider(UI.scale(100), 0, 100, volume){
+				@Override
+				public void changed() {
+					saveReminder.settext("Don't forget to save!");
+					saveReminder.setcolor(Color.RED);
+					super.changed();
+				}
+			};
+			prev = add(this.volume, prev.pos("ul").adds(114,3));
 			prev = add(this.knocked = new CheckBox("") {
 				{a = knocked;}
 				@Override
@@ -239,7 +332,13 @@ public class AlarmWindow extends Window {
 					//Config.toggleTracking.setVal(!this.a);
 					return super.mousedown(c, button);
 				}
-			}, prev.pos("ul").adds(UI.scale(130,0)));
+				@Override
+				public void changed(boolean val) {
+					saveReminder.settext("Don't forget to save!");
+					saveReminder.setcolor(Color.RED);
+					super.changed(val);
+				}
+			}, prev.pos("ul").adds(130,0));
 			prev = add(new Button(UI.scale(70), "Preview") {
 				@Override
 				public boolean mousedown(Coord c, int button) {
@@ -265,16 +364,18 @@ public class AlarmWindow extends Window {
 					return super.mousedown(c, button);
 
 				}
-			}, prev.pos("ul").adds(UI.scale(45,-4)));
+			}, prev.pos("ul").adds(45,-4));
 			prev = add(new Button(UI.scale(26), "X") {
 				@Override
 				public boolean mousedown(Coord c, int button) {
 					if(button != 1)
 						return super.mousedown(c, button);
 					wdgmsg(this.parent, "delete");
+					saveReminder.settext("Don't forget to save!");
+					saveReminder.setcolor(Color.RED);
 					return super.mousedown(c, button);
 				}
-			}, prev.pos("ul").adds(UI.scale(80,0)));
+			}, prev.pos("ul").adds(80,0));
 		}
 
 		public int getVolume() {

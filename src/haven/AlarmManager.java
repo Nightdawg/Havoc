@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class AlarmManager {
 
-	private static HashMap<String, Alarm> alarms = new HashMap<String, Alarm>();
+	private static LinkedHashMap<String, Alarm> alarms = new LinkedHashMap<String, Alarm>();
 
 	public static void init() {
 		load();
@@ -41,7 +41,7 @@ public class AlarmManager {
 	// Load settings from file or use defaults if file does not exist
 	public static void load() {
 		alarms.clear();
-		File config = new File("alarmConfig");
+		File config = new File("Alarms/settings/yourSavedConfig");
 		if(!config.exists()) {
 			defaultSettings();
 		} else {
@@ -73,9 +73,9 @@ public class AlarmManager {
 	// Save current settings to file
 	public static void save() {
 		try {
-			BufferedWriter bw = Files.newBufferedWriter(Paths.get(new File("alarmConfig").toURI()), StandardCharsets.UTF_8);
+			BufferedWriter bw = Files.newBufferedWriter(Paths.get(new File("Alarms/settings/yourSavedConfig").toURI()), StandardCharsets.UTF_8);
 			for(Map.Entry<String, Alarm> e : alarms.entrySet()) {
-				bw.write(e.getKey() + ";" + e.getValue().enabled + ";" + e.getValue().alarmName + ";" + e.getValue().filePath + ";" + e.getValue().volume+ ";" + e.getValue().knocked+"\n");
+				bw.write(e.getKey() + ";" + e.getValue().enabled + ";" + e.getValue().alarmName + ";" + e.getValue().filePath.replace(".wav", "") + ";" + e.getValue().volume + ";" + e.getValue().knocked+"\n");
 			}
 			bw.flush();
 			bw.close();
@@ -97,7 +97,7 @@ public class AlarmManager {
 	// Loads the default settings
 	public static void defaultSettings() {
 		alarms.clear();
-		loadFromFile(new File("Alarms/defaultAlarms"));
+		loadFromFile(new File("Alarms/settings/defaultAlarms"));
 	}
 
 	public static class Alarm {

@@ -1657,6 +1657,11 @@ public class OptWnd extends Window {
 				alarmWindow.show();
 			} else {
 				alarmWindow.show(!alarmWindow.visible);
+				alarmWindow.saveReminder.settext("Don't forget to save!");
+				alarmWindow.saveReminder.setcolor(Color.RED);
+				alarmWindow.bottomNote.settext("NOTE: You can add your own alarm sound files in the \"Alarms\" folder. (The file extension must be .wav)");
+				alarmWindow.bottomNote.setcolor(Color.WHITE);
+				alarmWindow.bottomNote.c.x = UI.scale(140);
 			}
 		}),0 ,y2-5).pos("bl").adds(0, 25).y;
 
