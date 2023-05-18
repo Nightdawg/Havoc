@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.map.PingSprite;
+
 import java.util.*;
 import java.awt.Color;
 import java.awt.Font;
@@ -763,7 +765,7 @@ public class ChatUI extends Widget {
 	    }
 	}
 
-		public boolean process(String msg) {
+		public boolean process(String msg, long from) {
 			if (msg.startsWith("@")) {
 				Pattern highlight = Pattern.compile("^@(-?\\d+)$");
 				Matcher matcher = highlight.matcher(msg);
@@ -782,6 +784,39 @@ public class ChatUI extends Widget {
 					} catch (Exception ignored){}
 				}
 				return true;
+			} else if(msg.startsWith("LOC@")) {
+				if (from == -1)
+					return false;
+				Pattern highlight = Pattern.compile("^LOC@(-?\\d+)x(-?\\d+)$");
+				Matcher matcher = highlight.matcher(msg);
+				if(matcher.matches()){
+					try {
+						synchronized (ui.sess.glob.party.memb) {
+							Party.Member pm = ui.sess.glob.party.memb.get(from);
+							Gob player = gameui().map.player();
+							if (player != null && pm != null) {
+								Coord2d playerc = player.rc;
+								Coord2d partyc = pm.getc();
+								if (playerc.dist(partyc) < 975*11) {
+									Coord2d playertopartym = partyc.sub(playerc);
+									Coord2d partyoffset = new Coord2d(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
+									Coord2d pingc = playerc.add(playertopartym).add(partyoffset);
+									gameui().mapfile.view.addSprite(new PingSprite(pingc, pm.col));
+//									Audio.play(Config.mapping);
+//									TODO need some res for it
+//									example from mender(in Config.java)
+//									public static final Resource mapping = Resource.local().loadwait("sfx/mapping");
+								} else {
+									System.out.println("player is too far away");
+								}
+							} else {
+								System.out.println("player is not in same instance as party member");
+							}
+						}
+
+					} catch (Exception ignored){}
+					return false;
+				}
 			}
 			return true;
 		}
@@ -790,7 +825,7 @@ public class ChatUI extends Widget {
 	    if(msg == "msg") {
 		Integer from = (Integer)args[0];
 		String line = (String)args[1];
-			if(process(line)) {
+			if(process(line, -1)) {
 				if (from == null) {
 					append(new MyMessage(line, iw()));
 				} else {
@@ -820,7 +855,7 @@ public class ChatUI extends Widget {
 		Integer from = (Integer)args[0];
 		long gobid = Utils.uint32((Integer)args[1]);
 		String line = (String)args[2];
-		if(process(line)) {
+		if(process(line, gobid)) {
 			Color col = Color.WHITE;
 			synchronized (ui.sess.glob.party.memb) {
 				Party.Member pm = ui.sess.glob.party.memb.get(gobid);

@@ -397,6 +397,61 @@ public class GOut {
 	drawp(Model.Mode.TRIANGLE_FAN, data, p / 2);
     }
 
+	public void clipCoord(Coord c, Coord ul, Coord br) {
+		c.x = Math.min(Math.max(c.x, ul.x), br.x);
+		c.y = Math.min(Math.max(c.y, ul.y), br.y);
+	}
+
+	public void fcircle(int x, int y, double rad, final int points) {
+		int circumference = points - 1;
+
+		float cx = x + tx.x;
+		float cy = y + tx.y;
+
+		int vi = 0;
+		float vertices[] = new float[points * 2];
+
+		vertices[vi++] = cx;
+		vertices[vi++] = cy;
+
+		for (int i = 0; i < circumference; i++) {
+			float percent = (i / (float) (circumference - 1));
+			float radians = (float) (percent * 2 * Math.PI);
+			vertices[vi++] = (float) (cx + rad * Math.cos(radians));
+			vertices[vi++] = (float) (cy + rad * Math.sin(radians));
+		}
+
+		FloatBuffer vbuf = Utils.mkfbuf(vertices.length);
+		vbuf.put(vertices);
+		vbuf.position(0);
+
+		drawp(Model.Mode.TRIANGLE_FAN, vertices);
+	}
+
+	public void circle(int x, int y, double rad, final int points, double width) {
+		usestate(new States.LineWidth(width));
+		int circumference = points;
+
+		float cx = x + tx.x;
+		float cy = y + tx.y;
+
+		int vi = 0;
+		float vertices[] = new float[points * 2];
+
+		for (int i = 0; i < circumference; i++) {
+			float percent = (i / (float) (circumference - 1));
+			float radians = (float) (percent * 2 * Math.PI);
+			vertices[vi++] = (float) (cx + rad * Math.cos(radians));
+			vertices[vi++] = (float) (cy + rad * Math.sin(radians));
+		}
+
+		FloatBuffer vbuf = Utils.mkfbuf(vertices.length);
+		vbuf.put(vertices);
+		vbuf.position(0);
+
+		drawp(Model.Mode.LINE_STRIP, vertices);
+	}
+
     public <T extends State> T curstate(State.Slot<T> slot) {
 	return(cur2d.get(slot));
     }
