@@ -27,10 +27,11 @@
 package haven;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.*;
 import java.util.function.*;
 import haven.render.*;
+import haven.res.gfx.fx.bprad.BPRad;
+import haven.res.gfx.fx.flcir.FLCir;
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
     public Coord2d rc;
@@ -56,6 +57,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private CollisionBoxGobSprite<HitboxFilled> hidingBox = null;
 	private GobGrowthInfo growthInfo;
 	private GobQualityInfo qualityInfo;
+	private Overlay customAnimalOverlay;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
 	private static final HashSet<Long> alarmPlayed = new HashSet<Long>();
 
@@ -73,6 +75,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 						if(AlarmManager.play(res.name, Gob.this))
 							alarmPlayed.add(id);
 					}
+					initiateCustomOverlays();
 				} catch (Loading e) {
 					if (!throwLoading) {
 						glob.loader.syncdefer(() -> this.init(true), null, this);
@@ -92,6 +95,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void updPose(HashSet<String> poses) {
 		if (poses.contains("knock") || poses.contains("dead") || poses.contains("waterdead")) {
 			knocked = true;
+			try{
+				removeOl(customAnimalOverlay);
+				customAnimalOverlay = null;
+			} catch (Exception np){
+				System.out.println("Overlay not yet initialized");
+			}
 		} else {
 			knocked = false;
 		}
@@ -182,6 +191,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		slots.remove(slot);
 	}
     }
+	public void removeOl(Overlay ol) {
+		if (ol != null) {
+			synchronized (ols) {
+				ol.remove();
+			}
+		}
+	}
 
     public static interface SetupMod {
 	public default Pipe.Op gobstate() {return(null);}
@@ -1177,6 +1193,67 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					collisionBox2.show(false);
 				}
 			}
+		}
+	}
+
+	private void initiateCustomOverlays() {
+		if (getres() != null && knocked != null) {
+			String resourceName = getres().name;
+			if(!knocked && resourceName.startsWith("gfx/kritter") && resourceName.matches(".*(bear|lynx|walrus|mammoth|troll|spermwhale|orca|moose|wolf|bat|goldeneagle|caveangler|boar|badger|wolverine|boreworn|ooze|adder|caverat|wildgoat)$")){
+				setDangerRadii(GameUI.dangerRadii);
+			} else if(!knocked && resourceName.startsWith("gfx/kritter") && resourceName.matches(".*(hen|rooster|doe|hedgehog|stagbeetle|rat|mole|toad|frog|turtle|forestlizard|squirrel|magpie|chick|chicken|sandflea|grasshopper|ladybug|dragonfly|firefly|woodgrouse-f|silkmoth|forestsnail|grub)$")){
+				setKritterOverlay(GameUI.kritterOverlay, false);
+			} else if (!knocked && resourceName.startsWith("gfx/kritter") && resourceName.matches(".*(rabbit|bunny)$")) {
+				setKritterOverlay(GameUI.kritterOverlay, true);
+			}
+		}
+	}
+
+	public void setKritterOverlay(boolean on, boolean rabbit) {
+		if (rabbit) {
+			setCircleOl(FLCir.gren, on);
+		} else {
+			setCircleOl(FLCir.purp, on);
+		}
+	}
+
+	public void setDangerRadii(boolean on) {
+		setRadiusOl(120F, FLCir.redr, on);
+	}
+
+	private void setRadiusOl(float radius, Color col, boolean on) {
+		if (on) {
+			for (Overlay ol : ols) {
+				if (ol.spr instanceof BPRad) {
+					System.out.println("already has bpradsprite.. skipping add ol");
+					return;
+				}
+			}
+			customAnimalOverlay = new Overlay(this, new BPRad(this, null, radius, col));
+			synchronized (ols) {
+				addol(customAnimalOverlay);
+			}
+		} else if (customAnimalOverlay != null) {
+			removeOl(customAnimalOverlay);
+			customAnimalOverlay = null;
+		}
+	}
+
+	private void setCircleOl(Color col, boolean on) {
+		if (on) {
+			for (Overlay ol : ols) {
+				if (ol.spr instanceof FLCir) {
+					System.out.println("already has flcirsprite.. skipping add ol");
+					return;
+				}
+			}
+			customAnimalOverlay = new Overlay(this, new FLCir(this, col));
+			synchronized (ols) {
+				addol(customAnimalOverlay);
+			}
+		} else if (customAnimalOverlay != null) {
+			removeOl(customAnimalOverlay);
+			customAnimalOverlay = null;
 		}
 	}
 
