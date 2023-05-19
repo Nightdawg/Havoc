@@ -104,7 +104,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				removeOl(customAnimalOverlay);
 				customAnimalOverlay = null;
 			} catch (Exception np){
-//				System.out.println("Overlay not yet initialized");
 			}
 		} else {
 			knocked = false;
@@ -553,7 +552,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			int v = msg.int32();
 			msg.uint8();
 			int c = msg.uint16();
-//	    System.out.println(String.format("processDmg v: %d, c: %d", v, c));
 
 			if(damage == null) {
 				addDmg();
@@ -1216,31 +1214,52 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	public static final String[] CRITTERAURA_PATHS = {
-			"/hen",
-			"/rooster",
-			"/hedgehog",
-			"/stagbeetle",
-			"/rat",
-			"/mole",
-			"/toad",
-			"/frog",
-			"/turtle",
-			"/forestlizard",
-			"/squirrel",
-			"/magpie",
-			"/chick",
-			"/chicken",
-			"/sandflea",
-			"/grasshopper",
-			"/ladybug",
-			"/dragonfly",
-			"/firefly",
-			"/woodgrouse-f",
-			"/silkmoth",
-			"/forestsnail",
-			"/grub",
-			"/waterstrider",
-			"/quail",
+			"gfx/kritter/bayshrimp/bayshrimp",
+			"gfx/kritter/bogturtle/bogturtle",
+			"gfx/kritter/brimstonebutterfly/brimstonebutterfly",
+			"gfx/kritter/cavecentipede/cavecentipede",
+			"gfx/kritter/cavemoth/cavemoth",
+			"gfx/kritter/chicken/chick",
+			"gfx/kritter/chicken/chicken", // ND: This seems to be the model for wild chickens, both hens and roosters.
+			"gfx/kritter/chicken/hen", // ND: This might be pointless?
+			"gfx/kritter/chicken/rooster", // ND: This might be pointless?
+			"gfx/kritter/crab/crab",
+			"gfx/kritter/dragonfly/dragonfly",
+			"gfx/kritter/earthworm/earthworm",
+			"gfx/kritter/firefly/firefly",
+			"gfx/kritter/forestlizard/forestlizard",
+			"gfx/kritter/forestsnail/forestsnail",
+			"gfx/kritter/frog/frog",
+			"gfx/kritter/grasshopper/grasshopper",
+			"gfx/kritter/hedgehog/hedgehog",
+			"gfx/kritter/irrbloss/irrbloss",
+			"gfx/kritter/jellyfish/jellyfish",
+			"gfx/kritter/ladybug/ladybug",
+			"gfx/kritter/lobster/lobster",
+			"gfx/kritter/magpie/magpie",
+			"gfx/kritter/mallard/mallard", // ND: I haven't checked yet, but I assume it could be the same case as with the chickens
+			"gfx/kritter/mallard/mallard-f", // ND: This might be pointless?
+			"gfx/kritter/mallard/mallard-m", // ND: This might be pointless?
+			"gfx/kritter/mole/mole",
+			"gfx/kritter/monarchbutterfly/monarchbutterfly",
+			"gfx/kritter/moonmoth/moonmoth",
+			"gfx/kritter/opiumdragon/opiumdragon",
+			"gfx/kritter/ptarmigan/ptarmigan",
+			"gfx/kritter/quail/quail",
+			"gfx/kritter/rat/rat",
+			"gfx/kritter/rockdove/rockdove",
+			"gfx/kritter/sandflea/sandflea",
+			"gfx/kritter/seagull/seagull",
+			"gfx/kritter/silkmoth/silkmoth",
+			"gfx/kritter/springbumblebee/springbumblebee",
+			"gfx/kritter/squirrel/squirrel",
+			"gfx/kritter/stagbeetle/stagbeetle",
+			"gfx/kritter/stalagoomba/stalagoomba",
+			"gfx/kritter/toad/toad",
+			"gfx/kritter/waterstrider/waterstrider",
+			"gfx/kritter/woodworm/woodworm",
+
+			"gfx/terobjs/items/grub", // ND: lmao
 	};
 
 	public static final String[] BEASTDANGER_PATHS = {
@@ -1264,10 +1283,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"/adder",
 			"/caverat",
 			"/wildgoat",
-			"/fox",
 	};
-
-	//Arrays.stream(HIDINGHOUSES).anyMatch(resourceName::contains))
 
 	private void initiateCustomOverlays() {
 			toggleBeastDangerRadii();
@@ -1279,12 +1295,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			String resourceName = getres().name;
 			if (resourceName.startsWith("gfx/kritter")) {
 				if (knocked != null && !knocked) {
-//					System.out.println(getres().name + " -- KNOCKED NOT NULL AND NOT KNOCKED");
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
 						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
 					}
 				} else if (!isComposite) { // ND: Retarded workaround. Some of these stupid animals have no animation when STANDING STILL. They're not loading their fucking knocked status??? HOW? It's like they're not an instance of composite, ONLY when standing still.
-//					System.out.println(getres().name + " -- KNOCKED NULL");
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
 						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
 					}
@@ -1296,21 +1310,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void toggleCritterAuras() {
 		if (getres() != null) {
 			String resourceName = getres().name;
-			if (resourceName.startsWith("gfx/kritter")) {
 				if (knocked != null && !knocked) {
-					if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::endsWith)) {
+					if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::matches)) {
 						setCritterAura(OptWnd.critterAuraEnabled, false);
 					} else if (resourceName.matches(".*(rabbit|bunny)$")) {
 						setCritterAura(OptWnd.critterAuraEnabled, true);
 					}
 				} else if (!isComposite) { //ND: This also works for critters that can't have a knocked status, like insects.
-					if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::endsWith)) {
+					if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::matches)) {
 						setCritterAura(OptWnd.critterAuraEnabled, false);
 					} else if (resourceName.matches(".*(rabbit|bunny)$")) {
 						setCritterAura(OptWnd.critterAuraEnabled, true);
 					}
 				}
-			}
 		}
 	}
 
@@ -1331,7 +1343,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (on) {
 			for (Overlay ol : ols) {
 				if (ol.spr instanceof BPRad) {
-//					System.out.println("already has bpradsprite.. skipping add ol");
 					return;
 				}
 			}
@@ -1349,7 +1360,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (on) {
 			for (Overlay ol : ols) {
 				if (ol.spr instanceof FLCir) {
-//					System.out.println("already has flcirsprite.. skipping add ol");
 					return;
 				}
 			}
