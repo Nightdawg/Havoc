@@ -1233,7 +1233,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public void updateResPeekDependantHighlights(MessageBuf sdt) {
 		updateCupboardHighlight(sdt);
-//		updateLeathertubsHighlight(sdt);
+		updateLeathertubsHighlight(sdt);
 	}
 
 	private void updateOverlayDependantHighlights() {
@@ -1248,6 +1248,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			if (peekrbuf == 30 || peekrbuf == 29) {
 				setGobStateHighlight(GobStateHighlight.State.FULL);
 			} else if (peekrbuf == 2 || peekrbuf == 1) {
+				setGobStateHighlight(GobStateHighlight.State.EMPTY);
+			} else {
+				setGobStateHighlight(GobStateHighlight.State.OTHER);
+			}
+		}
+	}
+
+	private void updateLeathertubsHighlight(MessageBuf sdt) {
+		if (getres() != null && Pattern.matches("gfx/terobjs/ttub", getres().name) && GameUI.leatherTubHighlight) {
+			int peekrbuf = sdt.peekrbuf(0);
+			if (peekrbuf == 10 || peekrbuf == 9) {
+				setGobStateHighlight(GobStateHighlight.State.FULL);
+			} else if (peekrbuf != 6) {
 				setGobStateHighlight(GobStateHighlight.State.EMPTY);
 			} else {
 				setGobStateHighlight(GobStateHighlight.State.OTHER);
