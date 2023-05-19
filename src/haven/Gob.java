@@ -1238,7 +1238,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateOverlayDependantHighlights() {
 		updateDryingFramesHighlight();
-//		updHighlightCheeseracks();
+		updateCheeseRacksHighlight();
 //		updHighlightPots();
 	}
 
@@ -1295,6 +1295,18 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				state = GobStateHighlight.State.EMPTY;
 			}
 			setGobStateHighlight(state);
+		}
+	}
+
+	private void updateCheeseRacksHighlight() {
+		if (getres() != null && Pattern.matches("gfx/terobjs/cheeserack", getres().name) && GameUI.cheeseRackHighlight) {
+			if (ols.size() == 3) {
+				setGobStateHighlight(GobStateHighlight.State.FULL);
+			} else if (ols.size() == 0) {
+				setGobStateHighlight(GobStateHighlight.State.EMPTY);
+			} else {
+				setGobStateHighlight(GobStateHighlight.State.OTHER);
+			}
 		}
 	}
 
