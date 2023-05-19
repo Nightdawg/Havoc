@@ -165,6 +165,9 @@
     <copy todir="bin/res" >
       <fileset dir="res" includes="**"/>
     </copy>
+    <copy todir="bin/Alarms" >
+      <fileset dir="Alarms" includes="**"/>
+    </copy>
     <copy file="etc/ansgar-config.properties" tofile="bin/haven-config.properties" />
     <chmod file="bin/hafen.jar" perm="a+x" />
   </target>

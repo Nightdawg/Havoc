@@ -84,6 +84,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean crimeon = false;
 	public static boolean trackon = false;
 	public static boolean partyperm = false;
+	public static boolean kritterOverlay = false;
+	public static boolean dangerRadii = false;
 	public QuickSlotsWdg quickslots;
 	public Thread keyboundActionThread;
 	private Gob detectGob;
@@ -176,7 +178,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			    protected void hit(Coord pc, Coord2d mc, ClickData inf) {
 				act(slot, new MenuGrid.Interaction(1, ui.modflags(), mc, inf));
 			    }
-			    
+
 			    protected void nohit(Coord pc) {
 				act(slot, new MenuGrid.Interaction(1, ui.modflags()));
 			    }
@@ -224,7 +226,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    return(false);
 	}
     }
-    
+
     @RName("gameui")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
@@ -236,7 +238,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    return(new GameUI(chrid, plid, genus));
 	}
     }
-    
+
     private final Coord minimapc;
     private final Coord menugridc;
     public GameUI(String chrid, long plid, String genus) {
@@ -422,7 +424,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	resize(parent.sz);
 	ui.cons.out = new java.io.PrintWriter(new java.io.Writer() {
 		StringBuilder buf = new StringBuilder();
-		
+
 		public void write(char[] src, int off, int len) {
 		    List<String> lines = new ArrayList<String>();
 		    synchronized(this) {
@@ -438,7 +440,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			syslog.append(ln, Color.WHITE);
 		    }
 		}
-		
+
 		public void close() {}
 		public void flush() {}
 	    });
@@ -452,7 +454,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	ui.cons.clearout();
 	super.dispose();
     }
-    
+
     public class Hidepanel extends Widget {
 	public final String id;
 	public final Coord g;
@@ -1009,7 +1011,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    chat.drawsmall(g, new Coord(blpw + UI.scale(10), by), UI.scale(50));
 	}
     }
-    
+
     private String iconconfname() {
 	StringBuilder buf = new StringBuilder();
 	buf.append("data/mm-icons");
@@ -1181,7 +1183,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				trackon = false;
 		}
 	}
-    
+
     public void uimsg(String msg, Object... args) {
 	if(msg == "err") {
 	    String err = (String)args[0];
@@ -1437,6 +1439,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleCombatAutoPeace  = KeyBinding.get("toggleCombatAutoPeaceKB",  KeyMatch.forchar('P', KeyMatch.C | KeyMatch.S));
 	public static KeyBinding kb_peaceCurrentTarget  = KeyBinding.get("peaceCurrentTargetKB",  KeyMatch.forchar('P', KeyMatch.M));
 
+	public static KeyBinding kb_toggleDangerRadii  = KeyBinding.get("toggleDangerRadii",  KeyMatch.nil);
+	public static KeyBinding kb_toggleCritterAuras  = KeyBinding.get("toggleCritterAuras ",  KeyMatch.nil);
+
 	public boolean globtype(char key, KeyEvent ev) {
 		if(key == ':') {
 			entercmd();
@@ -1489,7 +1494,39 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if(kb_peaceCurrentTarget.key().match(ev)) {
 			peaceCurrentTarget();
 			return(true);
-		} else if((key == 27) && (map != null) && !map.hasfocus) {
+		} else if (kb_toggleDangerRadii.key().match(ev)) {
+			dangerRadii = !dangerRadii;
+			msg("Danger radius " + (dangerRadii ? "enabled" : "disabled"));
+			synchronized (this.map.glob.oc) {
+				for (Gob g : this.map.glob.oc) {
+					if (g.getres() != null && g.knocked != null) {
+						String resourceName = g.getres().name;
+						if (!g.knocked && resourceName.startsWith("gfx/kritter") && resourceName.matches(".*(bear|lynx|walrus|mammoth|troll|spermwhale|orca|moose|wolf|bat|goldeneagle|caveangler|boar|badger|wolverine|boreworn|ooze|adder|caverat|wildgoat)$")) {
+							g.setDangerRadii(dangerRadii);
+						}
+					}
+				}
+			}
+			return true;
+		} else if (kb_toggleCritterAuras.key().match(ev)) {
+			kritterOverlay = !kritterOverlay;
+			msg("Kritter overlay " + (kritterOverlay ? "enabled" : "disabled"));
+			synchronized (this.map.glob.oc) {
+				for (Gob g : this.map.glob.oc) {
+					if (g.getres() != null && g.knocked != null) {
+						String resourceName = g.getres().name;
+						if (!g.knocked && resourceName.startsWith("gfx/kritter")) {
+							if (resourceName.matches(".*(hen|rooster|doe|hedgehog|stagbeetle|rat|mole|toad|frog|turtle|forestlizard|squirrel|magpie|chick|chicken|sandflea|grasshopper|ladybug|dragonfly|firefly|woodgrouse-f|silkmoth|forestsnail|grub)$")) {
+								g.setKritterOverlay(kritterOverlay, false);
+							} else if (resourceName.matches(".*(rabbit|bunny)$")) {
+								g.setKritterOverlay(kritterOverlay, true);
+							}
+						}
+					}
+				}
+			}
+			return true;
+		}else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
 		}

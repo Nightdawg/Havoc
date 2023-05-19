@@ -464,6 +464,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	}
 	Thread main = new HackThread(g, () -> main2(args), "Haven main thread");
 	main.start();
+		AlarmManager.init();
     }
 	
     private static void dumplist(Collection<Resource> list, Path fn) {

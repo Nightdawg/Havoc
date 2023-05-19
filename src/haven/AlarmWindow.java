@@ -1,0 +1,329 @@
+package haven;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class AlarmWindow extends Window {
+
+	private AlarmList al;
+	private Label enabledLabel;
+	private Label alarmNameLabel;
+	private Label resPathLabel;
+	private Label soundFileLabel;
+	private Label dontTriggerCheckboxLabel;
+	private Label dontTriggerCheckboxLabel2;
+
+	public AlarmWindow() {
+		super(UI.scale(825, 400), "Alarm Manager");
+		Widget prev;
+		prev = add(enabledLabel = new Label("Enabled"), UI.scale(38,10));
+		enabledLabel.tooltip = RichText.render("This checkbox determines whether the alarm will be triggered, or not.\n$col[185,185,185]{I added this checkbox so you don't have to delete the entire alarm if you just want to turn it off for a while.}", 300);
+		prev = add(alarmNameLabel = new Label("Alarm Name"), prev.pos("ul").adds(UI.scale(73, 0)));
+				//UI.scale(100, 10));
+		alarmNameLabel.tooltip = RichText.render("You can set this to whatever you want, or even leave empty. It's here just to help you find your alarms easier in the list.", 300);
+		prev = add(resPathLabel = new Label("Resource Path"), prev.pos("ul").adds(UI.scale(170, 0)));
+		resPathLabel.tooltip = RichText.render("This is the resource path of the entity type for which you want to throw an alarm.", 300);
+		prev = add(soundFileLabel = new Label("Sound File"), prev.pos("ul").adds(UI.scale(180, 0)));
+		soundFileLabel.tooltip = RichText.render("This is the name of the .wav sound file that will be played when the alarm is triggered.\nThe file must be present in the \"Alarms\" folder.\n$col[185,185,185]{You don't need to include the file extension in this box, but it must always be a .wav file!}", 300);
+		prev = add(new Label("Volume"), prev.pos("ul").adds(UI.scale(120, 0)));
+		prev = add(dontTriggerCheckboxLabel = new Label("Also trigger for"), prev.pos("ul").adds(UI.scale(73, -6)));
+		prev = add(dontTriggerCheckboxLabel2 = new Label("KO'd or Dead"), prev.pos("ul").adds(UI.scale(2, 14)));
+		dontTriggerCheckboxLabel.tooltip = dontTriggerCheckboxLabel2.tooltip = RichText.render("This checkbox only affects entities that can be knocked out or dead (for example, animals).", 300);
+
+
+		al = new AlarmList(825, 10);
+		for(AlarmItem ai : AlarmManager.getAlarmItems()) {
+			al.addItem(ai);
+		}
+		add(al, UI.scale(25, 35));
+
+		prev = add(new HRuler(800), al.pos("bl").adds(UI.scale(0, 20)));
+		add(new Label("Create new alarm:"), prev.pos("ul").adds(UI.scale(0, 12)).x(360));
+
+
+		Label enabledLabel;
+		prev = add(enabledLabel = new Label("Enabled"), prev.pos("ul").adds(UI.scale(0, 38)).x(38));
+		Label alarmNameLabel2;
+		prev = add(alarmNameLabel2 = new Label("Alarm Name"), prev.pos("ul").adds(UI.scale(73, 0)));
+		alarmNameLabel2.tooltip = RichText.render("You can set this to whatever you want, or even leave empty. It's here just to help you find your alarms easier in the list.", 300);
+		Label resPathLabel2;
+		prev = add(resPathLabel2 = new Label("Resource Path"), prev.pos("ul").adds(UI.scale(170, 0)));
+		resPathLabel2.tooltip = RichText.render("This is the resource path of the entity type for which you want to throw an alarm.", 300);
+		Label soundFileLabel2;
+		prev = add(soundFileLabel2 = new Label("Sound File"), prev.pos("ul").adds(UI.scale(180, 0)));
+		soundFileLabel2.tooltip = RichText.render("This is the name of the .wav sound file that will be played when the alarm is triggered.\nThe file must be present in the \"Alarms\" folder.\n$col[185,185,185]{You don't need to include the file extension in this box, but it must always be a .wav file!}", 300);
+		prev = add(new Label("Volume"), prev.pos("ul").adds(UI.scale(120, 0)));
+		Label dontTriggerCheckboxLabel0;
+		prev = add(dontTriggerCheckboxLabel0 = new Label("Also trigger for"), prev.pos("ul").adds(UI.scale(73, -6)));
+		Label dontTriggerCheckboxLabel02;
+		prev = add(dontTriggerCheckboxLabel02 = new Label("KO'd or Dead"), prev.pos("ul").adds(UI.scale(2, 14)));
+		dontTriggerCheckboxLabel0.tooltip = dontTriggerCheckboxLabel02.tooltip = RichText.render("This checkbox only affects entities that can be knocked out or dead (for example, animals).", 300);
+
+		CheckBox enabled;
+		prev = add(enabled = new CheckBox("") {
+			{a = true;}
+		}, UI.scale(50,418));
+		TextEntry alarmName = new TextEntry(UI.scale(120), "");
+		prev = add(alarmName, prev.pos("ul").adds(UI.scale(30, -2)));
+		add(new Label("NOTE: You can add your own alarm sound files in the \"Alarms\" folder. (The file extension must be .wav)"), prev.pos("ul").adds(UI.scale(100, 34)));
+		TextEntry addGobResname = new TextEntry(UI.scale(200), "");
+		prev = add(addGobResname, prev.pos("ul").adds(UI.scale(138, 0)));
+		TextEntry addAlarmFilename = new TextEntry(UI.scale(100), "");
+		prev = add(addAlarmFilename, prev.pos("ul").adds(UI.scale(218, 0)));
+		HSlider addVolume = new HSlider(UI.scale(100),0, 100,50);
+		prev =  add(addVolume, prev.pos("ul").adds(UI.scale(114, 3)));
+		CheckBox knocked;
+		prev = add(knocked = new CheckBox("") {
+			{a = false;}
+		}, prev.pos("ul").adds(UI.scale(130,0)));
+
+		add(new Button(UI.scale(100), "Add Alarm") {
+			@Override
+			public void click() {
+				al.addItem(new AlarmItem(addGobResname.buf.line(), enabled.a, alarmName.buf.line(), addAlarmFilename.buf.line(), addVolume.val, knocked.a));
+				enabled.a = true;
+				alarmName.settext("");
+				addGobResname.settext("");
+				addAlarmFilename.settext("");
+				addVolume.val = 50;
+				knocked.a = false;
+			}
+		}, prev.pos("ul").adds(UI.scale(50, -10)));
+
+		add(new Button(UI.scale(180), "Save Alarm Settings") {
+			@Override
+			public void click() {
+				AlarmManager.load(al);
+				AlarmManager.save();
+				if (gameui() != null)
+					gameui().msg("Alarm settings saved!");
+			}
+		}, UI.scale(652, 480));
+
+		add(new Button(UI.scale(180), "Load Nightdawg's Defaults") {
+			@Override
+			public void click() {
+				AlarmManager.defaultSettings();
+				while(!al.items.isEmpty())
+					al.deleteItem(al.items.get(0));
+				for(AlarmItem ai : AlarmManager.getAlarmItems()) {
+					al.addItem(ai);
+				}
+				if (gameui() != null)
+					gameui().msg("Default alarms restored!");
+			}
+		}, UI.scale(20, 480));
+		this.c = new Coord (100, 100);
+		pack();
+	}
+
+	@Override
+	public void wdgmsg(Widget sender, String msg, Object... args) {
+		if((sender == this) && (msg == "close")) {
+			hide();
+		} else {
+			super.wdgmsg(sender, msg, args);
+		}
+	}
+
+	public class AlarmList extends Widget {
+
+		ArrayList<AlarmItem> items = new ArrayList<>();
+		Scrollbar sb;
+		int rowHeight = UI.scale(30);
+		int rows, w;
+
+		public AlarmList(int w, int rows) {
+			this.rows = rows;
+			this.w = w;
+			this.sz = UI.scale(w, rowHeight * rows);
+			sb = new Scrollbar(rowHeight * rows, 0, 100);
+			add(sb, UI.scale(0, 0));
+		}
+
+		public AlarmItem listitem(int i) {
+			return items.get(i);
+		}
+
+		public void addItem(AlarmItem item) {
+			add(item);
+			items.add(item);
+		}
+
+		public void deleteItem(AlarmItem item) {
+			item.dispose();
+			items.remove(item);
+		}
+
+		public int listitems() {
+			return items.size();
+		}
+
+		@Override
+		public boolean mousewheel(Coord c, int amount) {
+			sb.ch(amount);
+			return true;
+		}
+
+		@Override
+		public boolean mousedown(Coord c, int button) {
+			int row = c.y / rowHeight + sb.val;
+			if(row >= items.size())
+				return super.mousedown(c, button);
+			if(items.get(row).mousedown(c.sub(UI.scale(15), c.y / rowHeight * rowHeight), button))
+				return true;
+			return super.mousedown(c, button);
+		}
+
+		@Override
+		public boolean mouseup(Coord c, int button) {
+			int row = c.y / rowHeight + sb.val;
+			if(row >= items.size())
+				return super.mouseup(c, button);
+			if(items.get(row).mouseup(c.sub(UI.scale(15), c.y / rowHeight * rowHeight), button))
+				return true;
+			return super.mouseup(c, button);
+		}
+
+		@Override
+		public void draw(GOut g) {
+			sb.max = items.size()-rows;
+			for(int i=0; i<rows; i++) {
+				if(i+sb.val >= items.size())
+					break;
+				GOut ig = g.reclip(new Coord(UI.scale(15), i*rowHeight), UI.scale(w-UI.scale(15), rowHeight));
+				items.get(i+sb.val).draw(ig);
+			}
+			super.draw(g);
+		}
+
+		@Override
+		public void wdgmsg(Widget sender, String msg, Object... args) {
+			if(msg.equals("delete") && sender instanceof AlarmItem) {
+				deleteItem((AlarmItem) sender);
+			} else {
+				super.wdgmsg(sender, msg, args);
+			}
+		}
+
+	}
+
+	public static class AlarmItem extends Widget {
+
+		private TextEntry alarmName, gobResname, alarmFilename;
+		private HSlider volume;
+		private CheckBox enabled, knocked;
+
+		public AlarmItem(String gobResname, boolean enabled, String alarmName, String alarmFilename, int volume, boolean knocked) {
+			Widget prev;
+			prev = add(this.enabled = new CheckBox("") {
+				{a = enabled;}
+			}, UI.scale(10,2));
+			this.alarmName = new TextEntry(UI.scale(120), alarmName);
+			prev = add(this.alarmName, prev.pos("ul").adds(UI.scale(30,-2)));
+			this.gobResname = new TextEntry(UI.scale(200), gobResname);
+			prev = add(this.gobResname, prev.pos("ul").adds(UI.scale(138,0)));
+			this.alarmFilename = new TextEntry(UI.scale(100), alarmFilename);
+			prev = add(this.alarmFilename, prev.pos("ul").adds(UI.scale(218,0)));
+			this.volume = new HSlider(UI.scale(100), 0, 100, volume);
+			prev = add(this.volume, prev.pos("ul").adds(UI.scale(114,3)));
+			prev = add(this.knocked = new CheckBox("") {
+				{a = knocked;}
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					//Config.toggleTracking.setVal(!this.a);
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ul").adds(UI.scale(130,0)));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + getAlarmFilename());
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, getVolume()/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+
+				}
+			}, prev.pos("ul").adds(UI.scale(45,-4)));
+			prev = add(new Button(UI.scale(26), "X") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return super.mousedown(c, button);
+					wdgmsg(this.parent, "delete");
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ul").adds(UI.scale(80,0)));
+		}
+
+		public int getVolume() {
+			return volume.val;
+		}
+
+		public boolean getKnocked() {
+			return this.knocked.a;
+		}
+
+		public boolean getEnabled() {
+			return this.enabled.a;
+		}
+
+		public String getGobResname() {
+			return gobResname.buf.line();
+		}
+
+		public String getAlarmFilename() {
+			if (alarmFilename.buf.line().endsWith(".wav")){
+				return alarmFilename.buf.line();
+			} else {
+				return (alarmFilename.buf.line()+".wav");
+			}
+
+		}
+
+		public String getAlarmName() {
+			return alarmName.buf.line();
+		}
+
+		@Override
+		public void draw(GOut g) {
+			super.draw(g);
+		}
+
+		@Override
+		public void mousemove(Coord c) {
+			if(c.x > 470)
+				super.mousemove(c.sub(UI.scale(15), 0));
+			else
+				super.mousemove(c);
+		}
+
+		@Override
+		public boolean mousedown(Coord c, int button) {
+			if(super.mousedown(c, button))
+				return true;
+			return false;
+		}
+	}
+}

@@ -46,6 +46,7 @@ public class Composite extends Drawable implements EquipTarget {
     private boolean nposesold, retainequ = false;
     private float tptime;
     private WrapMode tpmode;
+	public HashSet<String> poses = new HashSet<>();
     
     public Composite(Gob gob, Indir<Resource> base) {
 	super(gob);
@@ -58,6 +59,21 @@ public class Composite extends Drawable implements EquipTarget {
 	slot.add(comp);
 	super.added(slot);
     }
+
+	/**
+	 * This will run when a composite is initialized the first time
+	 */
+	public void cmpinit(Gob g) {
+		if(nposes != null) {
+			for (ResData resdata : nposes) {
+				Resource posres = resdata.res.get();
+				if (posres != null) {
+					poses.add(posres.basename());
+				}
+			}
+			gob.updPose(poses);
+		}
+	}
 
     public static List<PoseMod> loadposes(Collection<ResData> rl, Skeleton.ModOwner owner, Skeleton skel, boolean old) {
 	List<PoseMod> mods = new ArrayList<PoseMod>(rl.size());
@@ -106,6 +122,13 @@ public class Composite extends Drawable implements EquipTarget {
 	    try {
 		Composited.Poses np = comp.new Poses(loadposes(nposes, comp.skel, nposesold));
 		np.set(nposesold?0:ipollen);
+
+		poses.clear();
+		for (ResData pose : nposes) {
+			poses.add(pose.res.get().basename());
+		}
+		gob.updPose(poses);
+
 		nposes = null;
 		updequ();
 	    } catch(Loading e) {}
