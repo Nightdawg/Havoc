@@ -1,8 +1,5 @@
 package haven;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import haven.res.ui.tt.armor.Armor;
 
 import java.util.HashMap;

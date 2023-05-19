@@ -3,6 +3,5 @@
 /local-config.properties
 /local-boot.properties
 *~
-/accounts.json
-/alarmConfig
 /alarms/settings/yourSavedConfig
+savedTokens

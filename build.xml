@@ -81,7 +81,6 @@
 	<pathelement path="lib/ext/lwjgl/lwjgl-fat.jar" />
 	<pathelement path="lib/ext/lwjgl/lwjgl-opengl-fat.jar" />
 	<pathelement path="lib/jglob.jar" />
-    <pathelement path="lib/gson-2.8.6.jar" />
       <pathelement path="lib/rxjava-1.1.5.jar" />
       </classpath>
       <compilerarg value="-Xlint:unchecked" />
@@ -102,9 +101,6 @@
   <target name="lib-classes" depends="build-env" unless="unpacked-lib">
     <mkdir dir="build/classes-lib" />
     <unjar src="lib/jglob.jar" dest="build/classes-lib">
-      <patternset excludes="META-INF/**" />
-    </unjar>
-    <unjar src="lib/gson-2.8.6.jar" dest="build/classes-lib">
       <patternset excludes="META-INF/**" />
     </unjar>
     <unjar src="lib/rxjava-1.1.5.jar" dest="build/classes-lib">

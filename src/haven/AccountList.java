@@ -1,17 +1,17 @@
 package haven;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class AccountList extends Widget {
-    public static final String ACCOUNTS_JSON = "accounts.json";
-    public static final Map<String, String> accountmap = new HashMap<>();
+    public static final String SAVED_TOKENS = "savedTokens";
+    public static final LinkedHashMap<String, String> accountmap = new LinkedHashMap<>();
     private static final Coord SZ = UI.scale(240, 30);
-    private static final Comparator<Account> accountComparator = Comparator.comparing(o -> o.name);
 
     static {
         AccountList.loadAccounts();
@@ -21,17 +21,18 @@ public class AccountList extends Widget {
     public final List<Account> accounts = new ArrayList<>();
 
     static void loadAccounts() {
-        String json = Config.loadFile(ACCOUNTS_JSON);
-        if(json != null) {
-            try {
-                Gson gson = (new GsonBuilder()).create();
-                Type collectionType = new TypeToken<HashMap<String, String>>() {
-                }.getType();
-                Map<String, String> tmp = gson.fromJson(json, collectionType);
-                accountmap.putAll(tmp);
-            } catch (Exception ignored) {
-            }
-        }
+        File accountList = new File(SAVED_TOKENS);
+         if(accountList.exists()) {
+             try {
+                 for(String s : Files.readAllLines(Paths.get(accountList.toURI()), StandardCharsets.UTF_8)) {
+                     String[] split = s.split("(;)");
+                     if(!accountmap.containsKey(split[0]))
+                         accountmap.put(split[0], split[1]);
+                 }
+             } catch(IOException e) {
+                 e.printStackTrace();
+             }
+         }
     }
 
     public static void storeAccount(String name, String token) {
@@ -50,8 +51,16 @@ public class AccountList extends Widget {
 
     public static void saveAccounts() {
         synchronized(accountmap) {
-            Gson gson = (new GsonBuilder()).setPrettyPrinting().create();
-            Config.saveFile(ACCOUNTS_JSON, gson.toJson(accountmap));
+            try {
+                BufferedWriter bw = Files.newBufferedWriter(Paths.get(new File(SAVED_TOKENS).toURI()), StandardCharsets.UTF_8);
+                for(Map.Entry<String, String> e : accountmap.entrySet()) {
+                    bw.write(e.getKey() + ";" + e.getValue() + "\n");
+                }
+                bw.flush();
+                bw.close();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -98,7 +107,6 @@ public class AccountList extends Widget {
         for (Map.Entry<String, String> entry : accountmap.entrySet()) {
             add(entry.getKey(), entry.getValue());
         }
-        accounts.sort(accountComparator);
     }
 
     public void scroll(int amount) {
