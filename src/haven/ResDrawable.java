@@ -110,6 +110,7 @@ public class ResDrawable extends Drawable implements EquipTarget {
 	    } else if((d == null) || (d.res != res) || !d.sdt.equals(sdt)) {
 		g.setattr(new ResDrawable(g, res, sdt));
 	    }
+		g.updateResPeekDependantHighlights(sdt);
 		g.drawableUpdated();
 	}
     }

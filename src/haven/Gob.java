@@ -178,6 +178,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	    }
 	    remove0();
 	    gob.ols.remove(this);
+		gob.olRemoved();
 	}
 
 	public void remove() {
@@ -544,9 +545,15 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 						processDmg(item.sdt.clone());
 //		    System.out.printf("overlayAdded: '%s'%n", res.name);
 				}
+				updateOverlayDependantHighlights();
 			}
 		} catch (Loading ignored) {}
 	}
+
+	private void olRemoved() {
+		updateOverlayDependantHighlights();
+	}
+
 	private void processDmg(MessageBuf msg) {
 		try {
 			msg.rewind();
@@ -1225,7 +1232,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	public void updateResPeekDependantHighlights(MessageBuf sdt) {
-//		updateCupboardHighlight(sdt);
+		updateCupboardHighlight(sdt);
 //		updateLeathertubsHighlight(sdt);
 	}
 
@@ -1233,6 +1240,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 //		updHighlightDryingFrames();
 //		updHighlightCheeseracks();
 //		updHighlightPots();
+	}
+
+	private void updateCupboardHighlight(MessageBuf sdt) {
+		if (getres() != null && Pattern.matches("gfx/terobjs/cupboard", getres().name) && GameUI.cupboardHighlight) {
+			int peekrbuf = sdt.peekrbuf(0);
+			if (peekrbuf == 30 || peekrbuf == 29) {
+				setGobStateHighlight(GobStateHighlight.State.FULL);
+			} else if (peekrbuf == 2 || peekrbuf == 1) {
+				setGobStateHighlight(GobStateHighlight.State.EMPTY);
+			} else {
+				setGobStateHighlight(GobStateHighlight.State.OTHER);
+			}
+		}
 	}
 
 	private void setGobStateHighlight(GobStateHighlight.State state) {
