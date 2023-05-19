@@ -84,8 +84,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean crimeon = false;
 	public static boolean trackon = false;
 	public static boolean partyperm = false;
-	public static boolean kritterOverlay = false;
-	public static boolean dangerRadii = false;
 	public QuickSlotsWdg quickslots;
 	public Thread keyboundActionThread;
 	private Gob detectGob;
@@ -1495,36 +1493,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			peaceCurrentTarget();
 			return(true);
 		} else if (kb_toggleDangerRadii.key().match(ev)) {
-			dangerRadii = !dangerRadii;
-			msg("Danger radius " + (dangerRadii ? "enabled" : "disabled"));
-			synchronized (this.map.glob.oc) {
-				for (Gob g : this.map.glob.oc) {
-					if (g.getres() != null && g.knocked != null) {
-						String resourceName = g.getres().name;
-						if (!g.knocked && resourceName.startsWith("gfx/kritter") && resourceName.matches(".*(bear|lynx|walrus|mammoth|troll|spermwhale|orca|moose|wolf|bat|goldeneagle|caveangler|boar|badger|wolverine|boreworn|ooze|adder|caverat|wildgoat)$")) {
-							g.setDangerRadii(dangerRadii);
-						}
-					}
-				}
-			}
+			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(!OptWnd.beastDangerRadiiEnabled);
 			return true;
 		} else if (kb_toggleCritterAuras.key().match(ev)) {
-			kritterOverlay = !kritterOverlay;
-			msg("Kritter overlay " + (kritterOverlay ? "enabled" : "disabled"));
-			synchronized (this.map.glob.oc) {
-				for (Gob g : this.map.glob.oc) {
-					if (g.getres() != null && g.knocked != null) {
-						String resourceName = g.getres().name;
-						if (!g.knocked && resourceName.startsWith("gfx/kritter")) {
-							if (resourceName.matches(".*(hen|rooster|doe|hedgehog|stagbeetle|rat|mole|toad|frog|turtle|forestlizard|squirrel|magpie|chick|chicken|sandflea|grasshopper|ladybug|dragonfly|firefly|woodgrouse-f|silkmoth|forestsnail|grub)$")) {
-								g.setKritterOverlay(kritterOverlay, false);
-							} else if (resourceName.matches(".*(rabbit|bunny)$")) {
-								g.setKritterOverlay(kritterOverlay, true);
-							}
-						}
-					}
-				}
-			}
+			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(!OptWnd.critterAuraEnabled);
 			return true;
 		}else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);

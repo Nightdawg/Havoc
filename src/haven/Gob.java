@@ -88,6 +88,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					if(AlarmManager.play(res.name, Gob.this))
 						alarmPlayed.add(id);
 				}
+				initiateCustomOverlays();
 			}
 		}
 	}
@@ -99,7 +100,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				removeOl(customAnimalOverlay);
 				customAnimalOverlay = null;
 			} catch (Exception np){
-				System.out.println("Overlay not yet initialized");
+//				System.out.println("Overlay not yet initialized");
 			}
 		} else {
 			knocked = false;
@@ -1210,20 +1211,105 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 	}
 
+	public static final String[] CRITTERAURA_PATHS = {
+			"/hen",
+			"/rooster",
+			"/hedgehog",
+			"/stagbeetle",
+			"/rat",
+			"/mole",
+			"/toad",
+			"/frog",
+			"/turtle",
+			"/forestlizard",
+			"/squirrel",
+			"/magpie",
+			"/chick",
+			"/chicken",
+			"/sandflea",
+			"/grasshopper",
+			"/ladybug",
+			"/dragonfly",
+			"/firefly",
+			"/woodgrouse-f",
+			"/silkmoth",
+			"/forestsnail",
+			"/grub",
+			"/waterstrider"
+	};
+
+	public static final String[] BEASTDANGER_PATHS = {
+			"/bear",
+			"/lynx",
+			"/walrus",
+			"/mammoth",
+			"/troll",
+			"/spermwhale",
+			"/orca",
+			"/moose",
+			"/wolf",
+			"/bat",
+			"/goldeneagle",
+			"/caveangler",
+			"/boar",
+			"/badger",
+			"/wolverine",
+			"/boreworn",
+			"/ooze",
+			"/adder",
+			"/caverat",
+			"/wildgoat"
+	};
+
+	//Arrays.stream(HIDINGHOUSES).anyMatch(resourceName::contains))
+
 	private void initiateCustomOverlays() {
-		if (getres() != null && knocked != null) {
+		if (getres() != null) {
+			toggleBeastDangerRadii();
+			toggleCritterAuras();
+		}
+	}
+
+	public void toggleBeastDangerRadii() {
+		if (getres() != null) {
 			String resourceName = getres().name;
-			if(!knocked && resourceName.startsWith("gfx/kritter") && resourceName.matches(".*(bear|lynx|walrus|mammoth|troll|spermwhale|orca|moose|wolf|bat|goldeneagle|caveangler|boar|badger|wolverine|boreworn|ooze|adder|caverat|wildgoat)$")){
-				setDangerRadii(GameUI.dangerRadii);
-			} else if(!knocked && resourceName.startsWith("gfx/kritter") && resourceName.matches(".*(hen|rooster|doe|hedgehog|stagbeetle|rat|mole|toad|frog|turtle|forestlizard|squirrel|magpie|chick|chicken|sandflea|grasshopper|ladybug|dragonfly|firefly|woodgrouse-f|silkmoth|forestsnail|grub)$")){
-				setKritterOverlay(GameUI.kritterOverlay, false);
-			} else if (!knocked && resourceName.startsWith("gfx/kritter") && resourceName.matches(".*(rabbit|bunny)$")) {
-				setKritterOverlay(GameUI.kritterOverlay, true);
+			if (resourceName.startsWith("gfx/kritter")) {
+				if (knocked != null && !knocked) {
+					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
+						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+					}
+				} else { // ND: Retarded workaround. Some of these stupid animals have no animation when STANDING STILL. They're not loading their fucking knocked status??? HOW? It's like they're not an instance of composite, ONLY when standing still.
+					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
+						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+					}
+				}
 			}
 		}
 	}
 
-	public void setKritterOverlay(boolean on, boolean rabbit) {
+	public void toggleCritterAuras() {
+		if (getres() != null) {
+			String resourceName = getres().name;
+			if (resourceName.startsWith("gfx/kritter")) {
+				if (knocked != null && !knocked) {
+					if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::endsWith)) {
+						setCritterAura(OptWnd.critterAuraEnabled, false);
+					} else if (resourceName.matches(".*(rabbit|bunny)$")) {
+						setCritterAura(OptWnd.critterAuraEnabled, true);
+					}
+				} else { //ND: This also works for critters that can't have a knocked status, like insects.
+					if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::endsWith)) {
+						setCritterAura(OptWnd.critterAuraEnabled, false);
+					} else if (resourceName.matches(".*(rabbit|bunny)$")) {
+						setCritterAura(OptWnd.critterAuraEnabled, true);
+					}
+				}
+			}
+		}
+	}
+
+
+	public void setCritterAura(boolean on, boolean rabbit) {
 		if (rabbit) {
 			setCircleOl(FLCir.gren, on);
 		} else {
@@ -1239,7 +1325,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (on) {
 			for (Overlay ol : ols) {
 				if (ol.spr instanceof BPRad) {
-					System.out.println("already has bpradsprite.. skipping add ol");
+//					System.out.println("already has bpradsprite.. skipping add ol");
 					return;
 				}
 			}
@@ -1257,7 +1343,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (on) {
 			for (Overlay ol : ols) {
 				if (ol.spr instanceof FLCir) {
-					System.out.println("already has flcirsprite.. skipping add ol");
+//					System.out.println("already has flcirsprite.. skipping add ol");
 					return;
 				}
 			}
