@@ -1561,8 +1561,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			leatherTubHighlight = !leatherTubHighlight;
 			msg("Leather Tub Highlight " + (leatherTubHighlight ? "enabled" : "disabled"));
 		} else if (kb_toggleVehicleSpeed.key().match(ev)) {
-			vehicleSpeed = !vehicleSpeed;
-			msg("VehicleSpeed display " + (vehicleSpeed ? "enabled" : "disabled"));
+//			vehicleSpeed = !vehicleSpeed;
+//			msg("VehicleSpeed display " + (vehicleSpeed ? "enabled" : "disabled"));
+			msg("Not yet implemented");
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
