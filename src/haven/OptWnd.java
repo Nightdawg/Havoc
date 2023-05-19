@@ -713,9 +713,7 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Toggle Animal Danger Radii", GameUI.kb_toggleDangerRadii, y+6);
 			y = addbtn(cont, "Toggle Critter Circle Auras", GameUI.kb_toggleCritterAuras, y);
 			//Highlights etc
-			y = addbtn(cont, "Show Danger Radius", GameUI.kb_toggleDangerRadii, y+6);
-			y = addbtn(cont, "Highlight small kritters", GameUI.kb_toggleCritterAuras, y);
-			y = addbtn(cont, "Green Party Members", GameUI.kb_togglePartyMembersHighlight, y);
+			y = addbtn(cont, "Green Party Members", GameUI.kb_togglePartyMembersHighlight, y+6);
 			y = addbtn(cont, "Show Cupboard Stage", GameUI.kb_toggleCupboardHighlight, y);
 			y = addbtn(cont, "Show DFrame Stage", GameUI.kb_toggleDryingFrameHighlight, y);
 			y = addbtn(cont, "Show Garden Pot Stage", GameUI.kb_toggleGardenPotHighlight, y);
