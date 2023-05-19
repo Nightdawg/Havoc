@@ -773,9 +773,9 @@ public class ChatUI extends Widget {
 						if (gob != null) {
 							if (name.equals("Party")) {
 //								gob.highlightTarget();
-								gob.highlight(new Color(64, 255, 64, 255));
+								gob.highlight(new Color(243, 0, 0, 255));
 							} else if (name.equals("Area Chat")) {
-								gob.highlight(new Color(64, 255, 64, 255));
+								gob.highlight(new Color(255, 183, 0, 255));
 							}
 						}
 						return false;

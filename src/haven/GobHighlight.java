@@ -7,8 +7,8 @@ import java.awt.*;
 
 public class GobHighlight extends GAttrib implements Gob.SetupMod {
     private final Color c;
-    private static final long cycle = 1200;
-    private static final long duration = 7200;
+    private static final long cycle = 550;
+    private static final long duration = 2200;
     private long start = 0;
 
     public GobHighlight(Gob g, Color c) {
@@ -26,7 +26,7 @@ public class GobHighlight extends GAttrib implements Gob.SetupMod {
             return null;
         } else {
             float k = (float) Math.abs(Math.sin(Math.PI * active / cycle));
-            return new MixColor(c.getRed(), c.getGreen(), c.getBlue(), (int) (255 * k));
+            return new MixColor(c.getRed(), c.getGreen(), c.getBlue(), (int) (c.getAlpha() * k));
         }
     }
 }
