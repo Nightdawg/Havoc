@@ -84,15 +84,15 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean crimeon = false;
 	public static boolean trackon = false;
 	public static boolean partyperm = false;
-	public static boolean kritterOverlay = false;
-	public static boolean dangerRadii = false;
-	public static boolean partyMembersHighlight = false;
-	public static boolean cupboardHighlight = false;
-	public static boolean dryingFrameHighlight = false;
-	public static boolean gardenPotHighlight = false;
-	public static boolean cheeseRackHighlight = false;
-	public static boolean leatherTubHighlight = false;
-	public static boolean vehicleSpeed = false;
+	public static boolean kritterOverlay = true;
+	public static boolean dangerRadii = true;
+	public static boolean partyMembersHighlight = true;
+	public static boolean cupboardHighlight = true;
+	public static boolean dryingFrameHighlight = true;
+	public static boolean gardenPotHighlight = true;
+	public static boolean cheeseRackHighlight = true;
+	public static boolean leatherTubHighlight = true;
+	public static boolean vehicleSpeed = true;
 
 	public QuickSlotsWdg quickslots;
 	public Thread keyboundActionThread;
