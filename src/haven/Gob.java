@@ -71,13 +71,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (res != null) {
 			if (getattr(Drawable.class) instanceof Composite) {
 				try {
+					isComposite = true;
+					knocked = false;
 					initComp((Composite)getattr(Drawable.class));
 					if(!alarmPlayed.contains(id)) {
 						if(AlarmManager.play(res.name, Gob.this))
 							alarmPlayed.add(id);
 					}
 					initiateCustomOverlays();
-					isComposite = true;
 				} catch (Loading e) {
 					if (!throwLoading) {
 						glob.loader.syncdefer(() -> this.init(true), null, this);
@@ -96,6 +97,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	public void updPose(HashSet<String> poses) {
+		isComposite = true;
 		if (poses.contains("knock") || poses.contains("dead") || poses.contains("waterdead")) {
 			knocked = true;
 			try{
@@ -1262,6 +1264,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"/adder",
 			"/caverat",
 			"/wildgoat",
+			"/fox",
 	};
 
 	//Arrays.stream(HIDINGHOUSES).anyMatch(resourceName::contains))
@@ -1276,12 +1279,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			String resourceName = getres().name;
 			if (resourceName.startsWith("gfx/kritter")) {
 				if (knocked != null && !knocked) {
-					System.out.println(getres().name + " -- KNOCKED NOT NULL AND NOT KNOCKED");
+//					System.out.println(getres().name + " -- KNOCKED NOT NULL AND NOT KNOCKED");
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
 						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
 					}
 				} else if (!isComposite) { // ND: Retarded workaround. Some of these stupid animals have no animation when STANDING STILL. They're not loading their fucking knocked status??? HOW? It's like they're not an instance of composite, ONLY when standing still.
-					System.out.println(getres().name + " -- KNOCKED NULL");
+//					System.out.println(getres().name + " -- KNOCKED NULL");
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
 						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
 					}
