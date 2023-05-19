@@ -86,6 +86,14 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean partyperm = false;
 	public static boolean kritterOverlay = false;
 	public static boolean dangerRadii = false;
+	public static boolean partyMembersHighlight = false;
+	public static boolean cupboardHighlight = false;
+	public static boolean dryingFrameHighlight = false;
+	public static boolean gardenPotHighlight = false;
+	public static boolean cheeseRackHighlight = false;
+	public static boolean leatherTubHighlight = false;
+	public static boolean vehicleSpeed = false;
+
 	public QuickSlotsWdg quickslots;
 	public Thread keyboundActionThread;
 	private Gob detectGob;
@@ -1441,6 +1449,14 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
 	public static KeyBinding kb_toggleDangerRadii  = KeyBinding.get("toggleDangerRadii",  KeyMatch.nil);
 	public static KeyBinding kb_toggleCritterAuras  = KeyBinding.get("toggleCritterAuras ",  KeyMatch.nil);
+	public static KeyBinding kb_togglePartyMembersHighlight  = KeyBinding.get("togglePartyMembersHighlight",  KeyMatch.nil);
+	public static KeyBinding kb_toggleCupboardHighlight  = KeyBinding.get("toggleCupboardHighlight ",  KeyMatch.nil);
+	public static KeyBinding kb_toggleDryingFrameHighlight  = KeyBinding.get("toggleDryingFrameHighlight",  KeyMatch.nil);
+	public static KeyBinding kb_toggleGardenPotHighlight  = KeyBinding.get("toggleGardenPotHighlight ",  KeyMatch.nil);
+	public static KeyBinding kb_toggleCheeseRackHighlight  = KeyBinding.get("toggleCheeseRackHighlight",  KeyMatch.nil);
+	public static KeyBinding kb_toggleLeatherTubHighlight  = KeyBinding.get("toggleLeatherTubHighlight ",  KeyMatch.nil);
+	public static KeyBinding kb_toggleVehicleSpeed  = KeyBinding.get("toggleVehicleSpeed",  KeyMatch.nil);
+
 
 	public boolean globtype(char key, KeyEvent ev) {
 		if(key == ':') {
@@ -1526,7 +1542,28 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				}
 			}
 			return true;
-		}else if((key == 27) && (map != null) && !map.hasfocus) {
+		} else if (kb_togglePartyMembersHighlight.key().match(ev)) {
+			partyMembersHighlight = !partyMembersHighlight;
+			msg("Party Members Highlight " + (partyMembersHighlight ? "enabled" : "disabled"));
+		} else if (kb_toggleCupboardHighlight.key().match(ev)) {
+			cupboardHighlight = !cupboardHighlight;
+			msg("Cupboards Highlight " + (cupboardHighlight ? "enabled" : "disabled"));
+		} else if (kb_toggleDryingFrameHighlight.key().match(ev)) {
+			dryingFrameHighlight = !dryingFrameHighlight;
+			msg("Drying Frame Highlight " + (dryingFrameHighlight ? "enabled" : "disabled"));
+		} else if (kb_toggleGardenPotHighlight.key().match(ev)) {
+			gardenPotHighlight = !gardenPotHighlight;
+			msg("Garden Pot Highlight " + (gardenPotHighlight ? "enabled" : "disabled"));
+		} else if (kb_toggleCheeseRackHighlight.key().match(ev)) {
+			cheeseRackHighlight = !cheeseRackHighlight;
+			msg("Cheese Rack Highlight " + (cheeseRackHighlight ? "enabled" : "disabled"));
+		} else if (kb_toggleLeatherTubHighlight.key().match(ev)) {
+			leatherTubHighlight = !leatherTubHighlight;
+			msg("Leather Tub Highlight " + (leatherTubHighlight ? "enabled" : "disabled"));
+		} else if (kb_toggleVehicleSpeed.key().match(ev)) {
+			vehicleSpeed = !vehicleSpeed;
+			msg("VehicleSpeed display " + (vehicleSpeed ? "enabled" : "disabled"));
+		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
 		}
