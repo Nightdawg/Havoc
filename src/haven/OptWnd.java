@@ -712,6 +712,17 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Click Nearest Non-Visitor Gate", GameUI.kb_clickNearestGate, y);
 			y = addbtn(cont, "Toggle Animal Danger Radii", GameUI.kb_toggleDangerRadii, y+6);
 			y = addbtn(cont, "Toggle Critter Circle Auras", GameUI.kb_toggleCritterAuras, y);
+			//Highlights etc
+			y = addbtn(cont, "Show Danger Radius", GameUI.kb_toggleDangerRadii, y+6);
+			y = addbtn(cont, "Highlight small kritters", GameUI.kb_toggleCritterAuras, y);
+			y = addbtn(cont, "Green Party Members", GameUI.kb_togglePartyMembersHighlight, y);
+			y = addbtn(cont, "Show Cupboard Stage", GameUI.kb_toggleCupboardHighlight, y);
+			y = addbtn(cont, "Show DFrame Stage", GameUI.kb_toggleDryingFrameHighlight, y);
+			y = addbtn(cont, "Show Garden Pot Stage", GameUI.kb_toggleGardenPotHighlight, y);
+			y = addbtn(cont, "Show Cheese Rack Stage", GameUI.kb_toggleCheeseRackHighlight, y);
+			y = addbtn(cont, "Show Leather Tub Stage", GameUI.kb_toggleLeatherTubHighlight, y);
+			y = addbtn(cont, "Display Vehicle Speed", GameUI.kb_toggleVehicleSpeed, y);
+
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			prev = adda(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			pack();

@@ -40,6 +40,10 @@ public class Partyview extends Widget {
     private Map<Member, MemberView> avs = Collections.emptyMap();
     private Map<Long, Member> om = null;
 
+	//For overlay
+	public static final Color MEMBER_OL_COLOR = new Color(0, 255, 0, 128);
+	public static final Color PLAYER_OL_COLOR = new Color(0, 235, 255, 128);
+
     @RName("pv")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
@@ -100,7 +104,12 @@ public class Partyview extends Widget {
 	if(party.memb != this.om) {
 	    Map<Member, MemberView> old = new HashMap<>(this.avs);
 	    Map<Member, MemberView> avs = null;
+		System.out.println(party.memb.size());
 	    for(Member m : party.memb.values()) {
+//			Gob gob = m.getgob();
+//			if (GameUI.partyMembersHighlight && party.memb.size() > 1 && gob != null || gob.getattr(GobHighlightParty.class) == null && party.memb.size() > 1) {
+//				highlight(gob, MEMBER_OL_COLOR);
+//			}
 		if(m.gobid == ign)
 		    continue;
 		MemberView ava = old.remove(m);
@@ -112,6 +121,8 @@ public class Partyview extends Widget {
 	    }
 	    for(MemberView ava : old.values())
 		ava.reqdestroy();
+//		old.forEach((k, v) -> unhighlight(k.getgob()));
+//		if(party.memb.size() < 2){unhighlight(ui.sess.glob.oc.getgob(gameui().plid));}
 	    if(avs == null)
 		avs = Collections.emptyMap();
 	    List<Member> order = new ArrayList<>(avs.keySet());
@@ -137,6 +148,7 @@ public class Partyview extends Widget {
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	if(sender == leave) {
+
 	    wdgmsg("leave");
 	    return;
 	}
@@ -176,10 +188,27 @@ public class Partyview extends Widget {
 	}
     }
 
+	private void highlight(Gob gob, Color color) {
+		if (gob == null)
+			return;
+		if (gob.id == gameui().plid) {
+			gob.setattr(new GobHighlightParty(gob, PLAYER_OL_COLOR));
+		} else {
+			gob.setattr(new GobHighlightParty(gob, color));
+		}
+
+	}
+
+	private void unhighlight(Gob gob) {
+		if (gob == null)
+			return;
+		gob.delattr(GobHighlightParty.class);
+	}
+
     public void dispose() {
 	/* XXX: Arguably, glob.party should be removed entirely, but
 	 * until then, at least clear it when logging out. */
-	party.memb = Collections.emptyMap();
+		party.memb = Collections.emptyMap();
 	party.leader = null;
 	super.dispose();
     }

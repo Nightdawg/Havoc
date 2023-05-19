@@ -137,4 +137,10 @@ public class MessageBuf extends Message implements java.io.Serializable {
 	buf.append(")");
 	return(buf.toString());
     }
+
+	public int peekrbuf(int i) {
+		if (rbuf.length - 1 < i)
+			return -1;
+		return rbuf[i];
+	}
 }

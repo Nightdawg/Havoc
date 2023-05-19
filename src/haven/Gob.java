@@ -29,9 +29,13 @@ package haven;
 import java.awt.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.regex.Pattern;
+
 import haven.render.*;
 import haven.res.gfx.fx.bprad.BPRad;
 import haven.res.gfx.fx.flcir.FLCir;
+
+import static haven.Partyview.MEMBER_OL_COLOR;
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
     public Coord2d rc;
@@ -79,6 +83,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 							alarmPlayed.add(id);
 					}
 					initiateCustomOverlays();
+					initCustomGAttrs();
 				} catch (Loading e) {
 					if (!throwLoading) {
 						glob.loader.syncdefer(() -> this.init(true), null, this);
@@ -87,6 +92,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					}
 				}
 			} else {
+				initCustomGAttrs();
 				if(!alarmPlayed.contains(id)) {
 					if(AlarmManager.play(res.name, Gob.this))
 						alarmPlayed.add(id);
@@ -177,6 +183,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	    }
 	    remove0();
 	    gob.ols.remove(this);
+		gob.olRemoved();
 	}
 
 	public void remove() {
@@ -543,9 +550,15 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 						processDmg(item.sdt.clone());
 //		    System.out.printf("overlayAdded: '%s'%n", res.name);
 				}
+				updateOverlayDependantHighlights();
 			}
 		} catch (Loading ignored) {}
 	}
+
+	private void olRemoved() {
+		updateOverlayDependantHighlights();
+	}
+
 	private void processDmg(MessageBuf msg) {
 		try {
 			msg.rewind();
@@ -775,6 +788,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	    if(a instanceof RenderTree.Node && !a.skipRender)
 		slot.add((RenderTree.Node)a);
 	}
+//		synchronized (glob.party.memb) {
+//			if (GameUI.partyMembersHighlight && glob.party.memb.size() > 1 && glob.party.memb.get(id) != null && getattr(GobHighlightParty.class) == null) {
+//				setattr(new GobHighlightParty(this, MEMBER_OL_COLOR));
+//			}
+//		}
 	slots.add(slot);
     }
 
@@ -1284,6 +1302,120 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"/caverat",
 			"/wildgoat",
 	};
+
+	private void initCustomGAttrs() {
+		updateOverlayDependantHighlights();
+		Drawable dr = getattr(Drawable.class);
+		ResDrawable d = (dr instanceof ResDrawable)?(ResDrawable)dr:null;
+		if (d != null) {
+			updateResPeekDependantHighlights(d.sdt);
+		}
+	}
+
+	public void updateResPeekDependantHighlights(MessageBuf sdt) {
+		updateCupboardHighlight(sdt);
+		updateLeathertubsHighlight(sdt);
+	}
+
+	private void updateOverlayDependantHighlights() {
+		updateDryingFramesHighlight();
+		updateCheeseRacksHighlight();
+		updateGardenPotHighlight();
+	}
+
+	private void updateCupboardHighlight(MessageBuf sdt) {
+		if (getres() != null && Pattern.matches("gfx/terobjs/cupboard", getres().name) && GameUI.gardenPotHighlight) {
+			int peekrbuf = sdt.peekrbuf(0);
+			if (peekrbuf == 30 || peekrbuf == 29) {
+				setGobStateHighlight(GobStateHighlight.State.FULL);
+			} else if (peekrbuf == 2 || peekrbuf == 1) {
+				setGobStateHighlight(GobStateHighlight.State.EMPTY);
+			} else {
+				setGobStateHighlight(GobStateHighlight.State.OTHER);
+			}
+		}
+	}
+
+	private void updateLeathertubsHighlight(MessageBuf sdt) {
+		if (getres() != null && Pattern.matches("gfx/terobjs/ttub", getres().name) && GameUI.leatherTubHighlight) {
+			int peekrbuf = sdt.peekrbuf(0);
+			if (peekrbuf == 10 || peekrbuf == 9) {
+				setGobStateHighlight(GobStateHighlight.State.FULL);
+			} else if (peekrbuf != 6) {
+				setGobStateHighlight(GobStateHighlight.State.EMPTY);
+			} else {
+				setGobStateHighlight(GobStateHighlight.State.OTHER);
+			}
+		}
+	}
+
+	private void updateDryingFramesHighlight() {
+		if (getres() != null && Pattern.matches("gfx/terobjs/dframe", getres().name) && GameUI.dryingFrameHighlight) {
+			boolean done = true;
+			boolean empty = true;
+			for (Overlay ol : ols) {
+				try {
+					Indir<Resource> olires = ol.res;
+					if (olires != null) {
+						empty = false;
+						Resource olres = olires.get();
+						if (olres != null) {
+							if (olres.name.endsWith("-blood") || olres.name.endsWith("-windweed") || olres.name.endsWith("-fishraw")) {
+								done = false;
+								break;
+							}
+						}
+					}
+				} catch (Loading l) {
+				}
+			}
+			GobStateHighlight.State state = GobStateHighlight.State.OTHER;
+			if (done && !empty) {
+				state = GobStateHighlight.State.FULL;
+			} else if (empty) {
+				state = GobStateHighlight.State.EMPTY;
+			}
+			setGobStateHighlight(state);
+		}
+	}
+
+	private void updateCheeseRacksHighlight() {
+		if (getres() != null && Pattern.matches("gfx/terobjs/cheeserack", getres().name) && GameUI.cheeseRackHighlight) {
+			if (ols.size() == 3) {
+				setGobStateHighlight(GobStateHighlight.State.FULL);
+			} else if (ols.size() == 0) {
+				setGobStateHighlight(GobStateHighlight.State.EMPTY);
+			} else {
+				setGobStateHighlight(GobStateHighlight.State.OTHER);
+			}
+		}
+	}
+
+	private void updateGardenPotHighlight() {
+		if (getres() != null && Pattern.matches("gfx/terobjs/gardenpot", getres().name) && GameUI.gardenPotHighlight) {
+			if (ols.size() == 2) {
+				setGobStateHighlight(GobStateHighlight.State.FULL);
+			} else {
+				setGobStateHighlight(GobStateHighlight.State.OTHER);
+			}
+		}
+	}
+
+	private void setGobStateHighlight(GobStateHighlight.State state) {
+		GobStateHighlight current = getattr(GobStateHighlight.class);
+		if (current != null) {
+			current.state = state;
+		} else  {
+			if (GobStateHighlight.State.FULL == state)
+				setattr(new GobStateHighlight(this, GobStateHighlight.State.FULL));
+			else if (GobStateHighlight.State.EMPTY == state)
+				setattr(new GobStateHighlight(this, GobStateHighlight.State.EMPTY));
+			else {
+				delattr(GobStateHighlight.class);
+			}
+		}
+	}
+
 
 	private void initiateCustomOverlays() {
 			toggleBeastDangerRadii();
