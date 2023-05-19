@@ -448,8 +448,12 @@ public class OptWnd extends Window {
 	public static CheckBox toggleGobGrowthInfoCheckBox;
 	public static CheckBox toggleGobQualityInfoCheckBox;
 	public static CheckBox toggleGobCollisionBoxesDisplayCheckBox;
+	public static CheckBox toggleBeastDangerRadiiCheckBox;
+	public static CheckBox toggleCritterAurasCheckBox;
 	public static CheckBox alwaysOpenBeltCheckBox;
 	public static CheckBox showQuickSlotsBar;
+	public static boolean critterAuraEnabled = Utils.getprefb("critterAuras", false);
+	public static boolean beastDangerRadiiEnabled = Utils.getprefb("beastDangerRadii", true);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -600,6 +604,32 @@ public class OptWnd extends Window {
 					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated);
 				a = val;
 			}
+		}, prev.pos("bl").adds(0, 16));
+
+		prev = add(toggleBeastDangerRadiiCheckBox = new CheckBox("Display Animal Danger Radii"){
+			{a = (Utils.getprefb("beastDangerRadii", true));}
+			public void set(boolean val) {
+				Utils.setprefb("beastDangerRadii", val);
+				beastDangerRadiiEnabled = val;
+				if (gameui() != null) {
+					ui.sess.glob.oc.gobAction(Gob::toggleBeastDangerRadii);
+					gameui().msg("Animal danger radii are now " + (val ? "ENABLED" : "DISABLED") + "!");
+				}
+				a = val;
+			}
+		}, prev.pos("bl").adds(0, 6));
+
+		prev = add(toggleCritterAurasCheckBox = new CheckBox("Display Critter Circle Aura"){
+			{a = (Utils.getprefb("critterAuras", false));}
+			public void set(boolean val) {
+				Utils.setprefb("critterAuras", val);
+				critterAuraEnabled = val;
+				if (gameui() != null) {
+					ui.sess.glob.oc.gobAction(Gob::toggleCritterAuras);
+					gameui().msg("Critter circle auras are now " + (val ? "ENABLED" : "DISABLED") + "!");
+				}
+				a = val;
+			}
 		}, prev.pos("bl").adds(0, 6));
 
 		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 30).x(0));
@@ -680,8 +710,8 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Toggle Collision Boxes", GameUI.kb_toggleCollisionBoxes, y+6);
 			y = addbtn(cont, "Toggle Object Hiding", GameUI.kb_toggleHidingBoxes, y);
 			y = addbtn(cont, "Click Nearest Non-Visitor Gate", GameUI.kb_clickNearestGate, y);
-			y = addbtn(cont, "Toggle Danger Radii", GameUI.kb_toggleDangerRadii, y+6);
-			y = addbtn(cont, "Toggle Critter Auras", GameUI.kb_toggleCritterAuras, y);
+			y = addbtn(cont, "Toggle Animal Danger Radii", GameUI.kb_toggleDangerRadii, y+6);
+			y = addbtn(cont, "Toggle Critter Circle Auras", GameUI.kb_toggleCritterAuras, y);
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			prev = adda(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			pack();
@@ -1644,7 +1674,7 @@ public class OptWnd extends Window {
 		Panel hidingsettings = add(new NDHidingSettingsPanel(advancedSettings));
 
 		int y2 = UI.scale(6);
-		y2 = advancedSettings.add(new PButton(UI.scale(200), "Interface Settings", -1, iface, "Interface Settings"), 0, y2).pos("bl").adds(0, 5).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Interface & Display Settings", -1, iface, "Interface & Display Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Graphics Settings", -1, graphicssettings, "Graphics Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Action Bars Settings", -1, actionbarsettings, "Action Bars Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
@@ -1726,6 +1756,9 @@ public class OptWnd extends Window {
 		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in. \n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
 		showQuickSlotsBar.tooltip = RichText.render("Note: The Quick Switch keybinds ('Right Hand' and 'Left Hand') will still work, regardless of this widget being visible or not.", 300);
 		toggleGobGrowthInfoCheckBox.tooltip = RichText.render("Enabling this will show the following growth information:\n$col[185,185,185]{> Trees and Bushes will display their current growth percentage\n> Crops will display their growth stage as \"Current / Final\"\n}Note: If a Tree or Bush is not showing a percentage, that means it is fully grown, and can be harvested.", 300);
+		toggleGobCollisionBoxesDisplayCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
+		toggleBeastDangerRadiiCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
+		toggleCritterAurasCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){
