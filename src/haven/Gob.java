@@ -1239,7 +1239,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private void updateOverlayDependantHighlights() {
 		updateDryingFramesHighlight();
 		updateCheeseRacksHighlight();
-//		updHighlightPots();
+		updateGardenPotHighlight();
 	}
 
 	private void updateCupboardHighlight(MessageBuf sdt) {
@@ -1304,6 +1304,16 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				setGobStateHighlight(GobStateHighlight.State.FULL);
 			} else if (ols.size() == 0) {
 				setGobStateHighlight(GobStateHighlight.State.EMPTY);
+			} else {
+				setGobStateHighlight(GobStateHighlight.State.OTHER);
+			}
+		}
+	}
+
+	private void updateGardenPotHighlight() {
+		if (getres() != null && Pattern.matches("gfx/terobjs/gardenpot", getres().name) && GameUI.gardenPotHighlight) {
+			if (ols.size() == 2) {
+				setGobStateHighlight(GobStateHighlight.State.FULL);
 			} else {
 				setGobStateHighlight(GobStateHighlight.State.OTHER);
 			}
