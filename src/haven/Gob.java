@@ -59,6 +59,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private GobQualityInfo qualityInfo;
 	private Overlay customAnimalOverlay;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
+	public Boolean isComposite = false;
 	private static final HashSet<Long> alarmPlayed = new HashSet<Long>();
 
 	/**
@@ -76,6 +77,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 							alarmPlayed.add(id);
 					}
 					initiateCustomOverlays();
+					isComposite = true;
 				} catch (Loading e) {
 					if (!throwLoading) {
 						glob.loader.syncdefer(() -> this.init(true), null, this);
@@ -1235,7 +1237,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"/silkmoth",
 			"/forestsnail",
 			"/grub",
-			"/waterstrider"
+			"/waterstrider",
+			"/quail",
 	};
 
 	public static final String[] BEASTDANGER_PATHS = {
@@ -1258,16 +1261,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"/ooze",
 			"/adder",
 			"/caverat",
-			"/wildgoat"
+			"/wildgoat",
 	};
 
 	//Arrays.stream(HIDINGHOUSES).anyMatch(resourceName::contains))
 
 	private void initiateCustomOverlays() {
-		if (getres() != null) {
 			toggleBeastDangerRadii();
 			toggleCritterAuras();
-		}
 	}
 
 	public void toggleBeastDangerRadii() {
@@ -1275,10 +1276,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			String resourceName = getres().name;
 			if (resourceName.startsWith("gfx/kritter")) {
 				if (knocked != null && !knocked) {
+					System.out.println(getres().name + " -- KNOCKED NOT NULL AND NOT KNOCKED");
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
 						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
 					}
-				} else { // ND: Retarded workaround. Some of these stupid animals have no animation when STANDING STILL. They're not loading their fucking knocked status??? HOW? It's like they're not an instance of composite, ONLY when standing still.
+				} else if (!isComposite) { // ND: Retarded workaround. Some of these stupid animals have no animation when STANDING STILL. They're not loading their fucking knocked status??? HOW? It's like they're not an instance of composite, ONLY when standing still.
+					System.out.println(getres().name + " -- KNOCKED NULL");
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
 						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
 					}
@@ -1297,7 +1300,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					} else if (resourceName.matches(".*(rabbit|bunny)$")) {
 						setCritterAura(OptWnd.critterAuraEnabled, true);
 					}
-				} else { //ND: This also works for critters that can't have a knocked status, like insects.
+				} else if (!isComposite) { //ND: This also works for critters that can't have a knocked status, like insects.
 					if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::endsWith)) {
 						setCritterAura(OptWnd.critterAuraEnabled, false);
 					} else if (resourceName.matches(".*(rabbit|bunny)$")) {
