@@ -115,7 +115,8 @@ public class AlarmManager {
 		}
 
 		public void play() {
-			File file = new File("Alarms/" + filePath);
+			String filePath2 = filePath.endsWith(".wav") ? filePath : filePath + ".wav";
+			File file = new File("Alarms/" + filePath2);
 			if(!file.exists()) {
 				System.out.println("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
 				return;
