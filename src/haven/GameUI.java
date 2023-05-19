@@ -1493,10 +1493,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			peaceCurrentTarget();
 			return(true);
 		} else if (kb_toggleDangerRadii.key().match(ev)) {
-			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(!OptWnd.beastDangerRadiiEnabled);
+			OptWnd.toggleBeastDangerRadiiCheckBox.set(!OptWnd.beastDangerRadiiEnabled);
 			return true;
 		} else if (kb_toggleCritterAuras.key().match(ev)) {
-			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(!OptWnd.critterAuraEnabled);
+			OptWnd.toggleCritterAurasCheckBox.set(!OptWnd.critterAuraEnabled);
 			return true;
 		}else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
