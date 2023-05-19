@@ -29,6 +29,8 @@ package haven;
 import java.awt.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.regex.Pattern;
+
 import haven.render.*;
 import haven.res.gfx.fx.bprad.BPRad;
 import haven.res.gfx.fx.flcir.FLCir;
@@ -76,6 +78,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 							alarmPlayed.add(id);
 					}
 					initiateCustomOverlays();
+					initCustomGAttrs();
 				} catch (Loading e) {
 					if (!throwLoading) {
 						glob.loader.syncdefer(() -> this.init(true), null, this);
@@ -84,6 +87,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					}
 				}
 			} else {
+				initiateCustomOverlays();
+				initCustomGAttrs();
 				if(!alarmPlayed.contains(id)) {
 					if(AlarmManager.play(res.name, Gob.this))
 						alarmPlayed.add(id);
@@ -1209,6 +1214,42 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			}
 		}
 	}
+
+	private void initCustomGAttrs() {
+		updateOverlayDependantHighlights();
+		Drawable dr = getattr(Drawable.class);
+		ResDrawable d = (dr instanceof ResDrawable)?(ResDrawable)dr:null;
+		if (d != null) {
+			updateResPeekDependantHighlights(d.sdt);
+		}
+	}
+
+	public void updateResPeekDependantHighlights(MessageBuf sdt) {
+//		updateCupboardHighlight(sdt);
+//		updateLeathertubsHighlight(sdt);
+	}
+
+	private void updateOverlayDependantHighlights() {
+//		updHighlightDryingFrames();
+//		updHighlightCheeseracks();
+//		updHighlightPots();
+	}
+
+	private void setGobStateHighlight(GobStateHighlight.State state) {
+		GobStateHighlight current = getattr(GobStateHighlight.class);
+		if (current != null) {
+			current.state = state;
+		} else  {
+			if (GobStateHighlight.State.FULL == state)
+				setattr(new GobStateHighlight(this, GobStateHighlight.State.FULL));
+			else if (GobStateHighlight.State.EMPTY == state)
+				setattr(new GobStateHighlight(this, GobStateHighlight.State.EMPTY));
+			else {
+				delattr(GobStateHighlight.class);
+			}
+		}
+	}
+
 
 	private void initiateCustomOverlays() {
 		if (getres() != null && knocked != null) {
