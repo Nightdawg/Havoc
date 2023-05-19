@@ -786,11 +786,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	    if(a instanceof RenderTree.Node && !a.skipRender)
 		slot.add((RenderTree.Node)a);
 	}
-		synchronized (glob.party.memb) {
-			if (GameUI.partyMembersHighlight && glob.party.memb.size() > 1 && glob.party.memb.get(id) != null && getattr(GobHighlightParty.class) == null) {
-				setattr(new GobHighlightParty(this, MEMBER_OL_COLOR));
-			}
-		}
+//		synchronized (glob.party.memb) {
+//			if (GameUI.partyMembersHighlight && glob.party.memb.size() > 1 && glob.party.memb.get(id) != null && getattr(GobHighlightParty.class) == null) {
+//				setattr(new GobHighlightParty(this, MEMBER_OL_COLOR));
+//			}
+//		}
 	slots.add(slot);
     }
 

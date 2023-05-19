@@ -106,10 +106,10 @@ public class Partyview extends Widget {
 	    Map<Member, MemberView> avs = null;
 		System.out.println(party.memb.size());
 	    for(Member m : party.memb.values()) {
-			Gob gob = m.getgob();
-			if (GameUI.partyMembersHighlight && party.memb.size() > 1 && gob != null || gob.getattr(GobHighlightParty.class) == null && party.memb.size() > 1) {
-				highlight(gob, MEMBER_OL_COLOR);
-			}
+//			Gob gob = m.getgob();
+//			if (GameUI.partyMembersHighlight && party.memb.size() > 1 && gob != null || gob.getattr(GobHighlightParty.class) == null && party.memb.size() > 1) {
+//				highlight(gob, MEMBER_OL_COLOR);
+//			}
 		if(m.gobid == ign)
 		    continue;
 		MemberView ava = old.remove(m);
@@ -121,8 +121,8 @@ public class Partyview extends Widget {
 	    }
 	    for(MemberView ava : old.values())
 		ava.reqdestroy();
-		old.forEach((k, v) -> unhighlight(k.getgob()));
-		if(party.memb.size() < 2){unhighlight(ui.sess.glob.oc.getgob(gameui().plid));}
+//		old.forEach((k, v) -> unhighlight(k.getgob()));
+//		if(party.memb.size() < 2){unhighlight(ui.sess.glob.oc.getgob(gameui().plid));}
 	    if(avs == null)
 		avs = Collections.emptyMap();
 	    List<Member> order = new ArrayList<>(avs.keySet());
