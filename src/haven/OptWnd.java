@@ -634,7 +634,7 @@ public class OptWnd extends Window {
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
 
-		rightColumn = add(showCupboardFullnessCheckBox = new CheckBox("Show Cupboard Fullness"){
+		rightColumn = add(showCupboardFullnessCheckBox = new CheckBox("Show Containers Fullness"){
 			{a = (Utils.getprefb("showCupboardFullness", true));}
 			public void set(boolean val) {
 				Utils.setprefb("showCupboardFullness", val);

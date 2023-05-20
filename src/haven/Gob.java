@@ -1332,35 +1332,103 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	private void updateCupboardHighlight(MessageBuf sdt) {
-		if (getres() != null && Pattern.matches("gfx/terobjs/cupboard", getres().name) && OptWnd.showCupboardFullness) {
+		if (getres() != null) {
+			String resName = getres().name;
 			int peekrbuf = sdt.peekrbuf(0);
-			if (peekrbuf == 30 || peekrbuf == 29) {
-				setGobStateHighlight(GobStateHighlight.State.FULL);
-			} else if (peekrbuf == 2 || peekrbuf == 1) {
-				setGobStateHighlight(GobStateHighlight.State.EMPTY);
-			} else {
-				setGobStateHighlight(GobStateHighlight.State.OTHER);
+
+			switch (resName) {
+				case "gfx/terobjs/cupboard":
+				case "gfx/terobjs/chest":
+					if (OptWnd.showCupboardFullness) {
+						if (peekrbuf == 30 || peekrbuf == 29) {
+							setGobStateHighlight(GobStateHighlight.State.FULL);
+						} else if (peekrbuf == 2 || peekrbuf == 1) {
+							setGobStateHighlight(GobStateHighlight.State.EMPTY);
+						} else {
+							setGobStateHighlight(GobStateHighlight.State.OTHER);
+						}
+					}
+					break;
+				case "gfx/terobjs/crate":
+					if (OptWnd.showCupboardFullness) {
+						if (peekrbuf == 16) {
+							setGobStateHighlight(GobStateHighlight.State.FULL);
+						} else if (peekrbuf == 0 || peekrbuf == 1) {
+							setGobStateHighlight(GobStateHighlight.State.EMPTY);
+						} else {
+							setGobStateHighlight(GobStateHighlight.State.OTHER);
+						}
+					}
+					break;
+				case "gfx/terobjs/largechest":
+					if (OptWnd.showCupboardFullness) {
+						if (peekrbuf == 17 || peekrbuf == 18) {
+							setGobStateHighlight(GobStateHighlight.State.FULL);
+						} else if (peekrbuf == 2 || peekrbuf == 1) {
+							setGobStateHighlight(GobStateHighlight.State.EMPTY);
+						} else {
+							setGobStateHighlight(GobStateHighlight.State.OTHER);
+						}
+					}
+					break;
+				default:
+					break;
 			}
 		}
 	}
 
 	public void updateCupboardHighlight() {
-		if (getres() != null && Pattern.matches("gfx/terobjs/cupboard", getres().name)) {
-			if (OptWnd.showCupboardFullness) {
-				Drawable dr = getattr(Drawable.class);
-				ResDrawable d = (dr instanceof ResDrawable) ? (ResDrawable) dr : null;
-				if (d != null) {
-					int peekrbuf = d.sdt.peekrbuf(0);
-					if (peekrbuf == 30 || peekrbuf == 29) {
-						setGobStateHighlight(GobStateHighlight.State.FULL);
-					} else if (peekrbuf == 2 || peekrbuf == 1) {
-						setGobStateHighlight(GobStateHighlight.State.EMPTY);
-					} else {
-						setGobStateHighlight(GobStateHighlight.State.OTHER);
-					}
+		if (getres() != null) {
+			Drawable dr = getattr(Drawable.class);
+			ResDrawable d = (dr instanceof ResDrawable) ? (ResDrawable) dr : null;
+			if (d != null) {
+				String resName = getres().name;
+				int peekrbuf = d.sdt.peekrbuf(0);
+				switch (resName) {
+					case "gfx/terobjs/cupboard":
+					case "gfx/terobjs/chest":
+						if (OptWnd.showCupboardFullness) {
+							if (peekrbuf == 30 || peekrbuf == 29) {
+								setGobStateHighlight(GobStateHighlight.State.FULL);
+							} else if (peekrbuf == 2 || peekrbuf == 1) {
+								setGobStateHighlight(GobStateHighlight.State.EMPTY);
+							} else {
+								setGobStateHighlight(GobStateHighlight.State.OTHER);
+							}
+						} else {
+							delattr(GobStateHighlight.class);
+						}
+						break;
+					case "gfx/terobjs/crate":
+						if (OptWnd.showCupboardFullness) {  // Assuming you have this option for crates
+							if (peekrbuf == 16) {
+								setGobStateHighlight(GobStateHighlight.State.FULL);
+							} else if (peekrbuf == 0 || peekrbuf == 1) {
+								setGobStateHighlight(GobStateHighlight.State.EMPTY);
+							} else {
+								setGobStateHighlight(GobStateHighlight.State.OTHER);
+							}
+						} else {
+							delattr(GobStateHighlight.class);
+						}
+						break;
+					case "gfx/terobjs/largechest":
+						if (OptWnd.showCupboardFullness) {  // Assuming you have this option for crates
+							System.out.println(peekrbuf);
+							if (peekrbuf == 18 || peekrbuf == 17) {
+								setGobStateHighlight(GobStateHighlight.State.FULL);
+							} else if (peekrbuf == 2 || peekrbuf == 1) {
+								setGobStateHighlight(GobStateHighlight.State.EMPTY);
+							} else {
+								setGobStateHighlight(GobStateHighlight.State.OTHER);
+							}
+						} else {
+							delattr(GobStateHighlight.class);
+						}
+						break;
+					default:
+						break;
 				}
-			} else {
-				delattr(GobStateHighlight.class);
 			}
 		}
 	}
