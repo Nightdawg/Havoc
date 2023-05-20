@@ -1156,6 +1156,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"gfx/terobjs/arch/greathall",
 			"gfx/terobjs/arch/stonetower",
 			"gfx/terobjs/arch/windmill",
+			"gfx/terobjs/arch/primitivetent",
 	};
 
 	private void updateHidingBox() {
