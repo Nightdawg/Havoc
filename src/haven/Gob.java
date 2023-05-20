@@ -1332,7 +1332,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	private void updateCupboardHighlight(MessageBuf sdt) {
-		if (getres() != null && Pattern.matches("gfx/terobjs/cupboard", getres().name) && GameUI.gardenPotHighlight) {
+		if (getres() != null && Pattern.matches("gfx/terobjs/cupboard", getres().name) && OptWnd.showCupboardFullness) {
 			int peekrbuf = sdt.peekrbuf(0);
 			if (peekrbuf == 30 || peekrbuf == 29) {
 				setGobStateHighlight(GobStateHighlight.State.FULL);
@@ -1340,6 +1340,27 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				setGobStateHighlight(GobStateHighlight.State.EMPTY);
 			} else {
 				setGobStateHighlight(GobStateHighlight.State.OTHER);
+			}
+		}
+	}
+
+	public void updateCupboardHighlight() {
+		if (getres() != null && Pattern.matches("gfx/terobjs/cupboard", getres().name)) {
+			if (OptWnd.showCupboardFullness) {
+				Drawable dr = getattr(Drawable.class);
+				ResDrawable d = (dr instanceof ResDrawable) ? (ResDrawable) dr : null;
+				if (d != null) {
+					int peekrbuf = d.sdt.peekrbuf(0);
+					if (peekrbuf == 30 || peekrbuf == 29) {
+						setGobStateHighlight(GobStateHighlight.State.FULL);
+					} else if (peekrbuf == 2 || peekrbuf == 1) {
+						setGobStateHighlight(GobStateHighlight.State.EMPTY);
+					} else {
+						setGobStateHighlight(GobStateHighlight.State.OTHER);
+					}
+				}
+			} else {
+				delattr(GobStateHighlight.class);
 			}
 		}
 	}
@@ -1418,6 +1439,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				setattr(new GobStateHighlight(this, GobStateHighlight.State.FULL));
 			else if (GobStateHighlight.State.EMPTY == state)
 				setattr(new GobStateHighlight(this, GobStateHighlight.State.EMPTY));
+			else if (GobStateHighlight.State.OTHER == state)
+				setattr(new GobStateHighlight(this, GobStateHighlight.State.OTHER));
 			else {
 				delattr(GobStateHighlight.class);
 			}

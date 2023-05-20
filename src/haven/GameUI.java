@@ -85,7 +85,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean trackon = false;
 	public static boolean partyperm = false;
 	public static boolean partyMembersHighlight = true;
-	public static boolean cupboardHighlight = true;
 	public static boolean dryingFrameHighlight = true;
 	public static boolean gardenPotHighlight = true;
 	public static boolean cheeseRackHighlight = true;
@@ -1448,7 +1447,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleDangerRadii  = KeyBinding.get("toggleDangerRadii",  KeyMatch.nil);
 	public static KeyBinding kb_toggleCritterAuras  = KeyBinding.get("toggleCritterAuras ",  KeyMatch.nil);
 	public static KeyBinding kb_togglePartyMembersHighlight  = KeyBinding.get("togglePartyMembersHighlight",  KeyMatch.nil);
-	public static KeyBinding kb_toggleCupboardHighlight  = KeyBinding.get("toggleCupboardHighlight ",  KeyMatch.nil);
 	public static KeyBinding kb_toggleDryingFrameHighlight  = KeyBinding.get("toggleDryingFrameHighlight",  KeyMatch.nil);
 	public static KeyBinding kb_toggleGardenPotHighlight  = KeyBinding.get("toggleGardenPotHighlight ",  KeyMatch.nil);
 	public static KeyBinding kb_toggleCheeseRackHighlight  = KeyBinding.get("toggleCheeseRackHighlight",  KeyMatch.nil);
@@ -1517,9 +1515,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if (kb_togglePartyMembersHighlight.key().match(ev)) {
 			partyMembersHighlight = !partyMembersHighlight;
 			msg("Party Members Highlight " + (partyMembersHighlight ? "enabled" : "disabled"));
-		} else if (kb_toggleCupboardHighlight.key().match(ev)) {
-			cupboardHighlight = !cupboardHighlight;
-			msg("Cupboards Highlight " + (cupboardHighlight ? "enabled" : "disabled"));
 		} else if (kb_toggleDryingFrameHighlight.key().match(ev)) {
 			dryingFrameHighlight = !dryingFrameHighlight;
 			msg("Drying Frame Highlight " + (dryingFrameHighlight ? "enabled" : "disabled"));

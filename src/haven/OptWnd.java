@@ -452,13 +452,15 @@ public class OptWnd extends Window {
 	public static CheckBox toggleCritterAurasCheckBox;
 	public static CheckBox alwaysOpenBeltCheckBox;
 	public static CheckBox showQuickSlotsBar;
+	public static CheckBox showCupboardFullnessCheckBox;
 	public static boolean critterAuraEnabled = Utils.getprefb("critterAuras", false);
 	public static boolean beastDangerRadiiEnabled = Utils.getprefb("beastDangerRadii", true);
+	public static boolean showCupboardFullness = Utils.getprefb("showCupboardFullness", true);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
-
-	    Widget prev = add(new Label("Interface scale (requires restart)"), 0, 0);
+		Widget prev;
+		prev = add(new Label("Interface scale (requires restart)"), UI.scale(0, 0));
 	    {
 		Label dpy = new Label("");
 		final double smin = 1, smax = Math.floor(UI.maxscale() / 0.25) * 0.25;
@@ -530,23 +532,23 @@ public class OptWnd extends Window {
 			   dpy);
 		}
 	    }
-		prev = add(new Label("Advanced Interface Settings"), prev.pos("bl").adds(0, 10).x(0));
-		prev = add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
+		prev = add(new Label("Advanced Interface & Display Settings"), prev.pos("bl").adds(0, 16).x(110));
+		add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
 			{a = (Utils.getprefb("CornerFPSSettingBool", false));}
 			public void set(boolean val) {
 				GLPanel.Loop.enableCornerFPSSetting = val;
 				Utils.setprefb("CornerFPSSettingBool", val);
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 6));
-		prev = add(alwaysOpenBeltCheckBox = new CheckBox("Always open belt on login"){
+		}, UI.scale(230, 10));
+		Widget leftColumn = add(alwaysOpenBeltCheckBox = new CheckBox("Always open belt on login"){
 			{a = (Utils.getprefb("alwaysOpenBeltOnLogin", false));}
 			public void set(boolean val) {
 				Utils.setprefb("alwaysOpenBeltOnLogin", val);
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 6));
-		prev = add(showQuickSlotsBar = new CheckBox("Show Quick Slots Widget"){
+		}, prev.pos("bl").adds(0, 20).x(0));
+		leftColumn = add(showQuickSlotsBar = new CheckBox("Show Quick Slots Widget"){
 			{a = (Utils.getprefb("showQuickSlotsBar", true));}
 			public void set(boolean val) {
 				Utils.setprefb("showQuickSlotsBar", val);
@@ -558,24 +560,24 @@ public class OptWnd extends Window {
 				}
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 6));
-		prev = add(toggleQualityDisplayCheckBox = new CheckBox("Display Quality on Items"){
+		}, leftColumn.pos("bl").adds(0, 6));
+		leftColumn = add(toggleQualityDisplayCheckBox = new CheckBox("Display Quality on Items"){
 			{a = (Utils.getprefb("qtoggle", true));}
 			public void set(boolean val) {
 				Utils.setprefb("qtoggle", val);
 				Quality.show = val;
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 6));
-		prev = add(toggleGobHealthDisplayCheckBox = new CheckBox("Display Health Percentage on Objects"){
+		}, leftColumn.pos("bl").adds(0, 6));
+		leftColumn = add(toggleGobHealthDisplayCheckBox = new CheckBox("Display Object Health Percent"){
 			{a = (Utils.getprefb("gobHealthDisplayToggle", true));}
 			public void set(boolean val) {
 				Utils.setprefb("gobHealthDisplayToggle", val);
 				GobHealthInfo.displayHealthPercentage = val;
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 16));
-		prev = add(toggleGobQualityInfoCheckBox = new CheckBox("Show Object Quality when Inspected"){
+		}, leftColumn.pos("bl").adds(0, 16));
+		leftColumn = add(toggleGobQualityInfoCheckBox = new CheckBox("Show Object Quality on Inspection"){
 			{a = (Utils.getprefb("showGobQualityInfo", true));}
 			public void set(boolean val) {
 				Utils.setprefb("showGobQualityInfo", val);
@@ -584,8 +586,8 @@ public class OptWnd extends Window {
 					ui.sess.glob.oc.gobAction(Gob::qualityInfoUpdated);
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 6));
-		prev = add(toggleGobGrowthInfoCheckBox = new CheckBox("Display Growth Info on Plants"){
+		}, leftColumn.pos("bl").adds(0, 6));
+		leftColumn = add(toggleGobGrowthInfoCheckBox = new CheckBox("Display Growth Info on Plants"){
 			{a = (Utils.getprefb("showGobGrowthInfo", false));}
 			public void set(boolean val) {
 				Utils.setprefb("showGobGrowthInfo", val);
@@ -594,8 +596,8 @@ public class OptWnd extends Window {
 					ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 6));
-		prev = add(toggleGobCollisionBoxesDisplayCheckBox = new CheckBox("Display Collision Box on Objects"){
+		}, leftColumn.pos("bl").adds(0, 6));
+		Widget rightColumn = add(toggleGobCollisionBoxesDisplayCheckBox = new CheckBox("Display Collision Box on Objects"){
 			{a = (Utils.getprefb("gobCollisionBoxesDisplayToggle", false));}
 			public void set(boolean val) {
 				Utils.setprefb("gobCollisionBoxesDisplayToggle", val);
@@ -604,9 +606,9 @@ public class OptWnd extends Window {
 					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated);
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 16));
+		}, prev.pos("bl").adds(0, 20).x(230));
 
-		prev = add(toggleBeastDangerRadiiCheckBox = new CheckBox("Display Animal Danger Radii"){
+		rightColumn = add(toggleBeastDangerRadiiCheckBox = new CheckBox("Display Animal Danger Radii"){
 			{a = (Utils.getprefb("beastDangerRadii", true));}
 			public void set(boolean val) {
 				Utils.setprefb("beastDangerRadii", val);
@@ -617,9 +619,9 @@ public class OptWnd extends Window {
 				}
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 6));
+		}, rightColumn.pos("bl").adds(0, 6));
 
-		prev = add(toggleCritterAurasCheckBox = new CheckBox("Display Critter Circle Aura"){
+		rightColumn = add(toggleCritterAurasCheckBox = new CheckBox("Display Critter Circle Aura"){
 			{a = (Utils.getprefb("critterAuras", false));}
 			public void set(boolean val) {
 				Utils.setprefb("critterAuras", val);
@@ -630,9 +632,20 @@ public class OptWnd extends Window {
 				}
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 6));
+		}, rightColumn.pos("bl").adds(0, 6));
 
-		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 30).x(0));
+		rightColumn = add(showCupboardFullnessCheckBox = new CheckBox("Show Cupboard Fullness"){
+			{a = (Utils.getprefb("showCupboardFullness", true));}
+			public void set(boolean val) {
+				Utils.setprefb("showCupboardFullness", val);
+				showCupboardFullness = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::updateCupboardHighlight);
+				a = val;
+			}
+		}, rightColumn.pos("bl").adds(0, 16));
+
+		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 30).x(101));
 		setTooltipsForInterfaceSettingsStuff();
 	    pack();
 	}
@@ -714,7 +727,6 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Toggle Critter Circle Auras", GameUI.kb_toggleCritterAuras, y);
 			//Highlights etc
 			y = addbtn(cont, "Green Party Members", GameUI.kb_togglePartyMembersHighlight, y+6);
-			y = addbtn(cont, "Show Cupboard Stage", GameUI.kb_toggleCupboardHighlight, y);
 			y = addbtn(cont, "Show DFrame Stage", GameUI.kb_toggleDryingFrameHighlight, y);
 			y = addbtn(cont, "Show Garden Pot Stage", GameUI.kb_toggleGardenPotHighlight, y);
 			y = addbtn(cont, "Show Cheese Rack Stage", GameUI.kb_toggleCheeseRackHighlight, y);
