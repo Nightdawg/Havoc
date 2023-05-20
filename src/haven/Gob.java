@@ -75,8 +75,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (res != null) {
 			if (getattr(Drawable.class) instanceof Composite) {
 				try {
-					knocked = false;
 					initComp((Composite)getattr(Drawable.class));
+//					knocked = false;
 					isComposite = true;
 					if(!alarmPlayed.contains(id)) {
 						if(AlarmManager.play(res.name, Gob.this))
@@ -1308,7 +1308,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"/adder",
 			"/caverat",
 			"/wildgoat",
-			"/fox",
 	};
 
 	private void initCustomGAttrs() {
@@ -1457,11 +1456,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (getres() != null) {
 			String resourceName = getres().name;
 			if (resourceName.startsWith("gfx/kritter")) {
-				if (knocked != null && !knocked) {
+				if (knocked != null && knocked != true) {
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
 						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
 					}
-				} else if (!isComposite) { // ND: Retarded workaround. Some of these stupid animals have no animation when STANDING STILL. They're not loading their fucking knocked status??? HOW? It's like they're not an instance of composite, ONLY when standing still.
+				}
+				else if (isComposite) { // ND: Retarded workaround. Some of these stupid animals have no animation when STANDING STILL. They're not loading their fucking knocked status??? HOW? It's like they're not an instance of composite, ONLY when standing still.
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
 						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
 					}
