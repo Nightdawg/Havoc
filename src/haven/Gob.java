@@ -1321,7 +1321,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	public void updateResPeekDependantHighlights(MessageBuf sdt) {
-		updateCupboardHighlight(sdt);
+		updateContainerHighlight(sdt);
 		updateLeathertubsHighlight(sdt);
 	}
 
@@ -1331,7 +1331,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		updateGardenPotHighlight();
 	}
 
-	private void updateCupboardHighlight(MessageBuf sdt) {
+	private void updateContainerHighlight(MessageBuf sdt) {
 		if (getres() != null) {
 			String resName = getres().name;
 			int peekrbuf = sdt.peekrbuf(0);
@@ -1339,7 +1339,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			switch (resName) {
 				case "gfx/terobjs/cupboard":
 				case "gfx/terobjs/chest":
-					if (OptWnd.showCupboardFullness) {
+					if (OptWnd.showContainerFullness) {
 						if (peekrbuf == 30 || peekrbuf == 29) {
 							setGobStateHighlight(GobStateHighlight.State.FULL);
 						} else if (peekrbuf == 2 || peekrbuf == 1) {
@@ -1350,7 +1350,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					}
 					break;
 				case "gfx/terobjs/crate":
-					if (OptWnd.showCupboardFullness) {
+					if (OptWnd.showContainerFullness) {
 						if (peekrbuf == 16) {
 							setGobStateHighlight(GobStateHighlight.State.FULL);
 						} else if (peekrbuf == 0 || peekrbuf == 1) {
@@ -1361,7 +1361,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					}
 					break;
 				case "gfx/terobjs/largechest":
-					if (OptWnd.showCupboardFullness) {
+					if (OptWnd.showContainerFullness) {
 						if (peekrbuf == 17 || peekrbuf == 18) {
 							setGobStateHighlight(GobStateHighlight.State.FULL);
 						} else if (peekrbuf == 2 || peekrbuf == 1) {
@@ -1377,7 +1377,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 	}
 
-	public void updateCupboardHighlight() {
+	public void updateContainerHighlight() {
 		if (getres() != null) {
 			Drawable dr = getattr(Drawable.class);
 			ResDrawable d = (dr instanceof ResDrawable) ? (ResDrawable) dr : null;
@@ -1387,7 +1387,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				switch (resName) {
 					case "gfx/terobjs/cupboard":
 					case "gfx/terobjs/chest":
-						if (OptWnd.showCupboardFullness) {
+						if (OptWnd.showContainerFullness) {
 							if (peekrbuf == 30 || peekrbuf == 29) {
 								setGobStateHighlight(GobStateHighlight.State.FULL);
 							} else if (peekrbuf == 2 || peekrbuf == 1) {
@@ -1400,7 +1400,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 						}
 						break;
 					case "gfx/terobjs/crate":
-						if (OptWnd.showCupboardFullness) {  // Assuming you have this option for crates
+						if (OptWnd.showContainerFullness) {  // Assuming you have this option for crates
 							if (peekrbuf == 16) {
 								setGobStateHighlight(GobStateHighlight.State.FULL);
 							} else if (peekrbuf == 0 || peekrbuf == 1) {
@@ -1413,7 +1413,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 						}
 						break;
 					case "gfx/terobjs/largechest":
-						if (OptWnd.showCupboardFullness) {  // Assuming you have this option for crates
+						if (OptWnd.showContainerFullness) {  // Assuming you have this option for crates
 							System.out.println(peekrbuf);
 							if (peekrbuf == 18 || peekrbuf == 17) {
 								setGobStateHighlight(GobStateHighlight.State.FULL);

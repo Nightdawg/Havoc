@@ -29,10 +29,7 @@ package haven;
 import haven.render.*;
 import haven.res.ui.tt.q.quality.Quality;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.List;
@@ -455,7 +452,7 @@ public class OptWnd extends Window {
 	public static CheckBox showCupboardFullnessCheckBox;
 	public static boolean critterAuraEnabled = Utils.getprefb("critterAuras", false);
 	public static boolean beastDangerRadiiEnabled = Utils.getprefb("beastDangerRadii", true);
-	public static boolean showCupboardFullness = Utils.getprefb("showCupboardFullness", true);
+	public static boolean showContainerFullness = Utils.getprefb("showContainerFullness", true);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -621,7 +618,7 @@ public class OptWnd extends Window {
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
 
-		rightColumn = add(toggleCritterAurasCheckBox = new CheckBox("Display Critter Circle Aura"){
+		rightColumn = add(toggleCritterAurasCheckBox = new CheckBox("Display Critter Circle Auras"){
 			{a = (Utils.getprefb("critterAuras", false));}
 			public void set(boolean val) {
 				Utils.setprefb("critterAuras", val);
@@ -634,13 +631,13 @@ public class OptWnd extends Window {
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
 
-		rightColumn = add(showCupboardFullnessCheckBox = new CheckBox("Show Containers Fullness"){
-			{a = (Utils.getprefb("showCupboardFullness", true));}
+		rightColumn = add(showCupboardFullnessCheckBox = new CheckBox("Show Container Fullness"){
+			{a = (Utils.getprefb("showContainerFullness", true));}
 			public void set(boolean val) {
-				Utils.setprefb("showCupboardFullness", val);
-				showCupboardFullness = val;
+				Utils.setprefb("showContainerFullness", val);
+				showContainerFullness = val;
 				if (gameui() != null)
-					ui.sess.glob.oc.gobAction(Gob::updateCupboardHighlight);
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 16));
