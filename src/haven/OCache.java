@@ -390,7 +390,7 @@ public class OCache implements Iterable<Gob> {
 		    added = true;
 			try {
 				synchronized (gob) {
-					gob.init(false);
+					gob.init(true);
 				}
 			} catch (Exception e) {
 				System.out.println("Exception initializing gob " + gob.id);

@@ -75,9 +75,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (res != null) {
 			if (getattr(Drawable.class) instanceof Composite) {
 				try {
-					isComposite = true;
 					knocked = false;
 					initComp((Composite)getattr(Drawable.class));
+					isComposite = true;
 					if(!alarmPlayed.contains(id)) {
 						if(AlarmManager.play(res.name, Gob.this))
 							alarmPlayed.add(id);
@@ -104,9 +104,16 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public void updPose(HashSet<String> poses) {
 		isComposite = true;
-		if (poses.contains("knock") || poses.contains("dead") || poses.contains("waterdead")) {
-			knocked = true;
-			try{
+		Iterator<String> iter = poses.iterator();
+		while (iter.hasNext()) {
+			String s = iter.next();
+			if (s.contains("knock") || s.contains("dead") || s.contains("waterdead")){
+				knocked = true;
+				break;
+			}
+		}
+		if (knocked != null && knocked) {
+			try {
 				removeOl(customAnimalOverlay);
 				customAnimalOverlay = null;
 			} catch (Exception np){
@@ -1301,6 +1308,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"/adder",
 			"/caverat",
 			"/wildgoat",
+			"/fox",
 	};
 
 	private void initCustomGAttrs() {
