@@ -86,7 +86,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					initCustomGAttrs();
 				} catch (Loading e) {
 					if (!throwLoading) {
-						glob.loader.syncdefer(() -> this.init(true), null, this);
+						glob.loader.syncdefer(() -> this.init(true), null, this); // ND: I don't understand what this was supposed to do.
 					} else {
 						throw e;
 					}

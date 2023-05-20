@@ -393,8 +393,8 @@ public class OCache implements Iterable<Gob> {
 					gob.init(true);
 				}
 			} catch (Exception e) {
-				System.out.println("Exception initializing gob " + gob.id);
-				e.printStackTrace();
+//				System.out.println("Exception initializing gob " + gob.id);
+//				e.printStackTrace();
 			}
 		}
 		gob.updated();
