@@ -739,6 +739,7 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Left Hand (Quick switch)", GameUI.kb_leftQuickSlotButton, y+6);
 			y = addbtn(cont, "Right Hand (Quick switch)", GameUI.kb_rightQuickSlotButton, y);
 			y = addbtn(cont, "Toggle Animal Autopeace", GameUI.kb_toggleCombatAutoPeace, y+6);
+			y = addbtn(cont, "Re-aggro last target", GameUI.kb_aggroLastTarget, y);
 			y = addbtn(cont, "Peace Current Target", GameUI.kb_peaceCurrentTarget, y);
 			y = addbtn(cont, "Toggle Collision Boxes", GameUI.kb_toggleCollisionBoxes, y+6);
 			y = addbtn(cont, "Toggle Object Hiding", GameUI.kb_toggleHidingBoxes, y);

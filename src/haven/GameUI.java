@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.automated.AttackOpponent;
 import haven.automated.ClickNearestGate;
 
 import java.awt.image.BufferedImage;
@@ -85,6 +86,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean partyperm = false;
 	public static boolean partyMembersHighlight = true;
 	public static boolean vehicleSpeed = true;
+	public long lastopponent = -1;
 
 	public QuickSlotsWdg quickslots;
 	public Thread keyboundActionThread;
@@ -1437,6 +1439,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleHidingBoxes  = KeyBinding.get("toggleHidingBoxesKB",  KeyMatch.forchar('H', KeyMatch.C));
 	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("clickNearestGateKB",  KeyMatch.forchar('Q', 0));
 	public static KeyBinding kb_toggleCombatAutoPeace  = KeyBinding.get("toggleCombatAutoPeaceKB",  KeyMatch.forchar('P', KeyMatch.C | KeyMatch.S));
+	public static KeyBinding kb_aggroLastTarget = KeyBinding.get("aggroLastTarget",  KeyMatch.nil);
 	public static KeyBinding kb_peaceCurrentTarget  = KeyBinding.get("peaceCurrentTargetKB",  KeyMatch.forchar('P', KeyMatch.M));
 
 	public static KeyBinding kb_toggleDangerRadii  = KeyBinding.get("toggleDangerRadii",  KeyMatch.nil);
@@ -1494,6 +1497,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			OptWnd.toggleAutoPeaceCheckbox.set(val);
 			GameUI.this.msg("Autopeace animals when combat starts is now turned " + (val ? "ON" : "OFF") + ".");
 			return(true);
+		} else if (kb_aggroLastTarget.key().match(ev)) {
+			this.runActionThread(new Thread(new AttackOpponent(this, this.lastopponent), "Reaggro"));
 		} else if(kb_peaceCurrentTarget.key().match(ev)) {
 			peaceCurrentTarget();
 			return(true);
