@@ -2460,7 +2460,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 									if (OptWnd.advancedMouseInfo)
 										tt = "Object Resource Path: " + "$col[255,200,0]{" + res.name + "}" +
 												" \nID: " + gob.id +
-												" \nRC: " + gob.rc.floor() +
+												" \nRC: " + ui.sess.glob.map.getzp(gob.rc) +
 												String.format(" \nAngle: %.2f (%.2f\u00B0)", gob.a, 360.*(gob.a/(2.*Math.PI))) +
 												(ols != null ? " \nOls: $col[192,192,255]{" + ols + "}" : "") +
 												(ols2 != null ? " \nOls exp: $col[192,192,255]{" + ols2 + "}" : "") +

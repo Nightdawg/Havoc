@@ -4,9 +4,9 @@ import haven.render.MixColor;
 import haven.render.Pipe;
 
 public class GobStateHighlight extends GAttrib implements Gob.SetupMod {
-    private static final MixColor green = new MixColor(0,194,0, 150);
-    private static final MixColor yellow = new MixColor(209, 167, 0, 150);
-    private static final MixColor red = new MixColor(180, 0, 0, 170);
+    private static final MixColor green = new MixColor(0,120,0, 180);
+    private static final MixColor yellow = new MixColor(194, 155, 2, 140);
+    private static final MixColor red = new MixColor(170, 0, 0, 170);
     private static final MixColor gray = new MixColor(20, 20, 20, 170);
     public State state;
 
