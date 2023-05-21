@@ -27,7 +27,6 @@
 package haven;
 
 import haven.automated.ClickNearestGate;
-import haven.res.ui.tt.q.quality.Quality;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -85,10 +84,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean trackon = false;
 	public static boolean partyperm = false;
 	public static boolean partyMembersHighlight = true;
-	public static boolean dryingFrameHighlight = true;
-	public static boolean gardenPotHighlight = true;
-	public static boolean cheeseRackHighlight = true;
-	public static boolean leatherTubHighlight = true;
 	public static boolean vehicleSpeed = true;
 
 	public QuickSlotsWdg quickslots;
@@ -1447,10 +1442,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleDangerRadii  = KeyBinding.get("toggleDangerRadii",  KeyMatch.nil);
 	public static KeyBinding kb_toggleCritterAuras  = KeyBinding.get("toggleCritterAuras ",  KeyMatch.nil);
 	public static KeyBinding kb_togglePartyMembersHighlight  = KeyBinding.get("togglePartyMembersHighlight",  KeyMatch.nil);
-	public static KeyBinding kb_toggleDryingFrameHighlight  = KeyBinding.get("toggleDryingFrameHighlight",  KeyMatch.nil);
-	public static KeyBinding kb_toggleGardenPotHighlight  = KeyBinding.get("toggleGardenPotHighlight ",  KeyMatch.nil);
-	public static KeyBinding kb_toggleCheeseRackHighlight  = KeyBinding.get("toggleCheeseRackHighlight",  KeyMatch.nil);
-	public static KeyBinding kb_toggleLeatherTubHighlight  = KeyBinding.get("toggleLeatherTubHighlight ",  KeyMatch.nil);
 	public static KeyBinding kb_toggleVehicleSpeed  = KeyBinding.get("toggleVehicleSpeed",  KeyMatch.nil);
 
 
@@ -1515,18 +1506,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if (kb_togglePartyMembersHighlight.key().match(ev)) {
 			partyMembersHighlight = !partyMembersHighlight;
 			msg("Party Members Highlight " + (partyMembersHighlight ? "enabled" : "disabled"));
-		} else if (kb_toggleDryingFrameHighlight.key().match(ev)) {
-			dryingFrameHighlight = !dryingFrameHighlight;
-			msg("Drying Frame Highlight " + (dryingFrameHighlight ? "enabled" : "disabled"));
-		} else if (kb_toggleGardenPotHighlight.key().match(ev)) {
-			gardenPotHighlight = !gardenPotHighlight;
-			msg("Garden Pot Highlight " + (gardenPotHighlight ? "enabled" : "disabled"));
-		} else if (kb_toggleCheeseRackHighlight.key().match(ev)) {
-			cheeseRackHighlight = !cheeseRackHighlight;
-			msg("Cheese Rack Highlight " + (cheeseRackHighlight ? "enabled" : "disabled"));
-		} else if (kb_toggleLeatherTubHighlight.key().match(ev)) {
-			leatherTubHighlight = !leatherTubHighlight;
-			msg("Leather Tub Highlight " + (leatherTubHighlight ? "enabled" : "disabled"));
 		} else if (kb_toggleVehicleSpeed.key().match(ev)) {
 //			vehicleSpeed = !vehicleSpeed;
 //			msg("VehicleSpeed display " + (vehicleSpeed ? "enabled" : "disabled"));

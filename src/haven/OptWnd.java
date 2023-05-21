@@ -438,6 +438,7 @@ public class OptWnd extends Window {
     }
 
 	private CheckBox enableCornerFPSCheckBox;
+	private CheckBox enableAdvancedMouseInfoCheckBox;
 	private Label granularityPositionLabel;
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
@@ -449,10 +450,13 @@ public class OptWnd extends Window {
 	public static CheckBox toggleCritterAurasCheckBox;
 	public static CheckBox alwaysOpenBeltCheckBox;
 	public static CheckBox showQuickSlotsBar;
-	public static CheckBox showCupboardFullnessCheckBox;
+	public static CheckBox showContainerFullnessCheckBox;
+	public static CheckBox showWorkstationStageCheckBox;
 	public static boolean critterAuraEnabled = Utils.getprefb("critterAuras", false);
 	public static boolean beastDangerRadiiEnabled = Utils.getprefb("beastDangerRadii", true);
 	public static boolean showContainerFullness = Utils.getprefb("showContainerFullness", true);
+	public static boolean showWorkstationStage = Utils.getprefb("showWorkstationStage", true);
+	public static boolean advancedMouseInfo = Utils.getprefb("advancedMouseInfo", false);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -530,7 +534,8 @@ public class OptWnd extends Window {
 		}
 	    }
 		prev = add(new Label("Advanced Interface & Display Settings"), prev.pos("bl").adds(0, 16).x(110));
-		add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
+		Widget topRightColumn;
+		topRightColumn = add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
 			{a = (Utils.getprefb("CornerFPSSettingBool", false));}
 			public void set(boolean val) {
 				GLPanel.Loop.enableCornerFPSSetting = val;
@@ -538,6 +543,14 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, UI.scale(230, 10));
+		topRightColumn = add(enableAdvancedMouseInfoCheckBox = new CheckBox("Show Extended Mouseover Info"){
+			{a = (Utils.getprefb("advancedMouseInfo", false));}
+			public void set(boolean val) {
+				advancedMouseInfo = val;
+				Utils.setprefb("advancedMouseInfo", val);
+				a = val;
+			}
+		}, topRightColumn.pos("bl").adds(0, 6));
 		Widget leftColumn = add(alwaysOpenBeltCheckBox = new CheckBox("Always open belt on login"){
 			{a = (Utils.getprefb("alwaysOpenBeltOnLogin", false));}
 			public void set(boolean val) {
@@ -631,7 +644,7 @@ public class OptWnd extends Window {
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
 
-		rightColumn = add(showCupboardFullnessCheckBox = new CheckBox("Show Container Fullness"){
+		rightColumn = add(showContainerFullnessCheckBox = new CheckBox("Show Container Fullness"){
 			{a = (Utils.getprefb("showContainerFullness", true));}
 			public void set(boolean val) {
 				Utils.setprefb("showContainerFullness", val);
@@ -641,6 +654,16 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 16));
+		rightColumn = add(showWorkstationStageCheckBox = new CheckBox("Show Workstation Progress"){
+			{a = (Utils.getprefb("showWorkstationStage", true));}
+			public void set(boolean val) {
+				Utils.setprefb("showWorkstationStage", val);
+				showWorkstationStage = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				a = val;
+			}
+		}, rightColumn.pos("bl").adds(0, 6));
 
 		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 30).x(101));
 		setTooltipsForInterfaceSettingsStuff();
@@ -724,10 +747,6 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Toggle Critter Circle Auras", GameUI.kb_toggleCritterAuras, y);
 			//Highlights etc
 			y = addbtn(cont, "Green Party Members", GameUI.kb_togglePartyMembersHighlight, y+6);
-			y = addbtn(cont, "Show DFrame Stage", GameUI.kb_toggleDryingFrameHighlight, y);
-			y = addbtn(cont, "Show Garden Pot Stage", GameUI.kb_toggleGardenPotHighlight, y);
-			y = addbtn(cont, "Show Cheese Rack Stage", GameUI.kb_toggleCheeseRackHighlight, y);
-			y = addbtn(cont, "Show Leather Tub Stage", GameUI.kb_toggleLeatherTubHighlight, y);
 			y = addbtn(cont, "Display Vehicle Speed", GameUI.kb_toggleVehicleSpeed, y);
 
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
@@ -1769,6 +1788,7 @@ public class OptWnd extends Window {
 
 	private void setTooltipsForInterfaceSettingsStuff() {
 		enableCornerFPSCheckBox.tooltip = RichText.render("Enabling this will display the current FPS in the top-right corner of the screen.", 300);
+		enableAdvancedMouseInfoCheckBox.tooltip = RichText.render("Holding Ctrl+Shift will show the Resource Path of the object or tile you are mousing over. Enabling this option will show additional information.\n$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
 		granularityPositionLabel.tooltip = RichText.render("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
 		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in. \n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
@@ -1777,6 +1797,10 @@ public class OptWnd extends Window {
 		toggleGobCollisionBoxesDisplayCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
 		toggleBeastDangerRadiiCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
 		toggleCritterAurasCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
+		showContainerFullnessCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Container Objects, to indicate their fullness:" +
+				"\n$col[185,0,0]{Red: }$col[255,255,255]{Full}\n$col[224,213,0]{Yellow: }$col[255,255,255]{Contains items}\n$col[0,185,0]{Green: }$col[255,255,255]{Empty}", 300);
+		showWorkstationStageCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Workstation Objects (Drying Frame, Tanning Tub, Garden Pot, Cheese Rack), to indicate their progress stage:" +
+				"\n$col[185,0,0]{Red: }$col[255,255,255]{Finished}\n$col[224,213,0]{Yellow: }$col[255,255,255]{In progress}\n$col[0,185,0]{Green: }$col[255,255,255]{Ready for use}\n$col[160,160,160]{Gray: }$col[255,255,255]{Unprepared}", 300);
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){

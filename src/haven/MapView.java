@@ -26,15 +26,15 @@
 
 package haven;
 
-import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.*;
 import java.util.function.*;
-import java.lang.ref.*;
 import java.lang.reflect.*;
+import java.util.stream.Collectors;
+
 import haven.render.*;
 import haven.MCache.OverlayInfo;
 import haven.render.sl.Uniform;
@@ -47,6 +47,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public final Glob glob;
     private int view = 2;
     private Collection<Delayed> delayed = new LinkedList<Delayed>();
+	private Collection<DelayedB> delayedB = new LinkedList<DelayedB>();
     private Collection<Delayed> delayed2 = new LinkedList<Delayed>();
     public Camera camera = restorecam();
     private Loader.Future<Plob> placing = null;
@@ -57,10 +58,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public static double plobpgran = Utils.getprefd("plobpgran", 8);
     public static double plobagran = Utils.getprefd("plobagran", 12);
     private static final Map<String, Class<? extends Camera>> camtypes = new HashMap<String, Class<? extends Camera>>();
+
+	private long lastmmhittest = System.currentTimeMillis();
+	private Coord lasthittestc = Coord.z;
     
     public interface Delayed {
 	public void run(GOut g);
     }
+
+	public interface DelayedB {
+		public void run();
+	}
 
     public interface Grabber {
 	boolean mmousedown(Coord mc, int button);
@@ -1752,6 +1760,19 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
 
+	public void delayB(DelayedB d) {
+		synchronized(delayedB) {
+			delayedB.add(d);
+		}
+	}
+	protected void undelayB(Collection<DelayedB> list) {
+		synchronized(list) {
+			for(DelayedB d : list)
+				d.run();
+			list.clear();
+		}
+	}
+
     static class PolText {
 	Text text; double tm;
 	PolText(Text text, double tm) {this.text = text; this.tm = tm;}
@@ -1888,6 +1909,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if(camload != null)
 		throw(new Loading(camload));
 	    undelay(delayed, g);
+		undelayB(delayedB);
 	    super.draw(g);
 	    undelay(delayed2, g);
 	    poldraw(g);
@@ -2175,7 +2197,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	protected void nohit(Coord pc) {}
     }
 
-    public abstract class Hittest {
+    public abstract class Hittest implements DelayedB {
 	private final Coord pc;
 	private Coord2d mapcl;
 	private ClickData objcl;
@@ -2366,6 +2388,119 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if((placing.lastmc == null) || !placing.lastmc.equals(c)) {
 		placing.new Adjust(c, ui.modflags()).run();
 	    }
+	}  else if (ui.modshift && ui.modctrl) {
+		long now = System.currentTimeMillis();
+		if ((now - lastmmhittest > 500 || lasthittestc.dist(c) > tilesz.x) && gameui().hand.isEmpty()) {
+			lastmmhittest = now;
+			lasthittestc = c;
+
+			delayB(new Hittest(c) {
+				@Override
+				protected void hit(Coord pc, Coord2d mc, ClickData inf) {
+					if (inf != null) {
+						Long gobid = new Long((Integer) inf.clickargs()[1]);
+						Gob gob = glob.oc.getgob(gobid);
+						if (gob != null) {
+							try {
+								Resource res = gob.getres();
+
+								String ols = null;
+								String ols2 = null;
+								String poses = null;
+								String gattrs = null;
+								String equip = null;
+								String peekrbuf = null;
+								String plantinfo = null;
+								try {
+									ols = gob.ols.stream().map(ol -> ol.res.get().name).collect(Collectors.joining(", "));
+								} catch (Exception ignored) { }
+
+								try {
+									ols2 = gob.ols.stream().map(ol -> glob.sess.getres(haven.Utils.uint16d(ol.sdt.rbuf, 0)).get().basename() + " State: " + ol.sdt.peekrbuf(0)).collect(Collectors.joining(", "));
+								} catch (Exception ignored) { }
+								try {
+									gattrs = gob.attr.keySet().stream().map(Class::getName).collect(Collectors.joining(", ")).replace("$", ".");
+								} catch (Exception ignored) { }
+								//Composites:
+								if (gob.isComposite) {
+									try {
+										if (gob.getattr(Drawable.class) != null) {
+											poses = ((Composite)gob.getattr(Drawable.class)).poses.stream().collect(Collectors.joining(", "));
+										}
+									} catch (Exception ignored) { }
+								}
+
+								for (GAttrib g : gob.attr.values()) {
+									if (g instanceof Drawable) {
+										if (g instanceof ResDrawable) {
+											ResDrawable resDrawable = gob.getattr(ResDrawable.class);
+												peekrbuf = "" + resDrawable.sdt.peekrbuf(0);
+
+										} else if (g instanceof Composite) {
+											Composite c = (Composite) g;
+											StringBuilder sb = new StringBuilder();
+											if (c.comp.cequ.size() > 0) {
+												sb.append("$col[255,200,0]{Wearing:} \n");
+												for (Composited.ED item : c.comp.cequ) {
+													sb.append("   "+item.res.res.get().basename()+" \n");
+												}
+											}
+											if (c.comp.cmod.size() > 0) {
+												sb.append("$col[255,200,0]{Mod:} \n");
+												for (Composited.MD item : c.comp.cmod) {
+													sb.append("   "+item.mod.get().basename()+" \n");
+												}
+											}
+											equip = sb.toString();
+										}
+									}
+								}
+								if (res != null) {
+									String tt;
+									if (OptWnd.advancedMouseInfo)
+										tt = "Object Resource Path: " + "$col[255,200,0]{" + res.name + "}" +
+												" \nID: " + gob.id +
+												" \nRC: " + gob.rc.floor() +
+												String.format(" \nAngle: %.2f (%.2f\u00B0)", gob.a, 360.*(gob.a/(2.*Math.PI))) +
+												(ols != null ? " \nOls: $col[192,192,255]{" + ols + "}" : "") +
+												(ols2 != null ? " \nOls exp: $col[192,192,255]{" + ols2 + "}" : "") +
+												(poses != null ? " \nPoses: $col[192,192,255]{" + poses + "}" : "") +
+												(gattrs != null ? " \nGattrs: $col[192,192,255]{" + gattrs + "}" : "") +
+												(peekrbuf != null ? " \nPeekrbuf: $col[192,192,255]{" + peekrbuf + "}" : "") +
+												(equip != null ? " \n$col[255,255,192]{" + equip + "}" : "");
+									else
+										tt = "Object Resource Path: " + "$col[255,200,0]{" + res.name + "}";
+									tooltip = RichText.render(tt, 400);
+									return;
+								}
+							} catch (Loading e) {
+							}
+						}
+					} else {
+						MCache map = ui.sess.glob.map;
+						int t = map.gettile(mc.floor(tilesz));
+						Resource res = map.tilesetr(t);
+						if (res != null) {
+							if (OptWnd.advancedMouseInfo)
+								tooltip = RichText.render("Tile Resource Path: " + "$col[255,200,0]{" + res.name + "}" +
+									" \nMC: " + mc.floor(), 400);
+							else
+								tooltip = RichText.render("Tile Resource Path: " + "$col[255,200,0]{" + res.name + "}", 400);
+							return;
+						}
+					}
+					tooltip = null;
+				}
+
+				protected void nohit(Coord pc) {
+					if (OptWnd.advancedMouseInfo)
+						System.out.println(pc);
+					tooltip = null;
+				}
+			});
+		}
+	} else if (tooltip != null) {
+		tooltip = null;
 	}
     }
     
