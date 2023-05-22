@@ -84,7 +84,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean crimeon = false;
 	public static boolean trackon = false;
 	public static boolean partyperm = false;
-	public static boolean partyMembersHighlight = true;
+
 	public static boolean vehicleSpeed = true;
 	public long lastopponent = -1;
 
@@ -1444,7 +1444,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
 	public static KeyBinding kb_toggleDangerRadii  = KeyBinding.get("toggleDangerRadii",  KeyMatch.nil);
 	public static KeyBinding kb_toggleCritterAuras  = KeyBinding.get("toggleCritterAuras ",  KeyMatch.nil);
-	public static KeyBinding kb_togglePartyMembersHighlight  = KeyBinding.get("togglePartyMembersHighlight",  KeyMatch.nil);
 	public static KeyBinding kb_toggleVehicleSpeed  = KeyBinding.get("toggleVehicleSpeed",  KeyMatch.nil);
 
 
@@ -1509,9 +1508,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if (kb_toggleCritterAuras.key().match(ev)) {
 			OptWnd.toggleCritterAurasCheckBox.set(!OptWnd.critterAuraEnabled);
 			return true;
-		} else if (kb_togglePartyMembersHighlight.key().match(ev)) {
-			partyMembersHighlight = !partyMembersHighlight;
-			msg("Party Members Highlight " + (partyMembersHighlight ? "enabled" : "disabled"));
 		} else if (kb_toggleVehicleSpeed.key().match(ev)) {
 //			vehicleSpeed = !vehicleSpeed;
 //			msg("VehicleSpeed display " + (vehicleSpeed ? "enabled" : "disabled"));

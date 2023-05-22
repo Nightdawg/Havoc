@@ -747,8 +747,7 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Toggle Animal Danger Radii", GameUI.kb_toggleDangerRadii, y+6);
 			y = addbtn(cont, "Toggle Critter Circle Auras", GameUI.kb_toggleCritterAuras, y);
 			//Highlights etc
-			y = addbtn(cont, "Green Party Members", GameUI.kb_togglePartyMembersHighlight, y+6);
-			y = addbtn(cont, "Display Vehicle Speed", GameUI.kb_toggleVehicleSpeed, y);
+			y = addbtn(cont, "Display Vehicle Speed", GameUI.kb_toggleVehicleSpeed, y+6);
 
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			prev = adda(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
@@ -1251,7 +1250,9 @@ public class OptWnd extends Window {
 	private static HSlider combatUIBottomPanelHeightSlider;
 	public static CheckBox toggleGobDamageInfoCheckBox;
 	public static CheckBox toggleAutoPeaceCheckbox;
+	public static CheckBox partyMembersHighlightCheckBox;
 	private static Button damageInfoClearButton;
+	public static boolean partyMembersHighlight = Utils.getprefb("partyMembersHighlight", false);
 	public class NDCombatSettingsPanel extends Panel {
 		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
 			return (cont.addhl(new Coord(0, y), cont.sz.x,
@@ -1341,6 +1342,16 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, scroll.pos("bl").adds(2, -6));
+			prev = add(partyMembersHighlightCheckBox = new CheckBox("Highlight Party Members"){
+				{a = Utils.getprefb("partyMembersHighlight", false);}
+				public void set(boolean val) {
+					Utils.setprefb("partyMembersHighlight", val);
+					partyMembersHighlight = val;
+					if (gameui() != null && gameui().map != null && gameui().map.partyHighlight != null)
+						gameui().map.partyHighlight.update();
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
 			prev = add(toggleGobDamageInfoCheckBox = new CheckBox("Show damage info:"){
 				{a = Utils.getprefb("GobDamageInfoToggled", true);}
 				public void set(boolean val) {

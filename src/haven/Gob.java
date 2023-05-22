@@ -35,7 +35,6 @@ import haven.render.*;
 import haven.res.gfx.fx.bprad.BPRad;
 import haven.res.gfx.fx.flcir.FLCir;
 
-import static haven.Partyview.MEMBER_OL_COLOR;
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
     public Coord2d rc;
@@ -795,11 +794,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	    if(a instanceof RenderTree.Node && !a.skipRender)
 		slot.add((RenderTree.Node)a);
 	}
-		synchronized (glob.party.memb) {
-			if (GameUI.partyMembersHighlight && glob.party.memb.size() > 1 && glob.party.memb.get(id) != null && getattr(GobHighlightParty.class) == null) {
-				setattr(new GobHighlightParty(this, MEMBER_OL_COLOR));
-			}
-		}
 	slots.add(slot);
     }
 
@@ -1032,9 +1026,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (h != null) {
 			delattr(h.getClass());
 		}
-		try {
-			System.out.println("highlighting " + this.getres().name + " id: " + id);
-		} catch (Loading ignored) {} catch (Exception ignored) {}
 		h = new GobHighlight(this, c);
 		setattr(h);
 		h.start();

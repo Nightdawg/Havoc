@@ -30,7 +30,6 @@ import haven.Party.Member;
 
 import java.util.*;
 import java.awt.Color;
-import java.util.Map.Entry;
 
 public class Partyview extends Widget {
     public static final int marg = UI.scale(4);
@@ -39,11 +38,6 @@ public class Partyview extends Widget {
     private final Button leave;
     private Map<Member, MemberView> avs = Collections.emptyMap();
     private Map<Long, Member> om = null;
-
-	//For overlay
-	public static final Color MEMBER_OL_COLOR = new Color(0, 255, 0, 128);
-	public static final Color PLAYER_OL_COLOR = new Color(0, 235, 255, 128);
-
     @RName("pv")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
@@ -105,12 +99,6 @@ public class Partyview extends Widget {
 	    Map<Member, MemberView> old = new HashMap<>(this.avs);
 	    Map<Member, MemberView> avs = null;
 	    for(Member m : party.memb.values()) {
-			Gob gob = m.getgob();
-			if (gob != null) {
-				if (GameUI.partyMembersHighlight && party.memb.size() > 1 && gob.getattr(GobHighlightParty.class) == null) {
-					highlight(gob, MEMBER_OL_COLOR);
-				}
-			}
 		if(m.gobid == ign)
 		    continue;
 		MemberView ava = old.remove(m);
@@ -122,8 +110,6 @@ public class Partyview extends Widget {
 	    }
 	    for(MemberView ava : old.values())
 		ava.reqdestroy();
-		old.forEach((k, v) -> unhighlight(k.getgob()));
-		if(party.memb.size() < 2){unhighlight(ui.sess.glob.oc.getgob(gameui().plid));}
 	    if(avs == null)
 		avs = Collections.emptyMap();
 	    List<Member> order = new ArrayList<>(avs.keySet());
@@ -149,7 +135,6 @@ public class Partyview extends Widget {
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	if(sender == leave) {
-
 	    wdgmsg("leave");
 	    return;
 	}
@@ -188,18 +173,6 @@ public class Partyview extends Widget {
 	    super.uimsg(msg, args);
 	}
     }
-
-	private void highlight(Gob gob, Color color) {
-		if (gob == null){return;}
-		gob.setattr(new GobHighlightParty(gob, color));
-	}
-
-	private void unhighlight(Gob gob) {
-		if (gob == null)
-			return;
-		gob.delattr(GobHighlightParty.class);
-	}
-
     public void dispose() {
 	/* XXX: Arguably, glob.party should be removed entirely, but
 	 * until then, at least clear it when logging out. */
