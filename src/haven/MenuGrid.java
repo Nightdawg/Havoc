@@ -542,11 +542,11 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	}
 
 	private boolean togglestuff = true;
+	private boolean toggleStupidStuff = true;
 	public static boolean toggleTrackingOnLogin = Utils.getprefb("toggleTrackingOnLogin", false);
 	public static boolean toggleSwimmingOnLogin = Utils.getprefb("toggleSwimmingOnLogin", false);
 	public static boolean toggleCriminalActsOnLogin = Utils.getprefb("toggleCriminalActsOnLogin", false);
 	public static boolean toggleSiegeEnginesOnLogin = Utils.getprefb("toggleSiegeEnginesOnLogin", false);
-
     public void tick(double dt) {
 	if(recons)
 	    updlayout();
@@ -567,6 +567,11 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 				}
 				togglestuff = false;
 			}
+		}
+		if (toggleStupidStuff) { // ND: Unlike swim/crime/tracking, these are saved serverside. I toggle them automatically here once, then I fix them in GameUI
+			toggleStupidStuff = false;
+			wdgmsg("act", "permshare");
+			wdgmsg("act", "itemcomb");
 		}
     }
 

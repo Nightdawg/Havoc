@@ -1604,6 +1604,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 
     private double lastmsgsfx = 0;
+
+	public static boolean togglePartyPermissionsOnLogin = Utils.getprefb("togglePartyPermissionsOnLogin", false);
+	private boolean partyPermsOnLoginToggled = false;
+
+	public static boolean toggleItemStackingOnLogin = Utils.getprefb("toggleItemStackingOnLogin", false);
+	private boolean itemStackingOnLoginToggled = false;
     public void msg(String msg) {
 		if (msg.startsWith("Swimming is now turned")) {
 			togglebuff(msg, Bufflist.buffswim);
@@ -1613,6 +1619,20 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			togglebuff(msg, Bufflist.buffcrime);
 		} else if (msg.startsWith("Party permissions are now")) {
 			togglebuff(msg, Bufflist.partyperm);
+			if (!partyPermsOnLoginToggled){
+				if((togglePartyPermissionsOnLogin && msg.endsWith("off.")) || (!togglePartyPermissionsOnLogin && msg.endsWith("on."))){
+					wdgmsg("act", "permshare");
+				}
+				partyPermsOnLoginToggled = true;
+			}
+		} else if (msg.startsWith("Stacking is now")) {
+			togglebuff(msg, Bufflist.itemstacking);
+			if (!itemStackingOnLoginToggled){
+				if((toggleItemStackingOnLogin && msg.endsWith("off.")) || (!toggleItemStackingOnLogin && msg.endsWith("on."))){
+					wdgmsg("act", "itemcomb");
+				}
+				itemStackingOnLoginToggled = true;
+			}
 		}
 	msg(msg, Color.WHITE, Color.WHITE);
 	double now = Utils.rtime();

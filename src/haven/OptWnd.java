@@ -1184,6 +1184,22 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
+			prev = add(new CheckBox("Party Permissions"){
+				{a = Utils.getprefb("togglePartyPermissionsOnLogin", false);}
+				public void set(boolean val) {
+					Utils.setprefb("togglePartyPermissionsOnLogin", val);
+					GameUI.togglePartyPermissionsOnLogin = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			prev = add(new CheckBox("Automatic Item Stacking"){
+				{a = Utils.getprefb("toggleItemStackingOnLogin", false);}
+				public void set(boolean val) {
+					Utils.setprefb("toggleItemStackingOnLogin", val);
+					GameUI.toggleItemStackingOnLogin = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
 			prev = add(defaultSpeedLabel = new Label("Default Speed:"), prev.pos("bl").adds(0, 10).x(0));
 			add(new Dropbox<String>(runSpeeds.size(), runSpeeds) {
 					{
