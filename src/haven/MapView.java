@@ -2538,6 +2538,27 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public boolean drop(final Coord cc, Coord ul) {
 	new Hittest(cc) {
 	    public void hit(Coord pc, Coord2d mc, ClickData inf) {
+			if(GameUI.preventDropAnywhere || GameUI.preventWaterDrop && !ui.modctrl) {
+				boolean nodropping = false;
+				if (GameUI.preventDropAnywhere) {
+					nodropping = true;
+				} else {
+					int t = glob.map.gettile(player().rc.floor(tilesz));
+					Resource res = glob.map.tilesetr(t);
+					if (res != null && (
+							res.name.equals("gfx/tiles/water")
+									|| res.name.equals("gfx/tiles/deep"))
+							|| res.name.equals("gfx/tiles/owater")
+							|| res.name.equals("gfx/tiles/odeep")
+							|| res.name.equals("gfx/tiles/odeeper")) {
+						nodropping = true;
+					}
+				}
+				if (nodropping) {
+					wdgmsg("click", pc, mc.floor(posres), 1, 0);
+					return;
+				}
+			}
 		wdgmsg("drop", pc, mc.floor(posres), ui.modflags());
 	    }
 	}.run();
