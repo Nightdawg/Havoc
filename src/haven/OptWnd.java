@@ -1267,8 +1267,10 @@ public class OptWnd extends Window {
 	public static CheckBox toggleGobDamageInfoCheckBox;
 	public static CheckBox toggleAutoPeaceCheckbox;
 	public static CheckBox partyMembersHighlightCheckBox;
+	public static CheckBox partyMembersCirclesCheckBox;
 	private static Button damageInfoClearButton;
 	public static boolean partyMembersHighlight = Utils.getprefb("partyMembersHighlight", false);
+	public static boolean partyMembersCircles = Utils.getprefb("partyMembersCircles", true);
 	public class NDCombatSettingsPanel extends Panel {
 		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
 			return (cont.addhl(new Coord(0, y), cont.sz.x,
@@ -1365,6 +1367,16 @@ public class OptWnd extends Window {
 					partyMembersHighlight = val;
 					if (gameui() != null && gameui().map != null && gameui().map.partyHighlight != null)
 						gameui().map.partyHighlight.update();
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			prev = add(partyMembersCirclesCheckBox = new CheckBox("Draw Circles Under Party Members"){
+				{a = Utils.getprefb("partyMembersCircles", true);}
+				public void set(boolean val) {
+					Utils.setprefb("partyMembersCircles", val);
+					partyMembersCircles = val;
+					if (gameui() != null && gameui().map != null && gameui().map.partyCircles != null)
+						gameui().map.partyCircles.update();
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));

@@ -1599,9 +1599,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (getres() != null) {
 			String resourceName = getres().name;
 			if (resourceName.startsWith("gfx/kritter")) {
-				if (knocked != null && knocked != true) {
+				if (knocked != null && knocked == false) {
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
 						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+					}
+				} else if (knocked != null && knocked == true) {
+					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
+						setDangerRadii(false);
 					}
 				}
 				else if (isComposite) { // ND: Retarded workaround. Some of these stupid animals have no animation when STANDING STILL. They're not loading their fucking knocked status??? HOW? It's like they're not an instance of composite, ONLY when standing still.
@@ -1616,13 +1620,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void toggleCritterAuras() {
 		if (getres() != null) {
 			String resourceName = getres().name;
-				if (knocked != null && !knocked) {
+				if (knocked != null && knocked == false) {
 					if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::matches)) {
 						setCritterAura(OptWnd.critterAuraEnabled, false);
 					} else if (resourceName.matches(".*(rabbit|bunny)$")) {
 						setCritterAura(OptWnd.critterAuraEnabled, true);
 					}
-				} else if (!isComposite) { //ND: This also works for critters that can't have a knocked status, like insects.
+				} else if (knocked != null && knocked == true) {
+				if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::matches)) {
+					setCritterAura(false, false);
+				} else if (resourceName.matches(".*(rabbit|bunny)$")) {
+					setCritterAura(false, true);
+				}
+			}
+				else if (!isComposite) { //ND: This also works for critters that can't have a knocked status, like insects.
 					if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::matches)) {
 						setCritterAura(OptWnd.critterAuraEnabled, false);
 					} else if (resourceName.matches(".*(rabbit|bunny)$")) {

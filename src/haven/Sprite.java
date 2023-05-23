@@ -26,16 +26,16 @@
 
 package haven;
 
-import java.awt.image.BufferedImage;
-import java.awt.Graphics;
+import java.awt.*;
 import java.util.*;
-import java.util.function.*;
-import java.lang.reflect.Constructor;
+import java.util.List;
+
 import haven.render.*;
 
 public abstract class Sprite implements RenderTree.Node {
     public final Resource res;
     public final Owner owner;
+	public Color partyMemberColor;
     public static List<Factory> factories = new LinkedList<Factory>();
     static {
 	factories.add(SpriteLink.sfact);

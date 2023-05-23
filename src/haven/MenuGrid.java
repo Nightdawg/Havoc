@@ -33,7 +33,6 @@ import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class MenuGrid extends Widget implements KeyBinding.Bindable {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
@@ -541,8 +540,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		}
 	}
 
-	private boolean togglestuff = true;
-	private boolean toggleStupidStuff = true;
+	public static boolean toggleStuff = true;
+	public boolean toggleStupidStuff = true;
 	public static boolean toggleTrackingOnLogin = Utils.getprefb("toggleTrackingOnLogin", false);
 	public static boolean toggleSwimmingOnLogin = Utils.getprefb("toggleSwimmingOnLogin", false);
 	public static boolean toggleCriminalActsOnLogin = Utils.getprefb("toggleCriminalActsOnLogin", false);
@@ -550,7 +549,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
     public void tick(double dt) {
 	if(recons)
 	    updlayout();
-		if (togglestuff) {
+		if (toggleStuff) {
 			GameUI gui = getparent(GameUI.class);
 			if (gui != null) {
 				if (toggleTrackingOnLogin && !GameUI.trackon){
@@ -565,13 +564,13 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 				if (toggleSiegeEnginesOnLogin){
 					wdgmsg("act", "siegeptr");
 				}
-				togglestuff = false;
+				toggleStuff = false;
 			}
 		}
 		if (toggleStupidStuff) { // ND: Unlike swim/crime/tracking, these are saved serverside. I toggle them automatically here once, then I fix them in GameUI
-			toggleStupidStuff = false;
 			wdgmsg("act", "permshare");
 			wdgmsg("act", "itemcomb");
+			toggleStupidStuff = false;
 		}
     }
 

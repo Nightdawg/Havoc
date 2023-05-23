@@ -83,7 +83,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean swimon = false;
 	public static boolean crimeon = false;
 	public static boolean trackon = false;
-	public static boolean partyperm = false;
 
 	public static boolean vehicleSpeed = true;
 	public long lastopponent = -1;
@@ -795,9 +794,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 		if (swimon) {
 			buffs.addchild(new Buff(Bufflist.buffswim.indir()));
-		}
-		if (partyperm) {
-			buffs.addchild(new Buff(Bufflist.partyperm.indir()));
 		}
 	} else if(place == "menu") {
 	    menu = (MenuGrid)brpanel.add(child, menugridc);
@@ -1611,6 +1607,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean toggleItemStackingOnLogin = Utils.getprefb("toggleItemStackingOnLogin", false);
 	private boolean itemStackingOnLoginToggled = false;
     public void msg(String msg) {
+		boolean noMsgTho = false;
 		if (msg.startsWith("Swimming is now turned")) {
 			togglebuff(msg, Bufflist.buffswim);
 		} else if (msg.startsWith("Tracking is now turned")) {
@@ -1620,21 +1617,26 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if (msg.startsWith("Party permissions are now")) {
 			togglebuff(msg, Bufflist.partyperm);
 			if (!partyPermsOnLoginToggled){
+				noMsgTho = true;
 				if((togglePartyPermissionsOnLogin && msg.endsWith("off.")) || (!togglePartyPermissionsOnLogin && msg.endsWith("on."))){
 					wdgmsg("act", "permshare");
+				} else {
+					partyPermsOnLoginToggled = true;
 				}
-				partyPermsOnLoginToggled = true;
 			}
 		} else if (msg.startsWith("Stacking is now")) {
 			togglebuff(msg, Bufflist.itemstacking);
 			if (!itemStackingOnLoginToggled){
+				noMsgTho = true;
 				if((toggleItemStackingOnLogin && msg.endsWith("off.")) || (!toggleItemStackingOnLogin && msg.endsWith("on."))){
 					wdgmsg("act", "itemcomb");
+				} else {
+					itemStackingOnLoginToggled = true;
 				}
-				itemStackingOnLoginToggled = true;
 			}
 		}
-	msg(msg, Color.WHITE, Color.WHITE);
+	if (!noMsgTho && partyPermsOnLoginToggled && itemStackingOnLoginToggled)
+		msg(msg, Color.WHITE, Color.WHITE);
 	double now = Utils.rtime();
 	if(now - lastmsgsfx > 0.1) {
 	    ui.sfx(RootWidget.msgsfx);

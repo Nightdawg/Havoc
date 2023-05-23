@@ -62,6 +62,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	private long lastmmhittest = System.currentTimeMillis();
 	private Coord lasthittestc = Coord.z;
 	public final PartyHighlight partyHighlight;
+	public final PartyCircles partyCircles;
     
     public interface Delayed {
 	public void run(GOut g);
@@ -751,6 +752,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	if (Gob.showCollisionBoxes) updatePlobDrawable();
 	if (Gob.hideObjects) updatePlobDrawable();
 	this.partyHighlight = new PartyHighlight(glob.party, plgob);
+	this.partyCircles = new PartyCircles(glob.party, plgob);
     }
 
 	private void updatePlobDrawable() {
@@ -1975,6 +1977,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    clickmap.tick();
 	}
 	partyHighlight.update();
+	partyCircles.update();
 	Loader.Future<Plob> placing = this.placing;
 	if((placing != null) && placing.done())
 	    placing.get().ctick(dt);
