@@ -35,12 +35,14 @@ import java.util.function.*;
 import java.lang.reflect.*;
 import java.util.stream.Collectors;
 
+import haven.pathfinder.PFListener;
+import haven.pathfinder.Pathfinder;
 import haven.render.*;
 import haven.MCache.OverlayInfo;
 import haven.render.sl.Uniform;
 import haven.render.sl.Type;
 
-public class MapView extends PView implements DTarget, Console.Directory {
+public class MapView extends PView implements DTarget, Console.Directory, PFListener {
     public static boolean clickdb = false;
     public long plgob = -1;
     public Coord2d cc;
@@ -58,12 +60,21 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public static double plobpgran = Utils.getprefd("plobpgran", 8);
     public static double plobagran = Utils.getprefd("plobagran", 12);
     private static final Map<String, Class<? extends Camera>> camtypes = new HashMap<String, Class<? extends Camera>>();
+	public Pathfinder pf;
+	public Thread pfthread;
+	private static final int MAX_TILE_RANGE = 40;
+
 
 	private long lastmmhittest = System.currentTimeMillis();
 	private Coord lasthittestc = Coord.z;
 	public final PartyHighlight partyHighlight;
-    
-    public interface Delayed {
+
+	public void pfDone(final Pathfinder thread) {
+		if (haven.pathfinder.Map.DEBUG_TIMINGS)
+			System.out.println("-= PF DONE =-");
+	}
+
+	public interface Delayed {
 	public void run(GOut g);
     }
 
@@ -2860,6 +2871,79 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	public void snapCameraEast() {
 		camera.snap(Direction.EAST);
+	}
+
+	public void pfLeftClick(Coord mc, String action) {
+		if(!Gob.showCollisionBoxes){
+			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(true);
+		}
+		System.out.println("Pathfinding to coord + " + mc);
+		try{
+		Gob player = player();
+		if (player == null)
+			return;
+		if (mc.dist(player.rc.floor()) > 11 * MAX_TILE_RANGE) {
+			System.out.println("mc dist; " + mc.dist(player.rc.floor()));
+			Coord between = mc.sub(player.rc.floor());
+			double mul = 11 * MAX_TILE_RANGE / mc.dist(player.rc.floor());
+			mc = player.rc.floor().add(between.mul(mul));
+		}
+		synchronized (Pathfinder.class) {
+			if (pf != null) {
+				pf.terminate = true;
+				pfthread.interrupt();
+				// cancel movement
+				if (player.getattr(Moving.class) != null)
+					wdgmsg("gk", 27);
+			}
+
+			Coord src = player.rc.floor();
+			int gcx = haven.pathfinder.Map.origin - (src.x - mc.x);
+			int gcy = haven.pathfinder.Map.origin - (src.y - mc.y);
+			if (gcx < 0 || gcx >= haven.pathfinder.Map.sz || gcy < 0 || gcy >= haven.pathfinder.Map.sz)
+				return;
+
+			pf = new Pathfinder(this, new Coord(gcx, gcy), action);
+			pf.addListener(this);
+			pfthread = new Thread(pf, "Pathfinder");
+			pfthread.start();
+		}
+		} catch (Exception e){
+			e.getMessage();
+		}
+	}
+
+	public void pfRightClick(Gob gob, int meshid, int clickb, int modflags, String action) {
+		if (!Gob.showCollisionBoxes) {
+			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(true);
+		}
+		Gob player = player();
+		if (player == null)
+			return;
+		if (gob.rc.dist(player.rc) > 11 * MAX_TILE_RANGE) {
+			pfLeftClick(gob.rc.floor(), null);
+			return;
+		}
+		synchronized (Pathfinder.class) {
+			if (pf != null) {
+				pf.terminate = true;
+				pfthread.interrupt();
+				// cancel movement
+				if (player.getattr(Moving.class) != null)
+					wdgmsg("gk", 27);
+			}
+
+			Coord src = player.rc.floor();
+			int gcx = haven.pathfinder.Map.origin - (src.x - gob.rc.floor().x);
+			int gcy = haven.pathfinder.Map.origin - (src.y - gob.rc.floor().y);
+			if (gcx < 0 || gcx >= haven.pathfinder.Map.sz || gcy < 0 || gcy >= haven.pathfinder.Map.sz)
+				return;
+
+			pf = new Pathfinder(this, new Coord(gcx, gcy), gob, meshid, clickb, modflags, action);
+			pf.addListener(this);
+			pfthread = new Thread(pf, "Pathfinder");
+			pfthread.start();
+		}
 	}
 
 }

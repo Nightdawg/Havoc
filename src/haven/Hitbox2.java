@@ -157,7 +157,6 @@ public class Hitbox2 extends SlottedNode implements Rendered {
 						}
 					}
 				}
-
 				if(!polygons.isEmpty()) {
 					List<Float> vertices = new LinkedList<>();
 

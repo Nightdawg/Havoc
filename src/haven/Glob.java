@@ -27,6 +27,7 @@
 package haven;
 
 import java.awt.image.BufferedImage;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.awt.Color;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,6 +37,7 @@ import haven.render.*;
 import haven.render.sl.*;
 
 public class Glob {
+	public WeakReference<UI> ui;
     public final OCache oc = new OCache(this);
     public final MCache map;
     public final Session sess;
