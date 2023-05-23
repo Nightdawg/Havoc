@@ -52,11 +52,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     private final Collection<SetupMod> setupmods = new ArrayList<>();
     private final LinkedList<Runnable> deferred = new LinkedList<>();
     private Loader.Future<?> deferral = null;
-
 	private GobDamageInfo damage;
-
 	public StatusUpdates status = new StatusUpdates();
-	private CollisionBoxGobSprite<Hitbox> collisionBox = null;
+	public CollisionBoxGobSprite<Hitbox> collisionBox = null;
 	private CollisionBoxGobSprite<Hitbox2> collisionBox2 = null;
 	private CollisionBoxGobSprite<HitboxFilled> hidingBox = null;
 	private GobGrowthInfo growthInfo;
@@ -862,6 +860,30 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	    return(d.getpose());
 	return(null);
     }
+
+	public boolean isplayer(GameUI gui) {
+		try {
+			return gui.map.plgob == id;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean isMoving() {
+		return (getattr(Moving.class) != null);
+	}
+
+	public LinMove getLinMove() {
+		LinMove lm = getattr(LinMove.class);
+		if (lm != null)
+			return lm;
+
+		Following follow = getattr(Following.class);
+		if (follow != null)
+			return follow.tgt().getattr(LinMove.class);
+
+		return null;
+	}
 
     private static final ClassResolver<Gob> ctxr = new ClassResolver<Gob>()
 	.add(Gob.class, g -> g)

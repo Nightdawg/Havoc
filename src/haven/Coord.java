@@ -272,4 +272,8 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
 	return(of(Math.max(this.x, x), Math.max(this.y, y)));
     }
     public Coord max(Coord c) {return(max(c.x, c.y));}
+
+	public Coord rotate(double angle) {
+		return new Coord((int) (x * Math.cos(angle) - y * Math.sin(angle)), (int) (x * Math.sin(angle) + y * Math.cos(angle)));
+	}
 }

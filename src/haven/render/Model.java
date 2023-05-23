@@ -27,6 +27,8 @@
 package haven.render;
 
 import java.util.function.*;
+
+import haven.Coord;
 import haven.Disposable;
 
 public class Model implements Rendered, RenderTree.Node, Disposable {
@@ -37,6 +39,7 @@ public class Model implements Rendered, RenderTree.Node, Disposable {
     public final int ninst;
     public Disposable ro;
     public Object desc;
+	public BoundingBox bbox;
 
     public enum Mode {
 	POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN
@@ -138,4 +141,13 @@ public class Model implements Rendered, RenderTree.Node, Disposable {
 	this.desc = desc;
 	return(this);
     }
+
+	public static class BoundingBox {
+		public Coord a;
+		public Coord b;
+		public BoundingBox(Coord a, Coord b) {
+			this.a = a;
+			this.b = b;
+		}
+	}
 }

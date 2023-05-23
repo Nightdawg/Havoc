@@ -1494,6 +1494,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			return(true);
 		} else if (kb_aggroLastTarget.key().match(ev)) {
 			this.runActionThread(new Thread(new AttackOpponent(this, this.lastopponent), "Reaggro"));
+			this.map.pfLeftClick(new Coord(-11000, -11000), null);
 			return(true);
 		} else if(kb_peaceCurrentTarget.key().match(ev)) {
 			peaceCurrentTarget();

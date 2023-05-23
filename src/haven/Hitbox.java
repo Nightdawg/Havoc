@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class Hitbox extends SlottedNode implements Rendered {
 	private static final VertexArray.Layout LAYOUT = new VertexArray.Layout(new VertexArray.Layout.Input(Homo3D.vertex, new VectorFormat(3, NumberFormat.FLOAT32), 0, 0, 12));
-	private Model model;
+	public Model model;
 	private final Gob gob;
 	private static final Map<Resource, Model> MODEL_CACHE = new HashMap<>();
 	private static final float Z = 0.1f;
@@ -124,7 +124,12 @@ public class Hitbox extends SlottedNode implements Rendered {
 	}
 
 	private static Model getModel(Gob gob) {
+		if(gob.getres() != null){
+		}
 		Model model;
+
+		Coord bboxa = new Coord(0,0);
+		Coord bboxb = new Coord(0,0);
 		Resource res = getResource(gob);
 		synchronized (MODEL_CACHE) {
 			model = MODEL_CACHE.get(res);
@@ -140,15 +145,37 @@ public class Hitbox extends SlottedNode implements Rendered {
 						box.add(new Coord3f(neg.bc.x, -neg.bc.y, Z));
 						box.add(new Coord3f(neg.ac.x, -neg.bc.y, Z));
 
+						bboxa.x = neg.ac.x;
+						bboxa.y = neg.ac.y;
+						bboxb.x = neg.bc.x;
+						bboxb.y = neg.bc.y;
 						polygons.add(box);
 					}
 				}
 
 				Collection<Resource.Obstacle> obstacles = res.layers(Resource.Obstacle.class);
 				if(obstacles != null) {
+					Optional<Coord2d> minX;
+					Optional<Coord2d> minY;
+					Optional<Coord2d> maxX;
+					Optional<Coord2d> maxY;
 					for (Resource.Obstacle obstacle : obstacles) {
 						if("build".equals(obstacle.id)) {continue;}
 						for (Coord2d[] polygon : obstacle.p) {
+							minX = Arrays.stream(polygon)
+									.min(Comparator.comparingDouble(Coord2d::getX));
+							minY = Arrays.stream(polygon)
+									.min(Comparator.comparingDouble(Coord2d::getY));
+
+							maxX = Arrays.stream(polygon)
+									.max(Comparator.comparingDouble(Coord2d::getX));
+							maxY = Arrays.stream(polygon)
+									.max(Comparator.comparingDouble(Coord2d::getY));
+
+							bboxa.x = (int) minX.get().getX();
+							bboxa.y = (int) minY.get().getX();
+							bboxb.x = (int) maxX.get().getX();
+							bboxb.y = (int) maxY.get().getY();
 							polygons.add(Arrays.stream(polygon)
 									.map(coord2d -> new Coord3f((float) coord2d.x, (float) -coord2d.y, Z))
 									.collect(Collectors.toList()));
@@ -168,7 +195,7 @@ public class Hitbox extends SlottedNode implements Rendered {
 					VertexArray va = new VertexArray(LAYOUT, vbo);
 
 					model = new Model(Model.Mode.LINES, va, null);
-
+					model.bbox = new Model.BoundingBox(bboxa, bboxb);
 					MODEL_CACHE.put(res, model);
 				}
 			}

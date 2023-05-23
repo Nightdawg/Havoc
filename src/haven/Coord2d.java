@@ -42,7 +42,15 @@ public class Coord2d implements Comparable<Coord2d>, java.io.Serializable {
 	this(c.x, c.y);
     }
 
-    public Coord2d(Coord3f c) {
+	public double getX() {
+		return x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	public Coord2d(Coord3f c) {
 	this(c.x, c.y);
     }
 
