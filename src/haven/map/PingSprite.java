@@ -7,7 +7,7 @@ import haven.GOut;
 import java.awt.*;
 
 public class PingSprite extends MapSprite {
-    private static final double RADIUS = 15;
+    private static final double RADIUS = 14;
     private static final Color BACKGROUND = new Color(255, 255, 255, 210);
 
     private Color col;
@@ -16,7 +16,7 @@ public class PingSprite extends MapSprite {
     public PingSprite(Coord2d rc, Color col) {
         this.rc = rc;
         this.col = col;
-        timetolive = 10;
+        timetolive = 4;
     }
     
     @Override

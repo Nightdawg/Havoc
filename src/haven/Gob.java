@@ -46,6 +46,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     public final Glob glob;
     Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
     public final Collection<Overlay> ols = new ArrayList<Overlay>();
+	public Collection<Overlay> tempOls = new ArrayList<Overlay>();
     public final Collection<RenderTree.Slot> slots = new ArrayList<>(1);
     public int updateseq = 0;
     private final Collection<SetupMod> setupmods = new ArrayList<>();
@@ -1150,6 +1151,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"gfx/terobjs/arch/primitivetent",
 	};
 
+	private static final String[] HIDINGWORKSTATIONS = {
+			"gfx/terobjs/gardenpot",
+			"gfx/terobjs/cheeserack",
+			"gfx/terobjs/dframe",
+			"gfx/terobjs/ttub",
+	};
+
 	private void updateHidingBox() {
 		if (updateseq == 0) {
 			return;
@@ -1174,6 +1182,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				doHide = hideObjects;
 				doShowHidingBox = true;
 			} else if (OptWnd.hideHousesSetting && Arrays.stream(HIDINGHOUSES).anyMatch(res.name::contains)) {
+				doHide = hideObjects;
+				doShowHidingBox = true;
+			} else if (OptWnd.hideWorkstationsSetting && Arrays.stream(HIDINGWORKSTATIONS).anyMatch(res.name::contains)) {
 				doHide = hideObjects;
 				doShowHidingBox = true;
 			} else if (OptWnd.hideCropsSetting && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
@@ -1376,7 +1387,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateLeathertubsHighlight(MessageBuf sdt) {
 		if (getres() != null && Pattern.matches("gfx/terobjs/ttub", getres().name)) {
-			if (OptWnd.showWorkstationStage){
+			if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)){
 				setLeathertubsHighlight(sdt);
 			} else {
 				delattr(GobStateHighlight.class);
@@ -1388,7 +1399,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			Drawable dr = getattr(Drawable.class);
 			ResDrawable d = (dr instanceof ResDrawable) ? (ResDrawable) dr : null;
 			if (d != null) {
-				if (OptWnd.showWorkstationStage) {
+				if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)) {
 					setLeathertubsHighlight(d.sdt);
 				} else {
 					delattr(GobStateHighlight.class);
@@ -1411,7 +1422,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateDryingFramesHighlight() {
 		if (getres() != null && Pattern.matches("gfx/terobjs/dframe", getres().name)) {
-			if (OptWnd.showWorkstationStage){
+			if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)){
 				boolean done = true;
 				boolean empty = true;
 				for (Overlay ol : ols) {
@@ -1445,7 +1456,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateCheeseRacksHighlight() {
 		if (getres() != null && Pattern.matches("gfx/terobjs/cheeserack", getres().name)) {
-			if (OptWnd.showWorkstationStage) {
+			if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)) {
 				if (ols.size() == 3) {
 					setGobStateHighlight(GobStateHighlight.State.RED);
 				} else if (ols.size() == 0) {
@@ -1461,7 +1472,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateGardenPotHighlight(MessageBuf sdt) {
 		if (getres() != null && Pattern.matches("gfx/terobjs/gardenpot", getres().name)){
-			if (OptWnd.showWorkstationStage) {
+			if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)) {
 				setGardenPotHighlight(sdt);
 			} else {
 				delattr(GobStateHighlight.class);
@@ -1473,7 +1484,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			Drawable dr = getattr(Drawable.class);
 			ResDrawable d = (dr instanceof ResDrawable) ? (ResDrawable) dr : null;
 			if (d != null) {
-				if (OptWnd.showWorkstationStage) {
+				if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)) {
 					setGardenPotHighlight(d.sdt);
 				} else {
 					delattr(GobStateHighlight.class);

@@ -746,7 +746,7 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Click Nearest Non-Visitor Gate", GameUI.kb_clickNearestGate, y);
 			y = addbtn(cont, "Toggle Animal Danger Radii", GameUI.kb_toggleDangerRadii, y+6);
 			y = addbtn(cont, "Toggle Critter Circle Auras", GameUI.kb_toggleCritterAuras, y);
-			//Highlights etc
+
 			y = addbtn(cont, "Display Vehicle Speed", GameUI.kb_toggleVehicleSpeed, y+6);
 
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
@@ -1370,7 +1370,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
-			prev = add(partyMembersCirclesCheckBox = new CheckBox("Draw Circles Under Party Members"){
+			prev = add(partyMembersCirclesCheckBox = new CheckBox("Circles Under Party Members"){
 				{a = Utils.getprefb("partyMembersCircles", true);}
 				public void set(boolean val) {
 					Utils.setprefb("partyMembersCircles", val);
@@ -1440,6 +1440,8 @@ public class OptWnd extends Window {
 	public static boolean hideCropsSetting = Utils.getprefb("hideCrops", false);
 	public static CheckBox hideStockpilesCheckbox;
 	public static boolean hideStockpilesSetting = Utils.getprefb("hideStockpiles", false);
+	public static CheckBox hideWorkstationsCheckbox;
+	public static boolean hideWorkstationsSetting = Utils.getprefb("hideWorkstations", false);
 
 
 	public class NDHidingSettingsPanel extends Panel {
@@ -1461,6 +1463,7 @@ public class OptWnd extends Window {
 					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
 						ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
+						ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
 					}
 					a = val;
 				}
@@ -1536,6 +1539,16 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
+			prev = add(hideCropsCheckbox = new CheckBox("Crops"){
+				{a = Utils.getprefb("hideCrops", false);}
+				public void set(boolean val) {
+					Utils.setprefb("hideCrops", val);
+					hideCropsSetting = val;
+					if (gameui() != null)
+						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
 
 			prev = add(hideWallsCheckbox = new CheckBox("Palisades and Brick Walls"){
 				{a = Utils.getprefb("hideWalls", false);}
@@ -1558,18 +1571,6 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
-
-			prev = add(hideCropsCheckbox = new CheckBox("Crops"){
-				{a = Utils.getprefb("hideCrops", false);}
-				public void set(boolean val) {
-					Utils.setprefb("hideCrops", val);
-					hideCropsSetting = val;
-					if (gameui() != null)
-						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
-					a = val;
-				}
-			}, prev.pos("bl").adds(0, 4));
-
 			prev = add(hideStockpilesCheckbox = new CheckBox("Stockpiles"){
 				{a = Utils.getprefb("hideStockpiles", false);}
 				public void set(boolean val) {
@@ -1577,6 +1578,18 @@ public class OptWnd extends Window {
 					hideStockpilesSetting = val;
 					if (gameui() != null)
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+			prev = add(hideWorkstationsCheckbox = new CheckBox("Workstations"){
+				{a = Utils.getprefb("hideWorkstations", false);}
+				public void set(boolean val) {
+					Utils.setprefb("hideWorkstations", val);
+					hideWorkstationsSetting = val;
+					if (gameui() != null) {
+						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+						ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
@@ -1847,8 +1860,17 @@ public class OptWnd extends Window {
 		toggleGobDamageInfoCheckBox.tooltip = RichText.render("Enabling this will display the total amount of damage players and animals took.\nNote: The damage you will see saved above players/animals is the total damage you saw the entity take, while inside of your view range. This is not all of the damage said entity might have taken recently.\n$col[185,185,185]{If you change any of the settings below, you will need a damage update in order to see the changes (for example, deal some damage to the player/animal).}", 300);
 		damageInfoClearButton.tooltip = RichText.render("Clear all damage info", 300);
 		toggleAutoPeaceCheckbox.tooltip = RichText.render("Enabling this will automatically set your status to 'Peace' when combat is initiated with a new target (animals only). Toggling this on while in combat will also autopeace all animals you are currently fighting.\n$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
+		partyMembersHighlightCheckBox.tooltip = RichText.render("Enabling this will put a color highlight over all party members." +
+				"\n=====================" +
+				"\n$col[255,255,255]{White: }$col[185,185,185]{Yourself}\n$col[0,74,208]{Blue: }$col[185,185,185]{Party Leader}\n$col[0,160,0]{Green: }$col[185,185,185]{Other Members}" +
+				"\n=====================" +
+				"\n$col[185,185,185]{Note: If you are the party leader, your color highlight will always be $col[0,74,208]{Blue}, rather than $col[255,255,255]{White}.}", 300);
+		partyMembersCirclesCheckBox.tooltip = RichText.render("Enabling this will put a colored circle under all party members." +
+				"\n=====================" +
+				"\n$col[255,255,255]{White: }$col[185,185,185]{Yourself}\n$col[0,74,208]{Blue: }$col[185,185,185]{Party Leader}\n$col[0,160,0]{Green: }$col[185,185,185]{Other Members}" +
+				"\n=====================" +
+				"\n$col[185,185,185]{Note: If you are the party leader, your circle's color will always be $col[0,74,208]{Blue}, rather than $col[255,255,255]{White}.}", 300);
 	}
-
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
 		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding CTRL before right clicking an item or object instantly select the first available option from the flower menu.", 300);
@@ -1866,6 +1888,7 @@ public class OptWnd extends Window {
 
 	private void setTooltipsForHidingSettingsStuff(){
 		toggleGobHidingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.", 300);
+		hideWorkstationsCheckbox.tooltip = RichText.render("Workstation Objects: Drying Frame, Tanning Tub, Garden Pot, Cheese Rack)", 300);
 	}
 
     public OptWnd() {

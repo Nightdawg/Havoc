@@ -9,6 +9,7 @@ import java.util.*;
 public class PartyCircles {
     public static final Color MEMBER_OL_COLOR = new Color(0, 160, 0, 164);
     public static final Color LEADER_OL_COLOR = new Color(0, 74, 208, 164);
+    public static final Color MYSELF_OL_COLOR = new Color(255, 255, 255, 128);
 
     private final Party party;
     private final long playerId;
@@ -29,6 +30,8 @@ public class PartyCircles {
                     continue;
                 if (OptWnd.partyMembersCircles && m == party.leader)
                     highlight(gob, LEADER_OL_COLOR);
+                else if (OptWnd.partyMembersCircles && m.gobid == playerId && m != party.leader)
+                    highlight(gob, MYSELF_OL_COLOR);
                 else if (OptWnd.partyMembersCircles && m != party.leader)
                     highlight(gob, MEMBER_OL_COLOR);
                 else

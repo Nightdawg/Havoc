@@ -28,6 +28,11 @@ package haven;
 
 import haven.map.PingSprite;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
 import java.util.*;
 import java.awt.Color;
 import java.awt.Font;
@@ -164,7 +169,7 @@ public class ChatUI extends Widget {
 	    public abstract Tex tex();
 	    public abstract Coord sz();
 	}
-	
+
 	public static class SimpleMessage extends Message {
 	    private final Text t;
 		private final String timestamp = Utils.timestamp();
@@ -765,6 +770,7 @@ public class ChatUI extends Widget {
 	    }
 	}
 
+	static private final File mapPingFile = new File("res/sfx/mapPing.wav");
 		public boolean process(String msg, long from) {
 			if (msg.startsWith("@")) {
 				Pattern highlight = Pattern.compile("^@(-?\\d+)$");
@@ -802,10 +808,17 @@ public class ChatUI extends Widget {
 									Coord2d partyoffset = new Coord2d(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
 									Coord2d pingc = playerc.add(playertopartym).add(partyoffset);
 									gameui().mapfile.view.addSprite(new PingSprite(pingc, pm.col));
-//									Audio.play(Config.mapping);
-//									TODO need some res for it
-//									example from mender(in Config.java)
-//									public static final Resource mapping = Resource.local().loadwait("sfx/mapping");
+									try {
+										AudioInputStream in = AudioSystem.getAudioInputStream(mapPingFile);
+										AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+										AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+										Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+										((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, 0.7));
+									} catch(UnsupportedAudioFileException e) {
+										e.printStackTrace();
+									} catch(IOException e) {
+										e.printStackTrace();
+									}
 								} else {
 									System.out.println("player is too far away");
 								}
