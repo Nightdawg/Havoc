@@ -749,6 +749,9 @@ public class OptWnd extends Window {
 
 			y = addbtn(cont, "Display Vehicle Speed", GameUI.kb_toggleVehicleSpeed, y+6);
 
+			y = addbtn(cont, "Toggle No Water Drop", GameUI.kb_toggleNoWaterDropping, y+6);
+			y = addbtn(cont, "Toggle No Drop", GameUI.kb_toggleNoDropping, y);
+
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			prev = adda(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			pack();

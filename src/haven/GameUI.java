@@ -84,6 +84,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean crimeon = false;
 	public static boolean trackon = false;
 
+	public static boolean preventWaterDrop = false;
+	public static boolean preventDropAnywhere = false;
+
 	public static boolean vehicleSpeed = true;
 	public long lastopponent = -1;
 
@@ -1442,6 +1445,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleCritterAuras  = KeyBinding.get("toggleCritterAuras ",  KeyMatch.nil);
 	public static KeyBinding kb_toggleVehicleSpeed  = KeyBinding.get("toggleVehicleSpeed",  KeyMatch.nil);
 
+	public static KeyBinding kb_toggleNoWaterDropping  = KeyBinding.get("toggleNoWaterDropping ",  KeyMatch.nil);
+	public static KeyBinding kb_toggleNoDropping  = KeyBinding.get("toggleNoDropping",  KeyMatch.nil);
 
 	public boolean globtype(char key, KeyEvent ev) {
 		if(key == ':') {
@@ -1509,6 +1514,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 //			vehicleSpeed = !vehicleSpeed;
 //			msg("VehicleSpeed display " + (vehicleSpeed ? "enabled" : "disabled"));
 			msg("Not yet implemented");
+		} else if (kb_toggleNoWaterDropping.key().match(ev)) {
+			msg(preventWaterDrop ? "Dropping in water disabled " : "Dropping in water enabled");
+			preventWaterDrop = !preventWaterDrop;
+		} else if (kb_toggleNoDropping.key().match(ev)) {
+			msg(preventWaterDrop ? "Dropping disabled" : "Dropping enabled");
+			preventDropAnywhere = !preventDropAnywhere;
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
