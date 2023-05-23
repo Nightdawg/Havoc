@@ -1151,13 +1151,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"gfx/terobjs/arch/primitivetent",
 	};
 
-	private static final String[] HIDINGWORKSTATIONS = {
-			"gfx/terobjs/gardenpot",
-			"gfx/terobjs/cheeserack",
-			"gfx/terobjs/dframe",
-			"gfx/terobjs/ttub",
-	};
-
 	private void updateHidingBox() {
 		if (updateseq == 0) {
 			return;
@@ -1182,9 +1175,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				doHide = hideObjects;
 				doShowHidingBox = true;
 			} else if (OptWnd.hideHousesSetting && Arrays.stream(HIDINGHOUSES).anyMatch(res.name::contains)) {
-				doHide = hideObjects;
-				doShowHidingBox = true;
-			} else if (OptWnd.hideWorkstationsSetting && Arrays.stream(HIDINGWORKSTATIONS).anyMatch(res.name::contains)) {
 				doHide = hideObjects;
 				doShowHidingBox = true;
 			} else if (OptWnd.hideCropsSetting && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
@@ -1387,7 +1377,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateLeathertubsHighlight(MessageBuf sdt) {
 		if (getres() != null && Pattern.matches("gfx/terobjs/ttub", getres().name)) {
-			if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)){
+			if (OptWnd.showWorkstationStage){
 				setLeathertubsHighlight(sdt);
 			} else {
 				delattr(GobStateHighlight.class);
@@ -1399,7 +1389,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			Drawable dr = getattr(Drawable.class);
 			ResDrawable d = (dr instanceof ResDrawable) ? (ResDrawable) dr : null;
 			if (d != null) {
-				if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)) {
+				if (OptWnd.showWorkstationStage) {
 					setLeathertubsHighlight(d.sdt);
 				} else {
 					delattr(GobStateHighlight.class);
@@ -1422,7 +1412,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateDryingFramesHighlight() {
 		if (getres() != null && Pattern.matches("gfx/terobjs/dframe", getres().name)) {
-			if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)){
+			if (OptWnd.showWorkstationStage){
 				boolean done = true;
 				boolean empty = true;
 				for (Overlay ol : ols) {
@@ -1456,7 +1446,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateCheeseRacksHighlight() {
 		if (getres() != null && Pattern.matches("gfx/terobjs/cheeserack", getres().name)) {
-			if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)) {
+			if (OptWnd.showWorkstationStage) {
 				if (ols.size() == 3) {
 					setGobStateHighlight(GobStateHighlight.State.RED);
 				} else if (ols.size() == 0) {
@@ -1472,7 +1462,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateGardenPotHighlight(MessageBuf sdt) {
 		if (getres() != null && Pattern.matches("gfx/terobjs/gardenpot", getres().name)){
-			if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)) {
+			if (OptWnd.showWorkstationStage) {
 				setGardenPotHighlight(sdt);
 			} else {
 				delattr(GobStateHighlight.class);
@@ -1484,7 +1474,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			Drawable dr = getattr(Drawable.class);
 			ResDrawable d = (dr instanceof ResDrawable) ? (ResDrawable) dr : null;
 			if (d != null) {
-				if (OptWnd.showWorkstationStage && !(hideObjects && OptWnd.hideWorkstationsSetting)) {
+				if (OptWnd.showWorkstationStage) {
 					setGardenPotHighlight(d.sdt);
 				} else {
 					delattr(GobStateHighlight.class);

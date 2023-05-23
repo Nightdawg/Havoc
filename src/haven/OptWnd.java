@@ -1440,8 +1440,6 @@ public class OptWnd extends Window {
 	public static boolean hideCropsSetting = Utils.getprefb("hideCrops", false);
 	public static CheckBox hideStockpilesCheckbox;
 	public static boolean hideStockpilesSetting = Utils.getprefb("hideStockpiles", false);
-	public static CheckBox hideWorkstationsCheckbox;
-	public static boolean hideWorkstationsSetting = Utils.getprefb("hideWorkstations", false);
 
 
 	public class NDHidingSettingsPanel extends Panel {
@@ -1539,16 +1537,6 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
-			prev = add(hideCropsCheckbox = new CheckBox("Crops"){
-				{a = Utils.getprefb("hideCrops", false);}
-				public void set(boolean val) {
-					Utils.setprefb("hideCrops", val);
-					hideCropsSetting = val;
-					if (gameui() != null)
-						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
-					a = val;
-				}
-			}, prev.pos("bl").adds(0, 4));
 
 			prev = add(hideWallsCheckbox = new CheckBox("Palisades and Brick Walls"){
 				{a = Utils.getprefb("hideWalls", false);}
@@ -1581,15 +1569,13 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
-			prev = add(hideWorkstationsCheckbox = new CheckBox("Workstations"){
-				{a = Utils.getprefb("hideWorkstations", false);}
+			prev = add(hideCropsCheckbox = new CheckBox("Crops"){
+				{a = Utils.getprefb("hideCrops", false);}
 				public void set(boolean val) {
-					Utils.setprefb("hideWorkstations", val);
-					hideWorkstationsSetting = val;
-					if (gameui() != null) {
+					Utils.setprefb("hideCrops", val);
+					hideCropsSetting = val;
+					if (gameui() != null)
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
-						ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
-					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
@@ -1888,7 +1874,6 @@ public class OptWnd extends Window {
 
 	private void setTooltipsForHidingSettingsStuff(){
 		toggleGobHidingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.", 300);
-		hideWorkstationsCheckbox.tooltip = RichText.render("Workstation Objects: Drying Frame, Tanning Tub, Garden Pot, Cheese Rack)", 300);
 	}
 
     public OptWnd() {
