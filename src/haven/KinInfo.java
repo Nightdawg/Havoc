@@ -74,6 +74,8 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
 			nm = Utils.outline2(nfnd.render("a villager", BuddyWnd.gc[group]).img, Utils.contrast(BuddyWnd.gc[group]), false);
 		} else {
 			unknown = true;
+			// todo namegen
+			//			nm = Utils.outline2(nfnd.render(Namegen.getName(gob.id), BuddyWnd.gc[group]).img, Utils.contrast(unknowncol), false);
 		}
 	    if(name.length() > 0)
 		//nm = Utils.outline2(nfnd.render(name, BuddyWnd.gc[group]).img, Utils.contrast(BuddyWnd.gc[group]));
