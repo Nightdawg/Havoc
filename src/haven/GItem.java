@@ -29,7 +29,6 @@ package haven;
 import haven.res.ui.tt.q.qbuff.QBuff;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
@@ -52,6 +51,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	public boolean sendttupdate = false;
 	public double studytime = 0.0;
 	private QBuff quality;
+	private boolean postProcessed = false;
 
     @RName("item")
     public static class $_ implements Factory {
@@ -160,6 +160,10 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	if(spr == null) {
 	    try {
 		spr = this.spr = GSprite.create(this, res.get(), sdt.clone());
+			if (!postProcessed) {
+				dropIfRequired();
+				postProcessed = true;
+			}
 	    } catch(Loading l) {
 	    }
 	}
@@ -590,6 +594,22 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 			return ItemInfo.find(ItemInfo.Name.class, info()).str.text;
 		} catch (Exception ex) {
 			return "exception";
+		}
+	}
+
+	private void dropIfRequired() {
+		Resource curs = ui.root.getcurs(Coord.z);
+		String name = this.resource().basename();
+		if (curs != null && curs.name.equals("gfx/hud/curs/arw")) {
+			if (OptWnd.dropMinedItemsSetting && (
+					(OptWnd.dropStoneSetting && Config.mineablesStone.contains(name)) ||
+					(OptWnd.dropOreSetting && Config.mineablesOre.contains(name)) ||
+					(OptWnd.dropPreciousOreSetting && Config.mineablesOrePrecious.contains(name)) ||
+					(OptWnd.dropMinedCuriosSetting && Config.mineablesCurios.contains(name)) ||
+					(OptWnd.dropQuarryartzSetting && "quarryquartz".equals((name)))))
+			{
+				this.wdgmsg("drop", Coord.z);
+			}
 		}
 	}
 }

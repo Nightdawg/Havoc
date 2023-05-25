@@ -1582,12 +1582,91 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
-
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(57)));
 			setTooltipsForHidingSettingsStuff();
 			pack();
 		}
 	}
+
+	//DropSettings
+	public static CheckBox toggleDropItemsCheckBox;
+	public static boolean dropMinedItemsSetting = Utils.getprefb("dropItemsToggle", false);
+	public static CheckBox dropStoneCheckbox;
+	public static boolean dropStoneSetting = Utils.getprefb("dropStone", false);
+	public static CheckBox dropOreCheckbox;
+	public static boolean dropOreSetting = Utils.getprefb("dropOre", false);
+	public static CheckBox dropPreciousOreCheckbox;
+	public static boolean dropPreciousOreSetting = Utils.getprefb("dropPreciousOre", false);
+	public static CheckBox dropMinedCuriosCheckbox;
+	public static boolean dropMinedCuriosSetting = Utils.getprefb("dropMinedCurios", false);
+	public static CheckBox dropQuarryartzCheckbox;
+	public static boolean dropQuarryartzSetting = Utils.getprefb("dropQuarryartz", false);
+
+	public class NDAutoDropSettingsPanel extends Panel {
+
+		public NDAutoDropSettingsPanel(Panel back) {
+			Widget prev;
+			prev = add(toggleDropItemsCheckBox = new CheckBox("Drop Mined Items"){
+				{a = (Utils.getprefb("dropItemsToggle", false));}
+				public void set(boolean val) {
+					Utils.setprefb("dropItemsToggle", val);
+					dropMinedItemsSetting = val;
+					a = val;
+				}
+			}, 0, 10);
+
+			prev = add(new Label("Objects that will be dropped:"), prev.pos("bl").adds(0, 20).x(0));
+
+			prev = add(dropStoneCheckbox = new CheckBox("Mined Stone"){
+				{a = Utils.getprefb("dropStone", false);}
+				public void set(boolean val) {
+					Utils.setprefb("dropStone", val);
+					dropStoneSetting = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(16, 10));
+
+			prev = add(dropOreCheckbox = new CheckBox("Mined Ore"){
+				{a = Utils.getprefb("dropOre", false);}
+				public void set(boolean val) {
+					Utils.setprefb("dropOre", val);
+					dropOreSetting = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+			prev = add(dropPreciousOreCheckbox = new CheckBox("Mined Precious Ore"){
+				{a = Utils.getprefb("dropPreciousOre", false);}
+				public void set(boolean val) {
+					Utils.setprefb("dropPreciousOre", val);
+					dropPreciousOreSetting = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+			prev = add(dropMinedCuriosCheckbox = new CheckBox("Mined Curios"){
+				{a = Utils.getprefb("dropMinedCurios", false);}
+				public void set(boolean val) {
+					Utils.setprefb("dropMinedCurios", val);
+					dropMinedCuriosSetting = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+			prev = add(dropQuarryartzCheckbox = new CheckBox("Quarryartz"){
+				{a = Utils.getprefb("dropQuarryartz", false);}
+				public void set(boolean val) {
+					Utils.setprefb("dropQuarryartz", val);
+					dropQuarryartzSetting = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(57)));
+			setTooltipsForHidingSettingsStuff();
+			pack();
+		}
+	}
+
 
 	public class SetButton extends KeyMatch.Capture {
 	    public final KeyBinding cmd;
@@ -1751,6 +1830,7 @@ public class OptWnd extends Window {
 		Panel gameplaysettings = add(new NDGameplaySettingsPanel(advancedSettings));
 		Panel combatsettings = add(new NDCombatSettingsPanel(advancedSettings));
 		Panel hidingsettings = add(new NDHidingSettingsPanel(advancedSettings));
+		Panel dropsettings = add(new NDAutoDropSettingsPanel(advancedSettings));
 
 		int y2 = UI.scale(6);
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Interface & Display Settings", -1, iface, "Interface & Display Settings"), 0, y2).pos("bl").adds(0, 5).y;
@@ -1760,8 +1840,8 @@ public class OptWnd extends Window {
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Camera Settings", -1, camsettings, "Camera Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Gameplay Settings", -1, gameplaysettings, "Gameplay Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Combat Settings", -1, combatsettings, "Combat Settings"), 0, y2).pos("bl").adds(0, 25).y;
-
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Hiding Settings", -1, hidingsettings, "Hiding Settings"), 0, y2).pos("bl").adds(0, 5).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Drop Settings", -1, dropsettings, "Drop Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new Button(UI.scale(200), "Alarm Manager", () -> {
 			if(alarmWindow == null) {
 				alarmWindow = this.parent.add(new AlarmWindow());

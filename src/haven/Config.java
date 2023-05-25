@@ -29,7 +29,10 @@ package haven;
 import java.net.URL;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.*;
 import java.io.*;
 import java.nio.file.*;
@@ -281,6 +284,81 @@ public class Config {
 	out.println("  -C HEXCOOKIE       Authenticate with specified hex-encoded cookie");
 	out.println("  -p PREFSPEC        Use alternate preference prefix");
     }
+
+	public final static Set<String> mineablesStone = new HashSet<String>(Arrays.asList(
+			"gneiss",
+			"basalt",
+			"cinnabar",
+			"sunstone",
+			"dolomite",
+			"feldspar",
+			"flint",
+			"granite",
+			"hornblende",
+			"limestone",
+			"marble",
+			"porphyry",
+			"quartz",
+			"sandstone",
+			"schist",
+			"blackcoal",
+			"coal",
+			"zincspar",
+			"apatite",
+			"sodalite",
+			"fluorospar",
+			"soapstone",
+			"olivine",
+			"gabbro",
+			"alabaster",
+			"microlite",
+			"mica",
+			"kyanite",
+			"corund",
+			"orthoclase",
+			"breccia",
+			"diabase",
+			"arkose",
+			"diorite",
+			"slate",
+			"jasper",
+			"rhyolite",
+			"pegmatite",
+			"greenschist",
+			"eclogite",
+			"pumice",
+			"serpentine",
+			"chert",
+			"graywacke"
+	));
+
+	public final static Set<String> mineablesOre = new HashSet<String>(Arrays.asList(
+			"cassiterite",
+			"chalcopyrite",
+			"malachite",
+			"ilmenite",
+			"limonite",
+			"hematite",
+			"magnetite",
+			"peacockore",
+			"leadglance",
+			"cuprite"
+	));
+
+	public final static Set<String> mineablesOrePrecious = new HashSet<String>(Arrays.asList(
+			"galena",
+			"argentite",
+			"hornsilver",
+			"petzite",
+			"sylvanite",
+			"nagyagite"
+	));
+
+	public final static Set<String> mineablesCurios = new HashSet<String>(Arrays.asList(
+			"catgold",
+			"petrifiedshell",
+			"strangecrystal"
+	));
 
     public static void cmdline(String[] args) {
 	PosixArgs opt = PosixArgs.getopt(args, "hdPGfU:r:A:u:C:p:");
