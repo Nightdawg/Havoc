@@ -246,7 +246,6 @@ public class UI {
 
 	if (id > lastid) {
 		lastid = id;
-		//System.out.println("new widget : " + id + " - type: " + type);
 	}
 
 	Widget.Factory f = Widget.gettype2(type);

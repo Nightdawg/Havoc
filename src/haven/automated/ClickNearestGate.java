@@ -45,7 +45,7 @@ public class ClickNearestGate implements Runnable {
                     try {
                         if (isGate) {
                             for (Gob.Overlay ol : gob.ols) {
-                                String oname = gui.map.glob.sess.getres(Utils.uint16d(ol.sdt.rbuf, 0)).get().basename();
+                                String oname = gui.map.glob.sess.getres(haven.Utils.uint16d(ol.sdt.rbuf, 0)).get().basename();
                                 if (oname.equals("visflag"))
                                     isGate = false;
                             }
