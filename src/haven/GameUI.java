@@ -88,6 +88,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean preventWaterDrop = false;
 	public static boolean preventDropAnywhere = false;
 
+	public static boolean muteNonFriendly = false;
+
 	public static boolean vehicleSpeed = true;
 	public long lastopponent = -1;
 
@@ -1450,6 +1452,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleNoWaterDropping  = KeyBinding.get("toggleNoWaterDropping ",  KeyMatch.nil);
 	public static KeyBinding kb_toggleNoDropping  = KeyBinding.get("toggleNoDropping",  KeyMatch.nil);
 
+	public static KeyBinding kb_toggleMuteNonFriendly  = KeyBinding.get("toggleMuteNonFriendly",  KeyMatch.nil);
+
 	public boolean globtype(char key, KeyEvent ev) {
 		if(key == ':') {
 			entercmd();
@@ -1522,6 +1526,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if (kb_toggleNoDropping.key().match(ev)) {
 			msg(preventWaterDrop ? "Dropping disabled" : "Dropping enabled");
 			preventDropAnywhere = !preventDropAnywhere;
+		} else if (kb_toggleMuteNonFriendly.key().match(ev)) {
+			msg(muteNonFriendly ? "Non-Friendly players muted" : "Non-Friendly players unmuted");
+			muteNonFriendly = !muteNonFriendly;
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);

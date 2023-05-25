@@ -1540,6 +1540,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 	}
 
+	public boolean isFriend() {
+		synchronized (glob.party.memb) {
+			for (Party.Member m : glob.party.memb.values()) {
+				if (m.gobid == id)
+					return true;
+			}
+		}
+		KinInfo kininfo = getattr(KinInfo.class);
+		if (kininfo == null || (kininfo.unknown && !kininfo.isVillager()) || kininfo.group == 2 /*red*/)
+			return false;
+
+		return true;
+	}
+
 	public static final String[] CRITTERAURA_PATHS = {
 			"gfx/kritter/bayshrimp/bayshrimp",
 			"gfx/kritter/bogturtle/bogturtle",
