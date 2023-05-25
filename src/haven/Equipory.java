@@ -30,6 +30,8 @@ import haven.res.ui.tt.armor.Armor;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
+
 import static haven.Inventory.invsq;
 
 public class Equipory extends Widget implements DTarget {
@@ -115,6 +117,7 @@ public class Equipory extends Widget implements DTarget {
     private final Avaview ava;
 	AttrBonusesWdg bonuses;
 	public WItem[] slots = new WItem[ecoords.length];
+	private static final int btnw = UI.scale(80);
 
     @RName("epry")
     public static class $_ implements Factory {
@@ -126,7 +129,12 @@ public class Equipory extends Widget implements DTarget {
 		gobid = -1;
 	    else
 		gobid = Utils.uint32((Integer)args[0]);
-	    return(new Equipory(gobid));
+		// line below change to != for testing on your own eq
+		if (gobid == GameUI.playerId){
+			return(new Equipory(gobid, true));
+		} else {
+			return(new Equipory(gobid));
+		}
 	}
     }
 
@@ -136,29 +144,72 @@ public class Equipory extends Widget implements DTarget {
 	super.added();
     }
 
-    public Equipory(long gobid) {
-	super(isz);
-	ava = add(new Avaview(bg.sz(), gobid, "equcam") {
-		public boolean mousedown(Coord c, int button) {
-		    return(false);
-		}
-
-		public void draw(GOut g) {
-		    g.image(bg, Coord.z);
-		    super.draw(g);
-		}
-
-		{
-		    basic.add(new Outlines(false));
-		}
-
-		final FColor cc = new FColor(0, 0, 0, 0);
-		protected FColor clearcolor() {return(cc);}
-	    }, bgc);
-
+	public Equipory(long gobid) {
+		super(isz);
+		ava = add(new Avaview(bg.sz(), gobid, "equcam") {
+			public boolean mousedown(Coord c, int button) {
+				return (false);
+			}
+			public void draw(GOut g) {
+				g.image(bg, Coord.z);
+				super.draw(g);
+			}
+			{
+				basic.add(new Outlines(false));
+			}
+			final FColor cc = new FColor(0, 0, 0, 0);
+			protected FColor clearcolor() {
+				return (cc);
+			}
+		}, bgc);
 		bonuses = add(new AttrBonusesWdg(isz.y), isz.x + UI.scale(14), 0);
 		pack();
-    }
+
+		Button button = new Button(btnw, "Yoink") {
+			@Override
+			public void click() {
+				getGoodies();
+			}
+		};
+		button.c = new Coord(74, 0);
+		add(button);
+
+		Button button2 = new Button(btnw, "Drop") {
+			@Override
+			public void click() {
+				dropAll();
+			}
+		};
+
+		button2.c = new Coord(170, 0);
+		add(button2);
+	}
+
+	public Equipory(long gobid, boolean player) {
+		super(isz);
+		ava = add(new Avaview(bg.sz(), gobid, "equcam") {
+			public boolean mousedown(Coord c, int button) {
+				return (false);
+			}
+
+			public void draw(GOut g) {
+				g.image(bg, Coord.z);
+				super.draw(g);
+			}
+
+			{
+				basic.add(new Outlines(false));
+			}
+
+			final FColor cc = new FColor(0, 0, 0, 0);
+
+			protected FColor clearcolor() {
+				return (cc);
+			}
+		}, bgc);
+		bonuses = add(new AttrBonusesWdg(isz.y), isz.x + UI.scale(14), 0);
+		pack();
+	}
 
     public static interface SlotInfo {
 	public int slots();
@@ -324,4 +375,55 @@ public class Equipory extends Widget implements DTarget {
     public boolean iteminteract(Coord cc, Coord ul) {
 		return(false);
     }
+
+
+	public void getGoodies(){
+		try{
+			//pretty crude logic just steal rings -> armor -> and weapon
+			// it was easier so just try to transfer weapon to your eq and then try to pick it up and put in your belt
+			// i was too lazy to do it otherwise
+
+			//getting left ring into your eq
+			if(slots[8] != null){
+				this.slots[8].item.wdgmsg("transfer",Coord.z);
+			}
+			//getting right ring into your eq
+			if(slots[9] != null){
+				this.slots[9].item.wdgmsg("transfer",Coord.z);
+			}
+			//getting armor into your eq
+			if(slots[3] != null){
+				this.slots[3].item.wdgmsg("transfer",Coord.z);
+			}
+
+			//try to put left hand weapon into your eq and then try to take it and put into belt
+			if(slots[6] != null){
+				this.slots[6].item.wdgmsg("transfer",Coord.z);
+				this.slots[6].item.wdgmsg("take",Coord.z);
+				gameui().getequipory().slots[5].item.wdgmsg("itemact",0);
+			}
+			//try to put right hand weapon into your eq and then try to take it and put into belt
+			if(slots[7] != null){
+				this.slots[7].item.wdgmsg("transfer",Coord.z);
+				this.slots[7].item.wdgmsg("take",Coord.z);
+				gameui().getequipory().slots[5].item.wdgmsg("itemact",0);
+			}
+		} catch (Exception e){
+			System.out.println(e.getMessage());
+		}
+	}
+
+	public void dropAll() {
+		int[] ids = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18};
+		//16 is hat so excluded/ rest just modify what to drop
+		for (int id : ids) {
+			if (slots[id] != null) {
+				try {
+					if(this.slots[id].item.res != null){
+						this.slots[id].item.wdgmsg("drop", Coord.z);
+					}
+				} catch (Exception ignored) {}
+			}
+		}
+	}
 }

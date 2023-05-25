@@ -44,6 +44,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public static final int blpw = UI.scale(0), brpw = UI.scale(142);
 	public static final Text.Foundry actBarKeybindsFoundry = new Text.Foundry(Text.sans.deriveFont(java.awt.Font.BOLD), 12);
     public final String chrid, genus;
+	public static long playerId = -1;
     public final long plid;
     private final Hidepanel ulpanel, umpanel, urpanel, brpanel, menupanel;
 	public static AlignPanel questObjectivesPanel = null;
@@ -239,6 +240,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    String genus = "";
 	    if(args.length > 2)
 		genus = (String)args[2];
+		playerId = plid;
 	    return(new GameUI(chrid, plid, genus));
 	}
     }
