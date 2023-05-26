@@ -400,8 +400,11 @@ public class UI {
 	    new Warning("wdgmsg sender (%s) is not in rwidgets, message is %s", sender.getClass().getName(), msg).issue();
 	    return;
 	}
-	if(rcvr != null)
-	    rcvr.rcvmsg(id, msg, args);
+	if(rcvr != null){
+		rcvr.rcvmsg(id, msg, args);
+		//todo for dev purposes uncomment line below
+//		System.out.println("id: " + id + ", msg: " + msg + ", args: " + Arrays.toString(args));
+	}
     }
 	
     public void uimsg(int id, String msg, Object... args) {

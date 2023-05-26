@@ -753,6 +753,11 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Toggle No Drop", GameUI.kb_toggleNoDropping, y);
 			y = addbtn(cont, "Mute Non-Friendly", GameUI.kb_toggleMuteNonFriendly, y+6);
 
+			y = addbtn(cont, "Equip T.Sacks or W.Bindles", GameUI.kb_equipTSacks, y+6);
+
+			y = addbtn(cont, "Button For Testing", GameUI.kb_buttonForTesting, y+6);
+
+
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			prev = adda(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);
 			pack();

@@ -254,7 +254,12 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	    contentsid = null;
 	    if(args.length > 2)
 		contentsid = args[2];
-	    contentswnd = contparent().add(new ContentsWindow(this, contents));
+		if(this.parent instanceof Equipory){
+			Equipory equipory = (Equipory) this.parent;
+			contentswnd = contparent().add(new ContentsWindow(this, contents, equipory.player));
+		} else {
+			contentswnd = contparent().add(new ContentsWindow(this, contents, false));
+		}
 	}
     }
 
@@ -418,16 +423,18 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     public static class ContentsWindow extends Window {
 	public static final Coord overlap = UI.scale(2, 2);
 	public final GItem cont;
+	public final boolean player;
 	public final Widget inv;
 	private final Object id;
 	private Coord psz = null;
 	private String st;
 	private boolean hovering;
 
-	public ContentsWindow(GItem cont, Widget inv) {
+	public ContentsWindow(GItem cont, Widget inv, boolean player) {
 	    super(Coord.z, cont.contentsnm);
 	    this.cont = cont;
-	    this.inv = add(inv, Coord.z);
+		this.player = player;
+		this.inv = add(inv, Coord.z);
 	    this.id = cont.contentsid;
 	    this.tick(0);
 	    Coord c = null;

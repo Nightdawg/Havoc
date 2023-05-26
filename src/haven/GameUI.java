@@ -28,6 +28,8 @@ package haven;
 
 import haven.automated.AttackOpponent;
 import haven.automated.ClickNearestGate;
+import haven.automated.EquipSacks;
+import haven.render.RenderTree;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -38,6 +40,7 @@ import java.awt.image.WritableRaster;
 import java.util.regex.Matcher;
 
 import static haven.Inventory.invsq;
+import static haven.MCache.tilesz;
 
 public class GameUI extends ConsoleHost implements Console.Directory, UI.MessageWidget {
     public static final Text.Foundry msgfoundry = RootWidget.msgfoundry;
@@ -1454,6 +1457,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
 	public static KeyBinding kb_toggleMuteNonFriendly  = KeyBinding.get("toggleMuteNonFriendly",  KeyMatch.nil);
 
+	public static KeyBinding kb_equipTSacks  = KeyBinding.get("equipTSacks",  KeyMatch.nil);
+
+	public static KeyBinding kb_buttonForTesting  = KeyBinding.get("testButton",  KeyMatch.nil);
+
 	public boolean globtype(char key, KeyEvent ev) {
 		if(key == ':') {
 			entercmd();
@@ -1505,7 +1512,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			return(true);
 		} else if (kb_aggroLastTarget.key().match(ev)) {
 			this.runActionThread(new Thread(new AttackOpponent(this, this.lastopponent), "Reaggro"));
-			this.map.pfLeftClick(new Coord(-11000, -11000), null);
 			return(true);
 		} else if(kb_peaceCurrentTarget.key().match(ev)) {
 			peaceCurrentTarget();
@@ -1529,6 +1535,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if (kb_toggleMuteNonFriendly.key().match(ev)) {
 			msg(muteNonFriendly ? "Non-Friendly players muted" : "Non-Friendly players unmuted");
 			muteNonFriendly = !muteNonFriendly;
+		} else if (kb_equipTSacks.key().match(ev)) {
+			new Thread(new EquipSacks(this), "EquipSacks").start();
+		} else if (kb_buttonForTesting.key().match(ev)) {
+			//
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);

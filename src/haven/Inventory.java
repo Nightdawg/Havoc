@@ -35,7 +35,7 @@ public class Inventory extends Widget implements DTarget {
     public boolean dropul = true;
     public Coord isz;
     public boolean[] sqmask = null;
-    Map<GItem, WItem> wmap = new HashMap<GItem, WItem>();
+    public Map<GItem, WItem> wmap = new HashMap<GItem, WItem>();
 
 	public static final Comparator<WItem> ITEM_COMPARATOR_ASC = new Comparator<WItem>() {
 		@Override

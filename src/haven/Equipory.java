@@ -42,6 +42,7 @@ public class Equipory extends Widget implements DTarget {
     public static final Coord bgc = new Coord(invsq.sz().x, 0);
 	private static final Text.Foundry acf = new Text.Foundry(Text.sans, 12);
 	public boolean updateBottomText = false;
+	public final boolean player;
 	long delayBottomTextUpdate;
 	private Tex Detection = null;
 	private Tex Subtlety = null;
@@ -146,6 +147,7 @@ public class Equipory extends Widget implements DTarget {
 
 	public Equipory(long gobid) {
 		super(isz);
+		this.player = false;
 		ava = add(new Avaview(bg.sz(), gobid, "equcam") {
 			public boolean mousedown(Coord c, int button) {
 				return (false);
@@ -187,6 +189,7 @@ public class Equipory extends Widget implements DTarget {
 
 	public Equipory(long gobid, boolean player) {
 		super(isz);
+		this.player = player;
 		ava = add(new Avaview(bg.sz(), gobid, "equcam") {
 			public boolean mousedown(Coord c, int button) {
 				return (false);
