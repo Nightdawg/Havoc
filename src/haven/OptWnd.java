@@ -755,6 +755,8 @@ public class OptWnd extends Window {
 
 			y = addbtn(cont, "Equip T.Sacks or W.Bindles", GameUI.kb_equipTSacks, y+6);
 
+			y = addbtn(cont, "Toggle Walk Pathfinder", GameUI.kb_toggleWalkWithPathfinder, y+6);
+
 			y = addbtn(cont, "Button For Testing", GameUI.kb_buttonForTesting, y+6);
 
 

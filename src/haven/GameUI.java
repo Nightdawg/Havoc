@@ -93,6 +93,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
 	public static boolean muteNonFriendly = false;
 
+	public static boolean walkWithPathfinder = false;
+
 	public static boolean vehicleSpeed = true;
 	public long lastopponent = -1;
 
@@ -1459,6 +1461,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
 	public static KeyBinding kb_equipTSacks  = KeyBinding.get("equipTSacks",  KeyMatch.nil);
 
+	public static KeyBinding kb_toggleWalkWithPathfinder  = KeyBinding.get("toggleWalkWithPathfinder",  KeyMatch.nil);
+
 	public static KeyBinding kb_buttonForTesting  = KeyBinding.get("testButton",  KeyMatch.nil);
 
 	public boolean globtype(char key, KeyEvent ev) {
@@ -1537,6 +1541,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			muteNonFriendly = !muteNonFriendly;
 		} else if (kb_equipTSacks.key().match(ev)) {
 			new Thread(new EquipSacks(this), "EquipSacks").start();
+		} else if (kb_toggleWalkWithPathfinder.key().match(ev)) {
+			walkWithPathfinder = !walkWithPathfinder;
+			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
 			//
 		} else if((key == 27) && (map != null) && !map.hasfocus) {

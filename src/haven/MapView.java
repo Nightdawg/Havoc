@@ -2329,7 +2329,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 						}
 						return;
 					}
-					wdgmsg("click", args);
+					if(!GameUI.walkWithPathfinder){
+						wdgmsg("click", args);
+					} else {
+						pfLeftClick(mc.floor(), null);
+					}
 					return;
 				}
 
@@ -2353,7 +2357,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 				}
 			}
 		}
-	    wdgmsg("click", args);
+		if(!GameUI.walkWithPathfinder){
+			wdgmsg("click", args);
+		} else {
+			pfLeftClick(mc.floor(), null);
+		}
 	}
     }
     
