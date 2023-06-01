@@ -26,11 +26,11 @@
 
 package haven;
 
+import haven.automated.DropItemsFromKnockedEnemy;
 import haven.res.ui.tt.armor.Armor;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 import static haven.Inventory.invsq;
 
@@ -175,11 +175,11 @@ public class Equipory extends Widget implements DTarget {
 		};
 		button.c = new Coord(74, 0);
 		add(button);
-
+		Equipory equipory = this;
 		Button button2 = new Button(btnw, "Drop") {
 			@Override
 			public void click() {
-				dropAll();
+				new Thread(new DropItemsFromKnockedEnemy(equipory), "DropItemsFromEnemy").start();
 			}
 		};
 
@@ -413,20 +413,6 @@ public class Equipory extends Widget implements DTarget {
 			}
 		} catch (Exception e){
 			System.out.println(e.getMessage());
-		}
-	}
-
-	public void dropAll() {
-		int[] ids = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18};
-		//16 is hat so excluded/ rest just modify what to drop
-		for (int id : ids) {
-			if (slots[id] != null) {
-				try {
-					if(this.slots[id].item.res != null){
-						this.slots[id].item.wdgmsg("drop", Coord.z);
-					}
-				} catch (Exception ignored) {}
-			}
 		}
 	}
 }
