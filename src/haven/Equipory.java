@@ -27,6 +27,7 @@
 package haven;
 
 import haven.automated.DropItemsFromKnockedEnemy;
+import haven.automated.YoinkGoodStuffFromKnockedEnemy;
 import haven.res.ui.tt.armor.Armor;
 
 import java.awt.*;
@@ -166,20 +167,19 @@ public class Equipory extends Widget implements DTarget {
 		}, bgc);
 		bonuses = add(new AttrBonusesWdg(isz.y), isz.x + UI.scale(14), 0);
 		pack();
-
+		Equipory enemyEquipory = this;
 		Button button = new Button(btnw, "Yoink") {
 			@Override
 			public void click() {
-				getGoodies();
+				new Thread(new YoinkGoodStuffFromKnockedEnemy(enemyEquipory, gameui()), "DropItemsFromEnemy").start();
 			}
 		};
 		button.c = new Coord(74, 0);
 		add(button);
-		Equipory equipory = this;
 		Button button2 = new Button(btnw, "Drop") {
 			@Override
 			public void click() {
-				new Thread(new DropItemsFromKnockedEnemy(equipory), "DropItemsFromEnemy").start();
+				new Thread(new DropItemsFromKnockedEnemy(enemyEquipory, gameui()), "DropItemsFromEnemy").start();
 			}
 		};
 
@@ -378,41 +378,4 @@ public class Equipory extends Widget implements DTarget {
     public boolean iteminteract(Coord cc, Coord ul) {
 		return(false);
     }
-
-
-	public void getGoodies(){
-		try{
-			//pretty crude logic just steal rings -> armor -> and weapon
-			// it was easier so just try to transfer weapon to your eq and then try to pick it up and put in your belt
-			// i was too lazy to do it otherwise
-
-			//getting left ring into your eq
-			if(slots[8] != null){
-				this.slots[8].item.wdgmsg("transfer",Coord.z);
-			}
-			//getting right ring into your eq
-			if(slots[9] != null){
-				this.slots[9].item.wdgmsg("transfer",Coord.z);
-			}
-			//getting armor into your eq
-			if(slots[3] != null){
-				this.slots[3].item.wdgmsg("transfer",Coord.z);
-			}
-
-			//try to put left hand weapon into your eq and then try to take it and put into belt
-			if(slots[6] != null){
-				this.slots[6].item.wdgmsg("transfer",Coord.z);
-				this.slots[6].item.wdgmsg("take",Coord.z);
-				gameui().getequipory().slots[5].item.wdgmsg("itemact",0);
-			}
-			//try to put right hand weapon into your eq and then try to take it and put into belt
-			if(slots[7] != null){
-				this.slots[7].item.wdgmsg("transfer",Coord.z);
-				this.slots[7].item.wdgmsg("take",Coord.z);
-				gameui().getequipory().slots[5].item.wdgmsg("itemact",0);
-			}
-		} catch (Exception e){
-			System.out.println(e.getMessage());
-		}
-	}
 }

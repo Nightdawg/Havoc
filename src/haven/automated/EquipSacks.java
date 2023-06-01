@@ -43,16 +43,12 @@ public class EquipSacks implements Runnable {
         Inventory belt = null;
         Map<GItem, Coord> items = new HashMap<>();
         Coord sqsz = UI.scale(new Coord(33, 33));
-
         for (Widget w = gui.lchild; w != null; w = w.prev) {
             if (!(w instanceof haven.GItem.ContentsWindow) || !((GItem.ContentsWindow) w).player) continue;
-
             for (Widget ww : w.children()) {
                 if (!(ww instanceof Inventory)) continue;
-
                 Coord inventorySize = ((Inventory) ww).isz;
                 belt = (Inventory) ww;
-
                 for (int i = 0; i < inventorySize.x; i++) {
                     for (int j = 0; j < inventorySize.y; j++) {
                         Coord indexCoord = new Coord(i, j);
