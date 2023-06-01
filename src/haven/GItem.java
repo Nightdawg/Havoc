@@ -607,7 +607,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	private void dropIfRequired() {
 		Resource curs = ui.root.getcurs(Coord.z);
 		String name = this.resource().basename();
-		if (curs != null && curs.name.equals("gfx/hud/curs/arw")) {
+		if (curs != null && curs.name.equals("gfx/hud/curs/mine")) {
 			if (OptWnd.dropMinedItemsSetting && (
 					(OptWnd.dropStoneSetting && Config.mineablesStone.contains(name)) ||
 					(OptWnd.dropOreSetting && Config.mineablesOre.contains(name)) ||
