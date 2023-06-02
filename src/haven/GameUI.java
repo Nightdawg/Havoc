@@ -29,6 +29,7 @@ package haven;
 import haven.automated.AttackOpponent;
 import haven.automated.ClickNearestGate;
 import haven.automated.EquipSacks;
+import haven.automated.RefillWaterContainers;
 import haven.render.RenderTree;
 
 import java.awt.image.BufferedImage;
@@ -1545,7 +1546,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-			//
+			new Thread(new RefillWaterContainers(this), "RefillWaterContainers").start();
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
