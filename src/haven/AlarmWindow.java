@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AlarmWindow extends Window {
 
-	private AlarmList al;
+	private static AlarmList al;
 	private Label enabledLabel;
 	private Label alarmNameLabel;
 	private Label resPathLabel;
@@ -25,9 +25,10 @@ public class AlarmWindow extends Window {
 	private Label dontTriggerCheckboxLabel2;
 	private final Text.Foundry warningFoundry = new Text.Foundry(Text.sans, 14);
 	static Label bottomNote;
-	static Label saveReminder;
+	static Label defaultsReloadedText;
 	private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	private Future<?> future;
+	private Future<?> future2;
 
 
 	public AlarmWindow() {
@@ -114,8 +115,8 @@ public class AlarmWindow extends Window {
 					bottomNote.settext("Alarm added successfully!");
 					bottomNote.setcolor(Color.GREEN);
 					bottomNote.c.x = UI.scale(340);
-					saveReminder.settext("Don't forget to save!");
-					saveReminder.setcolor(Color.RED);
+					AlarmManager.load(al);
+					AlarmManager.save();
 					future = executor.scheduleWithFixedDelay(this::resetBottomNote, 3, 5, TimeUnit.SECONDS);
 				} else {
 					bottomNote.settext("Resource Path already in use! Can't have two alarms for the same object!");
@@ -127,7 +128,6 @@ public class AlarmWindow extends Window {
 			}
 
 			public void resetBottomNote() {
-				System.out.println("Reset bottom note");
 				bottomNote.settext("NOTE: You can add your own alarm sound files in the \"Alarms\" folder. (The file extension must be .wav)");
 				bottomNote.setcolor(Color.WHITE);
 				bottomNote.c.x = UI.scale(140);
@@ -135,20 +135,7 @@ public class AlarmWindow extends Window {
 			}
 		}, prev.pos("ul").adds(50, -10));
 
-		add(saveReminder = new Label("Don't forget to Save!", warningFoundry), UI.scale(510, 488));
-		saveReminder.setcolor(Color.RED);
-
-		add(new Button(UI.scale(180), "Save Alarm Settings") {
-			@Override
-			public void click() {
-				AlarmManager.load(al);
-				AlarmManager.save();
-				if (gameui() != null)
-					gameui().msg("Alarm settings saved!");
-				saveReminder.settext("Alarm settings saved!");
-				saveReminder.setcolor(Color.GREEN);
-			}
-		}, UI.scale(652, 480));
+		add(defaultsReloadedText = new Label("", warningFoundry), UI.scale(400, 488)).setcolor(Color.GREEN);
 
 		add(new Button(UI.scale(180), "Load Nightdawg's Defaults") {
 			@Override
@@ -159,10 +146,17 @@ public class AlarmWindow extends Window {
 				for(AlarmItem ai : AlarmManager.getAlarmItems()) {
 					al.addItem(ai);
 				}
-				saveReminder.settext("Don't forget to save!");
-				saveReminder.setcolor(Color.RED);
+				defaultsReloadedText.settext("Default Alarms Restored!");
 				if (gameui() != null)
 					gameui().msg("Default alarms restored!");
+				AlarmManager.load(al);
+				AlarmManager.save();
+				future2 = executor.scheduleWithFixedDelay(this::resetText, 3, 5, TimeUnit.SECONDS);
+			}
+
+			public void resetText() {
+				defaultsReloadedText.settext("");
+				future2.cancel(true);
 			}
 		}, UI.scale(20, 480));
 		this.c = new Coord (100, 100);
@@ -175,8 +169,8 @@ public class AlarmWindow extends Window {
 	public void wdgmsg(Widget sender, String msg, Object... args) {
 		if((sender == this) && (msg == "close")) {
 			hide();
-			saveReminder.settext("Don't forget to save!");
-			saveReminder.setcolor(Color.RED);
+			AlarmManager.load(al);
+			AlarmManager.save();
 			bottomNote.settext("NOTE: You can add your own alarm sound files in the \"Alarms\" folder. (The file extension must be .wav)");
 			bottomNote.setcolor(Color.WHITE);
 			bottomNote.c.x = UI.scale(140);
@@ -279,16 +273,16 @@ public class AlarmWindow extends Window {
 				{a = enabled;}
 				@Override
 				public void changed(boolean val) {
-					saveReminder.settext("Don't forget to save!");
-					saveReminder.setcolor(Color.RED);
+					AlarmManager.load(al);
+					AlarmManager.save();
 					super.changed(val);
 				}
 			}, UI.scale(10,2));
 			this.alarmName = new TextEntry(UI.scale(120), alarmName){
 				@Override
 				protected void changed() {
-					saveReminder.settext("Don't forget to save!");
-					saveReminder.setcolor(Color.RED);
+					AlarmManager.load(al);
+					AlarmManager.save();
 					super.changed();
 				}
 			};
@@ -296,8 +290,8 @@ public class AlarmWindow extends Window {
 			this.gobResname = new TextEntry(UI.scale(200), gobResname){
 				@Override
 				protected void changed() {
-					saveReminder.settext("Don't forget to save!");
-					saveReminder.setcolor(Color.RED);
+					AlarmManager.load(al);
+					AlarmManager.save();
 					super.changed();
 				}
 
@@ -310,8 +304,8 @@ public class AlarmWindow extends Window {
 			this.alarmFilename = new TextEntry(UI.scale(100), alarmFilename){
 				@Override
 				protected void changed() {
-					saveReminder.settext("Don't forget to save!");
-					saveReminder.setcolor(Color.RED);
+					AlarmManager.load(al);
+					AlarmManager.save();
 					super.changed();
 				}
 			};
@@ -319,8 +313,8 @@ public class AlarmWindow extends Window {
 			this.volume = new HSlider(UI.scale(100), 0, 100, volume){
 				@Override
 				public void changed() {
-					saveReminder.settext("Don't forget to save!");
-					saveReminder.setcolor(Color.RED);
+					AlarmManager.load(al);
+					AlarmManager.save();
 					super.changed();
 				}
 			};
@@ -334,8 +328,8 @@ public class AlarmWindow extends Window {
 				}
 				@Override
 				public void changed(boolean val) {
-					saveReminder.settext("Don't forget to save!");
-					saveReminder.setcolor(Color.RED);
+					AlarmManager.load(al);
+					AlarmManager.save();
 					super.changed(val);
 				}
 			}, prev.pos("ul").adds(130,0));
@@ -371,8 +365,8 @@ public class AlarmWindow extends Window {
 					if(button != 1)
 						return super.mousedown(c, button);
 					wdgmsg(this.parent, "delete");
-					saveReminder.settext("Don't forget to save!");
-					saveReminder.setcolor(Color.RED);
+					AlarmManager.load(al);
+					AlarmManager.save();
 					return super.mousedown(c, button);
 				}
 			}, prev.pos("ul").adds(80,0));

@@ -28,9 +28,9 @@ package haven;
 
 import haven.automated.AttackOpponent;
 import haven.automated.ClickNearestGate;
-import haven.automated.EquipSacks;
 import haven.automated.RefillWaterContainers;
 import haven.render.RenderTree;
+import haven.automated.EquipFromBelt;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -1460,8 +1460,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
 	public static KeyBinding kb_toggleMuteNonFriendly  = KeyBinding.get("toggleMuteNonFriendly",  KeyMatch.nil);
 
-	public static KeyBinding kb_equipTSacks  = KeyBinding.get("equipTSacks",  KeyMatch.nil);
-
 	public static KeyBinding kb_toggleWalkWithPathfinder  = KeyBinding.get("toggleWalkWithPathfinder",  KeyMatch.nil);
 
 	public static KeyBinding kb_buttonForTesting  = KeyBinding.get("testButton",  KeyMatch.nil);
@@ -1540,8 +1538,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if (kb_toggleMuteNonFriendly.key().match(ev)) {
 			msg(muteNonFriendly ? "Non-Friendly players muted" : "Non-Friendly players unmuted");
 			muteNonFriendly = !muteNonFriendly;
-		} else if (kb_equipTSacks.key().match(ev)) {
-			new Thread(new EquipSacks(this), "EquipSacks").start();
 		} else if (kb_toggleWalkWithPathfinder.key().match(ev)) {
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
