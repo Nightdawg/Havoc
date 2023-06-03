@@ -32,6 +32,8 @@ import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
+import haven.automated.EquipFromBelt;
+
 import java.util.*;
 
 public class MenuGrid extends Widget implements KeyBinding.Bindable {
@@ -336,6 +338,9 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/CombatDecks/CombatDeck3");
 		makeLocal("paginae/nightdawg/CombatDecks/CombatDeck4");
 		makeLocal("paginae/nightdawg/CombatDecks/CombatDeck5");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_tsacks");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_wbindles");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_b12");
 	}
 
 
@@ -535,8 +540,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		GameUI gui = gameui();
 		if (gui == null)
 			return;
-		if (ad[1].equals("siwtchToCombatDeck")) {
+		if (ad[1].equals("switchToCombatDeck")) {
 			gui.changeDecks(Integer.parseInt(ad[2]));
+		} else if (ad[1].equals("equipFromBelt")) {
+			new Thread(new EquipFromBelt(gameui(), ad[2]), "EquipFromBelt").start();
 		}
 	}
 

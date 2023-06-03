@@ -753,8 +753,6 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Toggle No Drop", GameUI.kb_toggleNoDropping, y);
 			y = addbtn(cont, "Mute Non-Friendly", GameUI.kb_toggleMuteNonFriendly, y+6);
 
-			y = addbtn(cont, "Equip T.Sacks or W.Bindles", GameUI.kb_equipTSacks, y+6);
-
 			y = addbtn(cont, "Toggle Walk Pathfinder", GameUI.kb_toggleWalkWithPathfinder, y+6);
 
 			y = addbtn(cont, "Button For Testing", GameUI.kb_buttonForTesting, y+6);
@@ -1856,8 +1854,6 @@ public class OptWnd extends Window {
 				alarmWindow.show();
 			} else {
 				alarmWindow.show(!alarmWindow.visible);
-				alarmWindow.saveReminder.settext("Don't forget to save!");
-				alarmWindow.saveReminder.setcolor(Color.RED);
 				alarmWindow.bottomNote.settext("NOTE: You can add your own alarm sound files in the \"Alarms\" folder. (The file extension must be .wav)");
 				alarmWindow.bottomNote.setcolor(Color.WHITE);
 				alarmWindow.bottomNote.c.x = UI.scale(140);
