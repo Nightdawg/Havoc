@@ -341,6 +341,17 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_tsacks");
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_wbindles");
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_b12");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_cutblade");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_boarspear");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_pickaxe");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_sledgehammer");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_scythe");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_metalshovel");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_tinkershovel");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_woodenshovel");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_hirdsmanshield");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_bronzeshield");
+		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_fyrdsmanshield");
 	}
 
 

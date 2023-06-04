@@ -75,10 +75,10 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
 		} else {
 			unknown = true;
 			// todo namegen
-			//			nm = Utils.outline2(nfnd.render(Namegen.getName(gob.id), BuddyWnd.gc[group]).img, Utils.contrast(unknowncol), false);
+			//			nm = AUtils.outline2(nfnd.render(Namegen.getName(gob.id), BuddyWnd.gc[group]).img, AUtils.contrast(unknowncol), false);
 		}
 	    if(name.length() > 0)
-		//nm = Utils.outline2(nfnd.render(name, BuddyWnd.gc[group]).img, Utils.contrast(BuddyWnd.gc[group]));
+		//nm = AUtils.outline2(nfnd.render(name, BuddyWnd.gc[group]).img, AUtils.contrast(BuddyWnd.gc[group]));
 		nm = Utils.outline2(nfnd.renderstroked(name, BuddyWnd.gc[group], Color.BLACK).img, Color.BLACK, true); // ND: Changed this for better name visibility
 	    int w = 0, h = 0;
 	    if(nm != null) {

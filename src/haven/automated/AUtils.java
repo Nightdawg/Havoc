@@ -1,12 +1,10 @@
 package haven.automated;
 
-import haven.Coord;
-import haven.GameUI;
-import haven.Gob;
+import haven.*;
 
 import static haven.OCache.posres;
 
-public class Utils {
+public class AUtils {
 
     public static void attackGob(GameUI gui, Gob gob) {
         if (gob != null && gui != null && gui.map != null) {

@@ -2806,11 +2806,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 //		public void run(Console cons, String[] args) throws Exception {
 //		    if(args.length >= 2) {
 //			Class<? extends Camera> ct = camtypes.get(args[1]);
-//			String[] cargs = Utils.splice(args, 2);
+//			String[] cargs = AUtils.splice(args, 2);
 //			if(ct != null) {
 //				camera = makecam(ct, cargs);
-//				Utils.setpref("defcam", args[1]);
-//				Utils.setprefb("camargs", Utils.serialize(cargs));
+//				AUtils.setpref("defcam", args[1]);
+//				AUtils.setprefb("camargs", AUtils.serialize(cargs));
 //			} else {
 //			    throw(new Exception("no such camera: " + args[1]));
 //			}

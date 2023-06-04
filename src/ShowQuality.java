@@ -24,7 +24,7 @@ public class ShowQuality extends MenuGrid.PagButton {
     */
 
     public void use(MenuGrid.Interaction iact) {
-	        //Utils.setprefb("qtoggle", Quality.show = !Quality.show);
+	        //AUtils.setprefb("qtoggle", Quality.show = !Quality.show);
         OptWnd.toggleQualityDisplayCheckBox.set(!Quality.show);
     }
 }

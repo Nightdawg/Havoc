@@ -17,38 +17,52 @@ public class EquipFromBelt implements Runnable {
     @Override
     public void run() {
         try {
-            WItem leftHand = gui.getequipory().slots[6];
-            WItem rightHand = gui.getequipory().slots[7];
             if (gui.vhand == null) {
                 switch (actionButtonString) {
                     case "tsacks":
-                        boolean isLeftHandTravelersSack = leftHand != null && leftHand.item.res.get().name.equals("gfx/invobjs/small/travellerssack");
-                        boolean isRightHandTravelersSack = rightHand != null && rightHand.item.res.get().name.equals("gfx/invobjs/small/travellerssack");
-                        if (isLeftHandTravelersSack && isRightHandTravelersSack) {
-                            gui.ui.msg("Already wearing Traveler Sacks.");
-                        } else {
-                            equipTravellerSacksInBelt();
-                        }
+                        equipDoubleItemsFromBelt("gfx/invobjs/small/travellerssack", "Traveller's Sacks");
                         break;
                     case "wbindles":
-                        boolean isLeftHandWanderersBindle = leftHand != null && leftHand.item.res.get().name.equals("gfx/invobjs/small/wanderersbindle");
-                        boolean isRightHandWanderersBindle = rightHand != null && rightHand.item.res.get().name.equals("gfx/invobjs/small/wanderersbindle");
-                        if (isLeftHandWanderersBindle && isRightHandWanderersBindle) {
-                            gui.ui.msg("Already wearing Wanderer Bindles.");
-                        } else {
-                            equipBindlesInBelt();
-                        }
+                        equipDoubleItemsFromBelt("gfx/invobjs/small/wanderersbindle", "Wanderer's Bindles");
                         break;
                     case "b12":
-                        boolean isB12Equipped = leftHand != null && leftHand.item.res.get().name.equals("gfx/invobjs/small/b12axe");
-                        if (isB12Equipped) {
-                            gui.ui.msg("Already wearing B12.");
-                        } else {
-                            equipB12InBelt();
-                        }
+                        equipTwoHanderFromBelt("gfx/invobjs/small/b12axe", "B12");
+                        break;
+                    case "cutblade":
+                        equipTwoHanderFromBelt("gfx/invobjs/small/cutblade", "Cutblade");
+                        break;
+                    case "boarspear":
+                        equipTwoHanderFromBelt("gfx/invobjs/small/boarspear", "Boar Spear");
+                        break;
+                    case "pickaxe":
+                        equipTwoHanderFromBelt("gfx/invobjs/small/pickaxe", "Pickaxe");
+                        break;
+                    case "sledgehammer":
+                        equipTwoHanderFromBelt("gfx/invobjs/small/sledgehammer", "Sledgehammer");
+                        break;
+                    case "scythe":
+                        equipTwoHanderFromBelt("gfx/invobjs/small/scythe", "Scythe");
+                        break;
+                    case "metalshovel":
+                        equipTwoHanderFromBelt("gfx/invobjs/small/shovel-m", "Metal Shovel");
+                        break;
+                    case "tinkershovel":
+                        equipTwoHanderFromBelt("gfx/invobjs/small/shovel-t", "Tinker's Shovel");
+                        break;
+                    case "woodenshovel":
+                        equipTwoHanderFromBelt("gfx/invobjs/small/shovel-w", "Wooden Shovel");
+                        break;
+                    case "hirdsmanshield":
+                        equipTwoDifferentItemsFromBelt("gfx/invobjs/small/hirdsword", "gfx/invobjs/small/roundshield", "Hirdsman's Sword", "Shield");
+                        break;
+                    case "bronzeshield":
+                        equipTwoDifferentItemsFromBelt("gfx/invobjs/small/bronzesword", "gfx/invobjs/small/roundshield", "Bronze Sword", "Shield");
+                        break;
+                    case "fyrdsmanshield":
+                        equipTwoDifferentItemsFromBelt("gfx/invobjs/small/fyrdsword", "gfx/invobjs/small/roundshield", "Fyrdsman's Sword", "Shield");
                         break;
                     default:
-                        //
+                        // ND: Default? Do nothing.
                 }
             }
         } catch (Exception e) {
@@ -93,316 +107,278 @@ public class EquipFromBelt implements Runnable {
             "wildgoatlur",
     };
 
-    public void equipTravellerSacksInBelt() throws InterruptedException {
+    public void equipDoubleItemsFromBelt(String resourcePath, String itemName) throws InterruptedException {
         Equipory equipory = gui.getequipory();
+        WItem leftHand = equipory.slots[6];
+        WItem rightHand = equipory.slots[7];
+        boolean isLeftHandTravelersSack = leftHand != null && leftHand.item.res.get().name.equals(resourcePath);
+        boolean isRightHandTravelersSack = rightHand != null && rightHand.item.res.get().name.equals(resourcePath);
+        if (isLeftHandTravelersSack && isRightHandTravelersSack) {
+            gui.ui.msg(itemName + " are already equipped.");
+            return;
+        }
         Inventory belt = null;
         Map<GItem, Coord> items = new HashMap<>();
         Coord sqsz = UI.scale(new Coord(33, 33));
-
         for (Widget w = gui.lchild; w != null; w = w.prev) {
             if (!(w instanceof haven.GItem.ContentsWindow) || !((GItem.ContentsWindow) w).player) continue;
-
             for (Widget ww : w.children()) {
                 if (!(ww instanceof Inventory)) continue;
-
                 Coord inventorySize = ((Inventory) ww).isz;
                 belt = (Inventory) ww;
-
                 for (int i = 0; i < inventorySize.x; i++) {
                     for (int j = 0; j < inventorySize.y; j++) {
                         Coord indexCoord = new Coord(i, j);
                         Coord calculatedCoord = indexCoord.mul(sqsz).add(1, 1);
-
                         Map<GItem, Coord> finalItems = items;
                         ((Inventory) ww).wmap.entrySet().stream()
                                 .filter(entry -> entry.getValue().c.equals(calculatedCoord) &&
-                                        (entry.getKey().res.get().name.equals("gfx/invobjs/small/travellerssack")))
+                                        (entry.getKey().res.get().name.equals(resourcePath)))
                                 .forEach(entry -> finalItems.put(entry.getKey(), indexCoord));
                     }
                 }
             }
         }
-
         if (items.isEmpty()) {
-            gui.ui.error("No traveller sacks found in the belt.");
+            gui.ui.error("No " + itemName + " found in the belt.");
             return;
         }
-
         if (items.size() > 2) {
             items = items.entrySet().stream()
                     .limit(2)
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
-
-        WItem firstHand = equipory.slots[6];
-        boolean isNullFirst = firstHand == null;
-        boolean isWrongItemFirst = firstHand != null && !(firstHand.item.res.get().name.equals("gfx/invobjs/small/travellerssack"));
-        if (!isNullFirst && Arrays.stream(RESTRICTED_ITEMS).anyMatch(firstHand.item.res.get().name::contains)) {
+        boolean isNullFirst = leftHand == null;
+        boolean isWrongItemFirst = leftHand != null && !(leftHand.item.res.get().name.equals(resourcePath));
+        if (!isNullFirst && Arrays.stream(RESTRICTED_ITEMS).anyMatch(leftHand.item.res.get().name::contains)) {
             isWrongItemFirst = false;
-            gui.ui.error("Item in left hand can not be placed in belt. Moving on.");
+            gui.ui.error("Item in Left Hand can not be placed in belt. Skipping.");
         }
         if (isNullFirst || isWrongItemFirst) {
             if (!items.isEmpty()) {
-                Map.Entry<GItem, Coord> itemEntry = items.entrySet().iterator().next();
-                items.remove(itemEntry.getKey());
-
-                GItem item = itemEntry.getKey();
-                Coord originalPosition = itemEntry.getValue();
-
-                item.wdgmsg("take", Coord.z);
-                Thread.sleep(5);
-                equipory.wdgmsg("drop", 6);
-                Thread.sleep(5);
-                if (!isNullFirst) {
-                    belt.wdgmsg("drop", originalPosition);
-                    Thread.sleep(5);
-                }
+                switchItem(items, equipory, 6, isNullFirst, belt);
             }
         }
-
-        //This timeout is to get server response in case you had two handed item
-        Thread.sleep(100);
-
-        WItem secondHand = equipory.slots[7];
-        boolean isNullSecond = secondHand == null;
-        boolean isWrongItemSecond = secondHand != null && !(secondHand.item.res.get().name.equals("gfx/invobjs/small/travellerssack"));
-        if (!isNullSecond && Arrays.stream(RESTRICTED_ITEMS).anyMatch(secondHand.item.res.get().name::contains)) {
+        boolean isNullSecond = rightHand == null;
+        boolean isWrongItemSecond = rightHand != null && !(rightHand.item.res.get().name.equals(resourcePath));
+        if (!isNullSecond && Arrays.stream(RESTRICTED_ITEMS).anyMatch(rightHand.item.res.get().name::contains)) {
             isWrongItemSecond = false;
-            gui.ui.error("Item in right hand can not be placed in belt. Moving on.");
+            gui.ui.error("Item in Right Hand can not be placed in belt. Skipping.");
         }
         if (isNullSecond || isWrongItemSecond) {
             if (!items.isEmpty()) {
-                Map.Entry<GItem, Coord> itemEntry = items.entrySet().iterator().next();
-                items.remove(itemEntry.getKey());
-
-                GItem item = itemEntry.getKey();
-                Coord originalPosition = itemEntry.getValue();
-
-                item.wdgmsg("take", Coord.z);
-                Thread.sleep(5);
-                equipory.wdgmsg("drop", 7);
-                Thread.sleep(5);
-                if (!isNullSecond) {
-                    belt.wdgmsg("drop", originalPosition);
-                    Thread.sleep(5);
-                }
+                switchItem(items, equipory, 7, isNullSecond, belt);
             }
         }
-        //gui.ui.msg("Traveller Sacks equip script Finished.");
     }
 
-    public void equipBindlesInBelt() throws InterruptedException {
+    public void equipTwoHanderFromBelt(String resourcePath, String itemName) throws InterruptedException {
         Equipory equipory = gui.getequipory();
+        WItem leftHand = equipory.slots[6];
+        WItem rightHand = equipory.slots[7];
+        boolean isTwoHanderEquipped = leftHand != null && leftHand.item.res.get().name.equals(resourcePath);
+        if (isTwoHanderEquipped) {
+            gui.ui.msg(itemName + " is already equipped.");
+            return;
+        }
         Inventory belt = null;
         Map<GItem, Coord> items = new HashMap<>();
         Coord sqsz = UI.scale(new Coord(33, 33));
-
         for (Widget w = gui.lchild; w != null; w = w.prev) {
             if (!(w instanceof haven.GItem.ContentsWindow) || !((GItem.ContentsWindow) w).player) continue;
-
             for (Widget ww : w.children()) {
                 if (!(ww instanceof Inventory)) continue;
-
                 Coord inventorySize = ((Inventory) ww).isz;
                 belt = (Inventory) ww;
-
                 for (int i = 0; i < inventorySize.x; i++) {
                     for (int j = 0; j < inventorySize.y; j++) {
                         Coord indexCoord = new Coord(i, j);
                         Coord calculatedCoord = indexCoord.mul(sqsz).add(1, 1);
-
                         Map<GItem, Coord> finalItems = items;
                         ((Inventory) ww).wmap.entrySet().stream()
                                 .filter(entry -> entry.getValue().c.equals(calculatedCoord) &&
-                                        (entry.getKey().res.get().name.equals("gfx/invobjs/small/wanderersbindle")))
+                                        (entry.getKey().res.get().name.equals(resourcePath)))
                                 .forEach(entry -> finalItems.put(entry.getKey(), indexCoord));
                     }
                 }
             }
         }
-
         if (items.isEmpty()) {
-            gui.ui.error("No wanderer bindles found in the belt.");
+            gui.ui.error("No " + itemName + " found in Belt.");
             return;
         }
-
-        if (items.size() > 2) {
-            items = items.entrySet().stream()
-                    .limit(2)
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        }
-
-        WItem firstHand = equipory.slots[6];
-        boolean isNullFirst = firstHand == null;
-        boolean isWrongItemFirst = firstHand != null && !(firstHand.item.res.get().name.equals("gfx/invobjs/small/wanderersbindle"));
-        if (!isNullFirst && Arrays.stream(RESTRICTED_ITEMS).anyMatch(firstHand.item.res.get().name::contains)) {
-            isWrongItemFirst = false;
-            gui.ui.error("Item in left hand can not be placed in belt. Moving on.");
-        }
-        if (isNullFirst || isWrongItemFirst) {
-            if (!items.isEmpty()) {
-                Map.Entry<GItem, Coord> itemEntry = items.entrySet().iterator().next();
-                items.remove(itemEntry.getKey());
-
-                GItem item = itemEntry.getKey();
-                Coord originalPosition = itemEntry.getValue();
-
-                item.wdgmsg("take", Coord.z);
-                Thread.sleep(5);
-                equipory.wdgmsg("drop", 6);
-                Thread.sleep(5);
-                if (!isNullFirst) {
-                    belt.wdgmsg("drop", originalPosition);
-                    Thread.sleep(5);
-                }
-            }
-        }
-
-        //This timeout is to get server response in case you had two handed item
-        Thread.sleep(100);
-
-        WItem secondHand = equipory.slots[7];
-        boolean isNullSecond = secondHand == null;
-        boolean isWrongItemSecond = secondHand != null && !(secondHand.item.res.get().name.equals("gfx/invobjs/small/wanderersbindle"));
-        if (!isNullSecond && Arrays.stream(RESTRICTED_ITEMS).anyMatch(secondHand.item.res.get().name::contains)) {
-            isWrongItemSecond = false;
-            gui.ui.error("Item in left hand can not be placed in belt. Moving on.");
-        }
-        if (isNullSecond || isWrongItemSecond) {
-            if (!items.isEmpty()) {
-                Map.Entry<GItem, Coord> itemEntry = items.entrySet().iterator().next();
-                items.remove(itemEntry.getKey());
-
-                GItem item = itemEntry.getKey();
-                Coord originalPosition = itemEntry.getValue();
-
-                item.wdgmsg("take", Coord.z);
-                Thread.sleep(5);
-                equipory.wdgmsg("drop", 7);
-                Thread.sleep(5);
-                if (!isNullSecond) {
-                    belt.wdgmsg("drop", originalPosition);
-                    Thread.sleep(5);
-                }
-            }
-        }
-        //gui.ui.msg("Wanderer Bindles equip script Finished.");
-    }
-
-    public void equipB12InBelt() throws InterruptedException {
-        Equipory equipory = gui.getequipory();
-        Inventory belt = null;
-        Map<GItem, Coord> items = new HashMap<>();
-        Coord sqsz = UI.scale(new Coord(33, 33));
-
-        for (Widget w = gui.lchild; w != null; w = w.prev) {
-            if (!(w instanceof haven.GItem.ContentsWindow) || !((GItem.ContentsWindow) w).player) continue;
-
-            for (Widget ww : w.children()) {
-                if (!(ww instanceof Inventory)) continue;
-
-                Coord inventorySize = ((Inventory) ww).isz;
-                belt = (Inventory) ww;
-
-                for (int i = 0; i < inventorySize.x; i++) {
-                    for (int j = 0; j < inventorySize.y; j++) {
-                        Coord indexCoord = new Coord(i, j);
-                        Coord calculatedCoord = indexCoord.mul(sqsz).add(1, 1);
-
-                        Map<GItem, Coord> finalItems = items;
-                        ((Inventory) ww).wmap.entrySet().stream()
-                                .filter(entry -> entry.getValue().c.equals(calculatedCoord) &&
-                                        (entry.getKey().res.get().name.equals("gfx/invobjs/small/b12axe")))
-                                .forEach(entry -> finalItems.put(entry.getKey(), indexCoord));
-                    }
-                }
-            }
-        }
-
-        if (items.isEmpty()) {
-            gui.ui.error("No B12 found in the belt.");
-            return;
-        }
-
         if (items.size() > 1) {
             items = items.entrySet().stream()
                     .limit(1)
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
-
-        WItem firstHand = equipory.slots[6];
-        WItem secondHand = equipory.slots[7];
-        boolean isNullFirst = firstHand == null;
-        boolean isNullSecond = secondHand == null;
-
-        if (!isNullFirst && Arrays.stream(RESTRICTED_ITEMS).anyMatch(firstHand.item.res.get().name::contains)) {
-            gui.ui.error("Item in left hand can not be placed in belt. B12 can not be equipped from belt.");
+        boolean isNullFirst = leftHand == null;
+        boolean isNullSecond = rightHand == null;
+        if (!isNullFirst && Arrays.stream(RESTRICTED_ITEMS).anyMatch(leftHand.item.res.get().name::contains)) {
+            gui.ui.error("Item in Left Hand can not be placed in belt. " + itemName + " could not be equipped.");
             return;
         }
-        if (!isNullSecond && Arrays.stream(RESTRICTED_ITEMS).anyMatch(secondHand.item.res.get().name::contains)) {
-            gui.ui.error("Item in right hand can not be placed in belt. B12 can not be equipped from belt.");
+        if (!isNullSecond && Arrays.stream(RESTRICTED_ITEMS).anyMatch(rightHand.item.res.get().name::contains)) {
+            gui.ui.error("Item in Right Hand can not be placed in belt." + itemName + " could not be equipped.");
             return;
         }
-
         boolean needExtraEmptyBeltSlot = false;
-        if (!isNullFirst && !isNullSecond){
-            if (Arrays.stream(TWOHANDED_ITEMS).noneMatch(firstHand.item.res.get().name::endsWith)){
+        if (!isNullFirst && !isNullSecond) {
+            if (Arrays.stream(TWOHANDED_ITEMS).noneMatch(leftHand.item.res.get().name::endsWith)) {
                 needExtraEmptyBeltSlot = true;
             }
         }
-
-        if (needExtraEmptyBeltSlot){
-
+        if (needExtraEmptyBeltSlot) {
+            if (belt.getFreeSpace() > 0) {
+                Map.Entry<GItem, Coord> itemEntry = items.entrySet().iterator().next();
+                items.remove(itemEntry.getKey());
+                GItem item = itemEntry.getKey();
+                Coord originalPosition = itemEntry.getValue();
+                equipory.slots[6].item.wdgmsg("take", Coord.z);
+                Thread.sleep(5);
+                belt.wdgmsg("drop", belt.isRoom(1, 1));
+                Thread.sleep(5);
+                item.wdgmsg("take", Coord.z);
+                Thread.sleep(5);
+                equipory.wdgmsg("drop", 6);
+                Thread.sleep(5);
+                belt.wdgmsg("drop", originalPosition);
+                Thread.sleep(5);
+            } else {
+                gui.ui.error("You need an extra empty slot in your Belt to swap your current handheld items for a Two-Handed (" + itemName + ").");
+            }
         } else {
-
+            Map.Entry<GItem, Coord> itemEntry = items.entrySet().iterator().next();
+            items.remove(itemEntry.getKey());
+            GItem item = itemEntry.getKey();
+            Coord originalPosition = itemEntry.getValue();
+            item.wdgmsg("take", Coord.z);
+            Thread.sleep(5);
+            equipory.wdgmsg("drop", 6);
+            Thread.sleep(5);
+            belt.wdgmsg("drop", originalPosition);
+            Thread.sleep(5);
         }
-
-
-
-//        if (isNullFirst) {
-//            if (!items.isEmpty()) {
-//                Map.Entry<GItem, Coord> itemEntry = items.entrySet().iterator().next();
-//                items.remove(itemEntry.getKey());
-//
-//                GItem item = itemEntry.getKey();
-//                Coord originalPosition = itemEntry.getValue();
-//
-//                item.wdgmsg("take", Coord.z);
-//                Thread.sleep(5);
-//                equipory.wdgmsg("drop", 6);
-//                Thread.sleep(5);
-//                if (!isNullFirst) {
-//                    belt.wdgmsg("drop", originalPosition);
-//                    Thread.sleep(5);
-//                }
-//            }
-//        }
-
-//        //This timeout is to get server response in case you had two handed item
-//        Thread.sleep(100);
-//
-//
-//
-//        if (isNullSecond) {
-//            if (!items.isEmpty()) {
-//                Map.Entry<GItem, Coord> itemEntry = items.entrySet().iterator().next();
-//                items.remove(itemEntry.getKey());
-//
-//                GItem item = itemEntry.getKey();
-//                Coord originalPosition = itemEntry.getValue();
-//
-//                item.wdgmsg("take", Coord.z);
-//                Thread.sleep(5);
-//                equipory.wdgmsg("drop", 7);
-//                Thread.sleep(5);
-//                if (!isNullSecond) {
-//                    belt.wdgmsg("drop", originalPosition);
-//                    Thread.sleep(5);
-//                }
-//            }
-//        }
-        //gui.ui.msg("B12 equip script Finished.");
     }
 
+    public void equipTwoDifferentItemsFromBelt(String firstResourcePath, String secondResourcePath, String firstItemName, String secondItemName) throws InterruptedException {
+        Equipory equipory = gui.getequipory();
+        WItem leftHand = equipory.slots[6];
+        WItem rightHand = equipory.slots[7];
+        boolean isFirstEquippedLeftHand = (leftHand != null && leftHand.item.res.get().name.equals(firstResourcePath));
+        boolean isFirstEquippedRightHand = (rightHand != null && rightHand.item.res.get().name.equals(firstResourcePath));
+        boolean isFirstEquipped = isFirstEquippedLeftHand || isFirstEquippedRightHand;
+        boolean isSecondEquippedLeftHand = (leftHand != null && leftHand.item.res.get().name.equals(secondResourcePath));
+        boolean isSecondEquippedRightHand = (rightHand != null && rightHand.item.res.get().name.equals(secondResourcePath));
+        boolean isSecondEquipped = isSecondEquippedLeftHand || isSecondEquippedRightHand;
+        if (isFirstEquipped && isSecondEquipped) {
+            gui.ui.msg(firstItemName + " and " + secondItemName + " are already equipped.");
+            return;
+        }
+        boolean isNullFirst = leftHand == null;
+        if (!isNullFirst && Arrays.stream(RESTRICTED_ITEMS).anyMatch(leftHand.item.res.get().name::contains)) {
+            gui.ui.error("Item in Left Hand can not be placed in belt. Can't equip items from belt.");
+            return;
+        }
+        boolean isNullSecond = rightHand == null;
+        if (!isNullSecond && Arrays.stream(RESTRICTED_ITEMS).anyMatch(rightHand.item.res.get().name::contains)) {
+            gui.ui.error("Item in Right Hand can not be placed in belt. Can't equip items from belt.");
+            return;
+        }
+        Inventory belt = null;
+        Map<GItem, Coord> firstItemInBelt = new HashMap<>();
+        Map<GItem, Coord> secondItemInBelt = new HashMap<>();
+        Coord sqsz = UI.scale(new Coord(33, 33));
+        for (Widget w = gui.lchild; w != null; w = w.prev) {
+            if (!(w instanceof haven.GItem.ContentsWindow) || !((GItem.ContentsWindow) w).player) continue;
+            for (Widget ww : w.children()) {
+                if (!(ww instanceof Inventory)) continue;
+                Coord inventorySize = ((Inventory) ww).isz;
+                belt = (Inventory) ww;
+                for (int i = 0; i < inventorySize.x; i++) {
+                    for (int j = 0; j < inventorySize.y; j++) {
+                        Coord indexCoord = new Coord(i, j);
+                        Coord calculatedCoord = indexCoord.mul(sqsz).add(1, 1);
+                        Map<GItem, Coord> finalFirstItems = firstItemInBelt;
+                        ((Inventory) ww).wmap.entrySet().stream()
+                                .filter(entry -> entry.getValue().c.equals(calculatedCoord) &&
+                                        (entry.getKey().res.get().name.equals(firstResourcePath)))
+                                .forEach(entry -> finalFirstItems.put(entry.getKey(), indexCoord));
 
+                        Map<GItem, Coord> finalSecondItems = secondItemInBelt;
+                        ((Inventory) ww).wmap.entrySet().stream()
+                                .filter(entry -> entry.getValue().c.equals(calculatedCoord) &&
+                                        (entry.getKey().res.get().name.equals(secondResourcePath)))
+                                .forEach(entry -> finalSecondItems.put(entry.getKey(), indexCoord));
+                    }
+                }
+            }
+        }
+        if (isFirstEquipped){
+            if (secondItemInBelt.isEmpty()) {
+                gui.ui.error("No " + secondItemName + " found in the belt.");
+                return;
+            }
+            if (secondItemInBelt.size() > 1) {
+                secondItemInBelt = secondItemInBelt.entrySet().stream()
+                        .limit(1)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            }
+            if (isFirstEquippedLeftHand){
+                switchItem(secondItemInBelt, equipory, 7, isNullFirst, belt);
+            } else if (isFirstEquippedRightHand){
+                switchItem(secondItemInBelt, equipory, 6, isNullFirst, belt);
+            }
+        } else if (isSecondEquipped){
+            if (firstItemInBelt.isEmpty()) {
+                gui.ui.error("No " + firstItemName + " found in the belt.");
+                return;
+            }
+            if (firstItemInBelt.size() > 1) {
+                firstItemInBelt = firstItemInBelt.entrySet().stream()
+                        .limit(1)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            }
+            if (isSecondEquippedLeftHand){
+                switchItem(secondItemInBelt, equipory, 6, isNullFirst, belt);
+            } else if (isSecondEquippedRightHand){
+                switchItem(firstItemInBelt, equipory, 7, isNullSecond, belt);
+            }
+        } else {
+            if (firstItemInBelt.isEmpty()) {
+                gui.ui.error("No " + firstItemName + " found in the belt.");
+                return;
+            }
+            if (secondItemInBelt.isEmpty()) {
+                gui.ui.error("No " + secondItemName + " found in the belt.");
+                return;
+            }
+            if (firstItemInBelt.size() > 1) {
+                firstItemInBelt = firstItemInBelt.entrySet().stream()
+                        .limit(1)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            }
+            if (secondItemInBelt.size() > 1) {
+                secondItemInBelt = secondItemInBelt.entrySet().stream()
+                        .limit(1)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            }
+            switchItem(firstItemInBelt, equipory, 6, isNullSecond, belt);
+            switchItem(secondItemInBelt, equipory, 7, isNullFirst, belt);
+        }
+    }
+    private void switchItem(Map<GItem, Coord> itemInBelt, Equipory equipory, int slot, boolean isNull, Inventory belt) throws InterruptedException {
+        Map.Entry<GItem, Coord> itemEntry = itemInBelt.entrySet().iterator().next();
+        itemInBelt.remove(itemEntry.getKey());
+        GItem item = itemEntry.getKey();
+        Coord originalPosition = itemEntry.getValue();
+        item.wdgmsg("take", Coord.z);
+        Thread.sleep(5);
+        equipory.wdgmsg("drop", slot);
+        Thread.sleep(5);
+        if (!isNull) {
+            belt.wdgmsg("drop", originalPosition);
+            Thread.sleep(5);
+        }
+    }
 }

@@ -4,7 +4,7 @@ package haven.automated;
 import haven.GameUI;
 import haven.Gob;
 
-import static haven.automated.Utils.attackGob;
+import static haven.automated.AUtils.attackGob;
 
 public class AttackOpponent implements Runnable {
     private GameUI gui;
