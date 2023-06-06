@@ -77,35 +77,9 @@ public class EquipFromBelt implements Runnable {
             "splint",
     };
 
-    //TODO: Maybe there's some way to determine if the item held in both hands is one and the same?
-    // Like check for some unique item ID? Do items even have a unique ID?
-    private static final String[] TWOHANDED_ITEMS = {
-            // ND: Weapons
-            "b12axe",
-            "boarspear",
-            "cutblade",
-            "huntersbow",
-            "rangersbow",
-
-            // ND: Tools
-            "scythe",
-            "sledgehammer",
-            "glassrod",
-            "pickaxe",
-            "shovel-m",
-            "shovel-w",
-            "shovel-t",
-
-            // ND: Instruments too
-            "bagpipe",
-            "flute",
-            "lute",
-            "drum",
-            "harmonica",
-            "fiddle",
-            "claycuckoou",
-            "wildgoatlur",
-    };
+    private boolean isTwoHander(WItem leftHand, WItem rightHand) {
+        return leftHand.item != null && rightHand.item != null && leftHand.item == rightHand.item;
+    }
 
     public void equipDoubleItemsFromBelt(String resourcePath, String itemName) throws InterruptedException {
         Equipory equipory = gui.getequipory();
@@ -224,7 +198,7 @@ public class EquipFromBelt implements Runnable {
         }
         boolean needExtraEmptyBeltSlot = false;
         if (!isNullFirst && !isNullSecond) {
-            if (Arrays.stream(TWOHANDED_ITEMS).noneMatch(leftHand.item.res.get().name::endsWith)) {
+            if (!isTwoHander(leftHand, rightHand)) {
                 needExtraEmptyBeltSlot = true;
             }
         }
