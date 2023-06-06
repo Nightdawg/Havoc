@@ -27,18 +27,21 @@
 package haven;
 
 import haven.automated.*;
-import haven.render.RenderTree;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.function.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.WritableRaster;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static haven.Inventory.invsq;
-import static haven.MCache.tilesz;
 
 public class GameUI extends ConsoleHost implements Console.Directory, UI.MessageWidget {
     public static final Text.Foundry msgfoundry = RootWidget.msgfoundry;
@@ -2180,4 +2183,37 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 	}
 
+	public static Integer getPingValue() {
+		String osName = System.getProperty("os.name");
+		boolean isWindows = osName.startsWith("Windows");
+
+		Pattern pattern = Pattern.compile("time=(\\d+(\\.\\d+)?)");
+
+		String pingCommand = isWindows ? "-n" : "-c";
+		String gameServer = "game.havenandhearth.com";
+
+		List<String> command = List.of("ping", pingCommand, "1", gameServer);
+
+		String output;
+		try {
+			Process process = new ProcessBuilder(command).start();
+			try (BufferedReader standardOutput = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+				output = standardOutput.lines().collect(Collectors.joining());
+			}
+		} catch (IOException e) {
+			System.err.println("Failed to execute ping command: " + e.getMessage());
+			return null;
+		}
+
+		Matcher matcher = pattern.matcher(output);
+		if (matcher.find()) {
+			String matchedPing = matcher.group(1);
+			try {
+				return (int)Double.parseDouble(matchedPing);
+			} catch (NumberFormatException e) {
+				System.err.println("Failed to parse ping value: " + matchedPing);
+			}
+		}
+		return null;
+	}
 }
