@@ -27,6 +27,7 @@
 package haven;
 
 import haven.render.*;
+import haven.sprites.CurAggroSprite;
 
 import java.awt.*;
 import java.util.*;
@@ -125,7 +126,8 @@ public class Fightsess extends Widget {
 	}
 	if((cur == null) || (cur.slot == null)) {
 	    try {
-		cur = new Effect(Sprite.create(null, fx, Message.nil));
+//		cur = new Effect(Sprite.create(null, fx, Message.nil));
+		cur = new Effect(new CurAggroSprite(null));
 		cur.slot = map.basic.add(cur.spr, place);
 	    } catch(Loading l) {
 		return(null);
@@ -214,7 +216,9 @@ public class Fightsess extends Widget {
 			g.aimage(ip.get().tex(), altui ? new Coord(x0 - UI.scale(40), y0 - UI.scale(30)) : pcc.add(-UI.scale(75), 0), 1, 0.5);
 			g.aimage(oip.get().tex(), altui ? new Coord(x0 + UI.scale(40), y0 - UI.scale(30)) : pcc.add(UI.scale(75), 0), 0, 0.5);
 
-			if(markCombatTargetSetting){curtgtfx = fxon(fv.current.gobid, tgtfx, curtgtfx);}
+			if (markCombatTargetSetting) {
+				curtgtfx = fxon(fv.current.gobid, tgtfx, curtgtfx);
+			}
 		}
 
 		{

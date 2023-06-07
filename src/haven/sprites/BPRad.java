@@ -1,5 +1,5 @@
 /* Preprocessed source code */
-package haven.res.gfx.fx.bprad;
+package haven.sprites;
 
 import haven.*;
 import haven.render.*;

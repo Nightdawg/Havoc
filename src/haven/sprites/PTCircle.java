@@ -1,8 +1,9 @@
-package haven.res.gfx.fx.flcir;
+package haven.sprites;
 
 import haven.Gob;
 import haven.Sprite;
 import haven.render.RenderTree;
+import haven.sprites.mesh.ColoredCircleMesh;
 
 import java.awt.*;
 

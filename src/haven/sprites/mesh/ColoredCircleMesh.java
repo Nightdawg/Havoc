@@ -1,4 +1,4 @@
-package haven.res.gfx.fx.flcir;
+package haven.sprites.mesh;
 
 import haven.FastMesh;
 import haven.MapMesh;

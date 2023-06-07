@@ -28,12 +28,13 @@ package haven;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.*;
 import java.util.regex.Pattern;
 
 import haven.render.*;
-import haven.res.gfx.fx.bprad.BPRad;
-import haven.res.gfx.fx.flcir.FLCir;
+import haven.sprites.BPRad;
+import haven.sprites.FLCir;
 
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
@@ -59,6 +60,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private CollisionBoxGobSprite<HitboxFilled> hidingBox = null;
 	private GobGrowthInfo growthInfo;
 	private GobQualityInfo qualityInfo;
+	private final List<Overlay> dols = new ArrayList<>();
 	private Overlay customAnimalOverlay;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
 	public Boolean isComposite = false;
@@ -143,6 +145,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	    this.sdt = new MessageBuf(sdt);
 	    this.spr = null;
 	}
+
+		public Overlay(Gob gob, int id, Sprite spr) {
+			this.gob = gob;
+			this.id = id;
+			this.res = null;
+			this.sdt = null;
+			this.spr = spr;
+		}
 
 	public Overlay(Gob gob, Sprite spr) {
 	    this.gob = gob;
@@ -467,6 +477,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 	    }
 	}
+	synchronized (dols) {
+		for (Iterator<Overlay> i = dols.iterator(); i.hasNext(); ) {
+			Overlay ol = i.next();
+			addol(ol);
+			i.remove();
+		}
+	}
 	updstate();
 	if(virtual && ols.isEmpty() && (getattr(Drawable.class) == null))
 	    glob.oc.remove(this);
@@ -542,6 +559,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	for(Overlay ol : ols) {
 	    if(ol.id == id)
 		return(ol);
+	}
+	synchronized (dols) {
+		for(Overlay ol : dols) {
+			if(ol.id == id)
+				return ol;
+		}
 	}
 	return(null);
     }
@@ -1256,6 +1279,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				}
 			}
 		}
+	}
+
+	public Overlay daddol(final Overlay ol) {
+		synchronized (dols) {
+			dols.add(ol);
+		}
+		return ol;
+	}
+
+	public Overlay daddol(int id, Sprite spr) {
+		final Overlay ol = new Overlay(this, id, spr);
+		daddol(ol);
+		return ol;
 	}
 
 	private void initCustomGAttrs() {
