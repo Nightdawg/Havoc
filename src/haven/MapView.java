@@ -2358,6 +2358,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 				}
 			}
 		}
+		if(checkpointManager != null && checkpointManagerThread != null){
+			checkpointManager.pauseIt();
+		}
 		if(!GameUI.walkWithPathfinder){
 			wdgmsg("click", args);
 		} else {
@@ -2991,7 +2994,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			GameUI gameUI = gameui();
 			checkpointManager = new CheckpointManager(gameUI);
 			Window window = checkpointManager;
-			gameUI.add(window, new Coord(gameUI.sz.x/2 - window.sz.x/2, gameUI.sz.y/2 - window.sz.y/2 - 200));
+			gameUI.add(window, new Coord(gameUI.sz.x/2 - window.sz.x/2 + 100, gameUI.sz.y - window.sz.y));
 			checkpointManagerThread = new Thread(checkpointManager, "CheckpointManager");
 			checkpointManagerThread.start();
 			checkpointManager.addCoord(coord);

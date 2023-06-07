@@ -127,6 +127,11 @@ public class CheckpointManager extends Window implements Runnable {
         }
     }
 
+    public void pauseIt() {
+        this.paused = true;
+        pause.change("Continue");
+    }
+
     public void addCoord(Coord2d coord) {
         synchronized (checkpointList) {
             checkpointList.addItem(new CheckPoint(coord));

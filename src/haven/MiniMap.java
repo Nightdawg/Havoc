@@ -920,6 +920,9 @@ public class MiniMap extends Widget {
 					}
 				} catch (Exception e) {}
 			}
+			if(mv.checkpointManager != null && mv.checkpointManagerThread != null){
+				mv.checkpointManager.pauseIt();
+			}
 			mv.wdgmsg("click", mc, loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres), button, ui.modflags());
 		} else {
 			if (OptWnd.autoswitchBunnyPlateBoots) {
