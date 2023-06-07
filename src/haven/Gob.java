@@ -62,6 +62,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private Overlay customAnimalOverlay;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
 	public Boolean isComposite = false;
+	public double gobSpeed = 0;
 	private static final HashSet<Long> alarmPlayed = new HashSet<Long>();
 
 	/**
@@ -598,8 +599,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
     public void move(Coord2d c, double a) {
 	Moving m = getattr(Moving.class);
-	if(m != null)
-	    m.move(c);
+		if (m != null) {
+			m.move(c);
+			this.gobSpeed = m.getv();
+		} else {
+			this.gobSpeed = 0;
+		}
 	this.rc = c;
 	this.a = a;
     }
