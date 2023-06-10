@@ -275,6 +275,7 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
 			if(i > 0)
 			    ui.uimsg(1, "prg", String.format("Connecting (address %d/%d)...", i + 1, addrs.length));
 			sess = new Session(new InetSocketAddress(addrs[i], port), acctname, cookie);
+			sess.ui = ui;
 			while(true) {
 			    synchronized(sess) {
 				if(sess.state == "") {

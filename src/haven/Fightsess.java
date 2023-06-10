@@ -28,7 +28,11 @@ package haven;
 
 import haven.render.*;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -65,6 +69,19 @@ public class Fightsess extends Widget {
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
 	    int nact = (Integer)args[0];
+		if(OptWnd.combatStartSoundEnabled) {
+			try {
+				File file = new File("Alarms/" + OptWnd.combatStartSoundFilename.buf.line() + ".wav");
+				if(file.exists()) {
+					AudioInputStream in = AudioSystem.getAudioInputStream(file);
+					AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+					AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+					Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+					((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, OptWnd.combatStartSoundVolumeSlider.val/50.0));
+				}
+			} catch(Exception ignored) {
+			}
+		}
 	    return(new Fightsess(nact));
 	}
     }

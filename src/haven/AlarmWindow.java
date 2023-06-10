@@ -32,7 +32,7 @@ public class AlarmWindow extends Window {
 
 
 	public AlarmWindow() {
-		super(UI.scale(825, 400), "Alarm Manager");
+		super(UI.scale(825, 400), "Custom Alarm Manager");
 		Widget prev;
 		prev = add(enabledLabel = new Label("Enabled"), UI.scale(38,10));
 		enabledLabel.tooltip = RichText.render("This checkbox determines whether the alarm will be triggered, or not.\n$col[185,185,185]{I added this checkbox so you don't have to delete the entire alarm if you just want to turn it off for a while.}", 300);
@@ -301,7 +301,7 @@ public class AlarmWindow extends Window {
 				}
 			};
 			prev = add(this.gobResname, prev.pos("ul").adds(138,0));
-			this.alarmFilename = new TextEntry(UI.scale(100), alarmFilename){
+			this.alarmFilename = new TextEntry(UI.scale(100), alarmFilename.replace(".wav", "")){
 				@Override
 				protected void changed() {
 					AlarmManager.load(al);

@@ -71,6 +71,7 @@ public class Session implements Resource.Resolver {
     byte[] cookie;
     final Map<Integer, CachedRes> rescache = new TreeMap<Integer, CachedRes>();
     public final Glob glob;
+	public UI ui;
     public byte[] sesskey;
 
     @SuppressWarnings("serial")
