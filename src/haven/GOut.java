@@ -402,6 +402,29 @@ public class GOut {
 		c.y = Math.min(Math.max(c.y, ul.y), br.y);
 	}
 
+	public void dottedline(Coord c2, Coord c1, float w) {
+		usestate(new States.PointSize(w));
+		Coord sc1 = c1.add(tx);
+		Coord sc2 = c2.add(tx);
+		if (!clipline(sc2, sc1))
+			return;
+
+		final Coord vec = new Coord(sc2).sub(sc1);
+		double length = vec.abs();
+
+		if(length > 0) {
+			float step = 4f;
+			final Coord2d stepVec = new Coord2d(vec).div(length).mul(step);
+			int dots = (int) (length/step);
+			float[] data = new float[dots*2];
+			for (int i = 0; i+1 < dots*2; i+=2) {
+				data[i] = (float) (sc1.x+stepVec.x*(i/2));
+				data[i+1] = (float) (sc1.y+stepVec.y*(i/2));
+			}
+			drawp(Model.Mode.POINTS, data);
+		}
+	}
+
 	public void fcircle(int x, int y, double rad, final int points) {
 		int circumference = points - 1;
 
@@ -450,6 +473,37 @@ public class GOut {
 		vbuf.position(0);
 
 		drawp(Model.Mode.LINE_STRIP, vertices);
+	}
+
+	private boolean clipline(Coord p1, Coord p2) {
+		int INSIDE = 0, LEFT = 1, RIGHT = 2, BOTTOM = 4, TOP = 8;
+		Function<Coord, Integer> fun = c -> {
+			int ret = INSIDE;
+			if (c.x < ul.x) ret |= LEFT;
+			if (c.x > br.x) ret |= RIGHT;
+			if (c.y < ul.y) ret |= TOP;
+			if (c.y > br.y) ret |= BOTTOM;
+			return ret;
+		};
+
+		int p1state = fun.apply(p1), p2state = fun.apply(p2);
+		while (true) {
+			if (p1state == 0 && p2state == 0) { break; }
+			else if ((p1state & p2state) != 0) { return false; }
+			else {
+				int state;
+				float x = 0, y = 0;
+				if (p1state != 0) state = p1state; else state = p2state;
+				if ((state & TOP) != 0) { 			x = p1.x + (float)(p2.x - p1.x) * (ul.y - p1.y) / (p2.y - p1.y); y = ul.y; }
+				else if ((state & BOTTOM) != 0) { 	x = p1.x + (float)(p2.x - p1.x) * (br.y - p1.y) / (p2.y - p1.y); y = br.y; }
+				else if ((state & RIGHT) != 0) { 	y = p1.y + (float)(p2.y - p1.y) * (br.x - p1.x) / (p2.x - p1.x); x = br.x; }
+				else if ((state & LEFT) != 0) { 	y = p1.y + (float)(p2.y - p1.y) * (ul.x - p1.x) / (p2.x - p1.x); x = ul.x; }
+
+				if (state == p1state) { p1.x=(int)x;p1.y=(int)y; p1state = fun.apply(p1); }
+				else { p2.x=(int)x;p2.y=(int)y; p2state = fun.apply(p2); }
+			}
+		}
+		return true;
 	}
 
     public <T extends State> T curstate(State.Slot<T> slot) {

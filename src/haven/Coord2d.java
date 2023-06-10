@@ -186,6 +186,11 @@ public class Coord2d implements Comparable<Coord2d>, java.io.Serializable {
 	return(norm(1.0));
     }
 
+	public Coord2d rotate(double a) {
+		return of((((x * Math.cos(a)) - (y * Math.sin(a)))),
+				(((x * Math.sin(a)) + (y * Math.cos(a)))));
+	}
+
     public static Coord2d sc(double a, double r) {
 	return(of(Math.cos(a) * r, Math.sin(a) * r));
     }

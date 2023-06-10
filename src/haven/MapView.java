@@ -60,20 +60,19 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     public static double plobpgran = Utils.getprefd("plobpgran", 8);
     public static double plobagran = Utils.getprefd("plobagran", 12);
     private static final Map<String, Class<? extends Camera>> camtypes = new HashMap<String, Class<? extends Camera>>();
-	public Pathfinder pf;
-	public Thread pfthread;
 	private static final int MAX_TILE_RANGE = 40;
-
 
 	private long lastmmhittest = System.currentTimeMillis();
 	private Coord lasthittestc = Coord.z;
+
 	public final PartyHighlight partyHighlight;
 	public final PartyCircles partyCircles;
 
-	public void pfDone(final Pathfinder thread) {
-		if (haven.pathfinder.Map.DEBUG_TIMINGS)
-			System.out.println("-= PF DONE =-");
-	}
+	public Pathfinder pf;
+	public Thread pfthread;
+	public CheckpointManager checkpointManager;
+	public Thread checkpointManagerThread;
+
 
 	public interface Delayed {
 	public void run(GOut g);
@@ -1990,8 +1989,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	partyHighlight.update();
 	partyCircles.update();
 	Loader.Future<Plob> placing = this.placing;
-	if((placing != null) && placing.done())
-	    placing.get().ctick(dt);
+	if((placing != null) && placing.done()) {
+		placing.get().ctick(dt);
+	}
     }
     
     public void resize(Coord sz) {
@@ -2268,7 +2268,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	    super(c);
 	    clickb = b;
 	}
-	
+
 	protected void hit(Coord pc, Coord2d mc, ClickData inf) {
 		GameUI gui = gameui();
 		// reset alt so we could walk with alt+lmb while having item on the cursor
@@ -2336,10 +2336,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 					}
 					return;
 				}
-
 			}
 		} else {
-			if(clickb == 1) {
+			if (clickb == 1 && ui.modmeta && gui.vhand == null) {
+				addCheckpoint(mc);
+			} else if(clickb == 1) {
 				if (OptWnd.autoswitchBunnyPlateBoots) {
 					try {
 						if (gui.getequipory() != null && gui.getequipory().slots != null) {
@@ -2356,6 +2357,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 					} catch (Exception e) {}
 				}
 			}
+		}
+		if(checkpointManager != null && checkpointManagerThread != null){
+			checkpointManager.pauseIt();
 		}
 		if(!GameUI.walkWithPathfinder){
 			wdgmsg("click", args);
@@ -2905,6 +2909,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		camera.snap(Direction.EAST);
 	}
 
+	public void pfDone(final Pathfinder thread) {
+		if (haven.pathfinder.Map.DEBUG_TIMINGS)
+			System.out.println("-= PF DONE =-");
+	}
+
 	public void pfLeftClick(Coord mc, String action) {
 		if(!Gob.showCollisionBoxes){
 			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(true);
@@ -2978,4 +2987,26 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		}
 	}
 
+	public void addCheckpoint(Coord2d coord){
+		if(checkpointManager != null && checkpointManagerThread != null){
+			checkpointManager.addCoord(coord);
+		} else {
+			GameUI gameUI = gameui();
+			checkpointManager = new CheckpointManager(gameUI);
+			Window window = checkpointManager;
+			gameUI.add(window, new Coord(gameUI.sz.x/2 - window.sz.x/2 + 100, gameUI.sz.y - window.sz.y));
+			checkpointManagerThread = new Thread(checkpointManager, "CheckpointManager");
+			checkpointManagerThread.start();
+			checkpointManager.addCoord(coord);
+		}
+	}
+
+	public List<Coord2d> getCheckPointList(){
+		if(checkpointManager != null && checkpointManagerThread != null){
+			synchronized (checkpointManager.checkpointList){
+				return checkpointManager.getAllCoords();
+			}
+		}
+		return null;
+	}
 }

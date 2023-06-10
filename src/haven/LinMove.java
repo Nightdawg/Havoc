@@ -100,8 +100,10 @@ public class LinMove extends Moving {
 	    if((m == null) || !(m instanceof LinMove))
 		return;
 	    LinMove lm = (LinMove)m;
-	    if(t < 0)
+	    if(t < 0){
 		g.delattr(Moving.class);
+		g.gobSpeed = 0;
+		}
 	    else
 		lm.sett(t);
 	    if(e >= 0)

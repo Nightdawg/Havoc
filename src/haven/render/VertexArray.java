@@ -166,8 +166,8 @@ public class VertexArray implements Disposable {
 	    this.size = size;
 	    this.usage = usage;
 	    this.init = init;
-	    if(size == 0)
-		new haven.Warning("empty vertex-buffer").level(haven.Warning.CRITICAL).trace(true).issue();
+		//TODO dotted line has length and if its too short through few methods its divided by 2 then by 4, and after floorings it inevitably goes 0 and cause this warning.
+		//if(size == 0){new haven.Warning("empty vertex-buffer").level(haven.Warning.CRITICAL).trace(true).issue();}
 	}
 
 	public Buffer(ByteBuffer data, Usage usage) {

@@ -1,7 +1,7 @@
 package haven;
 
 
-import haven.res.gfx.fx.flcir.PTCircle;
+import haven.sprites.PTCircle;
 
 import java.awt.*;
 import java.util.*;

@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sprites.AggroMark;
+
 import java.util.*;
 import static haven.Utils.uint32;
 
@@ -79,6 +81,26 @@ public class Fightview extends Widget {
 	    lastact = act;
 	    lastuse = Utils.rtime();
 	}
+
+		public void tick() {
+			final Gob g = ui.sess.glob.oc.getgob(gobid);
+			if (g != null && g.findol(AggroMark.id) == null) {
+				g.daddol(AggroMark.id, new AggroMark(g));
+			}
+		}
+
+		public void destroy() {
+			final Gob g = ui.sess.glob.oc.getgob(gobid);
+			if (g != null) {
+				final Gob.Overlay ol = g.findol(AggroMark.id);
+				if (ol != null) {
+					final AggroMark am = (AggroMark) ol.spr;
+					if (am != null) {
+						am.rem();
+					}
+				}
+			}
+		}
     }
 
     public class Relbox extends Widget {
@@ -282,13 +304,14 @@ public class Fightview extends Widget {
 		if (current != null) {
 			gameui().lastopponent = current.gobid;
 		}
-	layout();
-	updrel();
-    }
+		layout();
+		updrel();
+	}
     
     public void tick(double dt) {
 	super.tick(dt);
 	for(Relation rel : lsrel) {
+		rel.tick();
 	    Widget inf = obinfo(rel.gobid, false);
 	    if(inf != null)
 		inf.tick(dt);
@@ -341,7 +364,8 @@ public class Fightview extends Widget {
         } else if(msg == "del") {
             Relation rel = getrel(uint32((Integer)args[0]));
 	    rel.remove();
-            lsrel.remove(rel);
+		rel.destroy();
+		lsrel.remove(rel);
 	    if(rel == current)
 		setcur(null);
 	    updrel();
