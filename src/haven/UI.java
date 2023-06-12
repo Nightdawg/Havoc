@@ -63,6 +63,7 @@ public class UI {
     private boolean gprefsdirty = false;
     public final ActAudio.Root audio = new ActAudio.Root();
     private static final double scalef;
+	public GameUI gui = null;
 
 	public int lastid = 0;
     
@@ -403,7 +404,7 @@ public class UI {
 	if(rcvr != null){
 		rcvr.rcvmsg(id, msg, args);
 		//todo for dev purposes uncomment line below
-		System.out.println("id: " + id + ", msg: " + msg + ", args: " + Arrays.toString(args));
+		//System.out.println("id: " + id + ", msg: " + msg + ", args: " + Arrays.toString(args));
 	}
     }
 	

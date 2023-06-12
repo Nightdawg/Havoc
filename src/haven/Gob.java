@@ -27,6 +27,7 @@
 package haven;
 
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 import java.util.function.*;
@@ -35,6 +36,10 @@ import java.util.regex.Pattern;
 import haven.render.*;
 import haven.sprites.BPRad;
 import haven.sprites.FLCir;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
@@ -63,6 +68,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private final List<Overlay> dols = new ArrayList<>();
 	private Overlay customAnimalOverlay;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
+	public Boolean isMannequin = null;
+	private Boolean isMe = null;
+	private Boolean playerAlarmPlayed = false;
 	public Boolean isComposite = false;
 	public double gobSpeed = 0;
 	private static final HashSet<Long> alarmPlayed = new HashSet<Long>();
@@ -111,6 +119,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			if (s.contains("knock") || s.contains("dead") || s.contains("waterdead")){
 				knocked = true;
 				break;
+			}
+			if (s.contains("mannequin")){
+				isMannequin = true;
+				break;
+			} else {
+				isMannequin = false;
 			}
 		}
 		if (knocked != null && knocked) {
@@ -487,6 +501,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	updstate();
 	if(virtual && ols.isEmpty() && (getattr(Drawable.class) == null))
 	    glob.oc.remove(this);
+		if(!playerAlarmPlayed && isMe == null) {
+			isMe();
+			if(isMe != null) {
+				playPlayerAlarm();
+				playerAlarmPlayed = true;
+			}
+		}
 	updateState();
     }
 
@@ -1593,6 +1614,65 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			return false;
 
 		return true;
+	}
+
+	public void playPlayerAlarm() {
+		if (getres() != null) {
+			if (isMannequin != null && isMannequin == false){
+				if (getres().name.equals("gfx/borka/body")) {
+					KinInfo kininfo = getattr(KinInfo.class);
+					if (!isMe() && !alarmPlayed.contains(id)) {
+						if (kininfo == null || (kininfo.unknown && !kininfo.isVillager()) || (kininfo.group == 0 && !kininfo.isVillager())) {
+							playPlayerColorAlarm(OptWnd.whitePlayerAlarmEnabled, OptWnd.whitePlayerAlarmFilename.buf.line(), OptWnd.whitePlayerAlarmVolumeSlider.val);
+						} else if ((kininfo.unknown && kininfo.isVillager()) || (kininfo.group == 0 && kininfo.isVillager())) {
+							playPlayerColorAlarm(OptWnd.whiteVillageOrRealmPlayerAlarmEnabled, OptWnd.whiteVillageOrRealmPlayerAlarmFilename.buf.line(), OptWnd.whiteVillageOrRealmPlayerAlarmVolumeSlider.val);
+						} else if (kininfo.group == 1) {
+							playPlayerColorAlarm(OptWnd.greenPlayerAlarmEnabled, OptWnd.greenPlayerAlarmFilename.buf.line(), OptWnd.greenPlayerAlarmVolumeSlider.val);
+						} else if (kininfo.group == 2) {
+							playPlayerColorAlarm(OptWnd.redPlayerAlarmEnabled, OptWnd.redPlayerAlarmFilename.buf.line(), OptWnd.redPlayerAlarmVolumeSlider.val);
+						} else if (kininfo.group == 3) {
+							playPlayerColorAlarm(OptWnd.bluePlayerAlarmEnabled, OptWnd.bluePlayerAlarmFilename.buf.line(), OptWnd.bluePlayerAlarmVolumeSlider.val);
+						} else if (kininfo.group == 4) {
+							playPlayerColorAlarm(OptWnd.tealPlayerAlarmEnabled, OptWnd.tealPlayerAlarmFilename.buf.line(), OptWnd.tealPlayerAlarmVolumeSlider.val);
+						} else if (kininfo.group == 5) {
+							playPlayerColorAlarm(OptWnd.yellowPlayerAlarmEnabled, OptWnd.yellowPlayerAlarmFilename.buf.line(), OptWnd.yellowPlayerAlarmVolumeSlider.val);
+						} else if (kininfo.group == 6) {
+							playPlayerColorAlarm(OptWnd.purplePlayerAlarmEnabled, OptWnd.purplePlayerAlarmFilename.buf.line(), OptWnd.purplePlayerAlarmVolumeSlider.val);
+						} else if (kininfo.group == 7) {
+							playPlayerColorAlarm(OptWnd.pinkPlayerAlarmEnabled, OptWnd.pinkPlayerAlarmFilename.buf.line(), OptWnd.pinkPlayerAlarmVolumeSlider.val);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void playPlayerColorAlarm(Boolean enabled, String line, int val) {
+		if (enabled) {
+			try {
+				File file = new File("Alarms/" + line + ".wav");
+				if (file.exists()) {
+					AudioInputStream in = AudioSystem.getAudioInputStream(file);
+					AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+					AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+					Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+					((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, val / 50.0));
+					alarmPlayed.add(id);
+				}
+			} catch (Exception ignored) {
+			}
+		}
+	}
+
+	public Boolean isMe() {
+		if(isMe == null) {
+			if(glob.sess.ui.gui == null || glob.sess.ui.gui.map == null || glob.sess.ui.gui.map.plgob < 0) {
+				return null;
+			} else {
+				isMe = id == glob.sess.ui.gui.map.plgob;
+			}
+		}
+		return isMe;
 	}
 
 	public static final String[] CRITTERAURA_PATHS = {

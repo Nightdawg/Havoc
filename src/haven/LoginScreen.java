@@ -62,6 +62,7 @@ public class LoginScreen extends Widget {
 	GameUI.trackon = false;
 	GameUI.crimeon = false;
 	MenuGrid.toggleStuff = true;
+	Gob.alarmPlayed.clear();
     }
 
     //public static final KeyBinding kb_savtoken = KeyBinding.get("login/savtoken", KeyMatch.forchar('R', KeyMatch.M)); // ND: Why the fuck are there keybinds for these? Someone might press one of those by mistake.

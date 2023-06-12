@@ -29,8 +29,14 @@ package haven;
 import haven.render.*;
 import haven.res.ui.tt.q.quality.Quality;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -1398,7 +1404,8 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 14));
 			prev = add(new Label("> Include:"), prev.pos("bl").adds(18, 3));
-			prev = add(new CheckBox("Wounds"){
+			CheckBox woundsCheckBox;
+			prev = add(woundsCheckBox = new CheckBox("Wounds"){
 				{a = Utils.getprefb("GobDamageInfoWoundsToggled", true);}
 				public void set(boolean val) {
 					Utils.setprefb("GobDamageInfoWoundsToggled", val);
@@ -1406,7 +1413,9 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(56, -13));
-			prev = add(new CheckBox("Armor"){
+			woundsCheckBox.lbl = Text.std.render("Wounds", new Color(255, 232, 0, 255));
+			CheckBox armorCheckBox;
+			prev = add(armorCheckBox = new CheckBox("Armor"){
 				{a = Utils.getprefb("GobDamageInfoArmorToggled", true);}
 				public void set(boolean val) {
 					Utils.setprefb("GobDamageInfoArmorToggled", val);
@@ -1414,6 +1423,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(62, -14));
+			armorCheckBox.lbl = Text.std.render("Armor", new Color(50, 255, 92, 255));
 			prev = add(new CheckBox("Show damage background"){
 				{a = Utils.getprefb("GobDamageInfoBackgroundToggled", false);}
 				public void set(boolean val) {
@@ -1667,8 +1677,769 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
-			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(57)));
-			setTooltipsForHidingSettingsStuff();
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(0));
+
+			pack();
+		}
+	}
+
+	Button CustomAlarmManagerButton;
+	private static CheckBox whitePlayerAlarmEnabledCheckbox;
+	public static boolean whitePlayerAlarmEnabled = Utils.getprefb("whitePlayerAlarmEnabled", true);
+	public static TextEntry whitePlayerAlarmFilename;
+	public static HSlider whitePlayerAlarmVolumeSlider;
+	private static CheckBox whiteVillageOrRealmPlayerAlarmEnabledCheckbox;
+	public static boolean whiteVillageOrRealmPlayerAlarmEnabled = Utils.getprefb("whiteVillageOrRealmPlayerAlarmEnabled", true);
+	public static TextEntry whiteVillageOrRealmPlayerAlarmFilename;
+	public static HSlider whiteVillageOrRealmPlayerAlarmVolumeSlider;
+	private static CheckBox greenPlayerAlarmEnabledCheckbox;
+	public static boolean greenPlayerAlarmEnabled = Utils.getprefb("greenPlayerAlarmEnabled", false);
+	public static TextEntry greenPlayerAlarmFilename;
+	public static HSlider greenPlayerAlarmVolumeSlider;
+	private static CheckBox redPlayerAlarmEnabledCheckbox;
+	public static boolean redPlayerAlarmEnabled = Utils.getprefb("redPlayerAlarmEnabled", true);
+	public static TextEntry redPlayerAlarmFilename;
+	public static HSlider redPlayerAlarmVolumeSlider;
+	private static CheckBox bluePlayerAlarmEnabledCheckbox;
+	public static boolean bluePlayerAlarmEnabled = Utils.getprefb("bluePlayerAlarmEnabled", false);
+	public static TextEntry bluePlayerAlarmFilename;
+	public static HSlider bluePlayerAlarmVolumeSlider;
+	private static CheckBox tealPlayerAlarmEnabledCheckbox;
+	public static boolean tealPlayerAlarmEnabled = Utils.getprefb("tealPlayerAlarmEnabled", false);
+	public static TextEntry tealPlayerAlarmFilename;
+	public static HSlider tealPlayerAlarmVolumeSlider;
+	private static CheckBox yellowPlayerAlarmEnabledCheckbox;
+	public static boolean yellowPlayerAlarmEnabled = Utils.getprefb("yellowPlayerAlarmEnabled", false);
+	public static TextEntry yellowPlayerAlarmFilename;
+	public static HSlider yellowPlayerAlarmVolumeSlider;
+	private static CheckBox purplePlayerAlarmEnabledCheckbox;
+	public static boolean purplePlayerAlarmEnabled = Utils.getprefb("purplePlayerAlarmEnabled", false);
+	public static TextEntry purplePlayerAlarmFilename;
+	public static HSlider purplePlayerAlarmVolumeSlider;
+	private static CheckBox pinkPlayerAlarmEnabledCheckbox;
+	public static boolean pinkPlayerAlarmEnabled = Utils.getprefb("pinkPlayerAlarmEnabled", false);
+	public static TextEntry pinkPlayerAlarmFilename;
+	public static HSlider pinkPlayerAlarmVolumeSlider;
+	private static CheckBox combatStartSoundEnabledCheckbox;
+	public static boolean combatStartSoundEnabled = Utils.getprefb("combatStartSoundEnabled", false);
+	public static TextEntry combatStartSoundFilename;
+	public static HSlider combatStartSoundVolumeSlider;
+	private static CheckBox cleaveSoundEnabledCheckbox;
+	public static boolean cleaveSoundEnabled = Utils.getprefb("cleaveSoundEnabled", true);
+	public static TextEntry cleaveSoundFilename;
+	public static HSlider cleaveSoundVolumeSlider;
+	private static CheckBox opkSoundEnabledCheckbox;
+	public static boolean opkSoundEnabled = Utils.getprefb("opkSoundEnabled", true);
+	public static TextEntry opkSoundFilename;
+	public static HSlider opkSoundVolumeSlider;
+
+	private static CheckBox ponyPowerSoundEnabledCheckbox;
+	public static boolean ponyPowerSoundEnabled = Utils.getprefb("ponyPowerSoundEnabled", true);
+	public static TextEntry ponyPowerSoundFilename;
+	public static HSlider ponyPowerSoundVolumeSlider;
+
+	private static CheckBox lowEnergySoundEnabledCheckbox;
+	public static boolean lowEnergySoundEnabled = Utils.getprefb("lowEnergySoundEnabled", true);
+	public static TextEntry lowEnergySoundFilename;
+	public static HSlider lowEnergySoundVolumeSlider;
+
+	public class NDAlarmsAndSoundsSettingsPanel extends Panel {
+
+		public NDAlarmsAndSoundsSettingsPanel(Panel back) {
+			Widget prev;
+
+			add(new Label("You can add your own alarm sound files in the \"Alarms\" folder.", new Text.Foundry(Text.sans, 12)), 0, 0);
+			add(new Label("(The file extension must be .wav)", new Text.Foundry(Text.sans, 12)), UI.scale(0, 16));
+			prev = add(new Label("Enabled Player Alarms:"), UI.scale(0, 40));
+			prev = add(new Label("Sound File"), prev.pos("ur").add(70, 0));
+			prev = add(new Label("Volume"), prev.pos("ur").add(84, 0));
+			prev = add(whitePlayerAlarmEnabledCheckbox = new CheckBox("White/Unknown:"){
+				{a = Utils.getprefb("whitePlayerAlarmEnabled", true);}
+				public void set(boolean val) {
+					Utils.setprefb("whitePlayerAlarmEnabled", val);
+					whitePlayerAlarmEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 10).x(0));
+			prev = add(whitePlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("whitePlayerAlarmFilename", "ND_YoHeadsUp")){
+				protected void changed() {
+					Utils.setpref("whitePlayerAlarmFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(45, -2));
+			prev = add(whitePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("whitePlayerAlarmVolume", 50)){
+				@Override
+				public void changed() {
+					Utils.setprefi("whitePlayerAlarmVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + whitePlayerAlarmFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, whitePlayerAlarmVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(whiteVillageOrRealmPlayerAlarmEnabledCheckbox = new CheckBox("White(Village/Realm):"){
+				{a = Utils.getprefb("whiteVillageOrRealmPlayerAlarmEnabled", true);}
+				public void set(boolean val) {
+					Utils.setprefb("whiteVillageOrRealmPlayerAlarmEnabled", val);
+					whiteVillageOrRealmPlayerAlarmEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			prev = add(whiteVillageOrRealmPlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("whiteVillageOrRealmPlayerAlarmFilename", "ND_HelloFriend")){
+				protected void changed() {
+					Utils.setpref("whiteVillageOrRealmPlayerAlarmFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(16, -2));
+			prev = add(whiteVillageOrRealmPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("whiteVillageOrRealmPlayerAlarmVolume", 50)){
+				@Override
+				public void changed() {
+					Utils.setprefi("whiteVillageOrRealmPlayerAlarmVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + whiteVillageOrRealmPlayerAlarmFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, whiteVillageOrRealmPlayerAlarmVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(greenPlayerAlarmEnabledCheckbox = new CheckBox("Green:"){
+				{a = Utils.getprefb("greenPlayerAlarmEnabled", false);}
+				public void set(boolean val) {
+					Utils.setprefb("greenPlayerAlarmEnabled", val);
+					greenPlayerAlarmEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			greenPlayerAlarmEnabledCheckbox.lbl = Text.std.render("Green:", BuddyWnd.gc[1]);
+			prev = add(greenPlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("greenPlayerAlarmFilename", "ND_FlyingTheFriendlySkies")){
+				protected void changed() {
+					Utils.setpref("greenPlayerAlarmFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(88, -2));
+			prev = add(greenPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("greenPlayerAlarmVolume", 50)){
+				@Override
+				public void changed() {
+					Utils.setprefi("greenPlayerAlarmVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + greenPlayerAlarmFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, greenPlayerAlarmVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(redPlayerAlarmEnabledCheckbox = new CheckBox("Red:"){
+				{a = Utils.getprefb("redPlayerAlarmEnabled", true);}
+				public void set(boolean val) {
+					Utils.setprefb("redPlayerAlarmEnabled", val);
+					redPlayerAlarmEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			redPlayerAlarmEnabledCheckbox.lbl = Text.std.render("Red:", BuddyWnd.gc[2]);
+			prev = add(redPlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("redPlayerAlarmFilename", "ND_EnemySighted")){
+				protected void changed() {
+					Utils.setpref("redPlayerAlarmFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(98, -2));
+			prev = add(redPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("redPlayerAlarmVolume", 50)){
+				@Override
+				public void changed() {
+					Utils.setprefi("redPlayerAlarmVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + redPlayerAlarmFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, redPlayerAlarmVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(bluePlayerAlarmEnabledCheckbox = new CheckBox("Blue:"){
+				{a = Utils.getprefb("bluePlayerAlarmEnabled", false);}
+				public void set(boolean val) {
+					Utils.setprefb("bluePlayerAlarmEnabled", val);
+					bluePlayerAlarmEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			bluePlayerAlarmEnabledCheckbox.lbl = Text.std.render("Blue:", BuddyWnd.gc[3]);
+			prev = add(bluePlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("bluePlayerAlarmFilename", "ND_YeahLetsHustle")){
+				protected void changed() {
+					Utils.setpref("bluePlayerAlarmFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(95, -2));
+			prev = add(bluePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("bluePlayerAlarmVolume", 50)){
+				@Override
+				public void changed() {
+					Utils.setprefi("bluePlayerAlarmVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + bluePlayerAlarmFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, bluePlayerAlarmVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(tealPlayerAlarmEnabledCheckbox = new CheckBox("Teal:"){
+				{a = Utils.getprefb("tealPlayerAlarmEnabled", false);}
+				public void set(boolean val) {
+					Utils.setprefb("tealPlayerAlarmEnabled", val);
+					tealPlayerAlarmEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			tealPlayerAlarmEnabledCheckbox.lbl = Text.std.render("Teal:", BuddyWnd.gc[4]);
+			prev = add(tealPlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("tealPlayerAlarmFilename", "ND_YeahLetsHustle")){
+				protected void changed() {
+					Utils.setpref("tealPlayerAlarmFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(95, -2));
+			prev = add(tealPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("tealPlayerAlarmVolume", 50)){
+				@Override
+				public void changed() {
+					Utils.setprefi("tealPlayerAlarmVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + tealPlayerAlarmFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, tealPlayerAlarmVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(yellowPlayerAlarmEnabledCheckbox = new CheckBox("Yellow:"){
+				{a = Utils.getprefb("yellowPlayerAlarmEnabled", false);}
+				public void set(boolean val) {
+					Utils.setprefb("yellowPlayerAlarmEnabled", val);
+					yellowPlayerAlarmEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			yellowPlayerAlarmEnabledCheckbox.lbl = Text.std.render("Yellow:", BuddyWnd.gc[5]);
+			prev = add(yellowPlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("yellowPlayerAlarmFilename", "")){
+				protected void changed() {
+					Utils.setpref("yellowPlayerAlarmFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(85, -2));
+			prev = add(yellowPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("yellowPlayerAlarmVolume", 50)){
+				@Override
+				public void changed() {
+					Utils.setprefi("yellowPlayerAlarmVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + yellowPlayerAlarmFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, yellowPlayerAlarmVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(purplePlayerAlarmEnabledCheckbox = new CheckBox("Purple:"){
+				{a = Utils.getprefb("purplePlayerAlarmEnabled", false);}
+				public void set(boolean val) {
+					Utils.setprefb("purplePlayerAlarmEnabled", val);
+					purplePlayerAlarmEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			purplePlayerAlarmEnabledCheckbox.lbl = Text.std.render("Purple:", BuddyWnd.gc[6]);
+			prev = add(purplePlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("purplePlayerAlarmFilename", "")){
+				protected void changed() {
+					Utils.setpref("purplePlayerAlarmFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(86, -2));
+			prev = add(purplePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("purplePlayerAlarmVolume", 50)){
+				@Override
+				public void changed() {
+					Utils.setprefi("purplePlayerAlarmVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + purplePlayerAlarmFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, purplePlayerAlarmVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(pinkPlayerAlarmEnabledCheckbox = new CheckBox("Pink:"){
+				{a = Utils.getprefb("pinkPlayerAlarmEnabled", false);}
+				public void set(boolean val) {
+					Utils.setprefb("pinkPlayerAlarmEnabled", val);
+					pinkPlayerAlarmEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			pinkPlayerAlarmEnabledCheckbox.lbl = Text.std.render("Pink:", BuddyWnd.gc[7]);
+			prev = add(pinkPlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("pinkPlayerAlarmFilename", "")){
+				protected void changed() {
+					Utils.setpref("pinkPlayerAlarmFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(97, -2));
+			prev = add(pinkPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("pinkPlayerAlarmVolume", 50)){
+				@Override
+				public void changed() {
+					Utils.setprefi("pinkPlayerAlarmVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + pinkPlayerAlarmFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, pinkPlayerAlarmVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+
+			prev = add(new Label("Enabled Sounds & Alerts:"), prev.pos("bl").add(0, 10).x(0));
+			prev = add(new Label("Sound File"), prev.pos("ur").add(69, 0));
+			prev = add(new Label("Volume"), prev.pos("ur").add(84, 0));
+			prev = add(combatStartSoundEnabledCheckbox = new CheckBox("Combat Start Alert:"){
+				{a = Utils.getprefb("combatStartSoundEnabled", false);}
+				public void set(boolean val) {
+					Utils.setprefb("combatStartSoundEnabled", val);
+					combatStartSoundEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 10).x(0));
+			prev = add(combatStartSoundFilename = new TextEntry(UI.scale(140), Utils.getpref("combatStartSoundFilename", "ND_HitAndRun")){
+				protected void changed() {
+					Utils.setpref("combatStartSoundFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(30, -2));
+			prev = add(combatStartSoundVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("combatStartSoundVolume", 50)){
+				@Override
+				public void changed() {
+					Utils.setprefi("combatStartSoundVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + combatStartSoundFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, combatStartSoundVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(cleaveSoundEnabledCheckbox = new CheckBox("Cleave Sound Effect:"){
+				{a = Utils.getprefb("cleaveSoundEnabled", true);}
+				public void set(boolean val) {
+					Utils.setprefb("cleaveSoundEnabled", val);
+					cleaveSoundEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			prev = add(cleaveSoundFilename = new TextEntry(UI.scale(140), Utils.getpref("cleaveSoundFilename", "ND_Cleave")){
+				protected void changed() {
+					Utils.setpref("cleaveSoundFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(19, -2));
+			prev = add(cleaveSoundVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("cleaveSoundVolume", 75)){
+				@Override
+				public void changed() {
+					Utils.setprefi("cleaveSoundVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + cleaveSoundFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, cleaveSoundVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(opkSoundEnabledCheckbox = new CheckBox("Oppknock Sound Effect:"){
+				{a = Utils.getprefb("opkSoundEnabled", true);}
+				public void set(boolean val) {
+					Utils.setprefb("opkSoundEnabled", val);
+					opkSoundEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			prev = add(opkSoundFilename = new TextEntry(UI.scale(140), Utils.getpref("opkSoundFilename", "ND_Opk")){
+				protected void changed() {
+					Utils.setpref("opkSoundFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6, -2));
+			prev = add(opkSoundVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("opkSoundVolume", 75)){
+				@Override
+				public void changed() {
+					Utils.setprefi("opkSoundVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + opkSoundFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, opkSoundVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(ponyPowerSoundEnabledCheckbox = new CheckBox("Pony Power <10% Alert:"){
+				{a = Utils.getprefb("ponyPowerSoundEnabled", true);}
+				public void set(boolean val) {
+					Utils.setprefb("ponyPowerSoundEnabled", val);
+					ponyPowerSoundEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			prev = add(ponyPowerSoundFilename = new TextEntry(UI.scale(140), Utils.getpref("ponyPowerSoundFilename", "ND_HorseEnergy")){
+				protected void changed() {
+					Utils.setpref("ponyPowerSoundFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6, -2));
+			prev = add(ponyPowerSoundVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("ponyPowerSoundVolume", 35)){
+				@Override
+				public void changed() {
+					Utils.setprefi("ponyPowerSoundVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + ponyPowerSoundFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, ponyPowerSoundVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(lowEnergySoundEnabledCheckbox = new CheckBox("Energy <2500% Alert:"){
+				{a = Utils.getprefb("lowEnergySoundEnabled", true);}
+				public void set(boolean val) {
+					Utils.setprefb("lowEnergySoundEnabled", val);
+					lowEnergySoundEnabled = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6).x(0));
+			prev = add(lowEnergySoundFilename = new TextEntry(UI.scale(140), Utils.getpref("lowEnergySoundFilename", "ND_NotEnoughEnergy")){
+				protected void changed() {
+					Utils.setpref("lowEnergySoundFilename", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(16, -2));
+			prev = add(lowEnergySoundVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("lowEnergySoundVolume", 35)){
+				@Override
+				public void changed() {
+					Utils.setprefi("lowEnergySoundVolume", val);
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6,3));
+			prev = add(new Button(UI.scale(70), "Preview") {
+				@Override
+				public boolean mousedown(Coord c, int button) {
+					if(button != 1)
+						return true;
+					File file = new File("Alarms/" + lowEnergySoundFilename.buf.line() + ".wav");
+					if(!file.exists() || file.isDirectory()) {
+						if (gameui() != null)
+							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						return super.mousedown(c, button);
+					}
+					try {
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, lowEnergySoundVolumeSlider.val/50.0));
+					} catch(UnsupportedAudioFileException e) {
+						e.printStackTrace();
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+					return super.mousedown(c, button);
+				}
+			}, prev.pos("ur").adds(6,-5));
+
+			prev = add(CustomAlarmManagerButton = new Button(UI.scale(360), ">>> Other Alarms (Custom Alarm Manager) <<<", () -> {
+				if(alarmWindow == null) {
+					alarmWindow = this.parent.parent.add(new AlarmWindow());
+					alarmWindow.show();
+				} else {
+					alarmWindow.show(!alarmWindow.visible);
+					alarmWindow.bottomNote.settext("NOTE: You can add your own alarm sound files in the \"Alarms\" folder. (The file extension must be .wav)");
+					alarmWindow.bottomNote.setcolor(Color.WHITE);
+					alarmWindow.bottomNote.c.x = UI.scale(140);
+				}
+			}),prev.pos("bl").adds(0, 18).x(51));
+
+
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(131));
+			setTooltipsForAlarmSettingsStuff();
 			pack();
 		}
 	}
@@ -1837,6 +2608,7 @@ public class OptWnd extends Window {
 		Panel combatsettings = add(new NDCombatSettingsPanel(advancedSettings));
 		Panel hidingsettings = add(new NDHidingSettingsPanel(advancedSettings));
 		Panel dropsettings = add(new NDAutoDropSettingsPanel(advancedSettings));
+		Panel alarmsettings = add(new NDAlarmsAndSoundsSettingsPanel(advancedSettings));
 
 		int y2 = UI.scale(6);
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Interface & Display Settings", -1, iface, "Interface & Display Settings"), 0, y2).pos("bl").adds(0, 5).y;
@@ -1846,19 +2618,10 @@ public class OptWnd extends Window {
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Camera Settings", -1, camsettings, "Camera Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Gameplay Settings", -1, gameplaysettings, "Gameplay Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Combat Settings", -1, combatsettings, "Combat Settings"), 0, y2).pos("bl").adds(0, 25).y;
+
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Hiding Settings", -1, hidingsettings, "Hiding Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Drop Settings", -1, dropsettings, "Drop Settings"), 0, y2).pos("bl").adds(0, 5).y;
-		y2 = advancedSettings.add(new Button(UI.scale(200), "Alarm Manager", () -> {
-			if(alarmWindow == null) {
-				alarmWindow = this.parent.add(new AlarmWindow());
-				alarmWindow.show();
-			} else {
-				alarmWindow.show(!alarmWindow.visible);
-				alarmWindow.bottomNote.settext("NOTE: You can add your own alarm sound files in the \"Alarms\" folder. (The file extension must be .wav)");
-				alarmWindow.bottomNote.setcolor(Color.WHITE);
-				alarmWindow.bottomNote.c.x = UI.scale(140);
-			}
-		}),0 ,y2-5).pos("bl").adds(0, 25).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Alarms & Sounds Settings", -1, alarmsettings, "Alarms & Sounds Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Back", 27, main, "Options            "), 0, y2).pos("bl").adds(0, 5).y;
 		this.advancedSettings.pack();
@@ -1961,6 +2724,10 @@ public class OptWnd extends Window {
 
 	private void setTooltipsForHidingSettingsStuff(){
 		toggleGobHidingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.", 300);
+	}
+
+	private void setTooltipsForAlarmSettingsStuff(){
+		lowEnergySoundEnabledCheckbox.tooltip = RichText.render("This alarm will also trigger again when you reach <2000% energy.\n$col[185,185,185]{Don't starve yourself, dumbass.}", 400);
 	}
 
     public OptWnd() {

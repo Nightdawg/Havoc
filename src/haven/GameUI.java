@@ -357,6 +357,18 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	iconconf = loadiconconf();
 	super.attached();
     }
+
+	@Override
+	protected void attach(UI ui) {
+		ui.gui = this;
+		super.attach(ui);
+	}
+	@Override
+	public void destroy() {
+		super.destroy();
+		ui.gui = null;
+	}
+
 	private  void toggleol(String tag, boolean a) {
 		if(map != null) {
 			if(a)

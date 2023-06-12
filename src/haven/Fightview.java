@@ -28,7 +28,16 @@ package haven;
 
 import haven.sprites.AggroMark;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
+
 import static haven.Utils.uint32;
 
 public class Fightview extends Widget {
@@ -80,6 +89,7 @@ public class Fightview extends Widget {
 	public void use(Indir<Resource> act) {
 	    lastact = act;
 	    lastuse = Utils.rtime();
+		playCombatSoundEffect(lastact);
 	}
 
 		public void tick() {
@@ -211,6 +221,7 @@ public class Fightview extends Widget {
     public void use(Indir<Resource> act) {
 	lastact = act;
 	lastuse = Utils.rtime();
+	playCombatSoundEffect(lastact);
     }
     
     @RName("frv")
@@ -304,9 +315,9 @@ public class Fightview extends Widget {
 		if (current != null) {
 			gameui().lastopponent = current.gobid;
 		}
-		layout();
-		updrel();
-	}
+	layout();
+	updrel();
+    }
     
     public void tick(double dt) {
 	super.tick(dt);
@@ -407,4 +418,48 @@ public class Fightview extends Widget {
 	}
         super.uimsg(msg, args);
     }
+
+	public void playCombatSoundEffect(Indir<Resource> lastact){
+		if (lastact != null ) {
+			try {
+				Resource res = lastact.get();
+				Resource.Tooltip tt = res.layer(Resource.tooltip);
+				if (tt == null) { // ND: Took this code from Matias. I wonder what tooltip it's referring to. Maybe some combat moves had some missing stuff in the past?
+					gameui().syslog.append("Combat: WARNING! tooltip is missing for " + res.name + ". Notify Jorb/Loftar about this.", new Color(234, 105, 105));
+					return;
+				}
+
+				if(OptWnd.cleaveSoundEnabled && res.basename().endsWith("cleave")) {
+					try {
+						File file = new File("Alarms/" + OptWnd.cleaveSoundFilename.buf.line() + ".wav");
+						if(!file.exists()) {
+							return;
+						}
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, OptWnd.cleaveSoundVolumeSlider.val/50.0));
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
+				} else if (OptWnd.opkSoundEnabled &&res.basename().endsWith("oppknock")) {
+					try {
+						File file = new File("Alarms/" + OptWnd.opkSoundFilename.buf.line() + ".wav");
+						if(!file.exists()) {
+							return;
+						}
+						AudioInputStream in = AudioSystem.getAudioInputStream(file);
+						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, OptWnd.opkSoundVolumeSlider.val/50.0));
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
+				}
+			} catch (Loading l) {
+			}
+		}
+	}
 }

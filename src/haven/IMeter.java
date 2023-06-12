@@ -26,7 +26,11 @@
 
 package haven;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import java.awt.Color;
+import java.io.File;
 import java.util.*;
 
 public class IMeter extends LayerMeter {
@@ -37,6 +41,9 @@ public class IMeter extends LayerMeter {
 	MeterType type;
 	private static final Text.Foundry tipF = new Text.Foundry(Text.sans, 10);
 	private Tex tipTex;
+	private boolean ponyAlarmPlayed = false;
+	private boolean energyAlarmTriggered = false;
+	private boolean dangerEnergyAlarmTriggered = false;
 
     @RName("im")
     public static class $_ implements Factory {
@@ -146,6 +153,84 @@ public void draw(GOut g) {
 	public void uimsg(String msg, Object... args) {
 		if(msg == "set") {
 			this.meters = decmeters(args, 0);
+			if (!ponyAlarmPlayed) {
+				try {
+					Resource res = bg.get();
+					if (res != null && res.name.equals("gfx/hud/meter/häst")) {
+						if (OptWnd.ponyPowerSoundEnabled && meters.get(0).a <= 0.10) {
+						try {
+							File file = new File("Alarms/" + OptWnd.ponyPowerSoundFilename.buf.line() + ".wav");
+							if (file.exists()) {
+								AudioInputStream in = AudioSystem.getAudioInputStream(file);
+								AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+								AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+								Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+								((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, OptWnd.ponyPowerSoundVolumeSlider.val / 50.0));
+							}
+						} catch (Exception ignored) {
+						}
+						ponyAlarmPlayed = true;
+						}
+					}
+				} catch (Loading e) {
+				}
+			}
+			if (!energyAlarmTriggered) {
+				try {
+					Resource res = bg.get();
+					if (res != null && res.name.equals("gfx/hud/meter/nrj")) {
+						if (OptWnd.lowEnergySoundEnabled && meters.get(0).a < 0.25 && meters.get(0).a > 0.20) {
+							try {
+								File file = new File("Alarms/" + OptWnd.lowEnergySoundFilename.buf.line() + ".wav");
+								if (file.exists()) {
+									AudioInputStream in = AudioSystem.getAudioInputStream(file);
+									AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+									AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+									Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+									((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, OptWnd.lowEnergySoundVolumeSlider.val / 50.0));
+								}
+							} catch (Exception ignored) {
+							}
+							energyAlarmTriggered = true;
+						}
+					}
+				} catch (Loading e) {
+				}
+			}
+			if (!dangerEnergyAlarmTriggered) {
+				try {
+					Resource res = bg.get();
+					if (res != null && res.name.equals("gfx/hud/meter/nrj")) {
+						if (OptWnd.lowEnergySoundEnabled && meters.get(0).a <= 0.20) {
+							try {
+								File file = new File("Alarms/" + OptWnd.lowEnergySoundFilename.buf.line() + ".wav");
+								if (file.exists()) {
+									AudioInputStream in = AudioSystem.getAudioInputStream(file);
+									AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+									AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+									Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+									((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, OptWnd.lowEnergySoundVolumeSlider.val / 50.0));
+								}
+							} catch (Exception ignored) {
+							}
+							dangerEnergyAlarmTriggered = true;
+						}
+					}
+				} catch (Loading e) {
+				}
+			}
+			if (energyAlarmTriggered || dangerEnergyAlarmTriggered) { // ND: If at least one of the alarms has been triggered, check if we refilled the energy bar above 2500, to reset them in case we once again fall below it.
+				try {
+					Resource res = bg.get();
+					if (res != null && res.name.equals("gfx/hud/meter/nrj")) {
+						if (meters.get(0).a > 0.25) {
+							energyAlarmTriggered = false;
+							dangerEnergyAlarmTriggered = false;
+						}
+					}
+				} catch (Loading e) {
+				}
+			}
 		}  else {
 			if (msg == "tip") {
 				String value = ((String)args[0]).split(":")[1].replaceAll("(\\(.+\\))", "");
