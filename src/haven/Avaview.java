@@ -277,7 +277,8 @@ public class Avaview extends PView {
 	}
 		if (drawv && gob != null) {
 			if (gob.gobSpeed > 0)
-				g.text(String.format("%.2f u/s", gob.gobSpeed), speedCoord);
+				//g.text(String.format("%.2f u/s", gob.gobSpeed), speedCoord);
+				g.aimage(Text.renderstroked(String.format("%.2f u/s", gob.gobSpeed)).tex(), speedCoord, 0, 0); // ND: stroked text. Previous (unstroked) line was killing my framerate, idk why.
 		}
     }
 

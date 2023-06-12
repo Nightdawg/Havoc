@@ -210,6 +210,7 @@ public class Equipory extends Widget implements DTarget {
 				return (cc);
 			}
 		}, bgc);
+		ava.drawv = false;
 		bonuses = add(new AttrBonusesWdg(isz.y), isz.x + UI.scale(14), 0);
 		pack();
 	}

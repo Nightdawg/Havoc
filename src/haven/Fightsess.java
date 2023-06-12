@@ -56,6 +56,7 @@ public class Fightsess extends Widget {
     public Coord pcc;
     public int pho;
     private Fightview fv;
+	double currentCooldown = 0;
 
     public static class Action {
 	public final Indir<Resource> res;
@@ -240,12 +241,20 @@ public class Fightsess extends Widget {
 
 		{
 			Coord cdc = altui ? new Coord(x0, y0) : pcc.add(cmc);
+			Coord cdc2 = new Coord(x0, y0 - UI.scale(40));
 			if(now < fv.atkct) {
 				double a = (now - fv.atkcs) / (fv.atkct - fv.atkcs);
 				g.chcolor(225, 0, 0, 220);
 				g.fellipse(cdc, UI.scale(altui ? new Coord(24, 24) : new Coord(22, 22)), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)), Math.PI / 2);
 				g.chcolor();
-				g.aimage(Text.renderstroked(fmt1DecPlace(fv.atkct - now)).tex(), cdc, 0.5, 0.5);
+				g.aimage(Text.renderstroked(fmt2DecPlaces(fv.atkct - now)).tex(), cdc, 0.5, 0.5);
+			}
+			if (altui) {
+				if (fv.cooldownUpdated){
+					fv.cooldownUpdated = false;
+					currentCooldown = fv.atkct - now;
+				}
+				g.aimage(Text.renderstroked(fmt2DecPlaces(currentCooldown)).tex(), cdc2, 0.5, 0.5);
 			}
 			g.image(cdframe, altui ? new Coord(x0, y0).sub(cdframe.sz().div(2)) : cdc.sub(cdframe.sz().div(2)));
 		}
@@ -364,7 +373,7 @@ public class Fightsess extends Widget {
 		g.rect(sc, new Coord(msz.x, msz.y));
 
 		g.chcolor(Color.WHITE);
-		g.atextstroked(IMeter.characterCurrentHealth+" ("+(Utils.fmt1DecPlace((int)(m.a*100)))+"%)", new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5, Color.WHITE, Color.BLACK, Text.num12boldFnd);
+		g.atextstroked(IMeter.characterCurrentHealth+" ("+(Utils.fmt1DecPlace((int)(m.a*100)))+"% HHP)", new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5, Color.WHITE, Color.BLACK, Text.num12boldFnd);
 	}
 
 	private static final Color blu1 = new Color(3, 3, 80, 141);
@@ -391,6 +400,11 @@ public class Fightsess extends Widget {
 	}
 	public static String fmt1DecPlace(double value) {
 		double rvalue = (double) Math.round(value * 10) / 10;
+		return (rvalue % 1 == 0) ? Integer.toString((int) rvalue) : Double.toString(rvalue);
+	}
+
+	public static String fmt2DecPlaces(double value) {
+		double rvalue = (double) Math.round(value * 100) / 100;
 		return (rvalue % 1 == 0) ? Integer.toString((int) rvalue) : Double.toString(rvalue);
 	}
 

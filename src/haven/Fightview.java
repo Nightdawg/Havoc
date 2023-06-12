@@ -56,6 +56,7 @@ public class Fightview extends Widget {
     public Relation current = null;
     public Indir<Resource> blk, batk, iatk;
     public double atkcs, atkct;
+	public Boolean cooldownUpdated = false;
     public Indir<Resource> lastact = null;
     public double lastuse = 0;
     public Mainrel curdisp;
@@ -407,6 +408,7 @@ public class Fightview extends Widget {
 	} else if(msg == "atkc") {
 	    atkcs = Utils.rtime();
 	    atkct = atkcs + (((Number)args[0]).doubleValue() * 0.06);
+		cooldownUpdated = true;
 	    return;
 	} else if(msg == "blk") {
 	    blk = n2r((Integer)args[0]);
