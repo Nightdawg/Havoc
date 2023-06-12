@@ -73,7 +73,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private Boolean playerAlarmPlayed = false;
 	public Boolean isComposite = false;
 	public double gobSpeed = 0;
-	private static final HashSet<Long> alarmPlayed = new HashSet<Long>();
+	public static final HashSet<Long> alarmPlayed = new HashSet<Long>();
 
 	/**
 	 * This method is run after all gob attributes has been loaded first time
