@@ -413,7 +413,7 @@ public class GOut {
 		double length = vec.abs();
 
 		if(length > 0) {
-			float step = 4f;
+			float step = 0.1f;
 			final Coord2d stepVec = new Coord2d(vec).div(length).mul(step);
 			int dots = (int) (length/step);
 			float[] data = new float[dots*2];
@@ -421,7 +421,7 @@ public class GOut {
 				data[i] = (float) (sc1.x+stepVec.x*(i/2));
 				data[i+1] = (float) (sc1.y+stepVec.y*(i/2));
 			}
-			drawp(Model.Mode.POINTS, data);
+			drawp(Model.Mode.LINE_STRIP, data);
 		}
 	}
 

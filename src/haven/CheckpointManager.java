@@ -1,5 +1,11 @@
 package haven;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import java.util.Iterator;
@@ -23,16 +29,22 @@ public class CheckpointManager extends Window implements Runnable {
 
 
     public CheckpointManager(GameUI gui) {
-        super(UI.scale(300, 200), "Checkpoint Route");
+        super(UI.scale(350, 200), "Queued Movement - Checkpoint Route");
         this.gui = gui;
         this.lastPlayerCoord = gui.map.player().rc;
+
+        add(new Label("Checkpoint"), UI.scale(20, 8));
+        add(new Label("Coords"), UI.scale(106, 8));
+        add(new Label("Add Checkpoint"), UI.scale(169, 1));
+        add(new Label("behind this one"), UI.scale(171, 12));
+        add(new Label("Remove"), UI.scale(296, 8));
         checkpointList = new CheckpointManager.CheckpointList(390, 5);
-        add(checkpointList, UI.scale(5, 5));
-        pause = add(new Button(UI.scale(100), "Continue") {
+        add(checkpointList, UI.scale(5, 30));
+        pause = add(new Button(UI.scale(100), "Start") {
             @Override
             public void click() {
                 paused = !paused;
-                this.change(paused ? "Continue" : "Pause");
+                this.change(paused ? "Start" : "Pause");
             }
         }, UI.scale(25, 170));
         this.c = new Coord(100, 100);
@@ -58,11 +70,24 @@ public class CheckpointManager extends Window implements Runnable {
                         notMovingCounter = 0;
                     }
                     if (notMovingCounter == 10) {
-                        gui.ui.error("Im stuck");
-                        //TODO here should insert Alarm for being stuck but temporarily gui error.
+                        gui.ui.error("Queued Movement PAUSED: I'm stuck!!!");
+                        File file = new File("res/sfx/ImStuck.wav");
+                        if(file.exists()) {
+                            try {
+                                AudioInputStream in = AudioSystem.getAudioInputStream(file);
+                                AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
+                                AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+                                Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+                                ((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, 1));
+                            } catch(UnsupportedAudioFileException e) {
+                                e.printStackTrace();
+                            } catch(IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         notMovingCounter = 0;
                         paused = true;
-                        pause.change("Continue");
+                        pause.change("Start");
                     }
                 }
                 try {
@@ -82,7 +107,7 @@ public class CheckpointManager extends Window implements Runnable {
             if (checkpointList.listitems() < 1) {
                 this.hide();
                 paused = true;
-                pause.change("Continue");
+                pause.change("Start");
             } else {
                 this.show();
             }
@@ -121,7 +146,7 @@ public class CheckpointManager extends Window implements Runnable {
             checkpointList.removeAllItems();
             this.hide();
             paused = true;
-            pause.change("Continue");
+            pause.change("Start");
         } else {
             super.wdgmsg(sender, msg, args);
         }
@@ -129,12 +154,12 @@ public class CheckpointManager extends Window implements Runnable {
 
     public void pauseIt() {
         this.paused = true;
-        pause.change("Continue");
+        pause.change("Start");
     }
 
     public void addCoord(Coord2d coord) {
         synchronized (checkpointList) {
-            checkpointList.addItem(new CheckPoint(coord));
+            checkpointList.addItem(new CheckPoint(coord, checkpointList.currentIndex+1 == 0 ? checkpointList.items.size()+1 : checkpointList.currentIndex+1));
         }
     }
 
@@ -210,6 +235,9 @@ public class CheckpointManager extends Window implements Runnable {
 
         public void addItem(CheckPoint item) {
             add(item);
+            if (items.size() > 1 && currentIndex == -1 && sb.val <= sb.max){
+                sb.val = sb.max+1;
+            }
             if (currentIndex < 0 || currentIndex > listitems()) {
                 items.add(item);
                 setCurrentIndex(-1);
@@ -217,13 +245,19 @@ public class CheckpointManager extends Window implements Runnable {
                 items.add(currentIndex, item);
                 setCurrentIndex(-1);
             }
-
-
+            refreshCheckpointNumbers();
         }
 
         public void deleteItem(CheckPoint item) {
             item.dispose();
             items.remove(item);
+            if (sb.max-1 < sb.min){
+                sb.val = 0;
+            } else if (sb.max-1 < sb.val){
+                sb.val = sb.max-1;
+            }
+            setCurrentIndex(-1);
+            refreshCheckpointNumbers();
         }
 
         public void removeAllItems() {
@@ -283,10 +317,17 @@ public class CheckpointManager extends Window implements Runnable {
                 super.wdgmsg(sender, msg, args);
             }
         }
+
+        public void refreshCheckpointNumbers(){
+            for (int counter = 0; counter < items.size(); counter++) {
+                items.get(counter).checkpointNumber.settext(Integer.toString(counter + 1));
+            }
+        }
     }
 
 
     public static class CheckPoint extends Widget {
+        private Label checkpointNumber;
         private final Label coordText;
         private final Coord2d coord;
 
@@ -294,13 +335,15 @@ public class CheckpointManager extends Window implements Runnable {
             return coord;
         }
 
-        public CheckPoint(Coord2d coord) {
+        public CheckPoint(Coord2d coord, int checkpointNumber) {
             this.coord = coord;
             Widget prev;
+            this.checkpointNumber = new Label(Integer.toString(checkpointNumber), 30);
             this.coordText = new Label(coord.floor().toString(), 100);
-            prev = add(this.coordText, UI.scale(10, 4));
+            prev = add(this.checkpointNumber, UI.scale(20, 4));
+            prev = add(this.coordText, prev.pos("ul").adds(44, 0));
 
-            prev = add(new Button(UI.scale(60), "+Prev") {
+            prev = add(new Button(UI.scale(26), "+") {
                 @Override
                 public boolean mousedown(Coord c, int button) {
                     if (button != 1) {
@@ -316,7 +359,7 @@ public class CheckpointManager extends Window implements Runnable {
                         super.wdgmsg(sender, msg, args);
                     }
                 }
-            }, prev.pos("ul").adds(100, -5));
+            }, prev.pos("ul").adds(110, -5));
 
             prev = add(new Button(UI.scale(60), "Preview") {
                 @Override
@@ -342,7 +385,7 @@ public class CheckpointManager extends Window implements Runnable {
                         super.wdgmsg(sender, msg, args);
                     }
                 }
-            }, prev.pos("ul").adds(60, 0));
+            }, prev.pos("ur").adds(12, 0));
 
             prev = add(new Button(UI.scale(26), "X") {
                 @Override
@@ -360,7 +403,7 @@ public class CheckpointManager extends Window implements Runnable {
                         super.wdgmsg(sender, msg, args);
                     }
                 }
-            }, prev.pos("ul").adds(60, 0));
+            }, prev.pos("ur").adds(12, 0));
         }
 
         @Override
