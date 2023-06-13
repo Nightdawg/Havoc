@@ -201,6 +201,7 @@ public class Window extends Widget implements DTarget {
 	    ca = Area.sized(tlm, csz);
 	    aa = Area.sized(ca.ul.add(mrgn), asz);
 	    cbtn.c = Coord.of(sz.x - cbtn.sz.x - UI.scale(9), - UI.scale(3)); // ND: UI Window close button location
+		cpsz = Coord.of((int)(wsz.x*0.95), cm.sz().y).sub(cptl); // ND: changed this to make the window top bar fully draggable WHEN RESIZED (for instance, buddy window)
 	}
 
 	public Area contarea() {

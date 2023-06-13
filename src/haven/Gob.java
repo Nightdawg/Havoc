@@ -1639,7 +1639,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 						} else if (kininfo.group == 6) {
 							playPlayerColorAlarm(OptWnd.purplePlayerAlarmEnabled, OptWnd.purplePlayerAlarmFilename.buf.line(), OptWnd.purplePlayerAlarmVolumeSlider.val);
 						} else if (kininfo.group == 7) {
-							playPlayerColorAlarm(OptWnd.pinkPlayerAlarmEnabled, OptWnd.pinkPlayerAlarmFilename.buf.line(), OptWnd.pinkPlayerAlarmVolumeSlider.val);
+							playPlayerColorAlarm(OptWnd.orangePlayerAlarmEnabled, OptWnd.orangePlayerAlarmFilename.buf.line(), OptWnd.orangePlayerAlarmVolumeSlider.val);
 						}
 					}
 				}

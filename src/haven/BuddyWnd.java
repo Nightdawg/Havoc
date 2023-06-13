@@ -40,7 +40,7 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
     private BuddyInfo info = null;
     private Widget infof;
     public int serial = 0;
-    public static final int width = UI.scale(263);
+    public static final int width = UI.scale(270);
     public static final int margin1 = UI.scale(5);
     public static final int margin2 = 2 * margin1;
     public static final int margin3 = 2 * margin2;
@@ -51,11 +51,11 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 			new Color(255, 255, 255),
 			new Color(44, 219, 44),
 			new Color(225, 0, 0),
-			new Color(61, 108, 255),
+			new Color(77, 121, 255),
 			new Color(82, 242, 234),
-			new Color(255, 230, 0),
-			new Color(126, 61, 255),
-			new Color(255, 112, 212),
+			new Color(255, 220, 0),
+			new Color(138, 77, 255),
+			new Color(255, 115, 0, 255),
 	};
     private Comparator<Buddy> bcmp;
     private Comparator<Buddy> alphacmp = new Comparator<Buddy>() {
@@ -266,7 +266,7 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	private BuddyInfo(Coord sz, Buddy buddy) {
 	    super(sz);
 	    this.buddy = buddy;
-	    this.ava = adda(new Avaview(Avaview.dasz, -1, "avacam"), sz.x / 2, margin2, 0.5, 0);
+		this.ava = adda(new Avaview(new Coord(sz.x-margin3, UI.scale(200)), -1, "equcam"), sz.x / 2, margin2, 0.5, 0);
 	    Frame.around(this, this.ava);
 	    this.nick = add(new TextEntry(sz.x - margin3, buddy.name) {
 		    {dshow = true;}
@@ -441,22 +441,24 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	    }
 	}
     }
-
+	public Avaview avaMe;
     public BuddyWnd() {
 	super(new Coord(width, 0));
 	setfocustab(true);
 	Widget prev;
-        prev = add(new Img(CharWnd.catf.render("Kin").tex()));
+	Widget prev2;
+	prev = add(new Img(CharWnd.catf.render("My Info").tex()), UI.scale(24, 0));
 
-	bl = add(new BuddyList(Coord.of(sz.x - Window.wbox.bisz().x, UI.scale(140))), prev.pos("bl").add(Window.wbox.btloff()));
-	prev = Frame.around(this, Collections.singletonList(bl));
+	bl = add(new BuddyList(Coord.of(180 - Window.wbox.bisz().x, UI.scale(360))), prev.pos("bl").adds(126 + margin1, 10)); // .add(Window.wbox.btloff())
+	prev2 = Frame.around(this, Collections.singletonList(bl));
 
-	prev = add(new Label("Sort by:"), prev.pos("bl").adds(0, 5));
-	int sbw = ((sz.x + margin1) / 3) - margin1;
-	addhl(prev.pos("bl").adds(0, 2), sz.x,
-	      prev = new Button(sbw, "Status").action(() -> { setcmp(statuscmp); }),
-	             new Button(sbw, "Group" ).action(() -> { setcmp(groupcmp); }),
-	             new Button(sbw, "Name"  ).action(() -> { setcmp(alphacmp); })
+	prev2 = add(new Label("Sort by:"), prev2.pos("bl").adds(0, 5));
+	int sbw = ((140 + margin1) / 2) - margin1;
+	int sbw2 = ((180 + margin1) / 3) - margin1;
+	addhl(prev2.pos("bl").adds(0, 2), 180,
+			prev2 = new Button(sbw2, "Status").action(() -> { setcmp(statuscmp); }),
+	             new Button(sbw2, "Group" ).action(() -> { setcmp(groupcmp); }),
+	             new Button(sbw2, "Name"  ).action(() -> { setcmp(alphacmp); })
 	      );
 	String sort = Utils.getpref("buddysort", "");
 	if(sort.equals("")) {
@@ -466,9 +468,11 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	    if(sort.equals("group"))  bcmp = groupcmp;
 	    if(sort.equals("status")) bcmp = statuscmp;
 	}
-
-	prev = add(new Label("Presentation name:"), prev.pos("bl").adds(0, 10));
-	pname = add(new TextEntry(sz.x, "") {
+	avaMe = new Avaview(Avaview.dasz, -1, "avacam");
+	prev = add(avaMe, prev.pos("bl").adds(46 - Avaview.dasz.x/2, 10));
+	Frame.around(this, avaMe);
+	prev = add(new Label("My presentation name:"), prev.pos("bl").adds(0, 16).x(0));
+	pname = add(new TextEntry(140, "") {
 		{dshow = true;}
 		public void activate(String text) {
 		    setpname(text);
@@ -479,26 +483,25 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	}), pname.pos("bl").adds(0, 5));
 
 	prev = add(new Label("My hearth secret:"), prev.pos("bl").adds(0, 10));
-	charpass = add(new TextEntry(sz.x, "") {
+	charpass = add(new TextEntry(140, "") {
 		{dshow = true;}
 		public void activate(String text) {
 		    setpwd(text);
 		}
 	    }, prev.pos("bl").adds(0, 2));
-        addhl(charpass.pos("bl").adds(0, 5), sz.x,
+        addhl(charpass.pos("bl").adds(0, 5), 140,
 	      prev = new Button(sbw, "Set"   ).action(() -> { setpwd(charpass.text()); }),
-	             new Button(sbw, "Clear" ).action(() -> { setpwd(""); }),
-	             new Button(sbw, "Random").action(() -> {setpwd(randpwd());})
+	             new Button(sbw, "Clear" ).action(() -> { setpwd(""); })
 	      );
 
-	prev = add(new Label("Make kin by hearth secret:"), prev.pos("bl").adds(0, 10));
-	opass = add(new TextEntry(sz.x, "") {
+	prev = add(new Label("Add kin by Hearth Secret:"), prev.pos("bl").adds(0, 109));
+	opass = add(new TextEntry(140, "") {
 		public void activate(String text) {
 		    BuddyWnd.this.wdgmsg("bypwd", text);
 		    settext("");
 		}
 	    }, prev.pos("bl").adds(0, 2));
-	prev = add(new Button(sbw, "Add kin").action(() -> {
+	prev = add(new Button(140, "Add kin").action(() -> {
 		    BuddyWnd.this.wdgmsg("bypwd", opass.text());
 		    opass.settext("");
 	}), opass.pos("bl").adds(0, 5));
@@ -612,7 +615,7 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 		    pack();
 		}
 		if(b != null) {
-		    info = add(new BuddyInfo(new Coord(UI.scale(225), sz.y - offset - Window.wbox.bisz().y), b), width + margin3, offset);
+		    info = add(new BuddyInfo(new Coord(UI.scale(200), sz.y - offset - Window.wbox.bisz().y + margin2), b), 180 + 140 + margin3, offset);
 		    infof = Frame.around(this, Collections.singletonList(info));
 		}
 		pack();

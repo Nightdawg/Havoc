@@ -1716,10 +1716,10 @@ public class OptWnd extends Window {
 	public static boolean purplePlayerAlarmEnabled = Utils.getprefb("purplePlayerAlarmEnabled", false);
 	public static TextEntry purplePlayerAlarmFilename;
 	public static HSlider purplePlayerAlarmVolumeSlider;
-	private static CheckBox pinkPlayerAlarmEnabledCheckbox;
-	public static boolean pinkPlayerAlarmEnabled = Utils.getprefb("pinkPlayerAlarmEnabled", false);
-	public static TextEntry pinkPlayerAlarmFilename;
-	public static HSlider pinkPlayerAlarmVolumeSlider;
+	private static CheckBox orangePlayerAlarmEnabledCheckbox;
+	public static boolean orangePlayerAlarmEnabled = Utils.getprefb("orangePlayerAlarmEnabled", false);
+	public static TextEntry orangePlayerAlarmFilename;
+	public static HSlider orangePlayerAlarmVolumeSlider;
 	private static CheckBox combatStartSoundEnabledCheckbox;
 	public static boolean combatStartSoundEnabled = Utils.getprefb("combatStartSoundEnabled", false);
 	public static TextEntry combatStartSoundFilename;
@@ -2135,25 +2135,25 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("ur").adds(6,-5));
 
-			prev = add(pinkPlayerAlarmEnabledCheckbox = new CheckBox("Pink:"){
-				{a = Utils.getprefb("pinkPlayerAlarmEnabled", false);}
+			prev = add(orangePlayerAlarmEnabledCheckbox = new CheckBox("Orange:"){
+				{a = Utils.getprefb("orangePlayerAlarmEnabled", false);}
 				public void set(boolean val) {
-					Utils.setprefb("pinkPlayerAlarmEnabled", val);
-					pinkPlayerAlarmEnabled = val;
+					Utils.setprefb("orangePlayerAlarmEnabled", val);
+					orangePlayerAlarmEnabled = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6).x(0));
-			pinkPlayerAlarmEnabledCheckbox.lbl = Text.std.render("Pink:", BuddyWnd.gc[7]);
-			prev = add(pinkPlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("pinkPlayerAlarmFilename", "")){
+			orangePlayerAlarmEnabledCheckbox.lbl = Text.std.render("Pink:", BuddyWnd.gc[7]);
+			prev = add(orangePlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("orangePlayerAlarmFilename", "")){
 				protected void changed() {
-					Utils.setpref("pinkPlayerAlarmFilename", this.buf.line());
+					Utils.setpref("orangePlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
 			}, prev.pos("ur").adds(97, -2));
-			prev = add(pinkPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("pinkPlayerAlarmVolume", 50)){
+			prev = add(orangePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("orangePlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
-					Utils.setprefi("pinkPlayerAlarmVolume", val);
+					Utils.setprefi("orangePlayerAlarmVolume", val);
 					super.changed();
 				}
 			}, prev.pos("ur").adds(6,3));
@@ -2162,7 +2162,7 @@ public class OptWnd extends Window {
 				public boolean mousedown(Coord c, int button) {
 					if(button != 1)
 						return true;
-					File file = new File("Alarms/" + pinkPlayerAlarmFilename.buf.line() + ".wav");
+					File file = new File("Alarms/" + orangePlayerAlarmFilename.buf.line() + ".wav");
 					if(!file.exists() || file.isDirectory()) {
 						if (gameui() != null)
 							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
@@ -2173,7 +2173,7 @@ public class OptWnd extends Window {
 						AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);
 						AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
 						Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
-						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, pinkPlayerAlarmVolumeSlider.val/50.0));
+						((Audio.Mixer)Audio.player.stream).add(new Audio.VolAdjust(klippi, orangePlayerAlarmVolumeSlider.val/50.0));
 					} catch(UnsupportedAudioFileException e) {
 						e.printStackTrace();
 					} catch(IOException e) {
