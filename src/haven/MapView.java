@@ -2442,11 +2442,17 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 								String plantinfo = null;
 								try {
 									ols = gob.ols.stream().map(ol -> ol.res.get().name).collect(Collectors.joining(", "));
-								} catch (Exception ignored) { }
-
+								} catch (Exception ignored) {}
 								try {
-									ols2 = gob.ols.stream().map(ol -> glob.sess.getres(haven.Utils.uint16d(ol.sdt.rbuf, 0)).get().basename() + " State: " + ol.sdt.peekrbuf(0)).collect(Collectors.joining(", "));
-								} catch (Exception ignored) { }
+									ols2 = gob.ols.stream().map(ol -> {
+										try {
+											return glob.sess.getres(haven.Utils.uint16d(ol.sdt.rbuf, 0)).get().basename()
+													+ " State: " + ol.sdt.peekrbuf(0);
+										} catch(IndexOutOfBoundsException e) {
+											return "N/A";
+										}
+									}).collect(Collectors.joining(", "));
+								} catch (Exception ignores) {}
 								try {
 									gattrs = gob.attr.keySet().stream().map(Class::getName).collect(Collectors.joining(", ")).replace("$", ".");
 								} catch (Exception ignored) { }
