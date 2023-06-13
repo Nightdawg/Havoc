@@ -33,6 +33,7 @@ import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
 import haven.automated.EquipFromBelt;
+import haven.automated.OceanScoutBot;
 
 import java.util.*;
 
@@ -352,10 +353,12 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_hirdsmanshield");
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_bronzeshield");
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_fyrdsmanshield");
+		makeLocal("paginae/nightdawg/Bots/OceanShorelineScout");
 	}
 
-
+	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
 	private void makeLocal(String path) {
+		customButtonPaths.add(path); // ND: Add the paths to this list, to check against them when we load the action bars in GameUI -> loadLocal().
 		Resource.Named res = Resource.local().loadwait(path).indir();
 		Pagina pagina = new Pagina(this, res);
 		pagina.button(new PagButton(pagina));
@@ -554,7 +557,22 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		if (ad[1].equals("switchToCombatDeck")) {
 			gui.changeDecks(Integer.parseInt(ad[2]));
 		} else if (ad[1].equals("equipFromBelt")) {
-			new Thread(new EquipFromBelt(gameui(), ad[2]), "EquipFromBelt").start();
+			new Thread(new EquipFromBelt(gui, ad[2]), "EquipFromBelt").start();
+		} else if (ad[1].equals("oceanShorelineScout")) {
+			if(gui.shorelineScoutBot == null && gui.shorelineScoutBotThread == null){
+				gui.shorelineScoutBot = new OceanScoutBot(gui);
+				gui.add(gui.shorelineScoutBot, new Coord(gui.sz.x/2 - gui.shorelineScoutBot.sz.x/2, gui.sz.y/2 - gui.shorelineScoutBot.sz.y/2 - 200));
+				gui.shorelineScoutBotThread = new Thread(gui.shorelineScoutBot,"OceanShorelineScout");
+				gui.shorelineScoutBotThread.start();
+			} else {
+				if (gui.shorelineScoutBot != null) {
+					gui.shorelineScoutBot.stop = true;
+					gui.shorelineScoutBot.stop();
+					gui.shorelineScoutBot.reqdestroy();
+					gui.shorelineScoutBot = null;
+					gui.shorelineScoutBotThread = null;
+				}
+			}
 		}
 	}
 

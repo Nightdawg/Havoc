@@ -247,7 +247,7 @@ public class Fightsess extends Widget {
 				g.chcolor(225, 0, 0, 220);
 				g.fellipse(cdc, UI.scale(altui ? new Coord(24, 24) : new Coord(22, 22)), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)), Math.PI / 2);
 				g.chcolor();
-				g.aimage(Text.renderstroked(fmt2DecPlaces(fv.atkct - now)).tex(), cdc, 0.5, 0.5);
+				g.aimage(Text.renderstroked(fmt1DecPlace(fv.atkct - now)).tex(), cdc, 0.5, 0.5);
 			}
 			if (altui) {
 				if (fv.cooldownUpdated){

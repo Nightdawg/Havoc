@@ -102,6 +102,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public QuickSlotsWdg quickslots;
 	public Thread keyboundActionThread;
 	private Gob detectGob;
+	public OceanScoutBot shorelineScoutBot;
+	public Thread shorelineScoutBotThread;
 
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
@@ -1924,9 +1926,16 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 					for (int i = (curbelt * 12); i < (curbelt * 12)+12; i++) {
 						String resname = resnames[i];
 						if (!resname.equals("null")) {
-							try {
-								belt[i] = ((GameUI)parent).new BeltSlot(i, Resource.local().load(resname), Message.nil, 0);
-							} catch (Exception e) {   // possibly a resource from another client
+							try { // ND: In case there's a different resource saved, this piece of shit will not catch it. I don't understand why.
+								// ND: So what I did is to add the path names of the buttons to an ArrayList when they're created.
+								if (MenuGrid.customButtonPaths.stream().anyMatch(resname::matches)) { // ND: Check if the action button we try to load exists in the list.
+									belt[i] = ((GameUI) parent).new BeltSlot(i, Resource.local().load(resname), Message.nil, 0);
+								} else { // ND: If the button resource path we try to load doesn't exist in the aforementioned list, don't fucking try to load it, and instead remove it from the settings too.
+									resnames[i] = "null";
+									Utils.setprefsa("actionBar" + barNumber + "_" + chrid, resnames);
+								}
+							} catch (Error e) {   // possibly a resource from another client
+								// ND: More like possibly fuck you, stupid code.
 							}
 						}
 					}

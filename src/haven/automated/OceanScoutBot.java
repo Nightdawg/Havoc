@@ -14,7 +14,7 @@ import static haven.OCache.posres;
 public class OceanScoutBot extends Window implements Runnable {
     private int checkClock;
     private GameUI gui;
-    private boolean stop;
+    public boolean stop;
     private MCache mcache;
     private int clockwiseDirection = 1;
     private double ang = 0;
@@ -25,12 +25,12 @@ public class OceanScoutBot extends Window implements Runnable {
     private boolean active = false;
 
     public OceanScoutBot(GameUI gui) {
-        super(new Coord(220, 65), "Shore Scouting");
+        super(new Coord(190, 65), "Ocean Shoreline Scouting");
         this.gui = gui;
         checkClock = 0;
         stop = false;
         mcache = gui.map.glob.map;
-        CheckBox dirBox = new CheckBox("Sail Clockwise?") {
+        CheckBox dirBox = new CheckBox("Sail Clockwise") {
             {
                 a = true;
             }
@@ -40,18 +40,31 @@ public class OceanScoutBot extends Window implements Runnable {
                 a = val;
             }
         };
-        add(dirBox);
-        CheckBox activeBox = new CheckBox("Active") {
-            {
-                a = false;
-            }
+        add(dirBox, UI.scale(10, 10));
+//        CheckBox activeBox = new CheckBox("Active") {
+//            {
+//                a = false;
+//            }
+//
+//            public void set(boolean val) {
+//                active = val;
+//                a = val;
+//            }
+//        };
+//        add(activeBox, UI.scale(10, 36));
 
-            public void set(boolean val) {
-                active = val;
-                a = val;
+        add(new Button(170, "Start"){
+            @Override
+            public void click() {
+                active = !active;
+                if (active){
+                    this.change("Stop");
+                } else {
+                    gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
+                    this.change("Start");
+                }
             }
-        };
-        add(activeBox, new Coord(0, 30));
+        }, UI.scale(10, 30));
     }
 
     @Override
@@ -239,6 +252,7 @@ public class OceanScoutBot extends Window implements Runnable {
             stop = true;
             stop();
             reqdestroy();
+            gui.shorelineScoutBot = null;
         } else {
             super.wdgmsg(sender, msg, args);
         }
@@ -248,6 +262,10 @@ public class OceanScoutBot extends Window implements Runnable {
         gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
         if (gameui().map.pfthread != null) {
             gameui().map.pfthread.interrupt();
+        }
+        if (gameui().shorelineScoutBotThread != null) {
+            gameui().shorelineScoutBotThread.interrupt();
+            gui.shorelineScoutBotThread = null;
         }
         this.destroy();
     }
