@@ -56,6 +56,7 @@ public class MiniMap extends Widget {
     protected boolean follow;
     protected float zoomlevel = 1;
     protected DisplayGrid[] display;
+	public boolean compact;
     protected Area dgext, dtext;
     protected Segment dseg;
 	public float zoomMomentum = 0;
@@ -675,18 +676,36 @@ public class MiniMap extends Widget {
 	}
     }
 
-    public void drawparty(GOut g) {
-	for(Party.Member m : ui.sess.glob.party.memb.values()) {
-	    try {
-		Coord2d ppc = m.getc();
-		if(ppc == null)
-		    continue;
-		g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 255);
-		g.rotimage(plp, p2c(ppc), plp.sz().div(2), -m.geta() - (Math.PI / 2));
-		g.chcolor();
-	    } catch(Loading l) {}
+	public void drawparty(GOut g) {
+		for (Party.Member m : ui.sess.glob.party.memb.values()) {
+			try {
+				Coord2d ppc = m.getc();
+				if (ppc == null)
+					continue;
+				Coord p2cppc = p2c(ppc);
+				g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 255);
+				g.rotimage(plp, p2c(ppc), plp.sz().div(2), -m.geta() - (Math.PI / 2));
+				g.chcolor();
+
+				if (!compact) {
+					String name;
+					if (GameUI.gobIdToKinName.containsKey(m.gobid)) {
+						name = GameUI.gobIdToKinName.get(m.gobid);
+						g.image(Text.renderstroked(name, Color.white, Color.BLACK, Text.num12boldFnd).tex(),p2cppc.add(-name.length()*4,-30));
+					} else if (m.getgob() != null) {
+						KinInfo kinInfo = m.getgob().getattr(KinInfo.class);
+						if (kinInfo != null) {
+							name = kinInfo.name;
+							if (!GameUI.gobIdToKinName.containsKey(m.gobid)) {
+								GameUI.gobIdToKinName.put(m.gobid, name);
+							}
+						}
+					}
+				}
+			} catch (Loading l) {
+			}
+		}
 	}
-    }
 
     public void drawparts(GOut g){
 	drawmap(g);
@@ -1157,6 +1176,23 @@ public class MiniMap extends Widget {
 	public void addSprite(MapSprite mapSprite) {
 		synchronized (mapSprites) {
 			mapSprites.add(mapSprite);
+		}
+	}
+
+	enum Symbols {
+		$circle("gfx/hud/mmap/symbols/circle"),
+		$diamond("gfx/hud/mmap/symbols/diamond"),
+		$dot("gfx/hud/mmap/symbols/dot"),
+		$down("gfx/hud/mmap/symbols/down"),
+		$pentagon("gfx/hud/mmap/symbols/pentagon"),
+		$square("gfx/hud/mmap/symbols/square"),
+		$up("gfx/hud/mmap/symbols/up");
+
+		public final Tex tex;
+		public static final Symbols DEFAULT = $circle;
+
+		Symbols(String res) {
+			tex = Resource.loadtex(res);
 		}
 	}
 }

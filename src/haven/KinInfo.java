@@ -151,6 +151,7 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
 		int group = msg.uint8();
 		int btype = msg.uint8();
 		KinInfo b = g.getattr(KinInfo.class);
+		GameUI.gobIdToKinName.put(g.id, name);
 		if(b == null) {
 		    g.setattr(new KinInfo(g, name, group, btype));
 		} else {

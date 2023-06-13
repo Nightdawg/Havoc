@@ -807,6 +807,7 @@ public class MapWnd extends Window implements Console.Directory {
 	loadPos(a);
 	pack();
 	this.compact = a;
+	if (view != null) view.compact = a;
     }
 
 	// ND: For some fucking reason, the big map window is larger than the size. Why? I don't know.
