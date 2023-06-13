@@ -1283,6 +1283,7 @@ public class OptWnd extends Window {
 	public static CheckBox toggleAutoPeaceCheckbox;
 	public static CheckBox partyMembersHighlightCheckBox;
 	public static CheckBox partyMembersCirclesCheckBox;
+	public static CheckBox aggroedEnemiesCirclesCheckBox;
 	private static Button damageInfoClearButton;
 	public static boolean partyMembersHighlight = Utils.getprefb("partyMembersHighlight", false);
 	public static boolean partyMembersCircles = Utils.getprefb("partyMembersCircles", true);
@@ -1375,6 +1376,13 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, scroll.pos("bl").adds(2, -6));
+			prev = add(aggroedEnemiesCirclesCheckBox = new CheckBox("Circles Under Aggroed Enemies (Players/Mobs)"){
+				{a = Utils.getprefb("aggroedEnemiesCircles", true);}
+				public void set(boolean val) {
+					Utils.setprefb("aggroedEnemiesCircles", val);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
 			prev = add(partyMembersHighlightCheckBox = new CheckBox("Highlight Party Members"){
 				{a = Utils.getprefb("partyMembersHighlight", false);}
 				public void set(boolean val) {
@@ -1384,7 +1392,7 @@ public class OptWnd extends Window {
 						gameui().map.partyHighlight.update();
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 6));
+			}, prev.pos("bl").adds(0, 12));
 			prev = add(partyMembersCirclesCheckBox = new CheckBox("Circles Under Party Members"){
 				{a = Utils.getprefb("partyMembersCircles", true);}
 				public void set(boolean val) {

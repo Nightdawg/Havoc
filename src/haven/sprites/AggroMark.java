@@ -13,12 +13,13 @@ import java.awt.*;
 public class AggroMark extends Sprite {
     public static final int id = -4214129;
 
+    private static final Color col = new Color(255, 0, 0, 140);
     private final ColoredCircleMesh mesh;
     private boolean alive = true;
 
     public AggroMark(final Gob g) {
         super(g, null);
-        this.mesh = ColoredCircleMesh.getmesh(Color.RED, 3.5f, 5.6f, 0.5f);
+        this.mesh = ColoredCircleMesh.getmesh(col, 3.5f, 5.6f, 0.55f);
     }
 
     public void rem() {

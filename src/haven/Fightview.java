@@ -31,10 +31,8 @@ import haven.sprites.AggroMark;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -95,8 +93,16 @@ public class Fightview extends Widget {
 
 		public void tick() {
 			final Gob g = ui.sess.glob.oc.getgob(gobid);
-			if (g != null && g.findol(AggroMark.id) == null) {
+			if (OptWnd.aggroedEnemiesCirclesCheckBox.a && g != null && g.getres().name.equals("gfx/borka/body") && g.findol(AggroMark.id) == null) {
 				g.daddol(AggroMark.id, new AggroMark(g));
+			} else if (!OptWnd.aggroedEnemiesCirclesCheckBox.a && g != null) {
+				final Gob.Overlay ol = g.findol(AggroMark.id);
+				if (ol != null) {
+					final AggroMark am = (AggroMark) ol.spr;
+					if (am != null) {
+						am.rem();
+					}
+				}
 			}
 		}
 

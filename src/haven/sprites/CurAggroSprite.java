@@ -12,33 +12,34 @@ import java.nio.ShortBuffer;
 public class CurAggroSprite extends Sprite {
     public static final int id = -59129521;
     private static final ObstMesh mesh;
-    private static final BaseColor col = new BaseColor(Color.RED);
+    private static final BaseColor col = new BaseColor(new Color(255, 0, 0, 255));
 
     static {
-	final Coord2d[][] shapes = new Coord2d[4][4];
-	final Coord2d offset = new Coord2d(10, 0);
+	final Coord2d[][] shapes = new Coord2d[2][4];
+	final Coord2d offset = new Coord2d(11, 0);
 	{
-	    shapes[0][0] = offset.rotate(Math.toRadians(35));
-	    shapes[0][1] = offset.rotate(Math.toRadians(180 + 55));
-	    shapes[0][2] = offset.rotate(Math.toRadians(180 + 35));
-	    shapes[0][3] = offset.rotate(Math.toRadians(55));
+	    shapes[0][0] = offset.rotate(Math.toRadians(45 - 7));
+	    shapes[0][1] = offset.rotate(Math.toRadians(45 + 7));
+	    shapes[0][2] = offset.rotate(Math.toRadians(225 - 7));
+	    shapes[0][3] = offset.rotate(Math.toRadians(225 + 7));
 
-	    shapes[1][0] = offset.rotate(Math.toRadians(125));
-	    shapes[1][1] = offset.rotate(Math.toRadians(180 + 145));
-	    shapes[1][2] = offset.rotate(Math.toRadians(180 + 125));
-	    shapes[1][3] = offset.rotate(Math.toRadians(145));
+		shapes[1][0] = offset.rotate(Math.toRadians(135 - 7));
+		shapes[1][1] = offset.rotate(Math.toRadians(135 + 7));
+		shapes[1][2] = offset.rotate(Math.toRadians(315 - 7));
+		shapes[1][3] = offset.rotate(Math.toRadians(315 + 7));
 
-	    shapes[2][0] = offset.rotate(Math.toRadians(-10));
-	    shapes[2][1] = offset.rotate(Math.toRadians(180 + 10));
-	    shapes[2][2] = offset.rotate(Math.toRadians(180 - 10));
-	    shapes[2][3] = offset.rotate(Math.toRadians(10));
+//		shapes[2][0] = offset.rotate(Math.toRadians(0 - 8));
+//		shapes[2][1] = offset.rotate(Math.toRadians(0 + 8));
+//		shapes[2][2] = offset.rotate(Math.toRadians(180 - 8));
+//		shapes[2][3] = offset.rotate(Math.toRadians(180 + 8));
+//
+//		shapes[3][0] = offset.rotate(Math.toRadians(90 - 8));
+//		shapes[3][1] = offset.rotate(Math.toRadians(90 + 8));
+//		shapes[3][2] = offset.rotate(Math.toRadians(270 - 8));
+//		shapes[3][3] = offset.rotate(Math.toRadians(270 + 8));
 
-	    shapes[3][0] = offset.rotate(Math.toRadians(80));
-	    shapes[3][1] = offset.rotate(Math.toRadians(180 + 100));
-	    shapes[3][2] = offset.rotate(Math.toRadians(180 + 80));
-	    shapes[3][3] = offset.rotate(Math.toRadians(100));
 	}
-	mesh = makeMesh(shapes, col.color(), 0.5F);
+	mesh = makeMesh(shapes, col.color(), 0.6F);
     }
 
     public CurAggroSprite(final Gob g) {
