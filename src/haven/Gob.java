@@ -34,6 +34,7 @@ import java.util.function.*;
 import java.util.regex.Pattern;
 
 import haven.render.*;
+import haven.sprites.ArcheryVectorSprite;
 import haven.sprites.BPRad;
 import haven.sprites.FLCir;
 
@@ -75,6 +76,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public double gobSpeed = 0;
 	public static final HashSet<Long> alarmPlayed = new HashSet<Long>();
 
+	private Overlay archeryVector;
+
 	/**
 	 * This method is run after all gob attributes has been loaded first time
 	 * throwloading=true causes the loader/thread that ran the init to try again
@@ -112,6 +115,32 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	public void updPose(HashSet<String> poses) {
+		if (this.getres().name.equals("gfx/borka/body")){
+			if (poses.contains("spear-ready")) {
+				archeryVector(155);
+			} else if (poses.contains("sling-aim")) {
+				archeryVector(155);
+			} else if (poses.contains("drawbow")) {
+				for (GAttrib g : this.attr.values()) {
+					if (g instanceof Drawable) {
+						if (g instanceof Composite) {
+							Composite c = (Composite) g;
+							if (c.comp.cequ.size() > 0) {
+								for (Composited.ED item : c.comp.cequ) {
+									if (item.res.res.get().basename().equals("huntersbow"))
+										archeryVector(195);
+									else if (item.res.res.get().basename().equals("rangersbow"))
+										archeryVector(252);
+								}
+							}
+						}
+					}
+				}
+			} else {
+				removeOl(archeryVector);
+				archeryVector = null;
+			}
+		}
 		isComposite = true;
 		Iterator<String> iter = poses.iterator();
 		while (iter.hasNext()) {
@@ -1855,6 +1884,15 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			GobIcon icon = CustomMapIcons.getIcon(this);
 			if(icon != null) {
 				setattr(icon);
+			}
+		}
+	}
+
+	private void archeryVector(int range) {
+		if (this.archeryVector == null) {
+			archeryVector = new Overlay(this, new ArcheryVectorSprite(this, range));
+			synchronized (ols) {
+				addol(archeryVector);
 			}
 		}
 	}
