@@ -868,6 +868,12 @@ public class ChatUI extends Widget {
 		Integer from = (Integer)args[0];
 		long gobid = Utils.uint32((Integer)args[1]);
 		String line = (String)args[2];
+		if (from != null) {
+			BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
+			if (b != null) {
+				GameUI.gobIdToKinName.put(gobid,b.name);
+			}
+		}
 		if(process(line, gobid)) {
 			Color col = Color.WHITE;
 			synchronized (ui.sess.glob.party.memb) {

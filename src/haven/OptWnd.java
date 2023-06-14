@@ -1297,6 +1297,8 @@ public class OptWnd extends Window {
 			Widget prev;
 
 			Fightsess.altui = Utils.getprefb("useProperCombatUI", true);
+			Fightsess.drawFloatingCombatData = Utils.getprefb("drawFloatingCombatData", true);
+			Fightsess.drawFloatingCombatDataOnCur = Utils.getprefb("drawFloatingCombatDataOnCurrentTarget ", true);
 			Fightsess.showKeybindCombatSetting = Utils.getprefb("showCombatHotkeysUI", true);
 			Fightsess.markCombatTargetSetting = Utils.getprefb("markCurrentCombatTarget", true);
 			Fightview.autoPeaceSetting = Utils.getprefb("autoPeaceCombat", false);
@@ -1314,6 +1316,22 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
+			prev = add(new CheckBox("Draw Combat Data On Other Targets."){
+				{a = Utils.getprefb("drawFloatingCombatData", true);}
+				public void set(boolean val) {
+					Utils.setprefb("drawFloatingCombatData", val);
+					Fightsess.drawFloatingCombatData = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			prev = add(new CheckBox("Draw Additional Combat Data On Current Target."){
+				{a = Utils.getprefb("drawFloatingCombatData", true);}
+				public void set(boolean val) {
+					Utils.setprefb("drawFloatingCombatDataOnCurrentTarget", val);
+					Fightsess.drawFloatingCombatDataOnCur = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
 			prev = add(new Label("Top panel height:"), prev.pos("bl").adds(-16, 10));
 			Fightsess.combaty0HeightInt = Utils.getprefi("combatTopPanelHeight", 400);
 			prev = add(combatUITopPanelHeightSlider = new HSlider(UI.scale(200), 1, 500, Fightsess.combaty0HeightInt) {

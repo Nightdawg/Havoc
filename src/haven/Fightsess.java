@@ -35,8 +35,8 @@ import javax.sound.sampled.AudioSystem;
 import java.awt.*;
 import java.io.File;
 import java.util.*;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 public class Fightsess extends Widget {
 	public static final Text.Foundry keybindsFoundry = new Text.Foundry(Text.sans.deriveFont(java.awt.Font.BOLD), 14);
@@ -51,12 +51,21 @@ public class Fightsess extends Widget {
     public static final Tex useframe = Resource.loadtex("gfx/hud/combat/lastframe");
     public static final Coord useframeo = (useframe.sz().sub(off)).div(2);
     public static final int actpitch = UI.scale(50);
+	public static final Text.Foundry ipAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 16);
+	public static final Text.Foundry openingAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 14);
+	public static final Text.Foundry cleaveAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 10);
+	public static HashSet<String> maneuvers =  new HashSet<>(Arrays.asList(
+			"paginae/atk/toarms", "paginae/atk/shield", "paginae/atk/parry",
+			"paginae/atk/oakstance", "paginae/atk/dorg", "paginae/atk/chinup",
+			"paginae/atk/bloodlust", "paginae/atk/combmed"));
     public final Action[] actions;
     public int use = -1, useb = -1;
     public Coord pcc;
     public int pho;
+	public Map<Fightview.Relation, Coord> relations = new HashMap<>();
     private Fightview fv;
 	double currentCooldown = 0;
+	int tickAlert = 0;
 
     public static class Action {
 	public final Indir<Resource> res;
@@ -94,10 +103,11 @@ public class Fightsess extends Widget {
 	this.actions = new Action[nact];
     }
 
-    protected void added() {
-	fv = parent.getparent(GameUI.class).fv;
-	presize();
-    }
+	protected void added() {
+		fv = parent.getparent(GameUI.class).fv;
+		presize();
+
+	}
 
     public void presize() {
 	resize(parent.sz);
@@ -114,6 +124,16 @@ public class Fightsess extends Widget {
 	    return;
 	pcc = map.screenxf(raw).round2();
 	pho = (int)(map.screenxf(raw.add(0, 0, UI.scale(20))).round2().sub(pcc).y) - UI.scale(20);
+
+	relations.clear();
+	for (Fightview.Relation rel : fv.lsrel) {
+		try {
+			Coord3f rawc = map.glob.oc.getgob(rel.gobid).placed.getc();
+			if (rawc == null)
+				continue;
+			relations.put(rel, map.screenxf(rawc).round2());
+		} catch (NullPointerException ignore) {}
+	}
     }
 
     private static class Effect implements RenderTree.Node {
@@ -207,6 +227,8 @@ public class Fightsess extends Widget {
     private Effect curtgtfx;
 
 	public static Boolean altui = true;
+	public static Boolean drawFloatingCombatData = true;
+	public static Boolean drawFloatingCombatDataOnCur = true;
 	public static int combaty0HeightInt = 400;
 	public static int combatbottomHeightInt = 100;
 
@@ -214,8 +236,27 @@ public class Fightsess extends Widget {
 	public static boolean showKeybindCombatSetting = true;
 	public void draw(GOut g) {
 		updatepos();
-
 		GameUI gui = gameui();
+		if (Fightsess.drawFloatingCombatData) {
+			tickAlert++;
+			if(tickAlert > 20){
+				tickAlert = 0;
+			}
+			try {
+				for (Map.Entry<Fightview.Relation, Coord> entry : relations.entrySet()) {
+					Fightview.Relation otherRelation = entry.getKey();
+					Coord sc = entry.getValue();
+					if (sc == null || (fv.current == otherRelation && !Fightsess.drawFloatingCombatDataOnCur)) {
+						continue;
+					}
+					drawCombatData(g, otherRelation, sc);
+				}
+			} catch (NullPointerException ignored) {}
+			relations.clear();
+		}
+
+
+
 		double x1 = gui.sz.x / 2.0;
 		double y1 = gui.sz.y - ((gui.sz.y / 500.0) * combaty0HeightInt);
 		int x0 = (int)x1; // I have to do it like this, otherwise it's not consistent when resizing the window
@@ -374,6 +415,134 @@ public class Fightsess extends Widget {
 
 		g.chcolor(Color.WHITE);
 		g.atextstroked(IMeter.characterCurrentHealth+" ("+(Utils.fmt1DecPlace((int)(m.a*100)))+"% HHP)", new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5, Color.WHITE, Color.BLACK, Text.num12boldFnd);
+	}
+
+	private void drawCombatData(GOut g, Fightview.Relation rels, Coord sc) {
+		Coord topLeftFrame = new Coord(sc.x - 43, sc.y - 140);
+		boolean openings;
+		boolean cleaveUsed = false;
+
+		//Check if cleave indicator is needed
+		if (rels.lastActCleave != null) {
+			cleaveUsed = System.currentTimeMillis() - rels.lastActCleave < 5000;
+		}
+
+		//check if there is any opening
+		openings = rels.buffs.children(Buff.class).size() > 1;
+
+		//make background behind stance and coins
+		g.chcolor(new Color(255, 255, 255, 70));
+		g.frect(topLeftFrame, new Coord(86, 32));
+
+		//reset color
+		g.chcolor(255, 255, 255, 255);
+
+		//prepare colors for ip text
+		Color ipcol = rels.ip >= 6 ? new Color(55, 255, 0) : new Color(255, 255, 255);
+		Color oipcol = rels.oip >= 6 ? new Color(255, 54, 0) : new Color(255, 255, 255);
+
+		//made different x offsets depending on how many digits coins have
+		int ipOffset = rels.ip < 10 ? 20 : rels.ip < 100 ? 24 : 28;
+		int oipOffset = rels.oip < 10 ? 78 : rels.oip < 100 ? 81 : 86;
+
+		//add ip / oip text
+		g.atextstroked(Integer.toString(rels.ip), new Coord(topLeftFrame.x + ipOffset, topLeftFrame.y + 15), 1, 0.5, ipcol, Color.black, ipAdditionalFont);
+		g.atextstroked(Integer.toString(rels.oip), new Coord(topLeftFrame.x + oipOffset, topLeftFrame.y + 15), 1, 0.5, oipcol, Color.black, ipAdditionalFont);
+
+		//maneuver
+		for (Buff buff : rels.buffs.children(Buff.class)) {
+			try {
+				if (buff.res != null && buff.res.get() != null) {
+					String name = buff.res.get().name;
+					if (maneuvers.contains(name)) {
+						int meterValue = getOpeningValue(buff);
+						Tex img = buff.res.get().flayer(Resource.imgc).tex();
+						if(meterValue > 80 && name.equals("paginae/atk/combmed")){
+							g.chcolor(255, 255-(tickAlert*20), 255-(tickAlert*20), 255);
+						}
+						g.image(img, new Coord(topLeftFrame.x + 27, topLeftFrame.y));
+						if(meterValue > 0){
+							g.chcolor(0, 0, 0, 155);
+							g.frect(new Coord(topLeftFrame.x + 27, topLeftFrame.y + 32), new Coord(32, 8));
+							if(meterValue < 30){
+								g.chcolor(255, 255, 255, 255);
+							} else {
+								g.chcolor(255, (255 - (255*meterValue)/100), (255 - (255*meterValue)/100), 255);
+							}
+
+							g.frect(new Coord(topLeftFrame.x + 28, topLeftFrame.y + 33), new Coord((30 * meterValue)/100, 6));
+						}
+					}
+				}
+			} catch (Loading ignored) {
+			}
+		}
+
+
+
+		//openings only if has any
+		if (openings) {
+			//make bg for openings
+			g.chcolor(new Color(255, 255, 255, 70));
+			g.frect(new Coord(topLeftFrame.x, topLeftFrame.y + 32), new Coord(86, 29));
+
+			Map<String, Color> colorMap = new HashMap<>();
+			colorMap.put("paginae/atk/offbalance", new Color(0, 128, 3));
+			colorMap.put("paginae/atk/dizzy", new Color(39, 82, 191));
+			colorMap.put("paginae/atk/reeling", new Color(217, 177, 20));
+			colorMap.put("paginae/atk/cornered", new Color(192, 28, 28));
+
+			List<TemporaryOpening> openingList = new ArrayList<>();
+			for (Buff buff : rels.buffs.children(Buff.class)) {
+				try {
+					if (buff.res != null && buff.res.get() != null) {
+						String name = buff.res.get().name;
+						if (colorMap.containsKey(name)) {
+							int meterValue = getOpeningValue(buff);
+							openingList.add(new TemporaryOpening(meterValue, colorMap.get(name)));
+						}
+					}
+				} catch (Loading ignored) {
+				}
+			}
+			openingList.sort((o1, o2) -> Integer.compare(o2.value, o1.value));
+
+			int openingOffsetX = 3;
+			for (TemporaryOpening opening : openingList) {
+				g.chcolor(opening.color);
+				g.frect(new Coord(topLeftFrame.x + openingOffsetX, topLeftFrame.y + 40), new Coord(20, 20));
+				g.chcolor(255, 255, 255, 255);
+
+				int valueOffset = opening.value < 10 ? 16 : opening.value< 100 ? 19 : 23;
+				g.atextstroked(String.valueOf(opening.value), new Coord(topLeftFrame.x + openingOffsetX + valueOffset, topLeftFrame.y + 51), 1, 0.5, Color.WHITE, Color.BLACK, openingAdditionalFont);
+				openingOffsetX += 20;
+			}
+		}
+
+		//add cleave indicator
+		if (cleaveUsed) {
+			long timer = ((5000 - (System.currentTimeMillis() - rels.lastActCleave)));
+			g.chcolor(new Color(255, 255, 255, 70));
+			g.frect(new Coord(topLeftFrame.x, topLeftFrame.y - 12), new Coord(86, 12));
+			g.chcolor(new Color(82, 7, 7, 255));
+			g.frect(new Coord(topLeftFrame.x + 2, topLeftFrame.y - 11), new Coord((int) ((82 * timer)/5000), 10));
+			g.chcolor(new Color(255, 255, 255, 255));
+			g.atextstroked(getCleaveTime(timer), new Coord(topLeftFrame.x + 52, topLeftFrame.y - 7), 1, 0.5, Color.WHITE, Color.BLACK, cleaveAdditionalFont);
+		}
+		g.chcolor(255, 255, 255, 255);
+	}
+
+	private int getOpeningValue(Buff buff) {
+		Double meterDouble = (buff.ameter >= 0) ? Double.valueOf(buff.ameter / 100.0) : buff.getAmeteri().get();
+		if (meterDouble != null) {
+			return (int) (100 * meterDouble);
+		}
+		return 0;
+	}
+
+	public String getCleaveTime(long time) {
+		double convertedTime = time / 1000.0;
+		return String.format("%.1f", convertedTime);
 	}
 
 	private static final Color blu1 = new Color(3, 3, 80, 141);
@@ -615,4 +784,14 @@ public class Fightsess extends Widget {
 	}
 	return(false);
     }
+
+	private static class TemporaryOpening{
+		private int value;
+		private Color color;
+
+		public TemporaryOpening(int value, Color color) {
+			this.value = value;
+			this.color = color;
+		}
+	}
 }

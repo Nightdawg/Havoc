@@ -33,6 +33,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -85,6 +86,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public boolean changeCustomSlot = false;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+	public static Map<Long,String> gobIdToKinName = new ConcurrentHashMap<>();
 	public static boolean swimon = false;
 	public static boolean crimeon = false;
 	public static boolean trackon = false;
