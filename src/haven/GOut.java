@@ -757,4 +757,19 @@ public class GOut {
     public void getimage(Texture.Image<?> img, boolean flip, Consumer<BufferedImage> cb) {
 	getimage(out, img, flip, cb);
     }
+
+	public void clippedLine(Coord c1, Coord c2, int width) {
+		c1 = c1.add(tx);
+		c2 = c2.add(tx);
+		if (!clipline(c1, c2))
+			return;
+
+		usestate(new States.LineWidth(width));
+		float[] data = {
+				c1.x + 0.5f,
+				c1.y + 0.5f,
+				c2.x + 0.5f,
+				c2.y + 0.5f};
+		drawp(Model.Mode.LINES, data);
+	}
 }
