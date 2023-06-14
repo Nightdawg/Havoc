@@ -68,6 +68,7 @@ public class Fightview extends Widget {
 	public final Bufflist relbuffs = add(new Bufflist()); {relbuffs.hide();}
 	public int gst, ip, oip;
 	public Indir<Resource> lastact = null;
+	public Long lastActCleave = null;
 	public double lastuse = 0;
 	public boolean invalid = false;
 
@@ -88,6 +89,11 @@ public class Fightview extends Widget {
 	public void use(Indir<Resource> act) {
 	    lastact = act;
 	    lastuse = Utils.rtime();
+		try {
+			if (lastact.get() != null && lastact.get().name.endsWith("cleave")) {
+				lastActCleave = System.currentTimeMillis();
+			}
+		} catch (Loading ignored) {}
 		playCombatSoundEffect(lastact);
 	}
 

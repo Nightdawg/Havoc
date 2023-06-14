@@ -58,9 +58,10 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
     private List<ItemInfo> info = Collections.emptyList();
     /* Deprecated */
     String tt = null;
-    int ameter = -1;
+    public int ameter = -1;
     int nmeter = -1;
     Tex ntext = null;
+	public Tex atex;
 
     @RName("buff")
     public static class $_ implements Factory {
@@ -115,7 +116,12 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
     }
 
     private final AttrCache<Double> ameteri = new AttrCache<>(this::info, AttrCache.map1(AMeterInfo.class, minf -> minf::ameter));
-    private final AttrCache<Tex> nmeteri = new AttrCache<>(this::info, AttrCache.map1s(GItem.NumberInfo.class, ninf -> new TexI(GItem.NumberInfo.numrender(ninf.itemnum(), ninf.numcolor()))));
+
+	public AttrCache<Double> getAmeteri() {
+		return ameteri;
+	}
+
+	private final AttrCache<Tex> nmeteri = new AttrCache<>(this::info, AttrCache.map1s(GItem.NumberInfo.class, ninf -> new TexI(GItem.NumberInfo.numrender(ninf.itemnum(), ninf.numcolor()))));
 	private final AttrCache<Double> cmeteri = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
 
 	public void draw(GOut g) {
@@ -170,6 +176,7 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
 			}
 		} catch(Loading e) {}
 	}
+
 
     private BufferedImage shorttip() {
 	if(rawinfo != null)
@@ -263,6 +270,9 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
 	} else if(msg == "am") {
 	    this.ameter = (Integer)args[0];
 	    shorttip = longtip = null;
+		if (atex != null)
+			atex.dispose();
+		atex = null;
 	} else if(msg == "nm") {
 	    this.nmeter = (Integer)args[0];
 	    ntext = null;
