@@ -34,9 +34,10 @@ import java.util.function.*;
 import java.util.regex.Pattern;
 
 import haven.render.*;
+import haven.sprites.ArcheryRadiusSprite;
 import haven.sprites.ArcheryVectorSprite;
 import haven.sprites.BPRad;
-import haven.sprites.FLCir;
+import haven.sprites.AuraCircleSprite;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -77,6 +78,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public static final HashSet<Long> alarmPlayed = new HashSet<Long>();
 
 	private Overlay archeryVector;
+	private Overlay archeryRadius;
 
 	/**
 	 * This method is run after all gob attributes has been loaded first time
@@ -116,10 +118,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public void updPose(HashSet<String> poses) {
 		if (this.getres().name.equals("gfx/borka/body")){
+			boolean imOnLand = true;
+			if (poses.contains("rowboat") || poses.contains("coracleidle") || poses.contains("snekkja") || poses.contains("knarr") || poses.contains("dugout")) {
+				imOnLand = false;
+			}
 			if (poses.contains("spear-ready")) {
-				archeryVector(155);
+				archeryIndicator(155, imOnLand);
 			} else if (poses.contains("sling-aim")) {
-				archeryVector(155);
+				archeryIndicator(155, imOnLand);
 			} else if (poses.contains("drawbow")) {
 				for (GAttrib g : this.attr.values()) {
 					if (g instanceof Drawable) {
@@ -128,9 +134,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 							if (c.comp.cequ.size() > 0) {
 								for (Composited.ED item : c.comp.cequ) {
 									if (item.res.res.get().basename().equals("huntersbow"))
-										archeryVector(195);
+										archeryIndicator(195, imOnLand);
 									else if (item.res.res.get().basename().equals("rangersbow"))
-										archeryVector(252);
+										archeryIndicator(252, imOnLand);
 								}
 							}
 						}
@@ -139,6 +145,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			} else {
 				removeOl(archeryVector);
 				archeryVector = null;
+				removeOl(archeryRadius);
+				archeryRadius = null;
 			}
 		}
 		isComposite = true;
@@ -1779,7 +1787,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void toggleBeastDangerRadii() {
 		if (getres() != null) {
 			String resourceName = getres().name;
-			if (resourceName.startsWith("gfx/kritter")) {
+			if (resourceName.startsWith("gfx/kritter")){
 				if (knocked != null && knocked == false) {
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
 						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
@@ -1827,14 +1835,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public void setCritterAura(boolean on, boolean rabbit) {
 		if (rabbit) {
-			setCircleOl(FLCir.gren, on);
+			setCircleOl(AuraCircleSprite.gren, on);
 		} else {
-			setCircleOl(FLCir.purp, on);
+			setCircleOl(AuraCircleSprite.purp, on);
 		}
 	}
 
 	public void setDangerRadii(boolean on) {
-		setRadiusOl(120F, FLCir.redr, on);
+		setRadiusOl(120F, AuraCircleSprite.redr, on);
 	}
 
 	private void setRadiusOl(float radius, Color col, boolean on) {
@@ -1857,11 +1865,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private void setCircleOl(Color col, boolean on) {
 		if (on) {
 			for (Overlay ol : ols) {
-				if (ol.spr instanceof FLCir) {
+				if (ol.spr instanceof AuraCircleSprite) {
 					return;
 				}
 			}
-			customAnimalOverlay = new Overlay(this, new FLCir(this, col));
+			customAnimalOverlay = new Overlay(this, new AuraCircleSprite(this, col));
 			synchronized (ols) {
 				addol(customAnimalOverlay);
 			}
@@ -1880,11 +1888,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 	}
 
-	private void archeryVector(int range) {
-		if (this.archeryVector == null) {
-			archeryVector = new Overlay(this, new ArcheryVectorSprite(this, range));
+	private void archeryIndicator(int range, boolean imOnLand) {
+		if (OptWnd.flatWorldSetting && imOnLand){
+			if (this.archeryVector == null) {
+				archeryVector = new Overlay(this, new ArcheryVectorSprite(this, range));
+				synchronized (ols) {
+					addol(archeryVector);
+				}
+			}
+		}
+		if (this.archeryRadius == null) {
+			archeryRadius = new Overlay(this, new ArcheryRadiusSprite(this, range));
 			synchronized (ols) {
-				addol(archeryVector);
+				addol(archeryRadius);
 			}
 		}
 	}

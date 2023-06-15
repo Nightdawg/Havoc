@@ -9,7 +9,7 @@ import java.awt.*;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-public class CurAggroSprite extends Sprite {
+public class CurrentTargetSprite extends Sprite {
     public static final int id = -59129521;
     private static final ObstMesh mesh;
     private static final BaseColor col = new BaseColor(new Color(255, 0, 0, 255));
@@ -42,7 +42,7 @@ public class CurAggroSprite extends Sprite {
 	mesh = makeMesh(shapes, col.color(), 0.6F);
     }
 
-    public CurAggroSprite(final Gob g) {
+    public CurrentTargetSprite(final Gob g) {
 	super(g, null);
     }
 
@@ -54,7 +54,7 @@ public class CurAggroSprite extends Sprite {
 
     @Override
     public String toString() {
-	return "CurAggroSprite";
+	return "CurrentTargetSprite";
     }
 
 	public static ObstMesh makeMesh(final Coord2d[][] shapes, final Color col, final float h) {

@@ -1,7 +1,7 @@
 package haven;
 
 
-import haven.sprites.PTCircle;
+import haven.sprites.PartyCircleSprite;
 
 import java.awt.*;
 import java.util.*;
@@ -50,7 +50,7 @@ public class PartyCircles {
         Gob.Overlay existingOverlay = overlays.remove(gob);
         if (existingOverlay != null)
             gob.removeOl(existingOverlay);
-        Gob.Overlay overlay = new Gob.Overlay(gob, new PTCircle(gob, color));
+        Gob.Overlay overlay = new Gob.Overlay(gob, new PartyCircleSprite(gob, color));
         gob.addol(overlay);
         overlays.put(gob, overlay);
     }

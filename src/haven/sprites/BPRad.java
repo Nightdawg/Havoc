@@ -14,6 +14,7 @@ import java.nio.ShortBuffer;
 public class BPRad extends Sprite {
     static final Pipe.Op smat = new BaseColor(new Color(192, 0, 0, 128));
     static final Pipe.Op emat = Pipe.Op.compose(new BaseColor(new Color(255, 224, 96)), new States.LineWidth(4));
+	static final Pipe.Op blacc = Pipe.Op.compose(new BaseColor(new Color(0, 0, 0, 140)), new States.LineWidth(1));
     VertexBuf.VertexData posa;
     VertexBuf vbuf;
     Model smod, emod;
@@ -136,6 +137,7 @@ public class BPRad extends Sprite {
 				    Location.goback("gobx")));
 		if (col != null) {
 			slot.add(this.smod, this.col);
+			slot.add(emod, blacc);
 		} else {
 			slot.add(smod, smat);
 			slot.add(emod, emat);
