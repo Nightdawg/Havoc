@@ -909,11 +909,13 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
-			prev = add(disableFlavourObjectsCheckBox = new CheckBox("Disable Flavour Objects (Requires Relog)"){
+			prev = add(disableFlavourObjectsCheckBox = new CheckBox("Disable Flavour Objects"){
 				{a = Utils.getprefb("disableFlavourObjects", false);}
 				public void set(boolean val) {
 					Utils.setprefb("disableFlavourObjects", val);
 					disableFlavourObjects = val;
+					if (ui.sess != null)
+						ui.sess.glob.map.invalidateAll();
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
