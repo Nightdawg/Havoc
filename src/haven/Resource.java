@@ -1009,7 +1009,7 @@ public class Resource implements Serializable {
     @LayerName("image")
     public class Image extends Layer implements Comparable<Image>, IDLayer<Integer> {
 	public transient BufferedImage img;
-	private transient BufferedImage scaled;
+	transient BufferedImage scaled;
 	private transient Tex tex, rawtex;
 	public final int z, subz;
 	public final boolean nooff;

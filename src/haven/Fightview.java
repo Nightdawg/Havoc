@@ -69,6 +69,8 @@ public class Fightview extends Widget {
 	public int gst, ip, oip;
 	public Indir<Resource> lastact = null;
 	public Long lastActCleave = null;
+	public Long lastActDefence = null;
+	public Long lastDefenceDuration = null;
 	public double lastuse = 0;
 	public boolean invalid = false;
 
@@ -91,7 +93,30 @@ public class Fightview extends Widget {
 	    lastuse = Utils.rtime();
 		try {
 			if (lastact.get() != null && lastact.get().name.endsWith("cleave")) {
-				lastActCleave = System.currentTimeMillis();
+				for (Buff buff : buffs.children(Buff.class)) {
+					if (buff.res != null && buff.res.get() != null) {
+						String name = buff.res.get().name;
+						if (Fightsess.maneuvers.contains(name)) {
+							if (name.equals("paginae/atk/combmed")) {
+								int meterValue = 0;
+								Double meterDouble = (buff.ameter >= 0) ? Double.valueOf(buff.ameter / 100.0) : buff.getAmeteri().get();
+								if (meterDouble != null) {
+									meterValue = (int) (100 * meterDouble);
+								}
+								if (meterValue < 1) {
+									lastActCleave = System.currentTimeMillis();
+								}
+								break;
+							} else {
+								lastActCleave = System.currentTimeMillis();
+							}
+						}
+					}
+				}
+			}
+			if (lastact.get() != null && (Fightsess.nonAttackDefences.keySet().stream().anyMatch(lastact.get().name::matches))){
+				lastActDefence = System.currentTimeMillis();
+				lastDefenceDuration = Fightsess.nonAttackDefences.get(lastact.get().name);
 			}
 		} catch (Loading ignored) {}
 		playCombatSoundEffect(lastact);

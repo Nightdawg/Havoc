@@ -1307,7 +1307,6 @@ public class OptWnd extends Window {
 			GobDamageInfo.toggleGobDamageInfo = Utils.getprefb("GobDamageInfoToggled", true);
 			GobDamageInfo.toggleGobDamageInfoWounds = Utils.getprefb("GobDamageInfoWoundsToggled", true);
 			GobDamageInfo.toggleGobDamageInfoArmor = Utils.getprefb("GobDamageInfoArmorToggled", true);
-			GobDamageInfo.setDamageBackgroundColor(Utils.getprefb("GobDamageInfoBackgroundToggled", false));
 
 			prev = add(new Label("Combat UI:"), 0, 0);
 			prev = add(new CheckBox("Use Improved Combat UI"){
@@ -1318,23 +1317,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
-			prev = add(new CheckBox("Draw Combat Data On Other Targets."){
-				{a = Utils.getprefb("drawFloatingCombatData", true);}
-				public void set(boolean val) {
-					Utils.setprefb("drawFloatingCombatData", val);
-					Fightsess.drawFloatingCombatData = val;
-					a = val;
-				}
-			}, prev.pos("bl").adds(0, 6));
-			prev = add(new CheckBox("Draw Additional Combat Data On Current Target."){
-				{a = Utils.getprefb("drawFloatingCombatData", true);}
-				public void set(boolean val) {
-					Utils.setprefb("drawFloatingCombatDataOnCurrentTarget", val);
-					Fightsess.drawFloatingCombatDataOnCur = val;
-					a = val;
-				}
-			}, prev.pos("bl").adds(0, 6));
-			prev = add(new Label("Top panel height:"), prev.pos("bl").adds(-16, 10));
+			prev = add(new Label("Top panel height (Improved UI):"), prev.pos("bl").adds(-16, 10));
 			Fightsess.combaty0HeightInt = Utils.getprefi("combatTopPanelHeight", 400);
 			prev = add(combatUITopPanelHeightSlider = new HSlider(UI.scale(200), 1, 500, Fightsess.combaty0HeightInt) {
 				protected void attach(UI ui) {
@@ -1351,7 +1334,7 @@ public class OptWnd extends Window {
 				combatUITopPanelHeightSlider.val = 400;
 				Utils.setprefi("combatTopPanelHeight", 400);
 			}), prev.pos("bl").adds(210, -20));
-			prev = add(new Label("Bottom panel height:"), prev.pos("bl").adds(0, 10));
+			prev = add(new Label("Bottom panel height (Improved UI):"), prev.pos("bl").adds(0, 10));
 			Fightsess.combatbottomHeightInt = Utils.getprefi("combatBottomPanelHeight", 100);
 			prev = add(combatUIBottomPanelHeightSlider = new HSlider(UI.scale(200), 1, 500, Fightsess.combatbottomHeightInt) {
 				protected void attach(UI ui) {
@@ -1376,6 +1359,63 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
+
+			prev = add(new CheckBox("Draw Combat Data On Current Target"){
+				{a = Utils.getprefb("drawFloatingCombatData", true);}
+				public void set(boolean val) {
+					Utils.setprefb("drawFloatingCombatDataOnCurrentTarget", val);
+					Fightsess.drawFloatingCombatDataOnCur = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 14));
+			prev = add(new CheckBox("Draw Combat Data On Other Aggroed Enemies"){
+				{a = Utils.getprefb("drawFloatingCombatData", true);}
+				public void set(boolean val) {
+					Utils.setprefb("drawFloatingCombatData", val);
+					Fightsess.drawFloatingCombatData = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			prev = add(new CheckBox("Show Extra Info Background"){
+				{a = Utils.getprefb("CombatInfoBackgroundToggled", false);}
+				public void set(boolean val) {
+					Utils.setprefb("CombatInfoBackgroundToggled", val);
+					Fightsess.showInfoBackground = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+			prev = add(toggleGobDamageInfoCheckBox = new CheckBox("Show damage info:"){
+				{a = Utils.getprefb("GobDamageInfoToggled", true);}
+				public void set(boolean val) {
+					Utils.setprefb("GobDamageInfoToggled", val);
+					GobDamageInfo.toggleGobDamageInfo = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			prev = add(new Label("> Include:"), prev.pos("bl").adds(18, 3));
+			CheckBox woundsCheckBox;
+			prev = add(woundsCheckBox = new CheckBox("Wounds"){
+				{a = Utils.getprefb("GobDamageInfoWoundsToggled", true);}
+				public void set(boolean val) {
+					Utils.setprefb("GobDamageInfoWoundsToggled", val);
+					GobDamageInfo.toggleGobDamageInfoWounds = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(56, -13));
+			woundsCheckBox.lbl = Text.std.render("Wounds", new Color(255, 232, 0, 255));
+			CheckBox armorCheckBox;
+			prev = add(armorCheckBox = new CheckBox("Armor"){
+				{a = Utils.getprefb("GobDamageInfoArmorToggled", true);}
+				public void set(boolean val) {
+					Utils.setprefb("GobDamageInfoArmorToggled", val);
+					GobDamageInfo.toggleGobDamageInfoArmor = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(62, -14));
+			armorCheckBox.lbl = Text.std.render("Armor", new Color(50, 255, 92, 255));
+			add(damageInfoClearButton = new Button(UI.scale(70), "Clear", false).action(() -> {
+				GobDamageInfo.clearAllDamage(gameui());
+			}), prev.pos("bl").adds(0, -54).x(UI.scale(210)));
 			prev = add(new Label("Other Combat Settings:"), prev.pos("bl").adds(0, 14).x(0));
 			prev = add(toggleAutoPeaceCheckbox = new CheckBox("Autopeace animals when combat starts"){
 				{a = Utils.getprefb("autoPeaceCombat", false);}
@@ -1388,7 +1428,7 @@ public class OptWnd extends Window {
 			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(277, 40))), prev.pos("bl").adds(-2, 2));
 			Widget cont = scroll.cont;
 			addbtn(cont, "Toggle autopeace hotkey:", GameUI.kb_toggleCombatAutoPeace, 0);
-			prev = add(new CheckBox("Mark current target"){
+			prev = add(new CheckBox("Mark Current Target"){
 				{a = Utils.getprefb("markCurrentCombatTarget", true);}
 				public void set(boolean val) {
 					Utils.setprefb("markCurrentCombatTarget", val);
@@ -1423,46 +1463,6 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
-			prev = add(toggleGobDamageInfoCheckBox = new CheckBox("Show damage info:"){
-				{a = Utils.getprefb("GobDamageInfoToggled", true);}
-				public void set(boolean val) {
-					Utils.setprefb("GobDamageInfoToggled", val);
-					GobDamageInfo.toggleGobDamageInfo = val;
-					a = val;
-				}
-			}, prev.pos("bl").adds(0, 14));
-			prev = add(new Label("> Include:"), prev.pos("bl").adds(18, 3));
-			CheckBox woundsCheckBox;
-			prev = add(woundsCheckBox = new CheckBox("Wounds"){
-				{a = Utils.getprefb("GobDamageInfoWoundsToggled", true);}
-				public void set(boolean val) {
-					Utils.setprefb("GobDamageInfoWoundsToggled", val);
-					GobDamageInfo.toggleGobDamageInfoWounds = val;
-					a = val;
-				}
-			}, prev.pos("bl").adds(56, -13));
-			woundsCheckBox.lbl = Text.std.render("Wounds", new Color(255, 232, 0, 255));
-			CheckBox armorCheckBox;
-			prev = add(armorCheckBox = new CheckBox("Armor"){
-				{a = Utils.getprefb("GobDamageInfoArmorToggled", true);}
-				public void set(boolean val) {
-					Utils.setprefb("GobDamageInfoArmorToggled", val);
-					GobDamageInfo.toggleGobDamageInfoArmor = val;
-					a = val;
-				}
-			}, prev.pos("bl").adds(62, -14));
-			armorCheckBox.lbl = Text.std.render("Armor", new Color(50, 255, 92, 255));
-			prev = add(new CheckBox("Show damage background"){
-				{a = Utils.getprefb("GobDamageInfoBackgroundToggled", false);}
-				public void set(boolean val) {
-					Utils.setprefb("GobDamageInfoBackgroundToggled", val);
-					GobDamageInfo.setDamageBackgroundColor(val);
-					a = val;
-				}
-			}, prev.pos("bl").adds(0, 4).x(UI.scale(34)));
-			add(damageInfoClearButton = new Button(UI.scale(70), "Clear", false).action(() -> {
-				GobDamageInfo.clearAllDamage(gameui());
-			}), prev.pos("bl").adds(0, -54).x(UI.scale(210)));
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(46)));
 			setTooltipsForCombatSettingsStuff();

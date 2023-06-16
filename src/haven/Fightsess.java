@@ -52,12 +52,25 @@ public class Fightsess extends Widget {
     public static final Coord useframeo = (useframe.sz().sub(off)).div(2);
     public static final int actpitch = UI.scale(50);
 	public static final Text.Foundry ipAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 16);
-	public static final Text.Foundry openingAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 14);
+	public static final Text.Foundry openingAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 12);
 	public static final Text.Foundry cleaveAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 10);
 	public static HashSet<String> maneuvers =  new HashSet<>(Arrays.asList(
 			"paginae/atk/toarms", "paginae/atk/shield", "paginae/atk/parry",
 			"paginae/atk/oakstance", "paginae/atk/dorg", "paginae/atk/chinup",
 			"paginae/atk/bloodlust", "paginae/atk/combmed"));
+	public static HashMap<String, Long> nonAttackDefences = new HashMap<String, Long>()
+	{{
+		put("paginae/atk/regain", 2100L);
+		put("paginae/atk/zigzag", 3000L);
+		put("paginae/atk/yieldground", 1800L);
+		put("paginae/atk/sidestep", 1500L);
+		put("paginae/atk/qdodge", 1500L);
+		put("paginae/atk/jump", 1500L);
+		put("paginae/atk/artevade", 2400L);
+		put("paginae/atk/dash", 3200L); // ND: Assuming 5/5 cards are used, this is the minimum cooldown. Nobody uses dash, but just to be safe, I added it here.
+
+		// ND: Every other "defense" move is actually an attack, which is affected by agility, so we don't add them here.
+	}};
     public final Action[] actions;
     public int use = -1, useb = -1;
     public Coord pcc;
@@ -227,6 +240,7 @@ public class Fightsess extends Widget {
     private Effect curtgtfx;
 
 	public static Boolean altui = true;
+	public static Boolean showInfoBackground = Utils.getprefb("CombatInfoBackgroundToggled", false);
 	public static Boolean drawFloatingCombatData = true;
 	public static Boolean drawFloatingCombatDataOnCur = true;
 	public static int combaty0HeightInt = 400;
@@ -266,11 +280,128 @@ public class Fightsess extends Widget {
 		int bottom = (int)bottom1;// I have to do it like this, otherwise it's not consistent when resizing the window
 		double now = Utils.rtime();
 
-		for(Buff buff : fv.buffs.children(Buff.class))
-			buff.draw(g.reclip(altui ? new Coord(x0 - buff.c.x - Buff.cframe.sz().x - UI.scale(80), y0 - UI.scale(20)) : pcc.add(-buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
+		if (altui) { // ND: I had to copy this entire crap from Buff.java, cause of how g.reclip adds the buffs
+			ArrayList<Buff> myOpenings = new ArrayList<>(fv.buffs.children(Buff.class));
+			myOpenings.sort((o2, o1) -> Integer.compare(getOpeningValue(o1), getOpeningValue(o2)));
+			Buff maneuver = null;
+			for (Buff buff : myOpenings) {
+				if (buff.res != null && buff.res.get() != null) {
+					String name = buff.res.get().name;
+					if (maneuvers.contains(name)) {
+						maneuver = buff;
+						break;
+					}
+				}
+			}
+			if (maneuver != null && myOpenings.size() > 1) {
+				myOpenings.remove(maneuver);
+				myOpenings.add(myOpenings.size(), maneuver);
+			}
+			int location = - Buff.cframe.sz().x - UI.scale(80);
+			for (Buff buff : myOpenings) {
+				try {
+				Tex img = buff.res.get().flayer(Resource.imgc).tex();
+				Coord isz = img.sz();
+				g.chcolor(255, 255, 255, 255);
+				Double ameter = (buff.ameter >= 0) ? Double.valueOf(buff.ameter / 100.0) : buff.ameteri.get();
+				int ameteri = 0; // Added
+				if(ameter != null) {
+					ameteri = (int) (100*ameter); // Added
+					g.image(Buff.cframe, new Coord(x0 + location - UI.scale(3), y0 - UI.scale(20) - UI.scale(3)));
+					g.chcolor(0, 0, 0, 255);
+					g.frect(new Coord(x0 + location, y0 - UI.scale(20) + UI.scale(37) - UI.scale(3)), Buff.ametersz);
+					g.chcolor(255, 255, 255, 255);
+					g.frect(new Coord(x0 + location, y0 - UI.scale(20) + UI.scale(37) - UI.scale(3)), new Coord((int)Math.floor(ameter * Buff.ametersz.x), Buff.ametersz.y));
+				} else {
+					g.image(Buff.frame, new Coord(x0 + location - UI.scale(3), y0 - UI.scale(20) - UI.scale(3)));
+				}
+				if (Buff.NightdawgOPENINGS.containsKey(buff.res.get().name)) {
+					g.chcolor(Buff.NightdawgOPENINGS.get(buff.res.get().name));
+					g.frect(new Coord(x0 + location, y0 - UI.scale(20)), isz);
+					g.chcolor(Color.WHITE);
+					if(ameteri != buff.nmeter) {
+						buff.ntext = null;
+						buff.nmeter = ameteri;
+					}
+				} else {
+					g.image(img, new Coord(x0 + location, y0 - UI.scale(20)));
+				}
+				if(buff.nmeter >= 0)
+					g.aimage(buff.nmeter(), new Coord(x0 + location, y0 - UI.scale(20)).add(isz).sub(1, 1), 1, 1);
+				location -= UI.scale(40);
+				} catch (Loading ignored) {
+				}
+			}
+		} else {
+			for(Buff buff : fv.buffs.children(Buff.class))
+				buff.draw(g.reclip(altui ? new Coord(x0 - buff.c.x - Buff.cframe.sz().x - UI.scale(80), y0 - UI.scale(20)) : pcc.add(- buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
+		}
+
 		if(fv.current != null) {
-			for(Buff buff : fv.current.buffs.children(Buff.class))
-				buff.draw(g.reclip(altui ? new Coord(x0 + buff.c.x + UI.scale(80), y0 - UI.scale(20)) : pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
+			if (altui) { // ND: I had to copy this entire crap from Buff.java, cause of how g.reclip adds the buffs
+				ArrayList<Buff> enemyOpenings = new ArrayList<>(fv.current.buffs.children(Buff.class));
+				enemyOpenings.sort((o1, o2) -> Integer.compare(getOpeningValue(o2), getOpeningValue(o1)));
+				Buff maneuver = null;
+				for (Buff buff : enemyOpenings) {
+					if (buff.res != null && buff.res.get() != null) {
+						String name = buff.res.get().name;
+						if (maneuvers.contains(name)) {
+							maneuver = buff;
+							break;
+						}
+					}
+				}
+				if (maneuver != null && enemyOpenings.size() > 1) {
+					enemyOpenings.remove(maneuver);
+					enemyOpenings.add(enemyOpenings.size(), maneuver);
+				}
+				int location = UI.scale(80);
+				for (Buff buff : enemyOpenings) {
+					try {
+					String name = buff.res.get().name;
+					int meterValue = getOpeningValue(buff);
+					Tex img = buff.res.get().flayer(Resource.imgc).tex();
+					Coord isz = img.sz();
+					g.chcolor(255, 255, 255, 255);
+					Double ameter = (buff.ameter >= 0) ? Double.valueOf(buff.ameter / 100.0) : buff.ameteri.get();
+					int ameteri = 0; // Added
+					if(ameter != null) {
+						ameteri = (int) (100*ameter); // Added
+						g.image(Buff.cframe, new Coord(x0 + location - UI.scale(3), y0 - UI.scale(20) - UI.scale(3)));
+						g.chcolor(0, 0, 0, 255);
+						g.frect(new Coord(x0 + location, y0 - UI.scale(20) + UI.scale(37) - UI.scale(3)), Buff.ametersz);
+						g.chcolor(255, 255, 255, 255);
+						g.frect(new Coord(x0 + location, y0 - UI.scale(20) + UI.scale(37) - UI.scale(3)), new Coord((int)Math.floor(ameter * Buff.ametersz.x), Buff.ametersz.y));
+					} else {
+						g.image(Buff.frame, new Coord(x0 + location - UI.scale(3), y0 - UI.scale(20) - UI.scale(3)));
+					}
+					if (Buff.NightdawgOPENINGS.containsKey(name)) {
+						g.chcolor(Buff.NightdawgOPENINGS.get(name));
+						g.frect(new Coord(x0 + location, y0 - UI.scale(20)), isz);
+						g.chcolor(Color.WHITE);
+						if(ameteri != buff.nmeter) {
+							buff.ntext = null;
+							buff.nmeter = ameteri;
+						}
+					} else {
+						if (name.equals("paginae/atk/combmed")){
+							if(meterValue > 75){
+								g.chcolor(255, 255-(tickAlert*20), 255-(tickAlert*20), 255);
+							}
+						}
+						g.image(img, new Coord(x0 + location, y0 - UI.scale(20)));
+						g.chcolor(255, 255, 255, 255);
+					}
+					if(buff.nmeter >= 0)
+						g.aimage(buff.nmeter(), new Coord(x0 + location, y0 - UI.scale(20)).add(isz).sub(1, 1), 1, 1);
+					location += UI.scale(40);
+					} catch (Loading ignored) {
+					}
+				}
+			} else {
+				for(Buff buff : fv.current.buffs.children(Buff.class))
+					buff.draw(g.reclip(altui ? new Coord(x0 + buff.c.x + UI.scale(80), y0 - UI.scale(20)) : pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
+			}
 
 			g.aimage(ip.get().tex(), altui ? new Coord(x0 - UI.scale(40), y0 - UI.scale(30)) : pcc.add(-UI.scale(75), 0), 1, 0.5);
 			g.aimage(oip.get().tex(), altui ? new Coord(x0 + UI.scale(40), y0 - UI.scale(30)) : pcc.add(UI.scale(75), 0), 0, 0.5);
@@ -418,21 +549,68 @@ public class Fightsess extends Widget {
 	}
 
 	private void drawCombatData(GOut g, Fightview.Relation rels, Coord sc) {
-		Coord topLeftFrame = new Coord(sc.x - 43, sc.y - 140);
-		boolean openings;
-		boolean cleaveUsed = false;
-
-		//Check if cleave indicator is needed
-		if (rels.lastActCleave != null) {
-			cleaveUsed = System.currentTimeMillis() - rels.lastActCleave < 5000;
+		int scaledY = sc.y - UI.scale(140);
+		if (MapView.publicCurrentCameraName == 1){
+			double angle = MapView.freeCamAngle;
+			if (MapView.freeCamAngle < 0){
+				angle = - MapView.freeCamAngle;
+			}
+			double scale = 10 / MapView.publicFreeCamDist;
+			scaledY = sc.y - UI.scale(110) - (int)(3900 * scale) + (int)((1500*angle)*scale);
+		} else {
+			double scale = 50 / MapView.publicOrthoCamDist;
+			scaledY = sc.y - UI.scale(110) - (int)(UI.scale(332) * scale);
 		}
 
-		//check if there is any opening
-		openings = rels.buffs.children(Buff.class).size() > 1;
+		Coord topLeftFrame = new Coord(sc.x - UI.scale(43), scaledY);
+		boolean openings;
+		boolean cleaveUsed = false;
+		long cleaveDuration = 4300;
+		//Check if cleave indicator is needed
+		if (rels.lastActCleave != null) {
+			Gob gob = ui.sess.glob.oc.getgob(rels.gobid);
+			for (GAttrib gobAttrib : gob.attr.values()) { // ND: Do the following stuff to figure out the *MINIMUM* cooldown someone can have after cleaving.
+				if (gobAttrib instanceof Composite) {
+					Composite c = (Composite) gobAttrib;
+					if (c.comp.cequ.size() > 0) {
+						for (Composited.ED item : c.comp.cequ) { // ND: Check for the equipped weapon
+							if (item.res.res.get().basename().equals("b12axe")){ // 5.4
+								cleaveDuration = 5400;
+								break;
+							}
+							if (item.res.res.get().basename().equals("cutblade")){ // 5.2
+								cleaveDuration = 5200;
+								break;
+							} else { // 4.3 seconds for anything else
+								cleaveDuration = 4300;
+							}
+						}
+					}
+				}
+			}
+			cleaveUsed = System.currentTimeMillis() - rels.lastActCleave < cleaveDuration;
+		}
+		boolean defenseUsed = false;
+		if (rels.lastActDefence != null) {
+			defenseUsed = System.currentTimeMillis() - rels.lastActDefence < rels.lastDefenceDuration;
+		}
 
-		//make background behind stance and coins
-		g.chcolor(new Color(255, 255, 255, 70));
-		g.frect(topLeftFrame, new Coord(86, 32));
+		// ND: Check for openings depending if it's a player or not.
+		Gob gob = ui.sess.glob.oc.getgob(rels.gobid);
+		if (gob != null && gob.getres() != null){
+			if (gob.getres().name.equals("gfx/borka/body")){ // ND: If it's a player, the first buff is the maneuver, always, so skip it.
+				openings = rels.buffs.children(Buff.class).size() > 1;
+			} else { // ND: Everything else doesn't have a maneuver.
+				openings = rels.buffs.children(Buff.class).size() > 0;
+			}
+		} else {
+			openings = rels.buffs.children(Buff.class).size() > 1;
+		}
+
+		if (showInfoBackground) {
+			g.chcolor(new Color(0, 0, 0, 80));
+			g.frect(topLeftFrame, UI.scale(new Coord(86, 24)));
+		}
 
 		//reset color
 		g.chcolor(255, 255, 255, 255);
@@ -446,8 +624,8 @@ public class Fightsess extends Widget {
 		int oipOffset = rels.oip < 10 ? 78 : rels.oip < 100 ? 81 : 86;
 
 		//add ip / oip text
-		g.atextstroked(Integer.toString(rels.ip), new Coord(topLeftFrame.x + ipOffset, topLeftFrame.y + 15), 1, 0.5, ipcol, Color.black, ipAdditionalFont);
-		g.atextstroked(Integer.toString(rels.oip), new Coord(topLeftFrame.x + oipOffset, topLeftFrame.y + 15), 1, 0.5, oipcol, Color.black, ipAdditionalFont);
+		g.atextstroked(Integer.toString(rels.ip), new Coord(topLeftFrame.x + UI.scale(ipOffset), topLeftFrame.y + UI.scale(13)), 1, 0.5, ipcol, Color.black, ipAdditionalFont);
+		g.atextstroked(Integer.toString(rels.oip), new Coord(topLeftFrame.x + UI.scale(oipOffset), topLeftFrame.y + UI.scale(13)), 1, 0.5, oipcol, Color.black, ipAdditionalFont);
 
 		//maneuver
 		for (Buff buff : rels.buffs.children(Buff.class)) {
@@ -456,21 +634,23 @@ public class Fightsess extends Widget {
 					String name = buff.res.get().name;
 					if (maneuvers.contains(name)) {
 						int meterValue = getOpeningValue(buff);
-						Tex img = buff.res.get().flayer(Resource.imgc).tex();
-						if(meterValue > 80 && name.equals("paginae/atk/combmed")){
-							g.chcolor(255, 255-(tickAlert*20), 255-(tickAlert*20), 255);
+						Resource.Image img = buff.res.get().flayer(Resource.imgc);
+						Tex maneuverTexture = new TexI(PUtils.uiscale(img.scaled, UI.scale(new Coord(24, 24))));
+						if (name.equals("paginae/atk/combmed")){
+							if(meterValue > 75){
+								g.chcolor(255, 255-(tickAlert*20), 255-(tickAlert*20), 255);
+							}
 						}
-						g.image(img, new Coord(topLeftFrame.x + 27, topLeftFrame.y));
+						g.image(maneuverTexture, new Coord(topLeftFrame.x + UI.scale(31), topLeftFrame.y));
 						if(meterValue > 0){
 							g.chcolor(0, 0, 0, 155);
-							g.frect(new Coord(topLeftFrame.x + 27, topLeftFrame.y + 32), new Coord(32, 8));
+							g.frect(new Coord(topLeftFrame.x + UI.scale(31), topLeftFrame.y + UI.scale(24)), UI.scale(new Coord(24, 8)));
 							if(meterValue < 30){
 								g.chcolor(255, 255, 255, 255);
 							} else {
 								g.chcolor(255, (255 - (255*meterValue)/100), (255 - (255*meterValue)/100), 255);
 							}
-
-							g.frect(new Coord(topLeftFrame.x + 28, topLeftFrame.y + 33), new Coord((30 * meterValue)/100, 6));
+							g.frect(new Coord(topLeftFrame.x + UI.scale(32), topLeftFrame.y + UI.scale(25)), UI.scale(new Coord((22 * meterValue)/100, 6)));
 						}
 					}
 				}
@@ -482,9 +662,10 @@ public class Fightsess extends Widget {
 
 		//openings only if has any
 		if (openings) {
-			//make bg for openings
-			g.chcolor(new Color(255, 255, 255, 70));
-			g.frect(new Coord(topLeftFrame.x, topLeftFrame.y + 32), new Coord(86, 29));
+			if (showInfoBackground) {
+				g.chcolor(new Color(0, 0, 0, 80));
+				g.frect(new Coord(topLeftFrame.x, topLeftFrame.y + UI.scale(24)), UI.scale(new Coord(86, 29)));
+			}
 
 			Map<String, Color> colorMap = new HashMap<>();
 			colorMap.put("paginae/atk/offbalance", new Color(0, 128, 3));
@@ -507,27 +688,49 @@ public class Fightsess extends Widget {
 			}
 			openingList.sort((o1, o2) -> Integer.compare(o2.value, o1.value));
 
-			int openingOffsetX = 3;
+			int openingOffsetX = 1;
+			int iterator = 1;
 			for (TemporaryOpening opening : openingList) {
 				g.chcolor(opening.color);
-				g.frect(new Coord(topLeftFrame.x + openingOffsetX, topLeftFrame.y + 40), new Coord(20, 20));
+				g.frect(new Coord(topLeftFrame.x + UI.scale(openingOffsetX), topLeftFrame.y + UI.scale(32)), UI.scale(new Coord(20, 20)));
 				g.chcolor(255, 255, 255, 255);
 
-				int valueOffset = opening.value < 10 ? 16 : opening.value< 100 ? 19 : 23;
-				g.atextstroked(String.valueOf(opening.value), new Coord(topLeftFrame.x + openingOffsetX + valueOffset, topLeftFrame.y + 51), 1, 0.5, Color.WHITE, Color.BLACK, openingAdditionalFont);
-				openingOffsetX += 20;
+				int valueOffset = opening.value < 10 ? 15 : opening.value< 100 ? 19 : 22;
+				g.atextstroked(String.valueOf(opening.value), new Coord(topLeftFrame.x + UI.scale(openingOffsetX) + UI.scale(valueOffset) - UI.scale(1), topLeftFrame.y + UI.scale(43)), 1, 0.5, Color.WHITE, Color.BLACK, openingAdditionalFont);
+				if (iterator == 2) openingOffsetX += 22;
+				else openingOffsetX += 21;
+				iterator += 1;
 			}
 		}
 
-		//add cleave indicator
+		//add cleave cooldown indicator
 		if (cleaveUsed) {
-			long timer = ((5000 - (System.currentTimeMillis() - rels.lastActCleave)));
-			g.chcolor(new Color(255, 255, 255, 70));
-			g.frect(new Coord(topLeftFrame.x, topLeftFrame.y - 12), new Coord(86, 12));
-			g.chcolor(new Color(82, 7, 7, 255));
-			g.frect(new Coord(topLeftFrame.x + 2, topLeftFrame.y - 11), new Coord((int) ((82 * timer)/5000), 10));
+			long timer = ((cleaveDuration - (System.currentTimeMillis() - rels.lastActCleave)));
+			if (showInfoBackground) {
+				g.chcolor(new Color(0, 0, 0, 80));
+				g.frect(new Coord(topLeftFrame.x, topLeftFrame.y - UI.scale(12)), UI.scale(new Coord(86, 12)));
+			}
+			g.chcolor(new Color(0, 0, 0, 255));
+			g.frect(new Coord(topLeftFrame.x + UI.scale(1), topLeftFrame.y - UI.scale(12)), UI.scale(new Coord((int) ((82 * timer)/cleaveDuration)+1, 14)));
+			g.chcolor(new Color(213, 0, 0, 255));
+			g.frect(new Coord(topLeftFrame.x + UI.scale(2), topLeftFrame.y - UI.scale(11)), UI.scale(new Coord((int) ((82 * timer)/cleaveDuration), 12)));
 			g.chcolor(new Color(255, 255, 255, 255));
-			g.atextstroked(getCleaveTime(timer), new Coord(topLeftFrame.x + 52, topLeftFrame.y - 7), 1, 0.5, Color.WHITE, Color.BLACK, cleaveAdditionalFont);
+			g.atextstroked(getCooldownTime(timer), new Coord(topLeftFrame.x + UI.scale(52), topLeftFrame.y - UI.scale(6)), 1, 0.5, Color.WHITE, Color.BLACK, cleaveAdditionalFont);
+		}
+
+		//add defense cooldown indicator, just like cleave
+		if (defenseUsed) {
+			long timer = ((rels.lastDefenceDuration - (System.currentTimeMillis() - rels.lastActDefence)));
+			if (showInfoBackground) {
+				g.chcolor(new Color(0, 0, 0, 80));
+				g.frect(new Coord(topLeftFrame.x, topLeftFrame.y - UI.scale(12)), UI.scale(new Coord(86, 12)));
+			}
+			g.chcolor(new Color(0, 0, 0, 255));
+			g.frect(new Coord(topLeftFrame.x + UI.scale(1), topLeftFrame.y - UI.scale(12)), UI.scale(new Coord((int) ((82 * timer)/rels.lastDefenceDuration)+1, 14)));
+			g.chcolor(new Color(227, 136, 0, 255));
+			g.frect(new Coord(topLeftFrame.x + UI.scale(2), topLeftFrame.y - UI.scale(11)), UI.scale(new Coord((int) ((82 * timer)/rels.lastDefenceDuration), 12)));
+			g.chcolor(new Color(255, 255, 255, 255));
+			g.atextstroked(getCooldownTime(timer), new Coord(topLeftFrame.x + UI.scale(52), topLeftFrame.y - UI.scale(6)), 1, 0.5, Color.WHITE, Color.BLACK, cleaveAdditionalFont);
 		}
 		g.chcolor(255, 255, 255, 255);
 	}
@@ -540,7 +743,7 @@ public class Fightsess extends Widget {
 		return 0;
 	}
 
-	public String getCleaveTime(long time) {
+	public String getCooldownTime(long time) {
 		double convertedTime = time / 1000.0;
 		return String.format("%.1f", convertedTime);
 	}

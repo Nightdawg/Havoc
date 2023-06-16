@@ -521,6 +521,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	public static int freeCameraZoomSpeed = 25;
 	public static float publicFreeCamDist = 500.0f;
 	public static int publicCurrentCameraName = 1;
+	public static float freeCamAngle = (float)Math.PI / 4.0f;
 	public class NDFreeCam extends FreeCam {
 		private float dist = 500.0f, tdist = dist;
 		private float elev = (float)Math.PI / 4.0f, telev = elev;
@@ -572,6 +573,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 				if(telev < 0.0f) telev = 0.0f;
 			}
 			if(telev > (Math.PI / 2.0)) telev = (float)Math.PI / 2.0f;
+			freeCamAngle = telev;
 			tangl = anglorig + cameraAxisReverter * ((float)(c.x - dragorig.x) / 100.0f);
 		}
 

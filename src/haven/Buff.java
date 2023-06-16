@@ -34,7 +34,7 @@ import java.util.List;
 import haven.ItemInfo.AttrCache;
 
 public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed {
-	private static final Map<String, Color> NightdawgOPENINGS = new HashMap<String, Color>(4) {{
+	public static final Map<String, Color> NightdawgOPENINGS = new HashMap<String, Color>(4) {{
 		put("paginae/atk/offbalance", new Color(0, 128, 3));
 		put("paginae/atk/reeling", new Color(217, 177, 20));
 		put("paginae/atk/dizzy", new Color(39, 82, 191));
@@ -91,7 +91,7 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
 	return(info);
     }
 
-    private Tex nmeter() {
+    public Tex nmeter() {
 	if(ntext == null)
 	    ntext = new TexI(Utils.outline2(nfnd.render(Integer.toString(nmeter), Color.WHITE).img, Color.BLACK));
 	return(ntext);
@@ -115,7 +115,7 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
 	public Tip shortvar() {return(this);}
     }
 
-    private final AttrCache<Double> ameteri = new AttrCache<>(this::info, AttrCache.map1(AMeterInfo.class, minf -> minf::ameter));
+    public final AttrCache<Double> ameteri = new AttrCache<>(this::info, AttrCache.map1(AMeterInfo.class, minf -> minf::ameter));
 
 	public AttrCache<Double> getAmeteri() {
 		return ameteri;

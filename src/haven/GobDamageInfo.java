@@ -12,7 +12,7 @@ public class GobDamageInfo extends GobInfo {
     private static final int ARM = 36751;
     private static final int PAD = UI.scale(3);
 
-    public static Color BG = new Color(0, 0, 0, 150);
+    public static Color BG = new Color(0, 0, 0, 0);
     private static final Color SHP_C = Utils.col16(SHP);
     private static final Color HHP_C = Utils.col16(HHP);
     private static final Color ARM_C = Utils.col16(ARM);
@@ -20,7 +20,7 @@ public class GobDamageInfo extends GobInfo {
     public static boolean toggleGobDamageInfoWounds = true;
     public static boolean toggleGobDamageInfoArmor = true;
     public static void setDamageBackgroundColor(boolean enableBackground){
-        if (enableBackground) BG = new Color(0, 0, 0, 150);
+        if (enableBackground) BG = new Color(0, 0, 0, 80);
         else BG = new Color(0, 0, 0, 0);
     }
 

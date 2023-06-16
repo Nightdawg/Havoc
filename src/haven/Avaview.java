@@ -72,7 +72,7 @@ public class Avaview extends PView {
 	this.camnm = camnm;
 	this.avagob = avagob;
 	basic.add(new DirLight(Color.WHITE, Color.WHITE, Color.WHITE, new Coord3f(1, 1, 1).norm()), null);
-	this.speedCoord = Coord.z.add(5,sz.y-12);
+	this.speedCoord = Coord.z.add(UI.scale(5),sz.y-UI.scale(12));
 	makeproj();
     }
 
