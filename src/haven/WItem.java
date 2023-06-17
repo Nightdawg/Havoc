@@ -27,16 +27,13 @@
 package haven;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.Collectors;
 
 import haven.ItemInfo.AttrCache;
 import haven.resutil.Curiosity;
 
-import static haven.ItemInfo.find;
 import static haven.Inventory.sqsz;
 
 public class WItem extends Widget implements DTarget {
@@ -271,7 +268,7 @@ public class WItem extends Widget implements DTarget {
 	    }
 	    return(true);
 	} else if(btn == 3) {
-		if(ui.modctrl && ui.modmeta && ui.modshift){
+		if(OptWnd.massSplitCtrlShiftAlt && ui.modctrl && ui.modmeta && ui.modshift){
 			String name = item.getname();
 			if(name.contains("Block of") || name.equals("Pumpkin") || name.contains("gfx/invobjs/fish-")){
 				if(name.contains("Block of")){

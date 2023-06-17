@@ -1155,9 +1155,11 @@ public class OptWnd extends Window {
 
 	private static Label defaultSpeedLabel;
 	private static CheckBox instantFlowerMenuCTRLCheckBox;
+	private static CheckBox massSplitCtrlShiftAltCheckBox;
 	private static CheckBox autoswitchBunnyPlateBootsCheckBox;
 	public static CheckBox saveCutleryCheckBox = null;
 	public static boolean instantFlowerMenuCTRL = Utils.getprefb("instantFlowerMenuCTRL", true);
+	public static boolean massSplitCtrlShiftAlt = Utils.getprefb("massSplitCtrlShiftAlt", true);
 	public static boolean autoswitchBunnyPlateBoots = Utils.getprefb("autoswitchBunnyPlateBoots", true);
 	public static boolean antiCutleryBreakage = Utils.getprefb("antiCutleryBreakage", true);
 
@@ -1246,11 +1248,19 @@ public class OptWnd extends Window {
 				}, prev.pos("bl").adds(80, -14));
 
 			prev = add(new Label("Altered gameplay behavior:"), prev.pos("bl").adds(0, 6).x(0));
-			prev = add(instantFlowerMenuCTRLCheckBox = new CheckBox("Instantly select 1st flower menu option when holding CTRL"){
+			prev = add(instantFlowerMenuCTRLCheckBox = new CheckBox("Instantly select 1st flower menu option when holding Ctrl"){
 				{a = Utils.getprefb("instantFlowerMenuCTRL", true);}
 				public void set(boolean val) {
 					Utils.setprefb("instantFlowerMenuCTRL", val);
 					instantFlowerMenuCTRL = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+			prev = add(massSplitCtrlShiftAltCheckBox = new CheckBox("Mass Split on Right Click + holding Ctrl+Shift+Alt"){
+				{a = Utils.getprefb("massSplitCtrlShiftAlt", true);}
+				public void set(boolean val) {
+					Utils.setprefb("massSplitCtrlShiftAlt", val);
+					massSplitCtrlShiftAlt = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
@@ -2737,7 +2747,8 @@ public class OptWnd extends Window {
 	}
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
-		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding CTRL before right clicking an item or object instantly select the first available option from the flower menu.", 300);
+		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding Ctrl before right clicking an item or object instantly select the first available option from the flower menu.", 300);
+		massSplitCtrlShiftAltCheckBox.tooltip = RichText.render("Enabling this will make holding Ctrl+Shift+Alt before right clicking an item to instantly split all of the items of this type.", 300);
 		autoswitchBunnyPlateBootsCheckBox.tooltip = RichText.render("Enabling this will cause your currently equipped Plate Boots to automatically swap with a pair of bunny slippers from your inventory, whenever you right click to chase a rabbit, and vice versa if you click on anything else or just left click to walk.\n$col[185,185,185]{I don't see many reason for which you'd ever want to disable this setting, but alas, I made it an option.}", 300);
 		saveCutleryCheckBox.tooltip = RichText.render("Enabling this will cause any cutlery that has 1 wear left to be instantly transferred from the table into your inventory.\n$col[185,185,185]{A warning message will be shown, to let you know that the item has been transferred.}", 300);
 	}
