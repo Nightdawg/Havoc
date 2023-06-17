@@ -27,16 +27,13 @@
 package haven;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.Collectors;
 
 import haven.ItemInfo.AttrCache;
 import haven.resutil.Curiosity;
 
-import static haven.ItemInfo.find;
 import static haven.Inventory.sqsz;
 
 public class WItem extends Widget implements DTarget {
@@ -271,6 +268,26 @@ public class WItem extends Widget implements DTarget {
 	    }
 	    return(true);
 	} else if(btn == 3) {
+		if(OptWnd.massSplitCtrlShiftAlt && ui.modctrl && ui.modmeta && ui.modshift){
+			String name = item.getname();
+			if(name.contains("Block of") || name.equals("Pumpkin") || name.contains("gfx/invobjs/fish-")){
+				if(name.contains("Block of")){
+					name = "Block of";
+				} else if (name.contains("gfx/invobjs/fish-")){
+					name = "gfx/invobjs/fish-";
+				}
+				String finalName = name;
+				List<WItem> wItems = gameui().getAllInventories().stream()
+						.flatMap(inventory -> inventory.getItemsPartial(finalName).stream())
+						.collect(Collectors.toList());
+				int last = ui.lastid;
+				for(WItem wItem: wItems){
+					wItem.item.wdgmsg("iact", c, 0);
+					ui.rcvr.rcvmsg((last+1), "cl", 0, 0);
+					last += 6;
+				}
+			}
+		}
 		if (ui.modmeta && !ui.modctrl) {
 			if (inv) {
 				wdgmsg("transfer-identical", item, true);
