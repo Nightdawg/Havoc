@@ -2142,6 +2142,20 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	return(cmdmap);
     }
 
+	public List<Inventory> getAllInventories() {
+		List<Inventory> inventories = new ArrayList<>();
+		for (Widget wdg = lchild; wdg != null; wdg = wdg.prev) {
+			if (wdg instanceof Window) {
+				for (Widget wdgi = wdg.lchild; wdgi != null; wdgi = wdgi.prev) {
+					if (wdgi instanceof Inventory) {
+						inventories.add((Inventory) wdgi);
+					}
+				}
+			}
+		}
+		return inventories;
+	}
+
 	public IMeter.Meter getmeter(String name, int midx) {
 		List<IMeter.Meter> meters = getmeters(name);
 		if (meters != null && midx < meters.size()) {
