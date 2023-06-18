@@ -2181,13 +2181,13 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6).x(0));
-			orangePlayerAlarmEnabledCheckbox.lbl = Text.std.render("Pink:", BuddyWnd.gc[7]);
+			orangePlayerAlarmEnabledCheckbox.lbl = Text.std.render("Orange:", BuddyWnd.gc[7]);
 			prev = add(orangePlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("orangePlayerAlarmFilename", "")){
 				protected void changed() {
 					Utils.setpref("orangePlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(97, -2));
+			}, prev.pos("ur").adds(82, -2));
 			prev = add(orangePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("orangePlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
