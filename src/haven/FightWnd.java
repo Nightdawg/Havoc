@@ -848,17 +848,18 @@ public class FightWnd extends Widget {
 	}, p.pos("bl").adds(0, 10).x(info.c.x).add(wbox.btloff()));
 	Frame.around(this, Collections.singletonList(schoolsDropdown));
 
-		p = add(new Button(UI.scale(70), "Save", false) {
+		p = add(new Button(UI.scale(90), "Save & Use", false) {
 			public void click() {
 				Pair<Text, Integer> sel = schoolsDropdown.sel;
 				if (sel != null) {
 					save(sel.b);
 					use(sel.b);
+					schoolsDropdown.change(sel);
 				}
 			}
 		}, p.pos("ur").adds(20, 0));
 
-		add(new Button(UI.scale(80), "Rename", false) {
+		add(new Button(UI.scale(70), "Rename", false) {
 			public void click() {
 				Pair<Text, Integer> sel = schoolsDropdown.sel;
 				if (sel == null)
@@ -904,7 +905,7 @@ public class FightWnd extends Widget {
 				gameui().add(renwnd, new Coord(gameui().sz.x / 2 - 200, gameui().sz.y / 2 - 200));
 				renwnd.show();
 			}
-		}, p.pos("ur").adds(10, 0));
+		}, p.pos("ur").adds(6, 0));
 
 
 	pack();
@@ -913,11 +914,15 @@ public class FightWnd extends Widget {
 		try {
 			if (!saves[index].text.equals("Unused save")) {
 				schoolsDropdown.change(new Pair(saves[index], index));
-				gameui().msg("Switched to deck : " + saves[index].text, Color.white);
-			} else
-			gameui().msg("This is not a saved deck, not switching.", Color.white);
+				gameui().msg("Switched to deck : " + saves[index].text, Color.green);
+				ui.sfx(RootWidget.msgsfx);
+			} else {
+				gameui().msg("This is not a saved deck, not switching.", Color.red);
+				ui.sfx(RootWidget.errsfx);
+			}
 		} catch (Exception e) {
 			gameui().msg("Exception switching combat decks, exception ignored to avoid crash.", Color.white);
+			ui.sfx(RootWidget.errsfx);
 		}
 	}
 

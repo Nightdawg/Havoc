@@ -585,7 +585,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 6));
-		leftColumn = add(toggleGobHealthDisplayCheckBox = new CheckBox("Display Object Health Percent"){
+		leftColumn = add(toggleGobHealthDisplayCheckBox = new CheckBox("Display Object Health Percentage"){
 			{a = (Utils.getprefb("gobHealthDisplayToggle", true));}
 			public void set(boolean val) {
 				Utils.setprefb("gobHealthDisplayToggle", val);
@@ -901,7 +901,7 @@ public class OptWnd extends Window {
 					ui.sess.glob.brighten();
 				}
 			}), prev.pos("bl").adds(210, -20));
-			prev = add(disableWeatherEffectsCheckBox = new CheckBox("Disable Weather (Requires Relog)"){
+			prev = add(disableWeatherEffectsCheckBox = new CheckBox("Disable Weather (Requires Reload)"){
 				{a = Utils.getprefb("isWeatherDisabled", false);}
 				public void set(boolean val) {
 					Utils.setprefb("isWeatherDisabled", val);
@@ -919,7 +919,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
-			prev = add(simpleCropsCheckBox = new CheckBox("Simplified Crops (Requires Relog)"){
+			prev = add(simpleCropsCheckBox = new CheckBox("Simplified Crops (Requires Reload)"){
 				{a = Utils.getprefb("simplifiedCrops", false);}
 				public void set(boolean val) {
 					Utils.setprefb("simplifiedCrops", val);
@@ -927,7 +927,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
-			prev = add(simpleForageablesCheckBox = new CheckBox("Simplified Forageables (Requires Relog)"){
+			prev = add(simpleForageablesCheckBox = new CheckBox("Simplified Forageables (Requires Reload)"){
 				{a = Utils.getprefb("simplifiedForageables", false);}
 				public void set(boolean val) {
 					Utils.setprefb("simplifiedForageables", val);
@@ -1361,24 +1361,24 @@ public class OptWnd extends Window {
 				combatUIBottomPanelHeightSlider.val = 100;
 				Utils.setprefi("combatBottomPanelHeight", 100);
 			}), prev.pos("bl").adds(210, -20));
-			prev = add(new CheckBox("Show hotkeys"){
+			prev = add(new CheckBox("Show Hotkeys on the Bottom Panel (Combat Moves)"){
 				{a = Utils.getprefb("showCombatHotkeysUI", true);}
 				public void set(boolean val) {
 					Utils.setprefb("showCombatHotkeysUI", val);
 					Fightsess.showKeybindCombatSetting = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(16, 6));
+			}, prev.pos("bl").adds(16, 10));
 
-			prev = add(new CheckBox("Draw Combat Data On Current Target"){
+			prev = add(new CheckBox("Show Combat Data above Current Target"){
 				{a = Utils.getprefb("drawFloatingCombatData", true);}
 				public void set(boolean val) {
 					Utils.setprefb("drawFloatingCombatDataOnCurrentTarget", val);
 					Fightsess.drawFloatingCombatDataOnCur = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 14));
-			prev = add(new CheckBox("Draw Combat Data On Other Aggroed Enemies"){
+			}, prev.pos("bl").adds(0, 12));
+			prev = add(new CheckBox("Show Combat Data above other Aggroed Enemies"){
 				{a = Utils.getprefb("drawFloatingCombatData", true);}
 				public void set(boolean val) {
 					Utils.setprefb("drawFloatingCombatData", val);
@@ -1386,22 +1386,22 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
-			prev = add(new CheckBox("Show Extra Info Background"){
+			prev = add(new CheckBox("Show Background for Combat Data"){
 				{a = Utils.getprefb("CombatInfoBackgroundToggled", false);}
 				public void set(boolean val) {
 					Utils.setprefb("CombatInfoBackgroundToggled", val);
 					Fightsess.showInfoBackground = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 4));
-			prev = add(toggleGobDamageInfoCheckBox = new CheckBox("Show damage info:"){
+			}, prev.pos("bl").adds(16, 6));
+			prev = add(toggleGobDamageInfoCheckBox = new CheckBox("Show Damage Info:"){
 				{a = Utils.getprefb("GobDamageInfoToggled", true);}
 				public void set(boolean val) {
 					Utils.setprefb("GobDamageInfoToggled", val);
 					GobDamageInfo.toggleGobDamageInfo = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 6));
+			}, prev.pos("bl").adds(0, 12).x(16));
 			prev = add(new Label("> Include:"), prev.pos("bl").adds(18, 3));
 			CheckBox woundsCheckBox;
 			prev = add(woundsCheckBox = new CheckBox("Wounds"){
@@ -1425,7 +1425,7 @@ public class OptWnd extends Window {
 			armorCheckBox.lbl = Text.std.render("Armor", new Color(50, 255, 92, 255));
 			add(damageInfoClearButton = new Button(UI.scale(70), "Clear", false).action(() -> {
 				GobDamageInfo.clearAllDamage(gameui());
-			}), prev.pos("bl").adds(0, -54).x(UI.scale(210)));
+			}), prev.pos("bl").adds(0, -34).x(UI.scale(210)));
 			prev = add(new Label("Other Combat Settings:"), prev.pos("bl").adds(0, 14).x(0));
 			prev = add(toggleAutoPeaceCheckbox = new CheckBox("Autopeace animals when combat starts"){
 				{a = Utils.getprefb("autoPeaceCombat", false);}
@@ -1446,7 +1446,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, scroll.pos("bl").adds(2, -6));
-			prev = add(aggroedEnemiesCirclesCheckBox = new CheckBox("Circles Under Aggroed Enemies (Players/Mobs)"){
+			prev = add(aggroedEnemiesCirclesCheckBox = new CheckBox("Put Circles under Aggroed Enemies (Players/Mobs)"){
 				{a = Utils.getprefb("aggroedEnemiesCircles", true);}
 				public void set(boolean val) {
 					Utils.setprefb("aggroedEnemiesCircles", val);
@@ -1463,7 +1463,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 12));
-			prev = add(partyMembersCirclesCheckBox = new CheckBox("Circles Under Party Members"){
+			prev = add(partyMembersCirclesCheckBox = new CheckBox("Put Circles under Party Members"){
 				{a = Utils.getprefb("partyMembersCircles", true);}
 				public void set(boolean val) {
 					Utils.setprefb("partyMembersCircles", val);
