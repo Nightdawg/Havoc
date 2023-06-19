@@ -57,7 +57,8 @@ public class GobQualityInfo extends GobInfo {
 
     private BufferedImage quality() {
 	if(q != 0) {
-	    return Text.std.renderstroked(String.format("Q: %d", q), Q_COL, Color.BLACK).img;
+//	    return Text.std.renderstroked(String.format("Q: %d", q), Q_COL, Color.BLACK).img;
+		return Text.renderstroked(String.format("Q: %d", q), Q_COL, Color.BLACK, Text.num12boldFnd).img;
 	}
 	return null;
     }

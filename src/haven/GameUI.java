@@ -1618,7 +1618,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 
 	public void setDetectGob(Gob gob) {
-		detectGob = gob;
+		if (!gob.getres().name.equals("gfx/borka/body")) {
+			detectGob = gob;
+		}
 	}
     
     public void msg(String msg, Color color, Color logcol) {
