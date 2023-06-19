@@ -182,7 +182,43 @@ public class Hitbox extends SlottedNode implements Rendered {
 						}
 					}
 				}
-
+				if (polygons.isEmpty()){
+					List<List<Coord3f>> polygons2 = new LinkedList<>();
+					List<Coord3f> box = new LinkedList<>();
+					float ax = 0, bx = 0, ay = 0, by = 0;
+					if (res.name.startsWith("gfx/kritter/cattle/calf")) {
+						ax = -9F; bx = 9F; ay = -3F; by = 3F;
+					} else if (res.name.startsWith("gfx/kritter/sheep/lamb")) {
+						ax = -4F; bx = 5F; ay = -2F; by = 2F;
+					} else if (res.name.startsWith("gfx/kritter/goat/")) {
+						ax = -3F; bx = 4F; ay = -2F; by = 2F;
+					} else if (res.name.startsWith("gfx/kritter/pig/")) {
+						ax = -6F; bx = 6F; ay = -3F; by = 3F;
+					} else if (res.name.startsWith("gfx/kritter/horse/")) {
+						ax = -8F; bx = 8F; ay = -4F; by = 4F;
+					}
+					if (ax != 0 && bx != 0 && ay != 0 && by != 0) {
+						box.add(new Coord3f(ax, -ay, Z));
+						box.add(new Coord3f(bx, -ay, Z));
+						box.add(new Coord3f(bx, -by, Z));
+						box.add(new Coord3f(ax, -by, Z));
+						bboxa.x = (int)ax;
+						bboxa.y = (int)ay;
+						bboxb.x = (int)bx;
+						bboxb.y = (int)by;
+						polygons2.add(box);
+						List<Float> vertices = new LinkedList<>();
+						for (List<Coord3f> polygon : polygons2) {
+							addLoopedVertices(vertices, polygon);
+						}
+						float[] data = convert(vertices);
+						VertexArray.Buffer vbo = new VertexArray.Buffer(data.length * 4, DataBuffer.Usage.STATIC, DataBuffer.Filler.of(data));
+						VertexArray va = new VertexArray(LAYOUT, vbo);
+						model = new Model(Model.Mode.LINES, va, null);
+						model.bbox = new Model.BoundingBox(bboxa, bboxb);
+						MODEL_CACHE.put(res, model);
+					}
+				}
 				if(!polygons.isEmpty()) {
 					List<Float> vertices = new LinkedList<>();
 
