@@ -2306,7 +2306,8 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 					if (clickb == 1) {
 						chats.get("Area Chat").send("@" + gob.id);
 					} else if (clickb == 3) {
-						chats.get("Party").send("@" + gob.id);
+						if (chats.get("Party") != null)
+							chats.get("Party").send("@" + gob.id);
 					}
 					return;
 				} else {

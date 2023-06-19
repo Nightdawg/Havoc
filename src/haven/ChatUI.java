@@ -780,7 +780,6 @@ public class ChatUI extends Widget {
 						Gob gob = gameui().map.glob.oc.getgob(Long.parseLong(matcher.group(1)));
 						if (gob != null) {
 							if (name.equals("Party")) {
-//								gob.highlightTarget();
 								gob.highlight(new Color(243, 0, 0, 255));
 							} else if (name.equals("Area Chat")) {
 								gob.highlight(new Color(255, 183, 0, 255));
