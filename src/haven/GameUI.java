@@ -629,6 +629,11 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    pol2 = add(new TButton("rlm", true));
 	}
 
+	@Override
+	protected void added() { // ND: Do this override to avoid preventDraggingOutside(), that function should not be called for the Map Window.
+		parent.setfocus(this);
+	}
+
 	private void repack() {
 	    tabs.indpack();
 	    kin.c = new Coord(0, tabs.curtab.contentsz().y + UI.scale(20));
@@ -1611,6 +1616,11 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    prog.move(sz.sub(prog.sz).mul(0.5, 0.35));
 	actionBar1.c = new Coord(blpw + UI.scale(10), sz.y - actionBar1.sz.y - UI.scale(5));
 	actionBar2.c = new Coord(blpw + UI.scale(10), sz.y - actionBar1.sz.y - actionBar2.sz.y - UI.scale(5));
+	if (OptWnd.keepWindowsInside) {
+		for (Window wnd : getAllWindows()) {
+			wnd.preventDraggingOutside();
+		}
+	}
     }
     
     public void presize() {
@@ -2156,6 +2166,16 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			}
 		}
 		return inventories;
+	}
+
+	public List<Window> getAllWindows() {
+		List<Window> windows = new ArrayList<Window>();
+		for (Widget wdg = lchild; wdg != null; wdg = wdg.prev) {
+			if (wdg instanceof Window && !(wdg instanceof MapWnd)) {
+				windows.add((Window) wdg);
+			}
+		}
+		return windows;
 	}
 
 	public IMeter.Meter getmeter(String name, int midx) {

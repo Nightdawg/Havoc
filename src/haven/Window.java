@@ -119,6 +119,7 @@ public class Window extends Widget implements DTarget {
 
     protected void added() {
 	parent.setfocus(this);
+	preventDraggingOutside();
     }
 
     public void chcap(String cap) {
@@ -422,11 +423,54 @@ public class Window extends Widget implements DTarget {
 	if(dm != null) {
 	    dm.remove();
 	    dm = null;
+		preventDraggingOutside();
 	} else {
 	    super.mouseup(c, button);
 	}
 	return(true);
     }
+
+	public void preventDraggingOutside() {
+		if (gameui() != null) {
+			if (this.c.x < -UI.scale(14))
+				this.c.x = -UI.scale(14);
+			if (this.c.y < -UI.scale(14))
+				this.c.y = -UI.scale(14);
+			if (this.large) {
+				if (this.c.x > (gameui().sz.x - this.csz().x - UI.scale(68)))
+					this.c.x = gameui().sz.x - this.csz().x - UI.scale(68);
+				if (this.c.y > (gameui().sz.y - this.csz().y - UI.scale(62)))
+					this.c.y = gameui().sz.y - this.csz().y - UI.scale(62);
+			} else {
+				if (this.c.x > (gameui().sz.x - this.csz().x - UI.scale(40)))
+					this.c.x = gameui().sz.x - this.csz().x - UI.scale(40);
+				if (this.c.y > (gameui().sz.y - this.csz().y - UI.scale(52)))
+					this.c.y = gameui().sz.y - this.csz().y - UI.scale(52);
+			}
+		}
+	}
+
+	public static void preventDraggingOutside(Window window) {
+		Widget parent = window.parent;
+		GameUI gameui = null;
+		while (parent != null) {
+			if (parent instanceof GameUI) {
+				gameui = (GameUI) parent;
+				break;
+			}
+			parent = parent.parent;
+		}
+
+		if (gameui != null) {
+			if (window.c.x < -UI.scale(14))
+				window.c.x = -UI.scale(14);
+			if (window.c.y < -UI.scale(14))
+				window.c.y = -UI.scale(14);
+			if (window.c.x > (gameui.sz.x - window.csz().x - UI.scale(40)))
+				window.c.x = gameui.sz.x - window.csz().x - UI.scale(40);
+			if (window.c.y > (gameui.sz.y - window.csz().y - UI.scale(52)));
+		}
+	}
 
     public void mousemove(Coord c) {
 	if(dm != null) {

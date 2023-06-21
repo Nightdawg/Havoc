@@ -445,6 +445,7 @@ public class OptWnd extends Window {
 
 	private CheckBox enableCornerFPSCheckBox;
 	private CheckBox enableAdvancedMouseInfoCheckBox;
+	private CheckBox enableKeepWindowsInsideCheckBox;
 	private Label granularityPositionLabel;
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
@@ -463,6 +464,7 @@ public class OptWnd extends Window {
 	public static boolean showContainerFullness = Utils.getprefb("showContainerFullness", true);
 	public static boolean showWorkstationStage = Utils.getprefb("showWorkstationStage", true);
 	public static boolean advancedMouseInfo = Utils.getprefb("advancedMouseInfo", false);
+	public static boolean keepWindowsInside = Utils.getprefb("keepWindowsInside", false);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -554,6 +556,14 @@ public class OptWnd extends Window {
 			public void set(boolean val) {
 				advancedMouseInfo = val;
 				Utils.setprefb("advancedMouseInfo", val);
+				a = val;
+			}
+		}, topRightColumn.pos("bl").adds(0, 6));
+		topRightColumn = add(enableKeepWindowsInsideCheckBox = new CheckBox("Keep Windows in when Resizing Game"){
+			{a = (Utils.getprefb("keepWindowsInside", false));}
+			public void set(boolean val) {
+				keepWindowsInside = val;
+				Utils.setprefb("keepWindowsInside", val);
 				a = val;
 			}
 		}, topRightColumn.pos("bl").adds(0, 6));
@@ -2716,9 +2726,10 @@ public class OptWnd extends Window {
 	private void setTooltipsForInterfaceSettingsStuff() {
 		enableCornerFPSCheckBox.tooltip = RichText.render("Enabling this will display the current FPS in the top-right corner of the screen.", 300);
 		enableAdvancedMouseInfoCheckBox.tooltip = RichText.render("Holding Ctrl+Shift will show the Resource Path of the object or tile you are mousing over. Enabling this option will show additional information.\n$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
+		enableKeepWindowsInsideCheckBox.tooltip = RichText.render("Enabling this will cause ALL Windows to always be kept inside the Game Window, whenever you resize it.\n$col[185,185,185]{Note: By default, windows remain in the same spot, outside of your resized window.", 300);
 		granularityPositionLabel.tooltip = RichText.render("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
-		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in. \n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
+		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in.\n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
 		showQuickSlotsBar.tooltip = RichText.render("Note: The Quick Switch keybinds ('Right Hand' and 'Left Hand') will still work, regardless of this widget being visible or not.", 300);
 		toggleGobGrowthInfoCheckBox.tooltip = RichText.render("Enabling this will show the following growth information:\n$col[185,185,185]{> Trees and Bushes will display their current growth percentage\n> Crops will display their growth stage as \"Current / Final\"\n}Note: If a Tree or Bush is not showing a percentage, that means it is fully grown, and can be harvested.", 300);
 		toggleGobCollisionBoxesDisplayCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);

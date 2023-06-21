@@ -233,6 +233,10 @@ public class MapWnd extends Window implements Console.Directory {
 	compact(true);
 	resize(sz);
     }
+	@Override
+	protected void added() { // ND: Do this override to avoid preventDraggingOutside(), that function should not be called for the Map Window.
+		parent.setfocus(this);
+	}
 
     public void toggleol(String tag, boolean a) {
 	if(a)
