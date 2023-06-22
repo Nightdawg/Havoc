@@ -30,13 +30,13 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
 import haven.render.*;
-import statictools.Namegen;
 
 public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D {
     public static final BufferedImage vlg = Resource.loadimg("gfx/hud/vilind");
 	public static final Text.Foundry nfnd = new Text.Foundry(Text.dfont, 12); // ND: Changed the size from 10 to 12
     public String name;
-	public static final Color unknowncol = new Color(245, 162, 123);
+	public static final Color unknowncol = new Color(180, 180, 180);
+	public static final Color villrealmcol = new Color(255, 255, 255);
     public int group, type;
     public double seen = 0;
     private Tex rnm = null;
@@ -45,7 +45,7 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
     public KinInfo(Gob g, String name, int group, int type) {
 		super(g);
 		this.name = name;
-		if (name.equals(" ") && !isVillager()) {
+		if (name.equals("Unknown") && !isVillager()) {
 			unknown = true;
 		}
 		this.group = group;
@@ -53,7 +53,7 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
     }
     
     public void update(String name, int group, int type) {
-		if (name != null || !name.equals("???")) {
+		if (name != null || !name.equals("Unknown")) {
 			this.name = name;
 			unknown = false;
 		}
@@ -66,20 +66,19 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
 	if(rnm == null) {
 	    boolean hv = (type & 2) != 0;
 	    BufferedImage nm = null;
-		if(name != null && name.length() > 0 && !name.equals(" ") && !name.equals("???")) {
+		if (name != null && name.equals("Village/Realm Member") && isVillager()) {
 			unknown = false;
-			nm = Utils.outline2(nfnd.render(name, BuddyWnd.gc[group]).img, Utils.contrast(BuddyWnd.gc[group]), false);
-		} else if (name != null && isVillager()) {
+			nm = Utils.outline2(nfnd.renderstroked("Village/Realm Member", BuddyWnd.gc[group], Color.BLACK).img, Color.BLACK, true);
+		} else if (name != null && name.length() > 0 && !name.equals("Unknown")) {
 			unknown = false;
-			nm = Utils.outline2(nfnd.render("a villager", BuddyWnd.gc[group]).img, Utils.contrast(BuddyWnd.gc[group]), false);
+			nm = Utils.outline2(nfnd.renderstroked(name, BuddyWnd.gc[group], Color.BLACK).img, Color.BLACK, true);
 		} else {
 			unknown = true;
-			// todo namegen
-			//			nm = AUtils.outline2(nfnd.render(Namegen.getName(gob.id), BuddyWnd.gc[group]).img, AUtils.contrast(unknowncol), false);
+			nm = Utils.outline2(nfnd.renderstroked("Unknown", unknowncol, Color.BLACK).img, Color.BLACK, true);
 		}
-	    if(name.length() > 0)
-		//nm = AUtils.outline2(nfnd.render(name, BuddyWnd.gc[group]).img, AUtils.contrast(BuddyWnd.gc[group]));
-		nm = Utils.outline2(nfnd.renderstroked(name, BuddyWnd.gc[group], Color.BLACK).img, Color.BLACK, true); // ND: Changed this for better name visibility
+//	    if(name.length() > 0)
+//		//nm = AUtils.outline2(nfnd.render(name, BuddyWnd.gc[group]).img, AUtils.contrast(BuddyWnd.gc[group]));
+//		nm = Utils.outline2(nfnd.renderstroked(name, BuddyWnd.gc[group], Color.BLACK).img, Color.BLACK, true); // ND: Changed this for better name visibility
 	    int w = 0, h = 0;
 	    if(nm != null) {
 		w += nm.getWidth();
@@ -151,6 +150,8 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
 		int group = msg.uint8();
 		int btype = msg.uint8();
 		KinInfo b = g.getattr(KinInfo.class);
+		if (name.equals(" ") && ((btype & 2) != 0))
+			name = "Village/Realm Member";
 		GameUI.gobIdToKinName.put(g.id, name);
 		if(b == null) {
 		    g.setattr(new KinInfo(g, name, group, btype));

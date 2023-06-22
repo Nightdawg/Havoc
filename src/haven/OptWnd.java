@@ -1801,7 +1801,7 @@ public class OptWnd extends Window {
 			prev = add(new Label("Enabled Player Alarms:"), UI.scale(0, 40));
 			prev = add(new Label("Sound File"), prev.pos("ur").add(70, 0));
 			prev = add(new Label("Volume"), prev.pos("ur").add(84, 0));
-			prev = add(whitePlayerAlarmEnabledCheckbox = new CheckBox("White/Unknown:"){
+			prev = add(whitePlayerAlarmEnabledCheckbox = new CheckBox("White OR Unknown:"){
 				{a = Utils.getprefb("whitePlayerAlarmEnabled", true);}
 				public void set(boolean val) {
 					Utils.setprefb("whitePlayerAlarmEnabled", val);
@@ -1814,7 +1814,7 @@ public class OptWnd extends Window {
 					Utils.setpref("whitePlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(45, -2));
+			}, prev.pos("ur").adds(45, -2).x(139));
 			prev = add(whitePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("whitePlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -1848,7 +1848,7 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("ur").adds(6,-5));
 
-			prev = add(whiteVillageOrRealmPlayerAlarmEnabledCheckbox = new CheckBox("White(Village/Realm):"){
+			prev = add(whiteVillageOrRealmPlayerAlarmEnabledCheckbox = new CheckBox("Village/Realm Member:"){
 				{a = Utils.getprefb("whiteVillageOrRealmPlayerAlarmEnabled", true);}
 				public void set(boolean val) {
 					Utils.setprefb("whiteVillageOrRealmPlayerAlarmEnabled", val);
@@ -1861,7 +1861,7 @@ public class OptWnd extends Window {
 					Utils.setpref("whiteVillageOrRealmPlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(16, -2));
+			}, prev.pos("ur").adds(0, -2).x(139));
 			prev = add(whiteVillageOrRealmPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("whiteVillageOrRealmPlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -2778,6 +2778,7 @@ public class OptWnd extends Window {
 
 	private void setTooltipsForAlarmSettingsStuff(){
 		lowEnergySoundEnabledCheckbox.tooltip = RichText.render("This alarm will also trigger again when you reach <2000% energy.\n$col[185,185,185]{Don't starve yourself, dumbass.}", 400);
+		whiteVillageOrRealmPlayerAlarmEnabledCheckbox.tooltip = RichText.render("This alarm will only be triggered on White or Unmemorised Village/Realm Members.\n$col[185,185,185]{If you have them Kinned or Memorised and have changed their Kin color from White, the alarm of their respective kin color will be triggered instead (if enabled).}", 300);
 	}
 
     public OptWnd() {

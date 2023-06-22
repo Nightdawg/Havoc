@@ -51,7 +51,7 @@ public class RealmChannel extends ChatUI.MultiChat {
 		if((nm == null) && pnames.containsKey(Integer.valueOf(from)))
 		    nm = pnames.get(Integer.valueOf(from));
 		if(nm == null)
-		    nm = "???";
+		    nm = "??? (Not Memorised)";
 		if((r == null) || !nm.equals(cn)) {
 			String line = RichText.Parser.quote(String.format("%s: %s", nm, text));
 			line = "[" + timestamp + "] " + line;

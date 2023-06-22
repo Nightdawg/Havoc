@@ -39,8 +39,8 @@ public class Polity extends Widget {
     public final Map<Integer, Member> idmap = new HashMap<Integer, Member>();
     protected Widget mw;
 
-    public static final Text unk = Text.render("???");
-    public static final Text self = Text.render("You", new Color(192, 192, 255));
+    public static final Text unk = Text.render("Unknown (Not Memorised)", new Color(140, 140, 140));
+    public static final Text self = Text.render(">> Yourself <<", new Color(255, 205, 0));
     public class Member {
 	public final Integer id;
 
@@ -66,15 +66,15 @@ public class Polity extends Widget {
 	}
 
 	public MemberList(int w, int h) {
-	    this(Coord.of(w, h * UI.scale(20)));
+	    this(Coord.of(w, (int)(h * 1.6) * UI.scale(20)));
 	}
 
 	public List<Member> allitems() {return(memb);}
 	public String itemname(Member m) {
 	    if(m.id == null)
-		return("You");
+		return(">> Yourself <<");
 	    BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(m.id);
-	    return((b == null) ? "???" : b.name);
+	    return((b == null) ? "Unknown (Not Memorised)" : b.name);
 	}
 	public boolean searchmatch(Member m, String txt) {return(itemname(m).toLowerCase().indexOf(txt.toLowerCase()) >= 0);}
 

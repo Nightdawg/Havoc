@@ -722,7 +722,7 @@ public class ChatUI extends Widget {
 
 	    public Text text() {
 		BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
-		String nm = (b == null)?"???":(b.name);
+		String nm = (b == null)?"??? (Not Memorised)":(b.name);
 		if((r == null) || !nm.equals(cn)) {
 			String line = RichText.Parser.quote(String.format("%s: %s", nm, text));
 			line = "[" + timestamp + "] " + line;
@@ -939,7 +939,7 @@ public class ChatUI extends Widget {
 	public String name() {
 	    BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(other);
 	    if(b == null)
-		return("???");
+		return("??? (Not Memorised)");
 	    else
 		return(b.name);
 	}

@@ -179,6 +179,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		c.cmpinit(this);
 	}
 
+	public void initPlayerName() {
+		if (getattr(KinInfo.class) == null && glob.sess.ui.gui != null && glob.sess.ui.gui.map != null) {
+			if (getres() != null) {
+				if (getres().name.equals("gfx/borka/body")) {
+					long plgobid = glob.sess.ui.gui.map.plgob;
+					if (plgobid != -1 && plgobid != id) {
+						setattr(new KinInfo(this, "Unknown", 0, 0));
+					}
+				}
+			}
+		}
+	}
+
     public static class Overlay implements RenderTree.Node {
 	public final int id;
 	public final Gob gob;
@@ -541,6 +554,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if(!playerAlarmPlayed && isMe == null) {
 			isMe();
 			if(isMe != null) {
+				initPlayerName();
 				playPlayerAlarm();
 				playerAlarmPlayed = true;
 			}
