@@ -630,7 +630,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	}
 
 	@Override
-	protected void added() { // ND: Do this override to avoid preventDraggingOutside(), that function should not be called for the Map Window.
+	protected void added() { // ND: Do this override to avoid preventDraggingOutside(), that function should not be called for the Kith & Kin Window
 		parent.setfocus(this);
 	}
 

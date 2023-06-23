@@ -30,6 +30,11 @@ public class CraftWindow extends Window {
 		setfocusctl(true);
 	}
 
+	@Override
+	protected void added() { // ND: Do this override to avoid preventDraggingOutside(), that function should not be called for the Craft Window
+		parent.setfocus(this);
+	}
+
 	public void setLastAction(MenuGrid.Pagina value) {
 		lastAction = value;
 	}
