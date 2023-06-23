@@ -445,6 +445,7 @@ public class OptWnd extends Window {
 
 	private CheckBox enableCornerFPSCheckBox;
 	private CheckBox enableAdvancedMouseInfoCheckBox;
+	private CheckBox enableWrongResCheckBox;
 	private CheckBox enableKeepWindowsInsideCheckBox;
 	private Label granularityPositionLabel;
 	private Label granularityAngleLabel;
@@ -551,7 +552,15 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, UI.scale(230, 10));
-		topRightColumn = add(enableAdvancedMouseInfoCheckBox = new CheckBox("Show Extended Mouseover Info"){
+		topRightColumn = add(enableKeepWindowsInsideCheckBox = new CheckBox("Keep Windows in when Resizing Game"){
+			{a = (Utils.getprefb("keepWindowsInside", false));}
+			public void set(boolean val) {
+				keepWindowsInside = val;
+				Utils.setprefb("keepWindowsInside", val);
+				a = val;
+			}
+		}, topRightColumn.pos("bl").adds(0, 6));
+		topRightColumn = add(enableAdvancedMouseInfoCheckBox = new CheckBox("Show Extended Mouseover Info (Dev)"){
 			{a = (Utils.getprefb("advancedMouseInfo", false));}
 			public void set(boolean val) {
 				advancedMouseInfo = val;
@@ -559,11 +568,11 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, topRightColumn.pos("bl").adds(0, 6));
-		topRightColumn = add(enableKeepWindowsInsideCheckBox = new CheckBox("Keep Windows in when Resizing Game"){
-			{a = (Utils.getprefb("keepWindowsInside", false));}
+		topRightColumn = add(enableWrongResCheckBox = new CheckBox("Show Resource Version Prints (Dev)"){
+			{a = (Utils.getprefb("showResourceConsolePrints", false));}
 			public void set(boolean val) {
-				keepWindowsInside = val;
-				Utils.setprefb("keepWindowsInside", val);
+				Resource.showResourceConsolePrints = val;
+				Utils.setprefb("showResourceConsolePrints", val);
 				a = val;
 			}
 		}, topRightColumn.pos("bl").adds(0, 6));
@@ -2726,6 +2735,7 @@ public class OptWnd extends Window {
 	private void setTooltipsForInterfaceSettingsStuff() {
 		enableCornerFPSCheckBox.tooltip = RichText.render("Enabling this will display the current FPS in the top-right corner of the screen.", 300);
 		enableAdvancedMouseInfoCheckBox.tooltip = RichText.render("Holding Ctrl+Shift will show the Resource Path of the object or tile you are mousing over. Enabling this option will show additional information.\n$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
+		enableWrongResCheckBox.tooltip = RichText.render("$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
 		enableKeepWindowsInsideCheckBox.tooltip = RichText.render("Enabling this will cause ALL Windows to always be kept inside the Game Window, whenever you resize it.\n$col[185,185,185]{Note: By default, windows remain in the same spot, outside of your resized window.", 300);
 		granularityPositionLabel.tooltip = RichText.render("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);

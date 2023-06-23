@@ -1895,7 +1895,7 @@ public class Resource implements Serializable {
 	return(o.name.equals(this.name) && (o.ver == this.ver));
     }
 
-	//private static final List<String> ignoreResVersionList = Arrays.asList("gfx/terobjs/cupboard", "gfx/terobjs/crate");
+	public static boolean showResourceConsolePrints = Utils.getprefb("showResourceConsolePrints", false);
 	private static final List<String> ignoreCustomIconResVersionList =
 			Arrays.asList(
 					"customMapIcons/metalplow",
@@ -1927,7 +1927,7 @@ public class Resource implements Serializable {
 	if(this.ver == -1)
 	    this.ver = ver;
 	else if(ver != this.ver) {
-		if (ignoreCustomIconResVersionList.stream().noneMatch(name::matches)) {
+		if (ignoreCustomIconResVersionList.stream().noneMatch(name::matches) && showResourceConsolePrints) {
 			System.out.printf("Wrong res version (%d != %d) %s%n", ver, this.ver, this);
 			throw (new LoadException("Wrong res version (" + ver + " != " + this.ver + ")", this));
 		}
