@@ -26,10 +26,12 @@
 
 package haven;
 
+import haven.cookbook.RecipeCollector;
 import haven.res.ui.tt.q.qbuff.QBuff;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.*;
 
 public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owner {
@@ -197,6 +199,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	    if(pg != null)
 		info.add(new ItemInfo.Pagina(this, pg.text));
 	    this.info = info;
+		RecipeCollector.addFood(info,getres().name);
 	}
 	return(this.info);
     }

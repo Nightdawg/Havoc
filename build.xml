@@ -76,12 +76,13 @@
 	   source="11" target="11" includeantruntime="no"
 	   bootclasspath="${boot-classpath}">
       <classpath>
-	<pathelement path="lib/ext/jogl/jogl-all.jar" />
-	<pathelement path="lib/ext/jogl/gluegen-rt.jar" />
-	<pathelement path="lib/ext/lwjgl/lwjgl-fat.jar" />
-	<pathelement path="lib/ext/lwjgl/lwjgl-opengl-fat.jar" />
-	<pathelement path="lib/jglob.jar" />
-      <pathelement path="lib/rxjava-1.1.5.jar" />
+        <pathelement path="lib/ext/jogl/jogl-all.jar" />
+        <pathelement path="lib/ext/jogl/gluegen-rt.jar" />
+        <pathelement path="lib/ext/lwjgl/lwjgl-fat.jar" />
+        <pathelement path="lib/ext/lwjgl/lwjgl-opengl-fat.jar" />
+	    <pathelement path="lib/jglob.jar" />
+        <pathelement path="lib/sqlite-jdbc-3.42.0.0.jar" />
+        <pathelement path="lib/rxjava-1.1.5.jar" />
       </classpath>
       <compilerarg value="-Xlint:unchecked" />
       <compilerarg value="-Xlint:-options" />
@@ -114,7 +115,7 @@
       <fileset dir="build/classes-lib" />
       <manifest>
 	<attribute name="Main-Class" value="haven.MainFrame" />
-	<attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar lwjgl-fat.jar lwjgl-opengl-fat.jar builtin-res.jar hafen-res.jar" />
+	<attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar lwjgl-fat.jar lwjgl-opengl-fat.jar builtin-res.jar hafen-res.jar sqlite-jdbc-3.42.0.0.jar" />
       </manifest>
     </jar>
     <chmod file="build/hafen.jar" perm="a+x" />
@@ -150,6 +151,9 @@
     <copy todir="bin">
       <fileset dir="build">
 	<include name="hafen.jar" />
+      </fileset>
+      <fileset dir="lib">
+        <include name="sqlite-jdbc-3.42.0.0.jar"/>
       </fileset>
       <fileset dir="lib/ext">
 	<include name="hafen-res.jar" />

@@ -27,6 +27,8 @@
 package haven;
 
 import haven.automated.*;
+import haven.cookbook.CookBook;
+import haven.cookbook.RecipeCollector;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -106,7 +108,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	private Gob detectGob;
 	public OceanScoutBot shorelineScoutBot;
 	public Thread shorelineScoutBotThread;
-
+	private RecipeCollector recipeCollector;
+	private Thread recipeCollectorThread;
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(GameUI.class, slot -> slot.wdg())
@@ -353,8 +356,14 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	makewnd = add(new CraftWindow(), UI.scale(400, 200));
 	makewnd.hide();
 	quickslots = add(new QuickSlotsWdg(), Utils.getprefc("wndc-quickslots", UI.scale(new Coord(426, 10))));
-	if (!Utils.getprefb("showQuickSlotsBar", true))
+	if (!Utils.getprefb("showQuickSlotsBar", true)) {
 		quickslots.hide();
+	}
+	if(recipeCollector == null && recipeCollectorThread == null){
+		recipeCollector = new RecipeCollector();
+		recipeCollectorThread = new Thread(recipeCollector, "RecipeCollectorThread");
+		recipeCollectorThread.start();
+	}
     }
 
     protected void attached() {
@@ -1560,7 +1569,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-			new Thread(new RefillWaterContainers(this), "RefillWaterContainers").start();
+			CookBook cookBook = new CookBook();
+			this.add(cookBook, new Coord(this.sz.x/2 - cookBook.sz.x/2, this.sz.y/2 - cookBook.sz.y/2 - 200));
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
