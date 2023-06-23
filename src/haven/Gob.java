@@ -180,7 +180,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	public void initPlayerName() {
-		if (getattr(KinInfo.class) == null && glob.sess.ui.gui != null && glob.sess.ui.gui.map != null) {
+		if (getattr(KinInfo.class) == null && isMannequin != null && isMannequin == false && glob.sess.ui.gui != null && glob.sess.ui.gui.map != null) {
 			if (getres() != null) {
 				if (getres().name.equals("gfx/borka/body")) {
 					long plgobid = glob.sess.ui.gui.map.plgob;
