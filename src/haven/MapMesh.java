@@ -113,7 +113,7 @@ public class MapMesh implements RenderTree.Node, Disposable {
 	public MapSurface() {
 	    for(int y = vs.ul.y; y < vs.br.y; y++) {
 		for(int x = vs.ul.x; x < vs.br.x; x++) {
-		    surf[vs.o(x, y)] = new Vertex(x * (float)tilesz.x, y * -(float)tilesz.y, OptWnd.flatWorldSetting ? 0 : (float)map.getfz(ul.add(x, y)));
+		    surf[vs.o(x, y)] = new Vertex(x * (float)tilesz.x, y * -(float)tilesz.y, (float)map.getfz(ul.add(x, y)));
 		}
 	    }
 	    for(int y = ts.ul.y; y < ts.br.y; y++) {
@@ -335,7 +335,7 @@ public class MapMesh implements RenderTree.Node, Disposable {
     public static RenderTree.Node groundmod(MCache map, Coord2d cc, Coord2d ul, Coord2d br, double a) {
 	double si = Math.sin(a), co = Math.cos(a);
 	MeshBuf buf = new MeshBuf();
-	float cz = OptWnd.flatWorldSetting ? 0 : (float)map.getcz(cc);
+	float cz = (float)map.getcz(cc);
 	Coord ult, brt;
 	{
 	    Coord tult = null, tbrt = null;

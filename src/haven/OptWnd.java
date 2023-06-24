@@ -1478,7 +1478,7 @@ public class OptWnd extends Window {
 				}
 			}), prev.pos("bl").adds(0, -34).x(UI.scale(210)));
 			prev = add(new Label("Other Combat Settings:"), prev.pos("bl").adds(0, 14).x(0));
-			prev = add(toggleAutoPeaceCheckbox = new CheckBox("Autopeace animals when combat starts"){
+			prev = add(toggleAutoPeaceCheckbox = new CheckBox("Autopeace Animals when combat starts"){
 				{a = Utils.getprefb("autoPeaceCombat", false);}
 				public void set(boolean val) {
 					Utils.setprefb("autoPeaceCombat", val);
@@ -2773,7 +2773,7 @@ public class OptWnd extends Window {
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
 		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in.\n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
 		showQuickSlotsBar.tooltip = RichText.render("Note: The Quick Switch keybinds ('Right Hand' and 'Left Hand') will still work, regardless of this widget being visible or not.", 300);
-		toggleGobGrowthInfoCheckBox.tooltip = RichText.render("Enabling this will show the following growth information:\n$col[185,185,185]{> Trees and Bushes will display their current growth percentage\n> Crops will display their growth stage as \"Current / Final\"\n}Note: If a Tree or Bush is not showing a percentage, that means it is fully grown, and can be harvested.", 300);
+		toggleGobGrowthInfoCheckBox.tooltip = RichText.render("Enabling this will show the following growth information:\n$col[185,185,185]{> Trees and Bushes will display their current growth percentage\n> Crops will display their growth stage as \"Current / Final\"\n}Note: If a Tree or Bush is not showing a percentage, that means it is fully grown, and can be harvested.\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 300);
 		toggleGobCollisionBoxesDisplayCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a Hotkey.}", 300);
 		toggleBeastDangerRadiiCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
 		toggleCritterAurasCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
@@ -2786,7 +2786,7 @@ public class OptWnd extends Window {
 	private void setTooltipsForCombatSettingsStuff(){
 		toggleGobDamageInfoCheckBox.tooltip = RichText.render("Enabling this will display the total amount of damage players and animals took.\nNote: The damage you will see saved above players/animals is the total damage you saw the entity take, while inside of your view range. This is not all of the damage said entity might have taken recently.\n$col[185,185,185]{If you change any of the settings below, you will need a damage update in order to see the changes (for example, deal some damage to the player/animal).}", 300);
 		damageInfoClearButton.tooltip = RichText.render("Clears all damage info.\n$col[185,185,185]{Note: This can also be done using an Action Button.}", 320);
-		toggleAutoPeaceCheckbox.tooltip = RichText.render("Enabling this will automatically set your status to 'Peace' when combat is initiated with a new target (animals only). Toggling this on while in combat will also autopeace all animals you are currently fighting.\n$col[185,185,185]{Note: This option can also be turned on/off an Action Button.}", 300);
+		toggleAutoPeaceCheckbox.tooltip = RichText.render("Enabling this will automatically set your status to 'Peace' when combat is initiated with a new target (animals only). Toggling this on while in combat will also autopeace all animals you are currently fighting.\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 300);
 		partyMembersHighlightCheckBox.tooltip = RichText.render("Enabling this will put a color highlight over all party members." +
 				"\n=====================" +
 				"\n$col[255,255,255]{White: }$col[185,185,185]{Yourself}\n$col[0,74,208]{Blue: }$col[185,185,185]{Party Leader}\n$col[0,160,0]{Green: }$col[185,185,185]{Other Members}" +
