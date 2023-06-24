@@ -26,18 +26,23 @@
 
 package haven;
 
-import haven.automated.*;
+import haven.automated.AttackOpponent;
+import haven.automated.ClickNearestGate;
+import haven.automated.OceanScoutBot;
+import haven.cookbook.CookingRecipes;
+import haven.cookbook.RecipeCollector;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.*;
-import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.image.WritableRaster;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -105,7 +110,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	private Gob detectGob;
 	public OceanScoutBot shorelineScoutBot;
 	public Thread shorelineScoutBotThread;
-
+	private RecipeCollector recipeCollector;
+	private Thread recipeCollectorThread;
+	private CookingRecipes cookbook;
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(GameUI.class, slot -> slot.wdg())
@@ -352,8 +359,14 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	makewnd = add(new CraftWindow(), UI.scale(400, 200));
 	makewnd.hide();
 	quickslots = add(new QuickSlotsWdg(), Utils.getprefc("wndc-quickslots", UI.scale(new Coord(426, 10))));
-	if (!Utils.getprefb("showQuickSlotsBar", true))
+	if (!Utils.getprefb("showQuickSlotsBar", true)) {
 		quickslots.hide();
+	}
+	if(recipeCollector == null && recipeCollectorThread == null){
+		recipeCollector = new RecipeCollector();
+		recipeCollectorThread = new Thread(recipeCollector, "RecipeCollectorThread");
+		recipeCollectorThread.start();
+	}
     }
 
     protected void attached() {
@@ -1541,7 +1554,11 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-			new Thread(new RefillWaterContainers(this), "RefillWaterContainers").start();
+			if(cookbook == null){
+				cookbook = new CookingRecipes();
+				this.add(cookbook, new Coord(this.sz.x/2 - cookbook.sz.x/2, this.sz.y/2 - cookbook.sz.y/2 - 200));
+			}
+			cookbook.toggleShow();
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);

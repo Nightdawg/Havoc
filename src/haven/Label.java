@@ -63,15 +63,19 @@ public class Label extends Widget {
 	sz = this.text.sz();
     }
 
-    public Label(String text, int w) {
+	public Text getText() {
+		return text;
+	}
+
+	public Label(String text, int w) {
 	this(text, w, Text.std);
     }
 	
     public Label(String text) {
 	this(text, Text.std);
     }
-	
-    public void settext(String text) {
+
+	public void settext(String text) {
 	this.text.dispose();
 	this.text = f.render(texts = text, col);
 	sz = this.text.sz();
