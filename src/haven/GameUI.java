@@ -90,9 +90,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean swimon = false;
 	public static boolean crimeon = false;
 	public static boolean trackon = false;
-
-	public static boolean preventWaterDrop = false;
-	public static boolean preventDropAnywhere = false;
+	public static boolean preventDropAnywhere = Utils.getprefb("noCursorItemDropping", false);
+	public static boolean preventWaterDrop = Utils.getprefb("noCursorItemDroppingInWater", false);
 
 	public static boolean muteNonFriendly = false;
 
@@ -1470,16 +1469,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxesKB",  KeyMatch.forchar('B', KeyMatch.S));
 	public static KeyBinding kb_toggleHidingBoxes  = KeyBinding.get("toggleHidingBoxesKB",  KeyMatch.forchar('H', KeyMatch.C));
 	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("clickNearestGateKB",  KeyMatch.forchar('Q', 0));
-	public static KeyBinding kb_toggleCombatAutoPeace  = KeyBinding.get("toggleCombatAutoPeaceKB",  KeyMatch.forchar('P', KeyMatch.C | KeyMatch.S));
 	public static KeyBinding kb_aggroLastTarget = KeyBinding.get("aggroLastTarget",  KeyMatch.forchar('T', KeyMatch.S));
 	public static KeyBinding kb_peaceCurrentTarget  = KeyBinding.get("peaceCurrentTargetKB",  KeyMatch.forchar('P', KeyMatch.M));
 
-	public static KeyBinding kb_toggleDangerRadii  = KeyBinding.get("toggleDangerRadii",  KeyMatch.nil);
-	public static KeyBinding kb_toggleCritterAuras  = KeyBinding.get("toggleCritterAuras ",  KeyMatch.nil);
 	public static KeyBinding kb_toggleVehicleSpeed  = KeyBinding.get("toggleVehicleSpeed",  KeyMatch.nil);
-
-	public static KeyBinding kb_toggleNoWaterDropping  = KeyBinding.get("toggleNoWaterDropping ",  KeyMatch.nil);
-	public static KeyBinding kb_toggleNoDropping  = KeyBinding.get("toggleNoDropping",  KeyMatch.nil);
 
 	public static KeyBinding kb_toggleMuteNonFriendly  = KeyBinding.get("toggleMuteNonFriendly",  KeyMatch.nil);
 
@@ -1531,33 +1524,16 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if(kb_aggroButton.key().match(ev)) {
 			wdgmsg("act", "aggro");
 			return(true);
-		} else if(kb_toggleCombatAutoPeace.key().match(ev)) {
-			boolean val = !Fightview.autoPeaceSetting;
-			OptWnd.toggleAutoPeaceCheckbox.set(val);
-			GameUI.this.msg("Autopeace animals when combat starts is now turned " + (val ? "ON" : "OFF") + ".");
-			return(true);
 		} else if (kb_aggroLastTarget.key().match(ev)) {
 			this.runActionThread(new Thread(new AttackOpponent(this, this.lastopponent), "Reaggro"));
 			return(true);
 		} else if(kb_peaceCurrentTarget.key().match(ev)) {
 			peaceCurrentTarget();
 			return(true);
-		} else if (kb_toggleDangerRadii.key().match(ev)) {
-			OptWnd.toggleBeastDangerRadiiCheckBox.set(!OptWnd.beastDangerRadiiEnabled);
-			return true;
-		} else if (kb_toggleCritterAuras.key().match(ev)) {
-			OptWnd.toggleCritterAurasCheckBox.set(!OptWnd.critterAuraEnabled);
-			return true;
 		} else if (kb_toggleVehicleSpeed.key().match(ev)) {
 //			vehicleSpeed = !vehicleSpeed;
 //			msg("VehicleSpeed display " + (vehicleSpeed ? "enabled" : "disabled"));
 			msg("Not yet implemented");
-		} else if (kb_toggleNoWaterDropping.key().match(ev)) {
-			msg(preventWaterDrop ? "Dropping in water disabled " : "Dropping in water enabled");
-			preventWaterDrop = !preventWaterDrop;
-		} else if (kb_toggleNoDropping.key().match(ev)) {
-			msg(preventWaterDrop ? "Dropping disabled" : "Dropping enabled");
-			preventDropAnywhere = !preventDropAnywhere;
 		} else if (kb_toggleMuteNonFriendly.key().match(ev)) {
 			msg(muteNonFriendly ? "Non-Friendly players muted" : "Non-Friendly players unmuted");
 			muteNonFriendly = !muteNonFriendly;

@@ -285,12 +285,15 @@ public class Fightsess extends Widget {
 			myOpenings.sort((o2, o1) -> Integer.compare(getOpeningValue(o1), getOpeningValue(o2)));
 			Buff maneuver = null;
 			for (Buff buff : myOpenings) {
-				if (buff.res != null && buff.res.get() != null) {
-					String name = buff.res.get().name;
-					if (maneuvers.contains(name)) {
-						maneuver = buff;
-						break;
+				try {
+					if (buff.res != null && buff.res.get() != null) {
+						String name = buff.res.get().name;
+						if (maneuvers.contains(name)) {
+							maneuver = buff;
+							break;
+						}
 					}
+				} catch (Loading ignored) {
 				}
 			}
 			if (maneuver != null && myOpenings.size() > 1) {
@@ -343,12 +346,15 @@ public class Fightsess extends Widget {
 				enemyOpenings.sort((o1, o2) -> Integer.compare(getOpeningValue(o2), getOpeningValue(o1)));
 				Buff maneuver = null;
 				for (Buff buff : enemyOpenings) {
-					if (buff.res != null && buff.res.get() != null) {
-						String name = buff.res.get().name;
-						if (maneuvers.contains(name)) {
-							maneuver = buff;
-							break;
+					try {
+						if (buff.res != null && buff.res.get() != null) {
+							String name = buff.res.get().name;
+							if (maneuvers.contains(name)) {
+								maneuver = buff;
+								break;
+							}
 						}
+					} catch (Loading ignored) {
 					}
 				}
 				if (maneuver != null && enemyOpenings.size() > 1) {

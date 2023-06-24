@@ -2584,7 +2584,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     public boolean drop(final Coord cc, Coord ul) {
 	new Hittest(cc) {
 	    public void hit(Coord pc, Coord2d mc, ClickData inf) {
-			if(GameUI.preventDropAnywhere || GameUI.preventWaterDrop && !ui.modctrl) {
+			if((GameUI.preventDropAnywhere || GameUI.preventWaterDrop) && !ui.modctrl) {
 				boolean nodropping = false;
 				if (GameUI.preventDropAnywhere) {
 					nodropping = true;
