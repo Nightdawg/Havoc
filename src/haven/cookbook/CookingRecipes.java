@@ -180,7 +180,6 @@ public class CookingRecipes extends Window {
             sql.append(" LIMIT 10 OFFSET ");
             sql.append(page * 10 - 10);
 
-            System.out.println(sql);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql.toString());
 
