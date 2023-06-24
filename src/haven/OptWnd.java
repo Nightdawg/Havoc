@@ -627,8 +627,10 @@ public class OptWnd extends Window {
 			public void set(boolean val) {
 				Utils.setprefb("showGobGrowthInfo", val);
 				GobGrowthInfo.showGobGrowthInfo = val;
-				if (gameui() != null)
+				if (gameui() != null) {
 					ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
+					gameui().msg("Plant Growth Info is now " + (val ? "SHOWN" : "HIDDEN") + "!");
+				}
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 6));
@@ -763,19 +765,14 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "'Attack!' Cursor", GameUI.kb_aggroButton, y);
 			y = addbtn(cont, "Left Hand (Quick switch)", GameUI.kb_leftQuickSlotButton, y+6);
 			y = addbtn(cont, "Right Hand (Quick switch)", GameUI.kb_rightQuickSlotButton, y);
-			y = addbtn(cont, "Toggle Animal Autopeace", GameUI.kb_toggleCombatAutoPeace, y+6);
 			y = addbtn(cont, "Peace Current Target", GameUI.kb_peaceCurrentTarget, y);
 			y = addbtn(cont, "Re-aggro Last Target", GameUI.kb_aggroLastTarget, y);
 			y = addbtn(cont, "Toggle Collision Boxes", GameUI.kb_toggleCollisionBoxes, y+6);
 			y = addbtn(cont, "Toggle Object Hiding", GameUI.kb_toggleHidingBoxes, y);
 			y = addbtn(cont, "Click Nearest Non-Visitor Gate", GameUI.kb_clickNearestGate, y);
-			y = addbtn(cont, "Toggle Animal Danger Radii", GameUI.kb_toggleDangerRadii, y+6);
-			y = addbtn(cont, "Toggle Critter Circle Auras", GameUI.kb_toggleCritterAuras, y);
 
 			y = addbtn(cont, "Display Vehicle Speed", GameUI.kb_toggleVehicleSpeed, y+6);
 
-			y = addbtn(cont, "Toggle No Water Drop", GameUI.kb_toggleNoWaterDropping, y+6);
-			y = addbtn(cont, "Toggle No Drop", GameUI.kb_toggleNoDropping, y);
 			y = addbtn(cont, "Mute Non-Friendly", GameUI.kb_toggleMuteNonFriendly, y+6);
 
 			y = addbtn(cont, "Toggle Walk Pathfinder", GameUI.kb_toggleWalkWithPathfinder, y+6);
@@ -882,10 +879,10 @@ public class OptWnd extends Window {
 	private static CheckBox simpleForageablesCheckBox;
 	public static boolean simplifiedForageables = Utils.getprefb("simplifiedForageables", false);
 	private static CheckBox disableWeatherEffectsCheckBox;
-	private static CheckBox disableFlavourObjectsCheckBox;
-	private static CheckBox flatWorldCheckBox;
-	private static CheckBox tileSmoothingCheckBox;
-	private static CheckBox tileTransitionsCheckBox;
+	public static CheckBox disableFlavourObjectsCheckBox;
+	public static CheckBox flatWorldCheckBox;
+	public static CheckBox tileSmoothingCheckBox;
+	public static CheckBox tileTransitionsCheckBox;
 	private static CheckBox flatCaveWallsCheckBox;
 	public static boolean disableFlavourObjects = Utils.getprefb("disableFlavourObjects", false);
 	public static boolean flatWorldSetting = Utils.getprefb("flatWorld", false);
@@ -928,13 +925,16 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
-			prev = add(disableFlavourObjectsCheckBox = new CheckBox("Disable Flavour Objects"){
+			prev = add(disableFlavourObjectsCheckBox = new CheckBox("Hide Flavour Objects"){
 				{a = Utils.getprefb("disableFlavourObjects", false);}
 				public void set(boolean val) {
 					Utils.setprefb("disableFlavourObjects", val);
 					disableFlavourObjects = val;
 					if (ui.sess != null)
 						ui.sess.glob.map.invalidateAll();
+					if (gameui() != null) {
+						gameui().msg("Flavour Objects now" + (val ? "HIDDEN" : "SHOWN") + "!");
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
@@ -961,6 +961,9 @@ public class OptWnd extends Window {
 					flatWorldSetting = val;
 					if (ui.sess != null)
 						ui.sess.glob.map.invalidateAll();
+					if (gameui() != null) {
+						gameui().msg("Flat World is now " + (val ? "ENABLED" : "DISABLED") + "!");
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 16));
@@ -972,6 +975,9 @@ public class OptWnd extends Window {
 					noTileSmoothing = val;
 					if (ui.sess != null)
 						ui.sess.glob.map.invalidateAll();
+					if (gameui() != null) {
+						gameui().msg("Tile Smoothing is now " + (val ? "DISABLED" : "ENABLED") + "!");
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
@@ -983,6 +989,9 @@ public class OptWnd extends Window {
 					noTileTransitions = val;
 					if (ui.sess != null)
 						ui.sess.glob.map.invalidateAll();
+					if (gameui() != null) {
+						gameui().msg("Tile Transitions are now " + (val ? "DISABLED" : "ENABLED") + "!");
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8));
@@ -1174,11 +1183,11 @@ public class OptWnd extends Window {
 
 	private static Label defaultSpeedLabel;
 	private static CheckBox instantFlowerMenuCTRLCheckBox;
-	private static CheckBox massSplitCtrlShiftAltCheckBox;
 	private static CheckBox autoswitchBunnyPlateBootsCheckBox;
 	public static CheckBox saveCutleryCheckBox = null;
+	public static CheckBox noCursorItemDroppingCheckBox = null;
+	public static CheckBox noCursorItemDroppingInWaterCheckBox = null;
 	public static boolean instantFlowerMenuCTRL = Utils.getprefb("instantFlowerMenuCTRL", true);
-	public static boolean massSplitCtrlShiftAlt = Utils.getprefb("massSplitCtrlShiftAlt", true);
 	public static boolean autoswitchBunnyPlateBoots = Utils.getprefb("autoswitchBunnyPlateBoots", true);
 	public static boolean antiCutleryBreakage = Utils.getprefb("antiCutleryBreakage", true);
 
@@ -1275,14 +1284,6 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
-			prev = add(massSplitCtrlShiftAltCheckBox = new CheckBox("Mass Split on Right Click + holding Ctrl+Shift+Alt"){
-				{a = Utils.getprefb("massSplitCtrlShiftAlt", true);}
-				public void set(boolean val) {
-					Utils.setprefb("massSplitCtrlShiftAlt", val);
-					massSplitCtrlShiftAlt = val;
-					a = val;
-				}
-			}, prev.pos("bl").adds(0, 6));
 			prev = add(autoswitchBunnyPlateBootsCheckBox = new CheckBox("Autoswitch Bunny Slippers and Plate Boots from inventory"){
 				{a = Utils.getprefb("autoswitchBunnyPlateBoots", true);}
 				public void set(boolean val) {
@@ -1302,6 +1303,34 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 6));
 
+			prev = add(noCursorItemDroppingCheckBox = new CheckBox("No Cursor Item Dropping (Anywhere)"){
+				{a = Utils.getprefb("noCursorItemDropping", false);}
+				public void set(boolean val) {
+					Utils.setprefb("noCursorItemDropping", val);
+					GameUI.preventDropAnywhere = val;
+					if (gameui() != null) {
+						gameui().msg("No Item Dropping (Anywhere) is now " + (val ? "ENABLED" : "DISABLED") + "!");
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+
+			prev = add(noCursorItemDroppingInWaterCheckBox = new CheckBox("No Cursor Item Dropping (Water Only)"){
+				{a = Utils.getprefb("noCursorItemDroppingInWater", false);}
+				public void set(boolean val) {
+					Utils.setprefb("noCursorItemDroppingInWater", val);
+					GameUI.preventWaterDrop = val;
+					if (gameui() != null) {
+						if (!GameUI.preventDropAnywhere) {
+							gameui().msg("No Item Dropping (in Water) is now " + (val ? "ENABLED" : "DISABLED") + "!");
+						} else {
+							gameui().msg("No Item Dropping (in Water) is now " + (val ? "ENABLED" : "DISABLED") + "!" + (val ? "" : " (WARNING!!!: No Item Dropping (Anywhere) IS STILL ENABLED, and it overwrites this option!)"));
+						}
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(50)));
 			setTooltipsForGameplaySettingsStuff();
 			pack();
@@ -1315,7 +1344,7 @@ public class OptWnd extends Window {
 	public static CheckBox partyMembersHighlightCheckBox;
 	public static CheckBox partyMembersCirclesCheckBox;
 	public static CheckBox aggroedEnemiesCirclesCheckBox;
-	private static Button damageInfoClearButton;
+	public static Button damageInfoClearButton;
 	public static boolean partyMembersHighlight = Utils.getprefb("partyMembersHighlight", false);
 	public static boolean partyMembersCircles = Utils.getprefb("partyMembersCircles", true);
 	public class NDCombatSettingsPanel extends Panel {
@@ -1444,6 +1473,9 @@ public class OptWnd extends Window {
 			armorCheckBox.lbl = Text.std.render("Armor", new Color(50, 255, 92, 255));
 			add(damageInfoClearButton = new Button(UI.scale(70), "Clear", false).action(() -> {
 				GobDamageInfo.clearAllDamage(gameui());
+				if (gameui() != null) {
+					gameui().msg("All Combat Damage Info has been CLEARED!");
+				}
 			}), prev.pos("bl").adds(0, -34).x(UI.scale(210)));
 			prev = add(new Label("Other Combat Settings:"), prev.pos("bl").adds(0, 14).x(0));
 			prev = add(toggleAutoPeaceCheckbox = new CheckBox("Autopeace animals when combat starts"){
@@ -1451,12 +1483,12 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("autoPeaceCombat", val);
 					Fightview.autoPeaceSetting = val;
+					if (gameui() != null) {
+						gameui().msg("Autopeace Animals when combat starts is now " + (val ? "ENABLED" : "DISABLED") + ".");
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 8));
-			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(277, 40))), prev.pos("bl").adds(-2, 2));
-			Widget cont = scroll.cont;
-			addbtn(cont, "Toggle autopeace hotkey:", GameUI.kb_toggleCombatAutoPeace, 0);
 			prev = add(new CheckBox("Mark Current Target"){
 				{a = Utils.getprefb("markCurrentCombatTarget", true);}
 				public void set(boolean val) {
@@ -1464,7 +1496,7 @@ public class OptWnd extends Window {
 					Fightsess.markCombatTargetSetting = val;
 					a = val;
 				}
-			}, scroll.pos("bl").adds(2, -6));
+			}, prev.pos("bl").adds(0, 6));
 			prev = add(aggroedEnemiesCirclesCheckBox = new CheckBox("Put Circles under Aggroed Enemies (Players/Mobs)"){
 				{a = Utils.getprefb("aggroedEnemiesCircles", true);}
 				public void set(boolean val) {
@@ -2687,7 +2719,7 @@ public class OptWnd extends Window {
 	Widget prev;
 	y = main.add(new PButton(UI.scale(200), "Video Settings", -1, video, "Video Settings"), 0, y).pos("bl").adds(0, 5).y;
 	y = main.add(new PButton(UI.scale(200), "Audio Settings", -1, audio, "Audio Settings"), 0, y).pos("bl").adds(0, 5).y;
-	y = main.add(new PButton(UI.scale(200), "Keybindings", -1, keybind, "Keybindings"), 0, y).pos("bl").adds(0, 25).y;
+	y = main.add(new PButton(UI.scale(200), "Keybindings (Hotkeys)", -1, keybind, "Keybindings (Hotkeys)"), 0, y).pos("bl").adds(0, 25).y;
 
 	y = main.add(new PButton(UI.scale(200), "Advanced Settings", -1, advancedSettings, "Advanced Settings"), 0, y).pos("bl").adds(0, 5).y;
 
@@ -2742,9 +2774,9 @@ public class OptWnd extends Window {
 		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in.\n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
 		showQuickSlotsBar.tooltip = RichText.render("Note: The Quick Switch keybinds ('Right Hand' and 'Left Hand') will still work, regardless of this widget being visible or not.", 300);
 		toggleGobGrowthInfoCheckBox.tooltip = RichText.render("Enabling this will show the following growth information:\n$col[185,185,185]{> Trees and Bushes will display their current growth percentage\n> Crops will display their growth stage as \"Current / Final\"\n}Note: If a Tree or Bush is not showing a percentage, that means it is fully grown, and can be harvested.", 300);
-		toggleGobCollisionBoxesDisplayCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
-		toggleBeastDangerRadiiCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
-		toggleCritterAurasCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
+		toggleGobCollisionBoxesDisplayCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a Hotkey.}", 300);
+		toggleBeastDangerRadiiCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
+		toggleCritterAurasCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
 		showContainerFullnessCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Container Objects, to indicate their fullness:" +
 				"\n$col[185,0,0]{Red: }$col[255,255,255]{Full}\n$col[224,213,0]{Yellow: }$col[255,255,255]{Contains items}\n$col[0,185,0]{Green: }$col[255,255,255]{Empty}", 300);
 		showWorkstationStageCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Workstation Objects (Drying Frame, Tanning Tub, Garden Pot, Cheese Rack), to indicate their progress stage:" +
@@ -2753,8 +2785,8 @@ public class OptWnd extends Window {
 
 	private void setTooltipsForCombatSettingsStuff(){
 		toggleGobDamageInfoCheckBox.tooltip = RichText.render("Enabling this will display the total amount of damage players and animals took.\nNote: The damage you will see saved above players/animals is the total damage you saw the entity take, while inside of your view range. This is not all of the damage said entity might have taken recently.\n$col[185,185,185]{If you change any of the settings below, you will need a damage update in order to see the changes (for example, deal some damage to the player/animal).}", 300);
-		damageInfoClearButton.tooltip = RichText.render("Clear all damage info", 300);
-		toggleAutoPeaceCheckbox.tooltip = RichText.render("Enabling this will automatically set your status to 'Peace' when combat is initiated with a new target (animals only). Toggling this on while in combat will also autopeace all animals you are currently fighting.\n$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.}", 300);
+		damageInfoClearButton.tooltip = RichText.render("Clears all damage info.\n$col[185,185,185]{Note: This can also be done using an Action Button.}", 320);
+		toggleAutoPeaceCheckbox.tooltip = RichText.render("Enabling this will automatically set your status to 'Peace' when combat is initiated with a new target (animals only). Toggling this on while in combat will also autopeace all animals you are currently fighting.\n$col[185,185,185]{Note: This option can also be turned on/off an Action Button.}", 300);
 		partyMembersHighlightCheckBox.tooltip = RichText.render("Enabling this will put a color highlight over all party members." +
 				"\n=====================" +
 				"\n$col[255,255,255]{White: }$col[185,185,185]{Yourself}\n$col[0,74,208]{Blue: }$col[185,185,185]{Party Leader}\n$col[0,160,0]{Green: }$col[185,185,185]{Other Members}" +
@@ -2769,21 +2801,24 @@ public class OptWnd extends Window {
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
 		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding Ctrl before right clicking an item or object instantly select the first available option from the flower menu.", 300);
-		massSplitCtrlShiftAltCheckBox.tooltip = RichText.render("Enabling this will make holding Ctrl+Shift+Alt before right clicking an item to instantly split all of the items of this type.", 300);
 		autoswitchBunnyPlateBootsCheckBox.tooltip = RichText.render("Enabling this will cause your currently equipped Plate Boots to automatically swap with a pair of bunny slippers from your inventory, whenever you right click to chase a rabbit, and vice versa if you click on anything else or just left click to walk.\n$col[185,185,185]{I don't see many reason for which you'd ever want to disable this setting, but alas, I made it an option.}", 300);
 		saveCutleryCheckBox.tooltip = RichText.render("Enabling this will cause any cutlery that has 1 wear left to be instantly transferred from the table into your inventory.\n$col[185,185,185]{A warning message will be shown, to let you know that the item has been transferred.}", 300);
+		noCursorItemDroppingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: You can still drop the item on your cursor if you hold Ctrl.}", 300);
+		noCursorItemDroppingInWaterCheckBox.tooltip = RichText.render("Warning: If the previous option is Enabled, it will overwrite this one. You will still not be able to drop items in water.\n$col[185,185,185]{Note: You can still drop the item on your cursor if you hold Ctrl.}", 300);
 	}
 
 	private void setTooltipsForGraphicsSettingsStuff(){
 		nightVisionLabel.tooltip = RichText.render("Increasing this will simulate daytime lighting during the night.\n$col[185,185,185]{It slightly affects the light levels during the day too.}", 280);
 		nightVisionResetButton.tooltip = RichText.render("Reset to default", 300);
 		disableWeatherEffectsCheckBox.tooltip = RichText.render("Note: This disables *ALL* weather and camera effects, including rain effects, drunkenness distortion, drug high, valhalla gray overlay, camera shake, and any other similar effects.", 300);
-		disableFlavourObjectsCheckBox.tooltip = RichText.render("Note: This only disables random objects that appear in the world which you cannot interact with.\n$col[185,185,185]{Players usually disable flavour objects to improve visibility and/or performance.}", 300);
-		flatWorldCheckBox.tooltip = RichText.render("Enabling this will make the entire game world terrain flat.\n$col[185,185,185]{Cliffs will still be drawn with their relative height, scaled down.}", 300);
+		disableFlavourObjectsCheckBox.tooltip = RichText.render("Note: This only disables random objects that appear in the world which you cannot interact with.\n$col[185,185,185]{Players usually disable flavour objects to improve visibility, especially in combat.}\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
+		flatWorldCheckBox.tooltip = RichText.render("Enabling this will make the entire game world terrain flat.\n$col[185,185,185]{Cliffs will still be drawn with their relative height, scaled down.}\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
+		tileTransitionsCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
+		tileSmoothingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
 	}
 
 	private void setTooltipsForHidingSettingsStuff(){
-		toggleGobHidingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a hotkey.", 300);
+		toggleGobHidingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a Hotkey.", 300);
 	}
 
 	private void setTooltipsForAlarmSettingsStuff(){

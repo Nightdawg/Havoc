@@ -339,6 +339,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/CombatDecks/CombatDeck3");
 		makeLocal("paginae/nightdawg/CombatDecks/CombatDeck4");
 		makeLocal("paginae/nightdawg/CombatDecks/CombatDeck5");
+
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_tsacks");
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_wbindles");
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_b12");
@@ -353,7 +354,20 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_hirdsmanshield");
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_bronzeshield");
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_fyrdsmanshield");
+
 		makeLocal("paginae/nightdawg/Bots/OceanShorelineScout");
+
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleAnimalDangerRadii");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleCritterCircleAuras");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleFlatWorld");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleTileSmoothing");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleTileTransitions");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleFlavourObjects");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ClearAllCombatDamage");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleGrowthInfo");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleItemDropping");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleItemDroppingInWater");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleAnimalAutoPeace");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -572,6 +586,30 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.shorelineScoutBot = null;
 					gui.shorelineScoutBotThread = null;
 				}
+			}
+		} else if (ad[1].equals("CustomClientToggle")) {
+			if (ad[2].equals("AnimalDangerRadii")) {
+				OptWnd.toggleBeastDangerRadiiCheckBox.set(!OptWnd.toggleBeastDangerRadiiCheckBox.a);
+			} else if (ad[2].equals("CritterCircleAuras")) {
+				OptWnd.toggleCritterAurasCheckBox.set(!OptWnd.toggleCritterAurasCheckBox.a);
+			} else if (ad[2].equals("FlatWorld")) {
+				OptWnd.flatWorldCheckBox.set(!OptWnd.flatWorldCheckBox.a);
+			} else if (ad[2].equals("TileSmoothing")) {
+				OptWnd.tileSmoothingCheckBox.set(!OptWnd.tileSmoothingCheckBox.a);
+			} else if (ad[2].equals("TileTransitions")) {
+				OptWnd.tileTransitionsCheckBox.set(!OptWnd.tileTransitionsCheckBox.a);
+			} else if (ad[2].equals("FlavourObjects")) {
+				OptWnd.disableFlavourObjectsCheckBox.set(!OptWnd.disableFlavourObjectsCheckBox.a);
+			} else if (ad[2].equals("ClearAllCombatDamage")) {
+				OptWnd.damageInfoClearButton.click();
+			} else if (ad[2].equals("GrowthInfo")) {
+				OptWnd.toggleGobGrowthInfoCheckBox.set(!OptWnd.toggleGobGrowthInfoCheckBox.a);
+			} else if (ad[2].equals("NoDropping")) {
+				OptWnd.noCursorItemDroppingCheckBox.set(!OptWnd.noCursorItemDroppingCheckBox.a);
+			} else if (ad[2].equals("NoDroppingInWater")) {
+				OptWnd.noCursorItemDroppingInWaterCheckBox.set(!OptWnd.noCursorItemDroppingInWaterCheckBox.a);
+			} else if (ad[2].equals("AnimalAutoPeace")) {
+				OptWnd.toggleAutoPeaceCheckbox.set(!OptWnd.toggleAutoPeaceCheckbox.a);
 			}
 		}
 	}

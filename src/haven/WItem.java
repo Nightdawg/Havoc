@@ -268,26 +268,27 @@ public class WItem extends Widget implements DTarget {
 	    }
 	    return(true);
 	} else if(btn == 3) {
-		if(OptWnd.massSplitCtrlShiftAlt && ui.modctrl && ui.modmeta && ui.modshift){
-			String name = item.getname();
-			if(name.contains("Block of") || name.equals("Pumpkin") || name.contains("gfx/invobjs/fish-")){
-				if(name.contains("Block of")){
-					name = "Block of";
-				} else if (name.contains("gfx/invobjs/fish-")){
-					name = "gfx/invobjs/fish-";
-				}
-				String finalName = name;
-				List<WItem> wItems = gameui().getAllInventories().stream()
-						.flatMap(inventory -> inventory.getItemsPartial(finalName).stream())
-						.collect(Collectors.toList());
-				int last = ui.lastid;
-				for(WItem wItem: wItems){
-					wItem.item.wdgmsg("iact", c, 0);
-					ui.rcvr.rcvmsg((last+1), "cl", 0, 0);
-					last += 6;
-				}
-			}
-		}
+		// TODO: Make this a script Action Button instead
+//		if(OptWnd.massSplitCtrlShiftAlt && ui.modctrl && ui.modmeta && ui.modshift){
+//			String name = item.getname();
+//			if(name.contains("Block of") || name.equals("Pumpkin") || name.contains("gfx/invobjs/fish-")){
+//				if(name.contains("Block of")){
+//					name = "Block of";
+//				} else if (name.contains("gfx/invobjs/fish-")){
+//					name = "gfx/invobjs/fish-";
+//				}
+//				String finalName = name;
+//				List<WItem> wItems = gameui().getAllInventories().stream()
+//						.flatMap(inventory -> inventory.getItemsPartial(finalName).stream())
+//						.collect(Collectors.toList());
+//				int last = ui.lastid;
+//				for(WItem wItem: wItems){
+//					wItem.item.wdgmsg("iact", c, 0);
+//					ui.rcvr.rcvmsg((last+1), "cl", 0, 0);
+//					last += 6;
+//				}
+//			}
+//		}
 		if (ui.modmeta && !ui.modctrl) {
 			if (inv) {
 				wdgmsg("transfer-identical", item, true);
