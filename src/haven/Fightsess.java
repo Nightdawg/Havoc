@@ -431,6 +431,7 @@ public class Fightsess extends Widget {
 				if (fv.cooldownUpdated){
 					fv.cooldownUpdated = false;
 					currentCooldown = fv.atkct - now;
+					if (currentCooldown < 0) currentCooldown = 0;
 				}
 				g.aimage(Text.renderstroked(fmt2DecPlaces(currentCooldown)).tex(), cdc2, 0.5, 0.5);
 			}

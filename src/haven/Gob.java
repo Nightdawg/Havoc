@@ -28,6 +28,7 @@ package haven;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.function.*;
@@ -42,6 +43,7 @@ import haven.sprites.AuraCircleSprite;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
@@ -70,10 +72,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private final List<Overlay> dols = new ArrayList<>();
 	private Overlay customAnimalOverlay;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
+	public int playerPoseUpdatedCounter = 0;
 	public Boolean isMannequin = null;
 	private Boolean isMe = null;
 	private Boolean playerAlarmPlayed = false;
 	public Boolean isComposite = false;
+	public Boolean isDeadPlayer = false;
 	public double gobSpeed = 0;
 	public static final HashSet<Long> alarmPlayed = new HashSet<Long>();
 
@@ -117,7 +121,31 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	public void updPose(HashSet<String> poses) {
-		if (this.getres().name.equals("gfx/borka/body")){
+		isComposite = true;
+		Iterator<String> iter = poses.iterator();
+		while (iter.hasNext()) {
+			String s = iter.next();
+			if (s.contains("knock") || s.contains("dead") || s.contains("waterdead")) {
+				knocked = true;
+				break;
+			}
+			if (s.contains("mannequin")){
+				isMannequin = true;
+				break;
+			} else {
+				isMannequin = false;
+			}
+		}
+		if (knocked != null && knocked) {
+			try {
+				removeOl(customAnimalOverlay);
+				customAnimalOverlay = null;
+			} catch (Exception np){
+			}
+		} else {
+			knocked = false;
+		}
+		if (this.getres().name.equals("gfx/borka/body") && isMannequin != null && !isMannequin){
 			boolean imOnLand = true;
 			if (poses.contains("rowboat") || poses.contains("coracleidle") || poses.contains("snekkja") || poses.contains("knarr") || poses.contains("dugout")) {
 				imOnLand = false;
@@ -148,33 +176,15 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				removeOl(archeryRadius);
 				archeryRadius = null;
 			}
-		}
-		isComposite = true;
-		Iterator<String> iter = poses.iterator();
-		while (iter.hasNext()) {
-			String s = iter.next();
-			if (s.contains("knock") || s.contains("dead") || s.contains("waterdead")){
-				knocked = true;
-				break;
+			if  (!isDeadPlayer){
+				checkIfPlayerIsDead(poses);
+				if (playerPoseUpdatedCounter >= 2) { // ND: Do this to prevent the sounds from being played if you load in an already knocked/killed hearthling.
+					knockedOrDeadPlayerSoundEfect(poses);
+				}
+				playerPoseUpdatedCounter = playerPoseUpdatedCounter + 1;
 			}
-			if (s.contains("mannequin")){
-				isMannequin = true;
-				break;
-			} else {
-				isMannequin = false;
-			}
-		}
-		if (knocked != null && knocked) {
-			try {
-				removeOl(customAnimalOverlay);
-				customAnimalOverlay = null;
-			} catch (Exception np){
-			}
-		} else {
-			knocked = false;
 		}
 	}
-
 	public void initComp(Composite c) {
 		c.cmpinit(this);
 	}
@@ -1917,5 +1927,99 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				addol(archeryRadius);
 			}
 		}
+	}
+
+	public void knockedOrDeadPlayerSoundEfect(HashSet<String> poses){
+		Gob hearthling = this;
+		final Timer timer = new Timer(); // ND: Need to do this with a timer cause the knocked out birds get loaded a few miliseconds later. I hope 100 is enough to prevent any issues.
+		timer.schedule(new TimerTask(){
+			@Override
+			public void run(){
+				boolean imDead = true;
+				for (GAttrib g : hearthling.attr.values()) {
+					if (g instanceof Drawable) {
+						if (g instanceof Composite) {
+							Composite c = (Composite) g;
+							if (c.comp.cequ.size() > 0) {
+								for (Composited.ED item : c.comp.cequ) {
+									if (item.res.res.get().basename().equals("knockchirp")) {
+										imDead = false;
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+				if (poses.contains("knock") || poses.contains("drowned")) {
+					if (!imDead) {
+						File file = new File("res/sfx/PlayerKnockedOut.wav");
+						if (file.exists()) {
+							try {
+								AudioInputStream in = AudioSystem.getAudioInputStream(file);
+								AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+								AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+								Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+								((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, 1));
+							} catch (UnsupportedAudioFileException e) {
+								e.printStackTrace();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					} else {
+						isDeadPlayer = true;
+						File file = new File("res/sfx/PlayerKilled.wav");
+						if (file.exists()) {
+							try {
+								AudioInputStream in = AudioSystem.getAudioInputStream(file);
+								AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+								AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+								Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+								((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, 1));
+							} catch (UnsupportedAudioFileException e) {
+								e.printStackTrace();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+				timer.cancel();
+			}
+		}, 100);
+	}
+
+	public void checkIfPlayerIsDead(HashSet<String> poses){
+		Gob hearthling = this;
+		final Timer timer = new Timer(); // ND: Need to do this with a timer cause the knocked out birds get loaded a few miliseconds later. I hope 100 is enough to prevent any issues.
+		timer.schedule(new TimerTask(){
+			@Override
+			public void run() {
+				if (poses.contains("rigormortis")) {
+					isDeadPlayer = true;
+					return;
+				}
+				if (poses.contains("knock") || poses.contains("drowned")) {
+					isDeadPlayer = true;
+					for (GAttrib g : hearthling.attr.values()) {
+						if (g instanceof Drawable) {
+							if (g instanceof Composite) {
+								Composite c = (Composite) g;
+								if (c.comp.cequ.size() > 0) {
+									for (Composited.ED item : c.comp.cequ) {
+										if (item.res.res.get().basename().equals("knockchirp")) {
+											isDeadPlayer = false;
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				timer.cancel();
+			}
+		}, 100);
 	}
 }

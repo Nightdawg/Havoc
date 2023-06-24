@@ -933,7 +933,7 @@ public class OptWnd extends Window {
 					if (ui.sess != null)
 						ui.sess.glob.map.invalidateAll();
 					if (gameui() != null) {
-						gameui().msg("Flavour Objects now" + (val ? "HIDDEN" : "SHOWN") + "!");
+						gameui().msg("Flavour Objects now " + (val ? "HIDDEN" : "SHOWN") + "!");
 					}
 					a = val;
 				}
