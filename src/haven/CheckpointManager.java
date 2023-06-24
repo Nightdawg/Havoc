@@ -17,6 +17,7 @@ import static haven.MCache.tilesz;
 
 
 public class CheckpointManager extends Window implements Runnable {
+    Coord2d posres = Coord2d.of(0x1.0p-10, 0x1.0p-10).mul(11, 11);
     private static int delayMs = 250;
     private GameUI gui;
     private boolean stop = false;
@@ -38,13 +39,14 @@ public class CheckpointManager extends Window implements Runnable {
         add(new Label("Add Checkpoint"), UI.scale(169, 1));
         add(new Label("behind this one"), UI.scale(171, 12));
         add(new Label("Remove"), UI.scale(296, 8));
-        checkpointList = new CheckpointManager.CheckpointList(390, 5);
+        checkpointList = new CheckpointList(390, 5);
         add(checkpointList, UI.scale(5, 30));
         pause = add(new Button(UI.scale(100), "Start") {
             @Override
             public void click() {
                 paused = !paused;
                 this.change(paused ? "Start" : "Pause");
+                gui.map.wdgmsg("click", Coord.z, gui.map.player().rc.floor(posres), 1, 0);
             }
         }, UI.scale(25, 170));
         this.c = new Coord(100, 100);
