@@ -819,9 +819,6 @@ public class MCache implements MapSource {
     }
 
     public double getfz(Coord tc) {
-	if (OptWnd.flatWorldSetting) {
-		return 0;
-	}
 	Grid g = getgridt(tc);
 	return(g.getz(tc.sub(g.ul)));
     }

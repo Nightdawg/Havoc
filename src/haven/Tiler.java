@@ -222,6 +222,9 @@ public abstract class Tiler {
 	}
 
 	public double getz(Coord tc) {
+		if (OptWnd.flatWorldSetting) {
+			return 0;
+		}
 	    return(m.map.getfz(tc));
 	}
     }

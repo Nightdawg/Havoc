@@ -26,7 +26,7 @@ public class CookingRecipes extends Window {
 
     public CookingRecipes() {
         super(UI.scale(1100, 650), "CookBook");
-        this.show = true;
+        this.show = false;
         this.query = "";
         this.page = 1;
         add(new TextEntry(700, query) {

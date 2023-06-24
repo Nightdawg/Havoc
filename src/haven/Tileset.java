@@ -198,7 +198,12 @@ public class Tileset extends Resource.Layer {
 	    }
 
 	    public int gettile(Coord tc) {return(grid.gettile(tc.add(toff)));}
-	    public double getfz(Coord tc) {return(grid.getfz(tc.add(toff)));}
+	    public double getfz(Coord tc) {
+			if (OptWnd.flatWorldSetting) {
+				return 0;
+			}
+			return(grid.getfz(tc.add(toff)));
+		}
 	    public Tileset tileset(int t) {return(grid.tileset(t));}
 	    public Tiler tiler(int t) {return(grid.tiler(t));}
 	}
