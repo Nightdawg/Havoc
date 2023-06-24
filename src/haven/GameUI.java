@@ -1019,8 +1019,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public void draw(GOut g) {
 	actionBar1.c = new Coord(chat.c.x, chat.c.y - actionBar1.sz.y - UI.scale(5));
 	actionBar2.c = new Coord(chat.c.x, chat.c.y - actionBar1.sz.y - actionBar2.sz.y - UI.scale(3));
-	actionBar3.c = new Coord(sz.x - actionBar3.sz.x - UI.scale(10), menupanel.c.y - actionBar3.sz.y + UI.scale(20));
-	actionBar4.c = new Coord(sz.x - actionBar3.sz.x - actionBar4.sz.x - UI.scale(5), menupanel.c.y - actionBar4.sz.y + UI.scale(20));
+	actionBar3.c = new Coord(sz.x - actionBar3.sz.x - UI.scale(10), menupanel.c.y - actionBar3.sz.y + UI.scale(60));
+	actionBar4.c = new Coord(sz.x - actionBar3.sz.x - actionBar4.sz.x - UI.scale(5), menupanel.c.y - actionBar4.sz.y + UI.scale(60));
 	super.draw(g);
 	int by = sz.y;
 	if(chat.visible())
