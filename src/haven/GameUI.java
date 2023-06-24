@@ -26,20 +26,23 @@
 
 package haven;
 
-import haven.automated.*;
-import haven.cookbook.CookBook;
+import haven.automated.AttackOpponent;
+import haven.automated.ClickNearestGate;
+import haven.automated.OceanScoutBot;
+import haven.cookbook.CookingRecipes;
 import haven.cookbook.RecipeCollector;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.*;
-import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.image.WritableRaster;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -110,6 +113,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public Thread shorelineScoutBotThread;
 	private RecipeCollector recipeCollector;
 	private Thread recipeCollectorThread;
+	private CookingRecipes cookbook;
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(GameUI.class, slot -> slot.wdg())
@@ -1569,8 +1573,11 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-			CookBook cookBook = new CookBook();
-			this.add(cookBook, new Coord(this.sz.x/2 - cookBook.sz.x/2, this.sz.y/2 - cookBook.sz.y/2 - 200));
+			if(cookbook == null){
+				cookbook = new CookingRecipes();
+				this.add(cookbook, new Coord(this.sz.x/2 - cookbook.sz.x/2, this.sz.y/2 - cookbook.sz.y/2 - 200));
+			}
+			cookbook.toggleShow();
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
