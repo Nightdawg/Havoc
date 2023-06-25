@@ -119,7 +119,7 @@ public class CookingRecipes extends Window {
             boolean sortAdded = false;
             String orderBy = "";
             for (String condition : conditions) {
-                if (Pattern.matches("^name:([a-zA-Z]{1,50})$", condition)) {
+                if (Pattern.matches("^name:([a-zA-Z ]{1,50})$", condition)) {
                     if (!whereClauseAdded) {
                         sql.append(" WHERE ");
                         whereClauseAdded = true;
@@ -150,7 +150,7 @@ public class CookingRecipes extends Window {
                     String stat = condition.split(":")[1];
                     orderBy = " ORDER BY food." + stat + " DESC";
                     sortAdded = true;
-                } else if (Pattern.matches("^from:[a-zA-Z]{1,50}$", condition)) {
+                } else if (Pattern.matches("^from:[a-zA-Z ]{1,50}$", condition)) {
                     if (!whereClauseAdded) {
                         sql.append(" WHERE ");
                         whereClauseAdded = true;
@@ -160,7 +160,7 @@ public class CookingRecipes extends Window {
                     String ingredientName = condition.split(":")[1];
                     sql.append(" food.id IN (SELECT food_id from food_ingredient WHERE ingredient_id IN (SELECT id from ingredient WHERE name like '%").append(ingredientName).append("%'))");
 
-                } else if (Pattern.matches("^-from:[a-zA-Z]{1,50}$", condition)) {
+                } else if (Pattern.matches("^-from:[a-zA-Z ]{1,50}$", condition)) {
                     if (!whereClauseAdded) {
                         sql.append(" WHERE ");
                         whereClauseAdded = true;
