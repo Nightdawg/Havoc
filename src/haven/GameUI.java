@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.automated.AUtils;
 import haven.automated.AttackOpponent;
 import haven.automated.ClickNearestGate;
 import haven.automated.OceanScoutBot;
@@ -97,6 +98,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean trackon = false;
 	public static boolean preventDropAnywhere = Utils.getprefb("noCursorItemDropping", false);
 	public static boolean preventWaterDrop = Utils.getprefb("noCursorItemDroppingInWater", false);
+	public static boolean autoDrinkTeaOrWater = Utils.getprefb("autoDrinkTeaOrWater", false);
 
 	public static boolean muteNonFriendly = false;
 
@@ -106,6 +108,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public long lastopponent = -1;
 
 	public QuickSlotsWdg quickslots;
+	private long lastAutoDrinkTime = 0;
 	public Thread keyboundActionThread;
 	private Gob detectGob;
 	public OceanScoutBot shorelineScoutBot;
@@ -1240,6 +1243,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	} else if(msg == "prog") {
 	    if(args.length > 0) {
 		double p = ((Number)args[0]).doubleValue() / 100.0;
+		if(autoDrinkTeaOrWater && getmeter("stam", 0) != null && getmeter("stam", 0).a < 0.70){
+			if(p == 0 && System.currentTimeMillis() > lastAutoDrinkTime + 1000 || System.currentTimeMillis() > lastAutoDrinkTime + 3500){
+				lastAutoDrinkTime = System.currentTimeMillis();
+				drink(0.99);
+			}
+		}
 		if(prog == null)
 		    prog = adda(new Progress(p), 0.5, 0.35);
 		else
@@ -2231,6 +2240,61 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		if (keyboundActionThread != null && keyboundActionThread.isAlive()) {
 			keyboundActionThread.interrupt();
 		}
+	}
+
+	public boolean drink(double threshold) {
+		//TODO add trigger to stop drinking tea while > 90% energy
+		IMeter.Meter stam = getmeter("stam", 0);
+		IMeter.Meter nrj = getmeter("nrj", 0);
+		if (stam == null || stam.a > threshold) {
+			return false;
+		}
+		List<WItem> containers = new ArrayList<WItem>();
+		List<Inventory> inventories = getAllInventories();
+		for (Inventory i : inventories) {
+			containers.addAll(i.getItemsPartial("Waterskin", "Waterflask", "Kuksa", "Bucket"));
+		}
+		for (int i = 6; i <= 7; i++) {
+			try {
+				if (getequipory().slots[i].item.res.get().basename().equals("bucket-water")) {
+					containers.add(getequipory().slots[i]);
+				}
+			} catch (Loading | NullPointerException ignored) {}
+		}
+		Collections.reverse(containers);
+		WItem teacontainer = null;
+		WItem watercontainer = null;
+		for (WItem wi : containers) {
+			ItemInfo.Contents cont = wi.item.getcontents();
+			if (cont == null)
+				continue;
+			if (cont.content.name.equals("Tea")) {
+				teacontainer = wi;
+			} else if (cont.content.name.equals("Water")) {
+				watercontainer = wi;
+			}
+			if (teacontainer != null && watercontainer != null) {
+				break;
+			}
+		}
+		if (teacontainer == null && watercontainer == null) {
+			return false;
+		}
+		ui.lcc = Coord.z;
+		if (fv != null && fv.current != null) {
+			if (watercontainer != null) {
+				AUtils.clickWItemAndSelectOption(this, watercontainer, 0);
+			} else {
+				AUtils.clickWItemAndSelectOption(this, teacontainer, 0);
+			}
+		} else {
+			if ((nrj != null && nrj.a < 0.95 && teacontainer != null) || watercontainer == null) {
+				AUtils.clickWItemAndSelectOption(this, teacontainer, 0);
+			} else {
+				AUtils.clickWItemAndSelectOption(this, watercontainer, 0);
+			}
+		}
+		return true;
 	}
 
 	public static Integer getPingValue() {

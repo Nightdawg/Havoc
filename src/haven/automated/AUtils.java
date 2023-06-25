@@ -17,4 +17,9 @@ public class AUtils {
     public static void rightClick(GameUI gui) {
         gui.map.wdgmsg("click", Coord.z, gui.map.player().rc.floor(posres), 3, 0);
     }
+
+    public static void clickWItemAndSelectOption(GameUI gui, WItem wItem, int index) {
+        wItem.item.wdgmsg("iact", Coord.z, gui.ui.modflags());
+        gui.ui.rcvr.rcvmsg(gui.ui.lastid+1, "cl", index, gui.ui.modflags());
+    }
 }

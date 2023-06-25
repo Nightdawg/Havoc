@@ -1187,6 +1187,7 @@ public class OptWnd extends Window {
 	public static CheckBox saveCutleryCheckBox = null;
 	public static CheckBox noCursorItemDroppingCheckBox = null;
 	public static CheckBox noCursorItemDroppingInWaterCheckBox = null;
+	public static CheckBox autoDrinkTeaWhileWorking = null;
 	public static boolean instantFlowerMenuCTRL = Utils.getprefb("instantFlowerMenuCTRL", true);
 	public static boolean autoswitchBunnyPlateBoots = Utils.getprefb("autoswitchBunnyPlateBoots", true);
 	public static boolean antiCutleryBreakage = Utils.getprefb("antiCutleryBreakage", true);
@@ -1326,6 +1327,18 @@ public class OptWnd extends Window {
 						} else {
 							gameui().msg("No Item Dropping (in Water) is now " + (val ? "ENABLED" : "DISABLED") + "!" + (val ? "" : " (WARNING!!!: No Item Dropping (Anywhere) IS STILL ENABLED, and it overwrites this option!)"));
 						}
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
+
+			prev = add(autoDrinkTeaWhileWorking = new CheckBox("Automatically Drink Tea While Working."){
+				{a = Utils.getprefb("autoDrinkTeaOrWater", false);}
+				public void set(boolean val) {
+					Utils.setprefb("autoDrinkTeaOrWater", val);
+					GameUI.autoDrinkTeaOrWater = val;
+					if (gameui() != null) {
+						gameui().msg("Auto-drinking Tea and Water is now " + (val ? "ENABLED" : "DISABLED") + "!");
 					}
 					a = val;
 				}
@@ -2805,6 +2818,7 @@ public class OptWnd extends Window {
 		saveCutleryCheckBox.tooltip = RichText.render("Enabling this will cause any cutlery that has 1 wear left to be instantly transferred from the table into your inventory.\n$col[185,185,185]{A warning message will be shown, to let you know that the item has been transferred.}", 300);
 		noCursorItemDroppingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: You can still drop the item on your cursor if you hold Ctrl.}", 300);
 		noCursorItemDroppingInWaterCheckBox.tooltip = RichText.render("Warning: If the previous option is Enabled, it will overwrite this one. You will still not be able to drop items in water.\n$col[185,185,185]{Note: You can still drop the item on your cursor if you hold Ctrl.}", 300);
+		autoDrinkTeaWhileWorking.tooltip = RichText.render("At <70% stamina automatically drink tea or water depending on your current energy.", 300);
 	}
 
 	private void setTooltipsForGraphicsSettingsStuff(){
