@@ -460,10 +460,12 @@ public class OptWnd extends Window {
 	public static CheckBox showQuickSlotsBar;
 	public static CheckBox showContainerFullnessCheckBox;
 	public static CheckBox showWorkstationStageCheckBox;
+	public static CheckBox showTileMiningSupportRadius;
 	public static boolean critterAuraEnabled = Utils.getprefb("critterAuras", false);
 	public static boolean beastDangerRadiiEnabled = Utils.getprefb("beastDangerRadii", true);
 	public static boolean showContainerFullness = Utils.getprefb("showContainerFullness", true);
 	public static boolean showWorkstationStage = Utils.getprefb("showWorkstationStage", true);
+	public static boolean showTileSupportRadius = Utils.getprefb("showTileSupportRadius", false);
 	public static boolean advancedMouseInfo = Utils.getprefb("advancedMouseInfo", false);
 	public static boolean keepWindowsInside = Utils.getprefb("keepWindowsInside", false);
     public class InterfacePanel extends Panel {
@@ -688,6 +690,16 @@ public class OptWnd extends Window {
 				showWorkstationStage = val;
 				if (gameui() != null)
 					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				a = val;
+			}
+		}, rightColumn.pos("bl").adds(0, 6));
+		rightColumn = add(showTileMiningSupportRadius = new CheckBox("Show Tile Support Radius"){
+			{a = (Utils.getprefb("showTileSupportRadius", false));}
+			public void set(boolean val) {
+				Utils.setprefb("showTileSupportRadius", val);
+				showTileSupportRadius = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateMiningSupports);
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 6));

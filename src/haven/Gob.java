@@ -26,24 +26,21 @@
 
 package haven;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.List;
-import java.util.function.*;
-import java.util.regex.Pattern;
-
 import haven.render.*;
-import haven.sprites.ArcheryRadiusSprite;
-import haven.sprites.ArcheryVectorSprite;
-import haven.sprites.BPRad;
-import haven.sprites.AuraCircleSprite;
+import haven.sprites.*;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
@@ -70,7 +67,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private GobGrowthInfo growthInfo;
 	private GobQualityInfo qualityInfo;
 	private final List<Overlay> dols = new ArrayList<>();
-	private Overlay customAnimalOverlay;
+	private Overlay customOverlay;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
 	public int playerPoseUpdatedCounter = 0;
 	public Boolean isMannequin = null;
@@ -91,6 +88,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void init(boolean throwLoading) {
 		Resource res = getres();
 		if (res != null) {
+			initiateSupportOverlays();
 			if (getattr(Drawable.class) instanceof Composite) {
 				try {
 					initComp((Composite)getattr(Drawable.class));
@@ -138,8 +136,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 		if (knocked != null && knocked) {
 			try {
-				removeOl(customAnimalOverlay);
-				customAnimalOverlay = null;
+				removeOl(customOverlay);
+				customOverlay = null;
 			} catch (Exception np){
 			}
 		} else {
@@ -238,9 +236,27 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void init() {
 	    if(spr == null) {
+//			if(res != null && res.get().name.contains("gfx/fx/cavewarn")){
+//				try{
+//					System.out.println(this.gob.rc + " cavein: " + sdt.peekUint8());
+//				} catch (Exception e){
+//
+//				}
+//			}
+			if(this.gob != null) {
+				if (gob.getres() != null && res.get().name.contains("mineout")) {
+					System.out.println(gob.getres().name + " - " + gob.rc + " - " + res.get().name + System.currentTimeMillis());
+				}
+			}
+			if(this.gob != null){
+				if(gob.getres() == null && res.get().name.contains("mineout")) {
+					System.out.println(gob.getClass().getName() + " - " + gob.virtual + gob.rc + System.currentTimeMillis());
+				}
+			}
 		spr = Sprite.create(gob, res.get(), sdt);
-		if(added && (spr instanceof SetupMod))
+		if(added && (spr instanceof SetupMod)) {
 		    gob.setupmods.add((SetupMod)spr);
+		}
 	    }
 	    if(slots == null)
 		RUtils.multiadd(gob.slots, this);
@@ -1403,6 +1419,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		updateLeathertubsHighlight();
 	}
 
+	public void settingUpdateMiningSupports() { // ND: Used to enable/disable showing the color stage through options window.
+		updateSupportOverlays();
+	}
+
 	private static final String[] CONTAINER_PATHS = {
 			// ND: Each container might have different peekrbufs for each state. This needs to be checked for each new container, in each state (Empty & Closed || Empty & Open, Full & Closed || Full & Open).
 			"gfx/terobjs/cupboard",
@@ -1808,6 +1828,31 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			toggleCritterAuras();
 	}
 
+	private void initiateSupportOverlays(){
+		if (getres() != null && OptWnd.showTileSupportRadius) {
+			String resourceName = getres().name;
+			if (resourceName.equals("gfx/terobjs/ladder") || resourceName.equals("gfx/terobjs/minesupport") ){
+				setMiningOl(true, (float) a, 1);
+			} else if (resourceName.equals("gfx/terobjs/column")){
+				setMiningOl(true, (float) a, 2);
+			} else if (resourceName.equals("gfx/terobjs/minebeam")){
+				setMiningOl(true, (float) a, 3);
+			}
+		}
+	}
+
+	private void updateSupportOverlays(){
+		if (getres() != null){
+			if (getres().name.equals("gfx/terobjs/ladder") || getres().name.equals("gfx/terobjs/minesupport") ){
+				setMiningOl(OptWnd.showTileSupportRadius, (float) a, 1);
+			} else if (getres().name.equals("gfx/terobjs/column")){
+				setMiningOl(OptWnd.showTileSupportRadius, (float) a, 2);
+			} else if (getres().name.equals("gfx/terobjs/minebeam")){
+				setMiningOl(OptWnd.showTileSupportRadius, (float) a, 3);
+			}
+		}
+	}
+	
 	public void toggleBeastDangerRadii() {
 		if (getres() != null) {
 			String resourceName = getres().name;
@@ -1876,13 +1921,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					return;
 				}
 			}
-			customAnimalOverlay = new Overlay(this, new BPRad(this, null, radius, col));
+			customOverlay = new Overlay(this, new BPRad(this, null, radius, col));
 			synchronized (ols) {
-				addol(customAnimalOverlay);
+				addol(customOverlay);
 			}
-		} else if (customAnimalOverlay != null) {
-			removeOl(customAnimalOverlay);
-			customAnimalOverlay = null;
+		} else if (customOverlay != null) {
+			removeOl(customOverlay);
+			customOverlay = null;
 		}
 	}
 
@@ -1893,13 +1938,30 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					return;
 				}
 			}
-			customAnimalOverlay = new Overlay(this, new AuraCircleSprite(this, col));
+			customOverlay = new Overlay(this, new AuraCircleSprite(this, col));
 			synchronized (ols) {
-				addol(customAnimalOverlay);
+				addol(customOverlay);
 			}
-		} else if (customAnimalOverlay != null) {
-			removeOl(customAnimalOverlay);
-			customAnimalOverlay = null;
+		} else if (customOverlay != null) {
+			removeOl(customOverlay);
+			customOverlay = null;
+		}
+	}
+
+	public void setMiningOl(boolean on, float angle, int size) {
+		if (on) {
+			for (Overlay ol : ols) {
+				if (ol.spr instanceof SupportSprite) {
+					return;
+				}
+			}
+			customOverlay = new Overlay(this, new SupportSprite(this, angle, size));
+			synchronized (ols) {
+				addol(customOverlay);
+			}
+		} else if (customOverlay != null) {
+			removeOl(customOverlay);
+			customOverlay = null;
 		}
 	}
 
