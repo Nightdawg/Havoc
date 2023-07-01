@@ -10,49 +10,20 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 /* >spr: BPRad */
-@FromResource(name = "gfx/fx/bprad", version = 8)
-public class BPRad extends Sprite {
-    static final Pipe.Op smat = new BaseColor(new Color(192, 0, 0, 128));
-    static final Pipe.Op emat = Pipe.Op.compose(new BaseColor(new Color(255, 224, 96)), new States.LineWidth(4));
-	static final Pipe.Op blacc = Pipe.Op.compose(new BaseColor(new Color(0, 0, 0, 140)), new States.LineWidth(1));
+// @FromResource(name = "gfx/fx/bprad", version = 8)
+// ND: If you move the class, it no longer overwrites loftar's resource
+public class AnimalDangerRadiiSprite extends Sprite {
+	static final Pipe.Op blacc = Pipe.Op.compose(new BaseColor(new Color(0, 0, 0, 140)), new States.LineWidth(4));
     VertexBuf.VertexData posa;
     VertexBuf vbuf;
     Model smod, emod;
     private Coord2d lc;
-    float[] barda;
 
 	private Pipe.Op col;
-	public static final Color redr = new Color(192, 0, 0, 70);
-	public static final Color bluer = new Color(22, 67, 219, 70);
-	public static final Color yelr = new Color(248, 210, 0, 70);
-	public static final Color gren = new Color(88, 255, 0, 70);
-	public static final Color purp = new Color(193, 0, 255, 70);
 
-    public BPRad(Owner owner, Resource res, float r) {
-	super(owner, res);
-	int n = Math.max(24, (int)(2 * Math.PI * r / 11.0));
-	FloatBuffer posb = Utils.wfbuf(n * 3 * 2);
-	FloatBuffer nrmb = Utils.wfbuf(n * 3 * 2);
-	for(int i = 0; i < n; i++) {
-	    float s = (float)Math.sin(2 * Math.PI * i / n);
-	    float c = (float)Math.cos(2 * Math.PI * i / n);
-	    posb.put(     i  * 3 + 0, c * r).put(     i  * 3 + 1, s * r).put(     i  * 3 + 2,  10);
-	    posb.put((n + i) * 3 + 0, c * r).put((n + i) * 3 + 1, s * r).put((n + i) * 3 + 2, -10);
-	    nrmb.put(     i  * 3 + 0, c).put(     i  * 3 + 1, s).put(     i  * 3 + 2, 0);
-	    nrmb.put((n + i) * 3 + 0, c).put((n + i) * 3 + 1, s).put((n + i) * 3 + 2, 0);
-	}
-	VertexBuf.VertexData posa = new VertexBuf.VertexData(posb);
-	VertexBuf.NormalData nrma = new VertexBuf.NormalData(nrmb);
-	VertexBuf vbuf = new VertexBuf(posa, nrma);
-	this.smod = new Model(Model.Mode.TRIANGLES, vbuf.data(), new Indices(n * 6, NumberFormat.UINT16, DataBuffer.Usage.STATIC, this::sidx));
-	this.emod = new Model(Model.Mode.LINE_STRIP, vbuf.data(), new Indices(n + 1, NumberFormat.UINT16, DataBuffer.Usage.STATIC, this::eidx));
-	this.posa = posa;
-	this.vbuf = vbuf;
-    }
-
-	public BPRad(final Owner owner, final Resource resource, final float n, Color col) {
+	public AnimalDangerRadiiSprite(final Owner owner, final Resource resource, final float n, Color col) {
 		super(owner, resource);
-		this.col = new BaseColor(col);
+		this.col = Pipe.Op.compose(new BaseColor(col), Clickable.No);
 		init(n);
 	}
 
@@ -68,7 +39,7 @@ public class BPRad extends Sprite {
 					.put(i * 3 + 2, 10.0f);
 			wfbuf.put((max + i) * 3 + 0, n3 * n)
 					.put((max + i) * 3 + 1, n2 * n)
-					.put((max + i) * 3 + 2, -10.0f);
+					.put((max + i) * 3 + 2, -2.0f);
 			wfbuf2.put(i * 3 + 0, n3)
 					.put(i * 3 + 1, n2)
 					.put(i * 3 + 2, 0.0f);
@@ -79,12 +50,10 @@ public class BPRad extends Sprite {
 		final VertexBuf.VertexData posa = new VertexBuf.VertexData(wfbuf);
 		final VertexBuf vbuf = new VertexBuf(posa, new VertexBuf.NormalData(wfbuf2));
 		this.smod = new Model(Model.Mode.TRIANGLES, vbuf.data(), new Model.Indices(max * 6, NumberFormat.UINT16, DataBuffer.Usage.STATIC, this::sidx));
+		this.emod = new Model(Model.Mode.LINE_STRIP, vbuf.data(), new Indices(max + 1, NumberFormat.UINT16, DataBuffer.Usage.STATIC, this::eidx));
 		this.posa = posa;
 		this.vbuf = vbuf;
 	}
-    public BPRad(Owner owner, Resource res, Message sdt) {
-	this(owner, res, Utils.hfdec((short)sdt.int16()) * 11);
-    }
 
     private FillBuffer sidx(Indices dst, Environment env) {
 	FillBuffer ret = env.fillbuf(dst);
@@ -114,7 +83,7 @@ public class BPRad extends Sprite {
 	    for(int i = 0; i < n; i++) {
 		float z = (float)glob.map.getcz(c.x + posb.get(i * 3), c.y - posb.get(i * 3 + 1)) - bz;
 		posb.put(i * 3 + 2, z + 10);
-		posb.put((n + i) * 3 + 2, z - 10);
+		posb.put((n + i) * 3 + 2, z - 2);
 	    }
 	} catch(Loading e) {
 	    return;
@@ -137,10 +106,7 @@ public class BPRad extends Sprite {
 				    Location.goback("gobx")));
 		if (col != null) {
 			slot.add(this.smod, this.col);
-			slot.add(emod, blacc);
-		} else {
-			slot.add(smod, smat);
-			slot.add(emod, emat);
+			slot.add(this.emod, blacc);
 		}
     }
 }

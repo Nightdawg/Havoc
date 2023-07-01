@@ -35,9 +35,9 @@ import java.util.function.*;
 import java.util.regex.Pattern;
 
 import haven.render.*;
+import haven.sprites.AnimalDangerRadiiSprite;
 import haven.sprites.ArcheryRadiusSprite;
 import haven.sprites.ArcheryVectorSprite;
-import haven.sprites.BPRad;
 import haven.sprites.AuraCircleSprite;
 
 import javax.sound.sampled.AudioFormat;
@@ -1872,11 +1872,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private void setRadiusOl(float radius, Color col, boolean on) {
 		if (on) {
 			for (Overlay ol : ols) {
-				if (ol.spr instanceof BPRad) {
+				if (ol.spr instanceof AnimalDangerRadiiSprite) {
 					return;
 				}
 			}
-			customAnimalOverlay = new Overlay(this, new BPRad(this, null, radius, col));
+			customAnimalOverlay = new Overlay(this, new AnimalDangerRadiiSprite(this, null, radius, col));
 			synchronized (ols) {
 				addol(customAnimalOverlay);
 			}
