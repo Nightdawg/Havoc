@@ -607,6 +607,17 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 		}
 	}
 
+	public ItemInfo.Contents getcontents() {
+		try {
+			for (ItemInfo info : info()) {
+				if (info instanceof ItemInfo.Contents)
+					return (ItemInfo.Contents) info;
+			}
+		} catch (Exception ignored) {
+		}
+		return null;
+	}
+
 	private void dropIfRequired() {
 		Resource curs = ui.root.getcurs(Coord.z);
 		String name = this.resource().basename();

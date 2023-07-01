@@ -46,7 +46,7 @@ public class CheckpointManager extends Window implements Runnable {
             public void click() {
                 paused = !paused;
                 this.change(paused ? "Start" : "Pause");
-                gui.map.wdgmsg("click", Coord.z, gui.map.player().rc.floor(posres), 1, 0);
+                ui.root.wdgmsg("gk", 27);
             }
         }, UI.scale(25, 170));
         this.c = new Coord(100, 100);

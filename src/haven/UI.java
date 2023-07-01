@@ -26,20 +26,16 @@
 
 package haven;
 
-import haven.res.ui.tt.wear.Wear;
-import java.lang.ref.WeakReference;
-import java.util.*;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.GraphicsDevice;
-import java.awt.DisplayMode;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.InputEvent;
-import java.awt.image.BufferedImage;
-import static haven.Utils.el;
 import haven.render.Environment;
 import haven.render.Render;
+import haven.res.ui.tt.wear.Wear;
+
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 public class UI {
     public static int MOD_SHIFT = KeyMatch.S, MOD_CTRL = KeyMatch.C, MOD_META = KeyMatch.M, MOD_SUPER = KeyMatch.SUPER;
@@ -48,7 +44,7 @@ public class UI {
     private final Map<Integer, Widget> widgets = new TreeMap<Integer, Widget>();
     private final Map<Widget, Integer> rwidgets = new HashMap<Widget, Integer>();
     Environment env;
-    Receiver rcvr;
+    public Receiver rcvr;
     public Coord mc = Coord.z, lcc = Coord.z;
     public Session sess;
     public boolean modshift, modctrl, modmeta, modsuper;
