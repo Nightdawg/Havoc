@@ -113,6 +113,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	private RecipeCollector recipeCollector;
 	private Thread recipeCollectorThread;
 	private CookingRecipes cookbook;
+	public MiningAssistant miningAssistantWindow;
+	public Thread miningAssistantThread;
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(GameUI.class, slot -> slot.wdg())
@@ -1560,12 +1562,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-				MiningAssistant mining = new MiningAssistant(this);
-				this.add(mining, new Coord(this.sz.x/2 - mining.sz.x/2, this.sz.y/2 - mining.sz.y/2 - 200));
-				Thread miningThread = new Thread(mining, "mining");
-				miningThread.start();
-
-
 
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);

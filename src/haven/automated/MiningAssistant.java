@@ -30,9 +30,10 @@ public class MiningAssistant extends Window implements Runnable {
     private int counter = 0;
 
     public MiningAssistant(GameUI gui) {
-        super(new Coord(220, 265), "Mining Assistant");
+        super(new Coord(180, 190), "Mining Assistant");
         this.gui = gui;
         this.stop = false;
+        Widget prev;
 
         preventUnsafeMiningCb = new CheckBox("Prevent unsafe mining.") {
             {
@@ -44,7 +45,7 @@ public class MiningAssistant extends Window implements Runnable {
                 a = val;
             }
         };
-        add(preventUnsafeMiningCb, new Coord(50, 20));
+        prev = add(preventUnsafeMiningCb, new Coord(10, 20));
         preventUnsafeMiningCb.tooltip = RichText.render("This option will prevent selecting mining area even \npartially outside (visible) mining supports range. \n(Cannot select area outside view range)", 300);
 
         stopUnsafeMiningCb = new CheckBox("Stop unsafe mining.") {
@@ -57,7 +58,7 @@ public class MiningAssistant extends Window implements Runnable {
                 a = val;
             }
         };
-        add(stopUnsafeMiningCb, new Coord(50, 60));
+        prev = add(stopUnsafeMiningCb, prev.pos("bl").adds(0,20));
         stopUnsafeMiningCb.tooltip = RichText.render("If currently mined tile is outside support range \nmining will stop. (Drinking animation overrides mining \nand delay bot reaction - not 100% safe)", 300);
 
         stopMiningFiftyCb = new CheckBox("Stop mining <50.") {
@@ -70,7 +71,7 @@ public class MiningAssistant extends Window implements Runnable {
                 a = val;
             }
         };
-        add(stopMiningFiftyCb, new Coord(50, 100));
+        prev = add(stopMiningFiftyCb, prev.pos("bl").adds(0,20));
         stopMiningFiftyCb.tooltip = RichText.render("If currently mined tile is withing support range \nbelow 50% hp mining will stop.", 300);
 
 
@@ -84,7 +85,7 @@ public class MiningAssistant extends Window implements Runnable {
                 a = val;
             }
         };
-        add(stopMiningTwentyFiveCb, new Coord(50, 140));
+        prev = add(stopMiningTwentyFiveCb, prev.pos("bl").adds(0,20));
         stopMiningTwentyFiveCb.tooltip = RichText.render("If currently mined tile is withing support range \nbelow 25% hp mining will stop.", 300);
 
         stopMiningLooseRockCb = new CheckBox("Stop mining near loose rock.") {
@@ -97,8 +98,20 @@ public class MiningAssistant extends Window implements Runnable {
                 a = val;
             }
         };
-        add(stopMiningLooseRockCb, new Coord(50, 180));
+        prev = add(stopMiningLooseRockCb, prev.pos("bl").adds(0,20));
         stopMiningLooseRockCb.tooltip = RichText.render("If currently mined tile is withing ~9 tiles from any \nloose rock mining will stop.", 300);
+    }
+
+    @Override
+    public void wdgmsg(Widget sender, String msg, Object... args) {
+        if((sender == this) && (msg == "close")) {
+            gui.miningAssistantThread.interrupt();
+            gui.miningAssistantThread = null;
+            reqdestroy();
+            gui.miningAssistantWindow = null;
+        } else {
+            super.wdgmsg(sender, msg, args);
+        }
     }
 
     @Override
