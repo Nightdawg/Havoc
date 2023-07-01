@@ -1,8 +1,10 @@
 package haven.sprites;
 
+import haven.Clickable;
 import haven.Gob;
 import haven.Sprite;
 import haven.render.BaseColor;
+import haven.render.Pipe;
 import haven.render.RenderTree;
 import haven.sprites.mesh.ColoredSupportMesh;
 
@@ -19,11 +21,11 @@ public class SupportSprite extends Sprite {
     public SupportSprite(final Gob g, final float angle, int size) {
         super(g, null);
         if(size == 1){
-            this.mesh = ColoredSupportMesh.getMesh(color, positionsSmall, angle);
+            this.mesh = ColoredSupportMesh.getMesh(color, positionsSmall, angle, 0.3f);
         } else if (size == 3){
-            this.mesh = ColoredSupportMesh.getMesh(color, positionsLarge, angle);
+            this.mesh = ColoredSupportMesh.getMesh(color, positionsLarge, angle, 0.1f);
         } else {
-            this.mesh = ColoredSupportMesh.getMesh(color, positionsMedium, angle);
+            this.mesh = ColoredSupportMesh.getMesh(color, positionsMedium, angle, 0.1f);
         }
     }
 
@@ -39,6 +41,6 @@ public class SupportSprite extends Sprite {
     @Override
     public void added(RenderTree.Slot slot) {
         super.added(slot);
-        slot.add(mesh, new BaseColor(color));
+        slot.add(mesh, Pipe.Op.compose(new BaseColor(color), Clickable.No));
     }
 }

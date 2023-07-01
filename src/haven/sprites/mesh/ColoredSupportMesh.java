@@ -31,14 +31,14 @@ public class ColoredSupportMesh extends FastMesh {
                 new States.Facecull(States.Facecull.Mode.NONE)));
     }
 
-    public synchronized static ColoredSupportMesh getMesh(final Color col, final int[][] positions, final float angle) {
+    public synchronized static ColoredSupportMesh getMesh(final Color col, final int[][] positions, final float angle, final float height) {
         MeshKey key = new MeshKey(col, positions, angle);
         if(sprmap.containsKey(key))
             return sprmap.get(key);
         else {
             final float[] squarecol = Utils.c2fa(col);
             final float sideLength = 11f;
-            final float h = 0.1f;
+            final float h = height;
 
             final int totalSquares = positions.length;
 
