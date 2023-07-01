@@ -4,10 +4,13 @@ package haven.sprites.baseSprite;
 import haven.*;
 import haven.render.*;
 import haven.render.Model.Indices;
+import haven.resutil.WaterTile;
 
 import java.awt.*;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+
+import static haven.MCache.tilesz;
 
 public class ColoredCircleSprite extends Sprite {
     static final Pipe.Op smat = new BaseColor(new Color(0, 0, 0, 140));
@@ -86,8 +89,14 @@ public class ColoredCircleSprite extends Sprite {
 	FloatBuffer posb = posa.data;
 	int n = posa.size() / 2;
 	Gob gob = (Gob)owner;
-	DrawOffset dro = gob.getattr(DrawOffset.class);
 	try {
+		DrawOffset dro = gob.getattr(DrawOffset.class);
+		MCache map = glob.map;
+		Tiler t = map.tiler(map.gettile(c.floor(tilesz)));
+		float extraWaterHeight = 0;
+		if(t instanceof WaterTile) {
+			extraWaterHeight = map.getzp(gob.rc).z - gob.getrc().z;
+		}
 	    float bz = (float)glob.map.getcz(c.x, c.y);
 	    for(int i = 0; i < n; i++) {
 			float z = (float)glob.map.getcz(c.x + posb.get(i * 3), c.y - posb.get(i * 3 + 1)) - bz;
@@ -96,8 +105,8 @@ public class ColoredCircleSprite extends Sprite {
 				posb.put(i * 3 + 2, z + height - dro.off.z);
 				posb.put((n + i) * 3 + 2, z2 + height - dro.off.z);
 			} else {
-				posb.put(i * 3 + 2, z + height);
-				posb.put((n + i) * 3 + 2, z2 + height);
+				posb.put(i * 3 + 2, z + height + extraWaterHeight);
+				posb.put((n + i) * 3 + 2, z2 + height + extraWaterHeight);
 			}
 	    }
 	} catch(Loading e) {
