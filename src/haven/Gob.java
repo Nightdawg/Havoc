@@ -2052,6 +2052,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}, 100);
 	}
 
+	public Set<String> getPoses() {
+		Set<String> poses = new HashSet<>();
+		if (this.isComposite) {
+			try {
+				if (this.getattr(Drawable.class) != null) {
+					poses = new HashSet<>(((Composite) this.getattr(Drawable.class)).poses);
+
+				}
+			} catch (Exception ignored) { }
+		}
+		return poses;
+	}
+
 	public void checkIfPlayerIsDead(HashSet<String> poses){
 		Gob hearthling = this;
 		final Timer timer = new Timer(); // ND: Need to do this with a timer cause the knocked out birds get loaded a few miliseconds later. I hope 100 is enough to prevent any issues.

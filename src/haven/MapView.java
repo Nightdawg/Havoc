@@ -26,21 +26,26 @@
 
 package haven;
 
-import static haven.MCache.tilesz;
-import static haven.OCache.posres;
-import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.util.*;
-import java.util.function.*;
-import java.lang.reflect.*;
-import java.util.stream.Collectors;
-
+import haven.MCache.OverlayInfo;
+import haven.automated.MiningAssistant;
 import haven.pathfinder.PFListener;
 import haven.pathfinder.Pathfinder;
 import haven.render.*;
-import haven.MCache.OverlayInfo;
-import haven.render.sl.Uniform;
 import haven.render.sl.Type;
+import haven.render.sl.Uniform;
+
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import static haven.MCache.tilesz;
+import static haven.OCache.posres;
 
 public class MapView extends PView implements DTarget, Console.Directory, PFListener {
     public static boolean clickdb = false;
@@ -3031,5 +3036,21 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void wdgmsg(String msg, Object... args) {
+		boolean safe = true;
+		if(MiningAssistant.preventMiningOutsideSupport){
+			Resource curs = ui.root.getcurs(Coord.z);
+			if (curs != null && curs.name.equals("gfx/hud/curs/mine") && msg.equals("sel")) {
+				safe = MiningAssistant.isAreaInSupportRange((Coord) args[0], (Coord) args[1], gameui());
+			}
+		}
+		if(safe){
+			super.wdgmsg(msg, args);
+		} else {
+			ui.error("Tile outside all (visible) support range. Preventing mining command");
+		}
 	}
 }

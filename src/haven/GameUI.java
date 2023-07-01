@@ -26,10 +26,7 @@
 
 package haven;
 
-import haven.automated.AUtils;
-import haven.automated.AttackOpponent;
-import haven.automated.ClickNearestGate;
-import haven.automated.OceanScoutBot;
+import haven.automated.*;
 import haven.cookbook.CookingRecipes;
 import haven.cookbook.RecipeCollector;
 
@@ -1243,7 +1240,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	} else if(msg == "prog") {
 	    if(args.length > 0) {
 		double p = ((Number)args[0]).doubleValue() / 100.0;
-		if(autoDrinkTeaOrWater && getmeter("stam", 0) != null && getmeter("stam", 0).a < 0.70){
+		if(autoDrinkTeaOrWater && getmeter("stam", 0) != null && getmeter("stam", 0).a < 0.75){
 			if(p == 0 && System.currentTimeMillis() > lastAutoDrinkTime + 1000 || System.currentTimeMillis() > lastAutoDrinkTime + 3500){
 				lastAutoDrinkTime = System.currentTimeMillis();
 				drink(0.99);
@@ -1563,11 +1560,13 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-			if(cookbook == null){
-				cookbook = new CookingRecipes();
-				this.add(cookbook, new Coord(this.sz.x/2 - cookbook.sz.x/2, this.sz.y/2 - cookbook.sz.y/2 - 200));
-			}
-			cookbook.toggleShow();
+				MiningAssistant mining = new MiningAssistant(this);
+				this.add(mining, new Coord(this.sz.x/2 - mining.sz.x/2, this.sz.y/2 - mining.sz.y/2 - 200));
+				Thread miningThread = new Thread(mining, "mining");
+				miningThread.start();
+
+
+
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
@@ -2156,6 +2155,17 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	return(cmdmap);
     }
 
+	public Window getwnd(String cap) {
+		for (Widget w = lchild; w != null; w = w.prev) {
+			if (w instanceof Window) {
+				Window wnd = (Window) w;
+				if (wnd.cap != null && cap.equals(wnd.cap))
+					return wnd;
+			}
+		}
+		return null;
+	}
+
 	public List<Inventory> getAllInventories() {
 		List<Inventory> inventories = new ArrayList<>();
 		for (Widget wdg = lchild; wdg != null; wdg = wdg.prev) {
@@ -2252,7 +2262,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		List<WItem> containers = new ArrayList<WItem>();
 		List<Inventory> inventories = getAllInventories();
 		for (Inventory i : inventories) {
-			containers.addAll(i.getItemsPartial("Waterskin", "Waterflask", "Kuksa", "Bucket"));
+			containers.addAll(i.getItemsPartial("Waterskin", "Waterflask", "Kuksa", "Bucket", "glassjug"));
 		}
 		for (int i = 6; i <= 7; i++) {
 			try {
