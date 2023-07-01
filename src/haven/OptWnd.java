@@ -639,8 +639,10 @@ public class OptWnd extends Window {
 			public void set(boolean val) {
 				Utils.setprefb("gobCollisionBoxesDisplayToggle", val);
 				Gob.showCollisionBoxes = val;
-				if (gameui() != null)
+				if (gameui() != null) {
 					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated);
+					gameui().map.updatePlobDrawable();
+				}
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 20).x(230));
@@ -1570,6 +1572,7 @@ public class OptWnd extends Window {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
 						ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
 						ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+						gameui().map.updatePlobDrawable();
 					}
 					a = val;
 				}
@@ -1591,8 +1594,10 @@ public class OptWnd extends Window {
 				Hitbox2.SOLID_TOP = Pipe.Op.compose(new BaseColor(col2), new States.LineWidth(Hitbox2.WIDTH), Hitbox2.TOP);
 
 				// ND: Reload the boxes
-				if (gameui() != null)
+				if (gameui() != null) {
 					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					gameui().map.updatePlobDrawable();
+				}
 
 			}){}, scroll.pos("bl").adds(1, -2));
 
@@ -1606,6 +1611,7 @@ public class OptWnd extends Window {
 					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
 						ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
+						gameui().map.updatePlobDrawable();
 					}
 					a = val;
 				}
@@ -1619,6 +1625,7 @@ public class OptWnd extends Window {
 					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
 						ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
+						gameui().map.updatePlobDrawable();
 					}
 					a = val;
 				}
@@ -1629,8 +1636,10 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("hideBoulders", val);
 					hideBouldersSetting = val;
-					if (gameui() != null)
+					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+						gameui().map.updatePlobDrawable();
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
@@ -1640,8 +1649,10 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("hideTreeLogs", val);
 					hideTreeLogsSetting = val;
-					if (gameui() != null)
+					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+						gameui().map.updatePlobDrawable();
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
@@ -1651,8 +1662,10 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("hideWalls", val);
 					hideWallsSetting = val;
-					if (gameui() != null)
+					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+						gameui().map.updatePlobDrawable();
+					}
 					a = val;
 				}
 			}, prev2.pos("bl").adds(140, -14));
@@ -1662,8 +1675,10 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("hideHouses", val);
 					hideHousesSetting = val;
-					if (gameui() != null)
+					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+						gameui().map.updatePlobDrawable();
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
@@ -1672,8 +1687,10 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("hideStockpiles", val);
 					hideStockpilesSetting = val;
-					if (gameui() != null)
+					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+						gameui().map.updatePlobDrawable();
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
@@ -1682,8 +1699,10 @@ public class OptWnd extends Window {
 				public void set(boolean val) {
 					Utils.setprefb("hideCrops", val);
 					hideCropsSetting = val;
-					if (gameui() != null)
+					if (gameui() != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+						gameui().map.updatePlobDrawable();
+					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));

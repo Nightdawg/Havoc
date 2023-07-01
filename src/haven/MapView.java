@@ -781,7 +781,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	this.partyCircles = new PartyCircles(glob.party, plgob);
     }
 
-	private void updatePlobDrawable() {
+	public void updatePlobDrawable() {
 		if(placing != null && placing.done()) {
 			placing.get().drawableUpdated();
 		}
