@@ -11,15 +11,15 @@ import java.util.Set;
 public class MiningAssistant extends Window implements Runnable {
     private final GameUI gui;
     private final boolean stop;
-    public static boolean preventMiningOutsideSupport = false;
+    public static boolean preventMiningOutsideSupport = Utils.getprefb("preventMiningOutsideSupport", false);
     private final CheckBox preventUnsafeMiningCb;
-    private boolean stopMiningWhenOutsideSupport;
+    private boolean stopMiningWhenOutsideSupport = Utils.getprefb("stopMiningWhenOutsideSupport", false);
     private final CheckBox stopUnsafeMiningCb;
-    private boolean stopMiningFifty;
+    private boolean stopMiningFifty = Utils.getprefb("stopMiningFifty", false);
     private final CheckBox stopMiningFiftyCb;
-    private boolean stopMiningTwentyFive;
+    private boolean stopMiningTwentyFive = Utils.getprefb("stopMiningTwentyFive", false);
     private final CheckBox stopMiningTwentyFiveCb;
-    private boolean stopMiningLooseRock;
+    private boolean stopMiningLooseRock = Utils.getprefb("stopMiningLooseRock", false);
     private final CheckBox stopMiningLooseRockCb;
 
 
@@ -42,6 +42,7 @@ public class MiningAssistant extends Window implements Runnable {
 
             public void set(boolean val) {
                 preventMiningOutsideSupport = val;
+                Utils.setprefb("preventMiningOutsideSupport", val);
                 a = val;
             }
         };
@@ -55,6 +56,7 @@ public class MiningAssistant extends Window implements Runnable {
 
             public void set(boolean val) {
                 stopMiningWhenOutsideSupport = val;
+                Utils.setprefb("stopMiningWhenOutsideSupport", val);
                 a = val;
             }
         };
@@ -68,6 +70,7 @@ public class MiningAssistant extends Window implements Runnable {
 
             public void set(boolean val) {
                 stopMiningFifty = val;
+                Utils.setprefb("stopMiningFifty", val);
                 a = val;
             }
         };
@@ -82,6 +85,7 @@ public class MiningAssistant extends Window implements Runnable {
 
             public void set(boolean val) {
                 stopMiningTwentyFive = val;
+                Utils.setprefb("stopMiningTwentyFive", val);
                 a = val;
             }
         };
@@ -95,6 +99,7 @@ public class MiningAssistant extends Window implements Runnable {
 
             public void set(boolean val) {
                 stopMiningLooseRock = val;
+                Utils.setprefb("stopMiningLooseRock", val);
                 a = val;
             }
         };
