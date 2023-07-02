@@ -434,7 +434,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				iconwnd = null;
 			}
 		});
-		brpanel.add(new MenuCheckBox("lbtn-claim", kb_claim, "Display personal claims"), bg.c).state(() -> visol("cplot")).click(() -> {
+		brpanel.add(new MenuCheckBox("lbtn-claim", kb_claim, "Display Personal Claims on Ground"), bg.c).state(() -> visol("cplot")).click(() -> {
 			if (!visol("cplot")) {
 				toggleol("cplot", true);
 				Utils.setprefb("lbtn-claimWorldState", true);
@@ -444,7 +444,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			}
 		});
 
-		brpanel.add(new MenuCheckBox("lbtn-vil", kb_vil, "Display village claims"), bg.c).state(() -> visol("vlg")).click(() -> {
+		brpanel.add(new MenuCheckBox("lbtn-vil", kb_vil, "Display Village Claims on Ground"), bg.c).state(() -> visol("vlg")).click(() -> {
 			if (!visol("vlg")) {
 				toggleol("vlg", true);
 				Utils.setprefb("lbtn-vilWorldState", true);
@@ -453,7 +453,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				Utils.setprefb("lbtn-vilWorldState", false);
 			}
 		});
-		brpanel.add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display provinces"), bg.c).state(() -> visol("prov")).click(() -> {
+		brpanel.add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display Realm Provinces on Ground"), bg.c).state(() -> visol("prov")).click(() -> {
 			if (!visol("prov")) {
 				toggleol("prov", true);
 				Utils.setprefb("lbtn-rlmWorldState", true);

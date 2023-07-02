@@ -1058,7 +1058,7 @@ public class MiniMap extends Widget {
 			Coord viewsz = VIEW_SZ.div(zoomlevel);
 			g.chcolor(VIEW_BG_COLOR);
 			g.frect(rc, viewsz);
-			if (zoomlevel >= 0.4) {
+			if (zoomlevel >= 0.4 && follow) {
 				g.chcolor(VIEW_BORDER_COLOR);
 				g.rect(rc, viewsz);
 			}

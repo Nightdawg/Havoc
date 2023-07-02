@@ -181,7 +181,7 @@ public class MapWnd extends Window implements Console.Directory {
 					Utils.setprefb("pclaim-claimMapState", false);
 				}
 			})
-			.settip("Show personal claims").setgkey(kb_claim);
+			.settip("Show Personal Claims on Map").setgkey(kb_claim);
 	if(Utils.getprefb("vclaim-claimMapState", false)) overlays.add("vlg");
 	toolbar.add(new ICheckBox("gfx/hud/mmap/vclaim", "", "-d", "-h", "-dh") {
 				public boolean mousewheel(Coord c, int amount) {
@@ -201,7 +201,7 @@ public class MapWnd extends Window implements Console.Directory {
 					Utils.setprefb("vclaim-claimMapState", false);
 				}
 			})
-			.settip("Show village claims").setgkey(kb_vil);
+			.settip("Show Village Claims on Map").setgkey(kb_vil);
 	toolbar.add(new ICheckBox("gfx/hud/mmap/wnd", "", "-d", "-h", "-dh"))
 	    .state(this::compact).set(a -> {
 			savePos(a);
@@ -227,7 +227,7 @@ public class MapWnd extends Window implements Console.Directory {
 					Utils.setprefb("prov-claimMapState", false);
 				}
 			})
-	    .settip("Show provinces").setgkey(kb_prov);
+	    .settip("Show Realm Provinces on Map").setgkey(kb_prov);
 	toolbar.pack();
 	tool = add(new Toolbox());
 	compact(true);

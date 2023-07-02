@@ -38,21 +38,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
-import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import haven.render.*;
 import haven.sprites.AnimalDangerRadiiSprite;
 import haven.sprites.ArcheryRadiusSprite;
 import haven.sprites.ArcheryVectorSprite;
 import haven.sprites.AuraCircleSprite;
-
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
@@ -1842,7 +1835,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	private void initiateSupportOverlays(){
-		if (getres() != null && OptWnd.showTileSupportRadius) {
+		if (getres() != null && OptWnd.showMineSupportTiles) {
 			String resourceName = getres().name;
 			if (resourceName.equals("gfx/terobjs/ladder") || resourceName.equals("gfx/terobjs/minesupport") ){
 				setMiningOl(true, (float) a, 1);
@@ -1857,11 +1850,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private void updateSupportOverlays(){
 		if (getres() != null){
 			if (getres().name.equals("gfx/terobjs/ladder") || getres().name.equals("gfx/terobjs/minesupport") ){
-				setMiningOl(OptWnd.showTileSupportRadius, (float) a, 1);
+				setMiningOl(OptWnd.showMineSupportTiles, (float) a, 1);
 			} else if (getres().name.equals("gfx/terobjs/column")){
-				setMiningOl(OptWnd.showTileSupportRadius, (float) a, 2);
+				setMiningOl(OptWnd.showMineSupportTiles, (float) a, 2);
 			} else if (getres().name.equals("gfx/terobjs/minebeam")){
-				setMiningOl(OptWnd.showTileSupportRadius, (float) a, 3);
+				setMiningOl(OptWnd.showMineSupportTiles, (float) a, 3);
 			}
 		}
 	}

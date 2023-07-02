@@ -369,6 +369,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleItemDropping");
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleItemDroppingInWater");
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleAnimalAutoPeace");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleMineSupportSafeTiles");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleMineSupportRadii");
 
 		makeLocal("paginae/nightdawg/OtherTools/MiningAssistant");
 	}
@@ -613,6 +615,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 				OptWnd.noCursorItemDroppingInWaterCheckBox.set(!OptWnd.noCursorItemDroppingInWaterCheckBox.a);
 			} else if (ad[2].equals("AnimalAutoPeace")) {
 				OptWnd.toggleAutoPeaceCheckbox.set(!OptWnd.toggleAutoPeaceCheckbox.a);
+			} else if (ad[2].equals("MineSupportSafeTiles")) {
+				OptWnd.showMineSupportSafeTilesCheckBox.set(!OptWnd.showMineSupportSafeTilesCheckBox.a);
+			} else if (ad[2].equals("MineSupportRadii")) {
+				OptWnd.showMineSupportRadiiCheckBox.set(!OptWnd.showMineSupportRadiiCheckBox.a);
 			}
 		} else if (ad[1].equals("OtherTools")){
 			if (ad[2].equals("MiningAssistant")) {

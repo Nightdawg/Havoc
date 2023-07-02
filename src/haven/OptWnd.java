@@ -27,6 +27,7 @@
 package haven;
 
 import haven.render.*;
+import haven.res.gfx.fx.msrad.MSRad;
 import haven.res.ui.tt.q.quality.Quality;
 
 import javax.sound.sampled.AudioFormat;
@@ -460,12 +461,13 @@ public class OptWnd extends Window {
 	public static CheckBox showQuickSlotsBar;
 	public static CheckBox showContainerFullnessCheckBox;
 	public static CheckBox showWorkstationStageCheckBox;
-	public static CheckBox showTileMiningSupportRadius;
+	public static CheckBox showMineSupportRadiiCheckBox;
+	public static CheckBox showMineSupportSafeTilesCheckBox;
 	public static boolean critterAuraEnabled = Utils.getprefb("critterAuras", false);
 	public static boolean beastDangerRadiiEnabled = Utils.getprefb("beastDangerRadii", true);
 	public static boolean showContainerFullness = Utils.getprefb("showContainerFullness", true);
 	public static boolean showWorkstationStage = Utils.getprefb("showWorkstationStage", true);
-	public static boolean showTileSupportRadius = Utils.getprefb("showTileSupportRadius", false);
+	public static boolean showMineSupportTiles = Utils.getprefb("showMineSupportTiles", false);
 	public static boolean advancedMouseInfo = Utils.getprefb("advancedMouseInfo", false);
 	public static boolean keepWindowsInside = Utils.getprefb("keepWindowsInside", false);
     public class InterfacePanel extends Panel {
@@ -570,7 +572,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, topRightColumn.pos("bl").adds(0, 6));
-		topRightColumn = add(enableWrongResCheckBox = new CheckBox("Show Resource Version Prints (Dev)"){
+		topRightColumn = add(enableWrongResCheckBox = new CheckBox("Resource Version Prints (Dev)"){
 			{a = (Utils.getprefb("showResourceConsolePrints", false));}
 			public void set(boolean val) {
 				Resource.showResourceConsolePrints = val;
@@ -578,14 +580,14 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, topRightColumn.pos("bl").adds(0, 6));
-		Widget leftColumn = add(alwaysOpenBeltCheckBox = new CheckBox("Always open belt on login"){
+		Widget leftColumn = add(alwaysOpenBeltCheckBox = new CheckBox("Always Open Belt on Login"){
 			{a = (Utils.getprefb("alwaysOpenBeltOnLogin", false));}
 			public void set(boolean val) {
 				Utils.setprefb("alwaysOpenBeltOnLogin", val);
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 20).x(0));
-		leftColumn = add(showQuickSlotsBar = new CheckBox("Show Quick Slots Widget"){
+		leftColumn = add(showQuickSlotsBar = new CheckBox("Enable Quick Slots Widget"){
 			{a = (Utils.getprefb("showQuickSlotsBar", true));}
 			public void set(boolean val) {
 				Utils.setprefb("showQuickSlotsBar", val);
@@ -598,7 +600,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 6));
-		leftColumn = add(toggleQualityDisplayCheckBox = new CheckBox("Display Quality on Items"){
+		leftColumn = add(toggleQualityDisplayCheckBox = new CheckBox("Display Quality on Inventory Items"){
 			{a = (Utils.getprefb("qtoggle", true));}
 			public void set(boolean val) {
 				Utils.setprefb("qtoggle", val);
@@ -614,7 +616,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 16));
-		leftColumn = add(toggleGobQualityInfoCheckBox = new CheckBox("Show Object Quality on Inspection"){
+		leftColumn = add(toggleGobQualityInfoCheckBox = new CheckBox("Display Object Quality on Inspection"){
 			{a = (Utils.getprefb("showGobQualityInfo", true));}
 			public void set(boolean val) {
 				Utils.setprefb("showGobQualityInfo", val);
@@ -636,7 +638,31 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 6));
-		Widget rightColumn = add(toggleGobCollisionBoxesDisplayCheckBox = new CheckBox("Display Collision Box on Objects"){
+
+		leftColumn = add(showMineSupportRadiiCheckBox = new CheckBox("Show Mine Support Radii"){
+			{a = (Utils.getprefb("showMineSupportRadii", false));}
+			public void set(boolean val) {
+				Utils.setprefb("showMineSupportRadii", val);
+				if (gameui() != null){
+					gameui().msg("Mine Support Radii are now" + (val ? "SHOWN" : "HIDDEN") + "!");
+				}
+				MSRad.show(val);
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 16));
+		leftColumn = add(showMineSupportSafeTilesCheckBox = new CheckBox("Show Mine Support Safe Tiles"){
+			{a = (Utils.getprefb("showMineSupportTiles", false));}
+			public void set(boolean val) {
+				Utils.setprefb("showMineSupportTiles", val);
+				showMineSupportTiles = val;
+				if (gameui() != null){
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateMiningSupports);
+					gameui().msg("Mine Support Safe Tiles are now" + (val ? "SHOWN" : "HIDDEN") + "!");
+				}
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 6));
+		Widget rightColumn = add(toggleGobCollisionBoxesDisplayCheckBox = new CheckBox("Show Object Collision Boxes"){
 			{a = (Utils.getprefb("gobCollisionBoxesDisplayToggle", false));}
 			public void set(boolean val) {
 				Utils.setprefb("gobCollisionBoxesDisplayToggle", val);
@@ -649,33 +675,33 @@ public class OptWnd extends Window {
 			}
 		}, prev.pos("bl").adds(0, 20).x(230));
 
-		rightColumn = add(toggleBeastDangerRadiiCheckBox = new CheckBox("Display Animal Danger Radii"){
+		rightColumn = add(toggleBeastDangerRadiiCheckBox = new CheckBox("Show Animal Danger Radii"){
 			{a = (Utils.getprefb("beastDangerRadii", true));}
 			public void set(boolean val) {
 				Utils.setprefb("beastDangerRadii", val);
 				beastDangerRadiiEnabled = val;
 				if (gameui() != null) {
 					ui.sess.glob.oc.gobAction(Gob::toggleBeastDangerRadii);
-					gameui().msg("Animal danger radii are now " + (val ? "ENABLED" : "DISABLED") + "!");
+					gameui().msg("Animal Danger Radii are now " + (val ? "SHOWN" : "HIDDEN") + "!");
 				}
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
 
-		rightColumn = add(toggleCritterAurasCheckBox = new CheckBox("Display Critter Circle Auras"){
+		rightColumn = add(toggleCritterAurasCheckBox = new CheckBox("Show Critter Circle Auras"){
 			{a = (Utils.getprefb("critterAuras", false));}
 			public void set(boolean val) {
 				Utils.setprefb("critterAuras", val);
 				critterAuraEnabled = val;
 				if (gameui() != null) {
 					ui.sess.glob.oc.gobAction(Gob::toggleCritterAuras);
-					gameui().msg("Critter circle auras are now " + (val ? "ENABLED" : "DISABLED") + "!");
+					gameui().msg("Critter Circle Auras are now " + (val ? "SHOWN" : "HIDDEN") + "!");
 				}
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
 
-		rightColumn = add(showContainerFullnessCheckBox = new CheckBox("Show Container Fullness"){
+		rightColumn = add(showContainerFullnessCheckBox = new CheckBox("Highlight Container Fullness"){
 			{a = (Utils.getprefb("showContainerFullness", true));}
 			public void set(boolean val) {
 				Utils.setprefb("showContainerFullness", val);
@@ -685,23 +711,13 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 16));
-		rightColumn = add(showWorkstationStageCheckBox = new CheckBox("Show Workstation Progress"){
+		rightColumn = add(showWorkstationStageCheckBox = new CheckBox("Highlight Workstation Progress"){
 			{a = (Utils.getprefb("showWorkstationStage", true));}
 			public void set(boolean val) {
 				Utils.setprefb("showWorkstationStage", val);
 				showWorkstationStage = val;
 				if (gameui() != null)
 					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
-				a = val;
-			}
-		}, rightColumn.pos("bl").adds(0, 6));
-		rightColumn = add(showTileMiningSupportRadius = new CheckBox("Show Tile Support Radius"){
-			{a = (Utils.getprefb("showTileSupportRadius", false));}
-			public void set(boolean val) {
-				Utils.setprefb("showTileSupportRadius", val);
-				showTileSupportRadius = val;
-				if (gameui() != null)
-					ui.sess.glob.oc.gobAction(Gob::settingUpdateMiningSupports);
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
@@ -745,16 +761,16 @@ public class OptWnd extends Window {
 			y = cont.adda(new Label("Map Buttons"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
 			y = addbtn(cont, "Reset view", MapWnd.kb_home, y);
 			y = addbtn(cont, "Compact mode", MapWnd.kb_compact, y);
-			y = addbtn(cont, "Show personal claims", MapWnd.kb_claim, y);
-			y = addbtn(cont, "Show village claims", MapWnd.kb_vil, y);
-			y = addbtn(cont, "Show provinces", MapWnd.kb_prov, y);
+			y = addbtn(cont, "Show Personal Claims on Map", MapWnd.kb_claim, y);
+			y = addbtn(cont, "Show Village Claims on Map", MapWnd.kb_vil, y);
+			y = addbtn(cont, "Show Realm Provinces on Map", MapWnd.kb_prov, y);
 			y = addbtn(cont, "Hide markers", MapWnd.kb_hmark, y);
 			y = addbtn(cont, "Add marker", MapWnd.kb_mark, y);
 			y = cont.adda(new Label("World Toggles"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
-			y = addbtn(cont, "Display claims", GameUI.kb_claim, y);
-			y = addbtn(cont, "Display villages", GameUI.kb_vil, y);
-			y = addbtn(cont, "Display realms", GameUI.kb_rlm, y);
-			y = addbtn(cont, "Display grid-lines", MapView.kb_grid, y);
+			y = addbtn(cont, "Display Personal Claims", GameUI.kb_claim, y);
+			y = addbtn(cont, "Display Village Claims", GameUI.kb_vil, y);
+			y = addbtn(cont, "Display Realm Provinces", GameUI.kb_rlm, y);
+			y = addbtn(cont, "Display Tile Grid", MapView.kb_grid, y);
 			y = cont.adda(new Label("Camera control"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
 			//y = addbtn(cont, "Rotate left", MapView.kb_camleft, y);
 			//y = addbtn(cont, "Rotate right", MapView.kb_camright, y);
@@ -1436,7 +1452,7 @@ public class OptWnd extends Window {
 				combatUIBottomPanelHeightSlider.val = 100;
 				Utils.setprefi("combatBottomPanelHeight", 100);
 			}), prev.pos("bl").adds(210, -20));
-			prev = add(new CheckBox("Show Hotkeys on the Bottom Panel (Combat Moves)"){
+			prev = add(new CheckBox("Display Combat Move Hotkeys (Bottom Panel)"){
 				{a = Utils.getprefb("showCombatHotkeysUI", true);}
 				public void set(boolean val) {
 					Utils.setprefb("showCombatHotkeysUI", val);
@@ -1445,7 +1461,7 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(16, 10));
 
-			prev = add(new CheckBox("Show Combat Data above Current Target"){
+			prev = add(new CheckBox("Display Combat Data above Current Target"){
 				{a = Utils.getprefb("drawFloatingCombatData", true);}
 				public void set(boolean val) {
 					Utils.setprefb("drawFloatingCombatDataOnCurrentTarget", val);
@@ -1453,7 +1469,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 12));
-			prev = add(new CheckBox("Show Combat Data above other Aggroed Enemies"){
+			prev = add(new CheckBox("Display Combat Data above other Aggroed Enemies"){
 				{a = Utils.getprefb("drawFloatingCombatData", true);}
 				public void set(boolean val) {
 					Utils.setprefb("drawFloatingCombatData", val);
@@ -1461,7 +1477,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
-			prev = add(new CheckBox("Show Background for Combat Data"){
+			prev = add(new CheckBox("Add Background for Combat Data"){
 				{a = Utils.getprefb("CombatInfoBackgroundToggled", false);}
 				public void set(boolean val) {
 					Utils.setprefb("CombatInfoBackgroundToggled", val);
@@ -1469,7 +1485,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
-			prev = add(toggleGobDamageInfoCheckBox = new CheckBox("Show Damage Info:"){
+			prev = add(toggleGobDamageInfoCheckBox = new CheckBox("Display Damage Info:"){
 				{a = Utils.getprefb("GobDamageInfoToggled", true);}
 				public void set(boolean val) {
 					Utils.setprefb("GobDamageInfoToggled", val);
@@ -1552,7 +1568,7 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 6));
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(46)));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForCombatSettingsStuff();
 			pack();
 		}
@@ -2812,7 +2828,7 @@ public class OptWnd extends Window {
 		enableCornerFPSCheckBox.tooltip = RichText.render("Enabling this will display the current FPS in the top-right corner of the screen.", 300);
 		enableAdvancedMouseInfoCheckBox.tooltip = RichText.render("Holding Ctrl+Shift will show the Resource Path of the object or tile you are mousing over. Enabling this option will show additional information.\n$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
 		enableWrongResCheckBox.tooltip = RichText.render("$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
-		enableKeepWindowsInsideCheckBox.tooltip = RichText.render("Enabling this will cause ALL Windows to always be kept inside the Game Window, whenever you resize it.\n$col[185,185,185]{Note: By default, windows remain in the same spot, outside of your resized window.", 300);
+		enableKeepWindowsInsideCheckBox.tooltip = RichText.render("Enabling this will force ALL Windows to be kept inside the Game Window, whenever you resize it.\n$col[185,185,185]{Note: By default, windows will remain in the same spot when you resize your Game Window, even if they're outside of it.", 300);
 		granularityPositionLabel.tooltip = RichText.render("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
 		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in.\n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
@@ -2860,6 +2876,8 @@ public class OptWnd extends Window {
 		flatWorldCheckBox.tooltip = RichText.render("Enabling this will make the entire game world terrain flat.\n$col[185,185,185]{Cliffs will still be drawn with their relative height, scaled down.}\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
 		tileTransitionsCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
 		tileSmoothingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
+		showMineSupportRadiiCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
+		showMineSupportSafeTilesCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
 	}
 
 	private void setTooltipsForHidingSettingsStuff(){
