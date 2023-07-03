@@ -432,7 +432,6 @@ public class Window extends Widget implements DTarget {
 
 	public void preventDraggingOutside() {
 		if (gameui() != null) {
-			System.out.println("X = " + this.csz().x + "; Y = " + this.csz().y);
 			if (OptWnd.keep25PercentWindowSizeInside || this.csz().x > 800 || this.csz().y > 500) {
 				if (this.c.x < - UI.scale(14) - (int)(this.csz().x/1.333))
 					this.c.x = - UI.scale(14) - (int)(this.csz().x/1.333);
