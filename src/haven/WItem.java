@@ -29,7 +29,6 @@ package haven;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import haven.ItemInfo.AttrCache;
 import haven.resutil.Curiosity;
@@ -143,7 +142,17 @@ public class WItem extends Widget implements DTarget {
 	    GItem.InfoOverlay<?>[] ret = buf.toArray(new GItem.InfoOverlay<?>[0]);
 	    return(() -> ret);
 	});
-    public final AttrCache<Double> itemmeter = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
+    public final AttrCache<Double> itemmeter = new AttrCache<Double>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter)); // ND: (from Ender) Explicitly added type to be sure IDE is not confused
+	public static Color redDurability = new Color(255, 0, 0, 180);
+	public static Color orangeDurability = new Color(255, 153, 0, 180);
+	public static Color yellowDurability = new Color(255, 234, 0, 180);
+	public static Color greenDurability = new Color(0, 255, 4, 180);
+	public final AttrCache<Pair<Double, Color>> wear = new AttrCache<>(this::info, AttrCache.cache(info->{
+		Pair<Integer, Integer> wear = ItemInfo.getWear(info);
+		if(wear == null) return (null);
+		double bar = (float) (wear.b - wear.a) / wear.b;
+		return new Pair<>(bar, Utils.blendcol(bar, redDurability, orangeDurability, yellowDurability, greenDurability));
+	}));
 
     private Widget contparent() {
 	/* XXX: This is a bit weird, but I'm not sure what the alternative is... */
@@ -183,6 +192,7 @@ public class WItem extends Widget implements DTarget {
 		for(GItem.InfoOverlay<?> ol : ols)
 		    ol.draw(g);
 	    }
+		drawDurabilityBars(g, sz);
 		drawmeter(g, sz);
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
@@ -243,6 +253,20 @@ public class WItem extends Widget implements DTarget {
 			return cachedStudyTex;
 		}
 		return null;
+	}
+
+	private void drawDurabilityBars(GOut g, Coord sz) {
+		if(true) {
+			Pair<Double, Color> wear = this.wear.get();
+			if(wear != null) {
+				int h = (int) (sz.y * wear.a);
+				g.chcolor(Color.BLACK);
+				g.frect(new Coord(0, sz.y - h - 1), new Coord(5, h + 2));
+				g.chcolor(wear.b);
+				g.frect(new Coord(1, sz.y - h), new Coord(3, h));
+				g.chcolor();
+			}
+		}
 	}
 
 	public final AttrCache<Pair<String, String>> study = new AttrCache<Pair<String, String>>(this::info, AttrCache.map1(Curiosity.class, curio -> curio::remainingTip));
