@@ -1613,7 +1613,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    prog.move(sz.sub(prog.sz).mul(0.5, 0.35));
 	actionBar1.c = new Coord(blpw + UI.scale(10), sz.y - actionBar1.sz.y - UI.scale(5));
 	actionBar2.c = new Coord(blpw + UI.scale(10), sz.y - actionBar1.sz.y - actionBar2.sz.y - UI.scale(5));
-	if (OptWnd.keepWindowsInside) {
+	if (OptWnd.dragWindowsInWhenResizing) {
 		for (Window wnd : getAllWindows()) {
 			wnd.preventDraggingOutside();
 		}

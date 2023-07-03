@@ -447,8 +447,8 @@ public class OptWnd extends Window {
 	private CheckBox enableCornerFPSCheckBox;
 	private CheckBox enableAdvancedMouseInfoCheckBox;
 	private CheckBox enableWrongResCheckBox;
-	private CheckBox enableKeepWindowsInsideCheckBox;
-	private CheckBox enableKeep25PercentWindowSizeInsideCheckBox;
+	private CheckBox enableDragWindowsInWhenResizingCheckBox;
+	private CheckBox enableSnapWindowsBackInsideCheckBox;
 	private Label granularityPositionLabel;
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
@@ -470,8 +470,8 @@ public class OptWnd extends Window {
 	public static boolean showWorkstationStage = Utils.getprefb("showWorkstationStage", true);
 	public static boolean showMineSupportTiles = Utils.getprefb("showMineSupportTiles", false);
 	public static boolean advancedMouseInfo = Utils.getprefb("advancedMouseInfo", false);
-	public static boolean keepWindowsInside = Utils.getprefb("keepWindowsInside", false);
-	public static boolean keep25PercentWindowSizeInside = Utils.getprefb("keep25PercentWindowSizeInside", false);
+	public static boolean dragWindowsInWhenResizing = Utils.getprefb("dragWindowsInWhenResizing", false);
+	public static boolean snapWindowsBackInside = Utils.getprefb("snapWindowsBackInside", true);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -548,34 +548,7 @@ public class OptWnd extends Window {
 			   dpy);
 		}
 	    }
-		prev = add(new Label("Advanced Interface & Display Settings"), prev.pos("bl").adds(0, 16).x(110));
 		Widget topRightColumn;
-		topRightColumn = add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
-			{a = (Utils.getprefb("CornerFPSSettingBool", false));}
-			public void set(boolean val) {
-				GLPanel.Loop.enableCornerFPSSetting = val;
-				Utils.setprefb("CornerFPSSettingBool", val);
-				a = val;
-			}
-		}, UI.scale(230, 4));
-
-		topRightColumn = add(enableKeep25PercentWindowSizeInsideCheckBox = new CheckBox("Keep only 25% of window size inside"){
-			{a = (Utils.getprefb("keep25PercentWindowSizeInside", false));}
-			public void set(boolean val) {
-				keep25PercentWindowSizeInside = val;
-				Utils.setprefb("keep25PercentWindowSizeInside", val);
-				a = val;
-			}
-		}, topRightColumn.pos("bl").adds(0, 6));
-
-		topRightColumn = add(enableKeepWindowsInsideCheckBox = new CheckBox("Keep Windows in when Resizing Game"){
-			{a = (Utils.getprefb("keepWindowsInside", false));}
-			public void set(boolean val) {
-				keepWindowsInside = val;
-				Utils.setprefb("keepWindowsInside", val);
-				a = val;
-			}
-		}, topRightColumn.pos("bl").adds(0, 6));
 		topRightColumn = add(enableAdvancedMouseInfoCheckBox = new CheckBox("Show Extended Mouseover Info (Dev)"){
 			{a = (Utils.getprefb("advancedMouseInfo", false));}
 			public void set(boolean val) {
@@ -583,7 +556,7 @@ public class OptWnd extends Window {
 				Utils.setprefb("advancedMouseInfo", val);
 				a = val;
 			}
-		}, topRightColumn.pos("bl").adds(0, 6));
+		}, UI.scale(230, 6));
 		topRightColumn = add(enableWrongResCheckBox = new CheckBox("Resource Version Prints (Dev)"){
 			{a = (Utils.getprefb("showResourceConsolePrints", false));}
 			public void set(boolean val) {
@@ -592,14 +565,18 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, topRightColumn.pos("bl").adds(0, 6));
-		Widget leftColumn = add(alwaysOpenBeltCheckBox = new CheckBox("Always Open Belt on Login"){
+
+		prev = add(new Label("Advanced Interface Settings"), prev.pos("bl").adds(0, 18).x(150));
+		Widget leftColumn;
+		Widget rightColumn;
+		leftColumn = add(alwaysOpenBeltCheckBox = new CheckBox("Always Open Belt on Login"){
 			{a = (Utils.getprefb("alwaysOpenBeltOnLogin", false));}
 			public void set(boolean val) {
 				Utils.setprefb("alwaysOpenBeltOnLogin", val);
 				a = val;
 			}
 		}, prev.pos("bl").adds(0, 20).x(0));
-		leftColumn = add(showQuickSlotsBar = new CheckBox("Enable Quick Slots Widget"){
+		leftColumn = add(showQuickSlotsBar = new CheckBox("Enable Quick Slots (Hands) Widget"){
 			{a = (Utils.getprefb("showQuickSlotsBar", true));}
 			public void set(boolean val) {
 				Utils.setprefb("showQuickSlotsBar", val);
@@ -620,6 +597,36 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 6));
+
+		rightColumn = add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
+			{a = (Utils.getprefb("CornerFPSSettingBool", false));}
+			public void set(boolean val) {
+				GLPanel.Loop.enableCornerFPSSetting = val;
+				Utils.setprefb("CornerFPSSettingBool", val);
+				a = val;
+			}
+		}, prev.pos("bl").adds(0, 20).x(230));
+
+		rightColumn = add(enableSnapWindowsBackInsideCheckBox = new CheckBox("Snap windows back when dragged out"){
+			{a = (Utils.getprefb("snapWindowsBackInside", true));}
+			public void set(boolean val) {
+				snapWindowsBackInside = val;
+				Utils.setprefb("snapWindowsBackInside", val);
+				a = val;
+			}
+		}, rightColumn.pos("bl").adds(0, 6));
+
+		rightColumn = add(enableDragWindowsInWhenResizingCheckBox = new CheckBox("Drag windows in when resizing game"){
+			{a = (Utils.getprefb("dragWindowsInWhenResizing", false));}
+			public void set(boolean val) {
+				dragWindowsInWhenResizing = val;
+				Utils.setprefb("dragWindowsInWhenResizing", val);
+				a = val;
+			}
+		}, rightColumn.pos("bl").adds(0, 6));
+
+		prev = add(new Label("Advanced Display Settings"), leftColumn.pos("bl").adds(0, 18).x(150));
+
 		leftColumn = add(toggleGobHealthDisplayCheckBox = new CheckBox("Display Object Health Percentage"){
 			{a = (Utils.getprefb("gobHealthDisplayToggle", true));}
 			public void set(boolean val) {
@@ -627,7 +634,7 @@ public class OptWnd extends Window {
 				GobHealthInfo.displayHealthPercentage = val;
 				a = val;
 			}
-		}, leftColumn.pos("bl").adds(0, 16));
+		}, prev.pos("bl").adds(0, 20).x(0));
 		leftColumn = add(toggleGobQualityInfoCheckBox = new CheckBox("Display Object Quality on Inspection"){
 			{a = (Utils.getprefb("showGobQualityInfo", true));}
 			public void set(boolean val) {
@@ -674,7 +681,8 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 6));
-		Widget rightColumn = add(toggleGobCollisionBoxesDisplayCheckBox = new CheckBox("Show Object Collision Boxes"){
+
+		rightColumn = add(toggleGobCollisionBoxesDisplayCheckBox = new CheckBox("Show Object Collision Boxes"){
 			{a = (Utils.getprefb("gobCollisionBoxesDisplayToggle", false));}
 			public void set(boolean val) {
 				Utils.setprefb("gobCollisionBoxesDisplayToggle", val);
@@ -734,7 +742,7 @@ public class OptWnd extends Window {
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
 
-		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 30).x(101));
+		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 30).x(117));
 		setTooltipsForInterfaceSettingsStuff();
 	    pack();
 	}
@@ -2840,8 +2848,8 @@ public class OptWnd extends Window {
 		enableCornerFPSCheckBox.tooltip = RichText.render("Enabling this will display the current FPS in the top-right corner of the screen.", 300);
 		enableAdvancedMouseInfoCheckBox.tooltip = RichText.render("Holding Ctrl+Shift will show the Resource Path of the object or tile you are mousing over. Enabling this option will show additional information.\n$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
 		enableWrongResCheckBox.tooltip = RichText.render("$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
-		enableKeepWindowsInsideCheckBox.tooltip = RichText.render("Enabling this will force ALL Windows to be kept inside the Game Window, whenever you resize it.\n$col[185,185,185]{Note: By default, windows will remain in the same spot when you resize your Game Window, even if they're outside of it.", 300);
-		enableKeep25PercentWindowSizeInsideCheckBox.tooltip = RichText.render("$col[185,185,185]{This is always the case for large windows, like the Cattle Roster or Cook Book.}", 300);
+		enableDragWindowsInWhenResizingCheckBox.tooltip = RichText.render("Enabling this will force ALL Windows to be dragged back inside the Game Window, whenever you resize it.\n$col[185,185,185]{Note: By default, windows will remain in the same spot when you resize your Game Window, even if they're outside of it.", 300);
+		enableSnapWindowsBackInsideCheckBox.tooltip = RichText.render("Enabling this cause most windows to be fully snapped back into your Game's Window.\nBy default, when you try to drag a window outside of your Game Window, it will only pop 25% of it back in.\n$col[185,185,185]{Large windows like the Cattle Roster or Cook Book will always are not affected by this setting. The 25% rule always applies to them.}", 300);
 		granularityPositionLabel.tooltip = RichText.render("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
 		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in.\n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
