@@ -347,7 +347,7 @@ public class WItem extends Widget implements DTarget {
 
     public boolean mousehover(Coord c, boolean on) {
 	boolean ret = super.mousehover(c, on);
-	if(on && (item.contents != null)) {
+	if(on && (item.contents != null && (!OptWnd.requireShiftHoverStacks || ui.modshift))) {
 	    item.hovering(this);
 	    return(true);
 	}

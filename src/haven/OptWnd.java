@@ -452,6 +452,7 @@ public class OptWnd extends Window {
 	private Label granularityPositionLabel;
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
+	public static CheckBox requireShiftHoverStacksCheckBox;
 	public static CheckBox toggleGobHealthDisplayCheckBox;
 	public static CheckBox toggleGobGrowthInfoCheckBox;
 	public static CheckBox toggleGobQualityInfoCheckBox;
@@ -472,6 +473,7 @@ public class OptWnd extends Window {
 	public static boolean advancedMouseInfo = Utils.getprefb("advancedMouseInfo", false);
 	public static boolean dragWindowsInWhenResizing = Utils.getprefb("dragWindowsInWhenResizing", false);
 	public static boolean snapWindowsBackInside = Utils.getprefb("snapWindowsBackInside", true);
+	public static boolean requireShiftHoverStacks = Utils.getprefb("requireShiftHoverStacks", false);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -597,6 +599,15 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 6));
+
+		leftColumn = add(requireShiftHoverStacksCheckBox = new CheckBox("Show hover-inventories only if holding Shift"){
+			{a = (Utils.getprefb("requireShiftHoverStacks", false));}
+			public void set(boolean val) {
+				Utils.setprefb("requireShiftHoverStacks", val);
+				requireShiftHoverStacks = val;
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 16));
 
 		rightColumn = add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
 			{a = (Utils.getprefb("CornerFPSSettingBool", false));}
