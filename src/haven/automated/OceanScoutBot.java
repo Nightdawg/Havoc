@@ -6,7 +6,6 @@ import haven.pathfinder.Pathfinder;
 import haven.render.Model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Random;
 
 import static haven.OCache.posres;
@@ -41,17 +40,6 @@ public class OceanScoutBot extends Window implements Runnable {
             }
         };
         add(dirBox, UI.scale(10, 10));
-//        CheckBox activeBox = new CheckBox("Active") {
-//            {
-//                a = false;
-//            }
-//
-//            public void set(boolean val) {
-//                active = val;
-//                a = val;
-//            }
-//        };
-//        add(activeBox, UI.scale(10, 36));
 
         add(new Button(170, "Start"){
             @Override

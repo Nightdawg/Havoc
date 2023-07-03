@@ -644,7 +644,7 @@ public class OptWnd extends Window {
 			public void set(boolean val) {
 				Utils.setprefb("showMineSupportRadii", val);
 				if (gameui() != null){
-					gameui().msg("Mine Support Radii are now" + (val ? "SHOWN" : "HIDDEN") + "!");
+					gameui().msg("Mine Support Radii are now " + (val ? "SHOWN" : "HIDDEN") + "!");
 				}
 				MSRad.show(val);
 				a = val;
@@ -657,7 +657,7 @@ public class OptWnd extends Window {
 				showMineSupportTiles = val;
 				if (gameui() != null){
 					ui.sess.glob.oc.gobAction(Gob::settingUpdateMiningSupports);
-					gameui().msg("Mine Support Safe Tiles are now" + (val ? "SHOWN" : "HIDDEN") + "!");
+					gameui().msg("Mine Support Safe Tiles are now " + (val ? "SHOWN" : "HIDDEN") + "!");
 				}
 				a = val;
 			}

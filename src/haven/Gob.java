@@ -36,16 +36,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-
-import haven.sprites.AnimalDangerRadiiSprite;
-import haven.sprites.ArcheryRadiusSprite;
-import haven.sprites.ArcheryVectorSprite;
-import haven.sprites.AuraCircleSprite;
 
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
@@ -242,6 +237,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void init() {
 	    if(spr == null) {
+			//Minesweeper data
 //			if(res != null && res.get().name.contains("gfx/fx/cavewarn")){
 //				try{
 //					System.out.println(this.gob.rc + " cavein: " + sdt.peekUint8());
@@ -249,16 +245,16 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 //
 //				}
 //			}
-			if(this.gob != null) {
-				if (gob.getres() != null && res.get().name.contains("mineout")) {
-					System.out.println(gob.getres().name + " - " + gob.rc + " - " + res.get().name + System.currentTimeMillis());
-				}
-			}
-			if(this.gob != null){
-				if(gob.getres() == null && res.get().name.contains("mineout")) {
-					System.out.println(gob.getClass().getName() + " - " + gob.virtual + gob.rc + System.currentTimeMillis());
-				}
-			}
+//			if(this.gob != null) {
+//				if (gob.getres() != null && res.get().name.contains("mineout")) {
+//					System.out.println(gob.getres().name + " - " + gob.rc + " - " + res.get().name + System.currentTimeMillis());
+//				}
+//			}
+//			if(this.gob != null){
+//				if(gob.getres() == null && res.get().name.contains("mineout")) {
+//					System.out.println(gob.getClass().getName() + " - " + gob.virtual + gob.rc + System.currentTimeMillis());
+//				}
+//			}
 		spr = Sprite.create(gob, res.get(), sdt);
 		if(added && (spr instanceof SetupMod)) {
 		    gob.setupmods.add((SetupMod)spr);
