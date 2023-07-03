@@ -112,7 +112,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public Thread shorelineScoutBotThread;
 	private RecipeCollector recipeCollector;
 	private Thread recipeCollectorThread;
-	private CookingRecipes cookbook;
+	public CookingRecipes cookbook;
 	public MiningAssistant miningAssistantWindow;
 	public Thread miningAssistantThread;
 

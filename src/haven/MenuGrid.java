@@ -35,6 +35,7 @@ import haven.Resource.AButton;
 import haven.automated.EquipFromBelt;
 import haven.automated.MiningAssistant;
 import haven.automated.OceanScoutBot;
+import haven.cookbook.CookingRecipes;
 
 import java.util.*;
 
@@ -373,6 +374,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleMineSupportRadii");
 
 		makeLocal("paginae/nightdawg/OtherTools/MiningAssistant");
+		makeLocal("paginae/nightdawg/OtherTools/CookBook");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -633,6 +635,12 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.miningAssistantWindow.reqdestroy();
 					gui.miningAssistantWindow = null;
 				}
+			} else if (ad[2].equals("CookBook")) {
+				if(gui.cookbook == null){
+					gui.cookbook = new CookingRecipes();
+					gui.add(gui.cookbook, new Coord(gui.sz.x/2 - gui.cookbook.sz.x/2, gui.sz.y/2 - gui.cookbook.sz.y/2 - 200));
+				}
+				gui.cookbook.toggleShow();
 			}
 		}
 	}
