@@ -448,6 +448,7 @@ public class OptWnd extends Window {
 	private CheckBox enableAdvancedMouseInfoCheckBox;
 	private CheckBox enableWrongResCheckBox;
 	private CheckBox enableKeepWindowsInsideCheckBox;
+	private CheckBox enableKeep25PercentWindowSizeInsideCheckBox;
 	private Label granularityPositionLabel;
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
@@ -470,6 +471,7 @@ public class OptWnd extends Window {
 	public static boolean showMineSupportTiles = Utils.getprefb("showMineSupportTiles", false);
 	public static boolean advancedMouseInfo = Utils.getprefb("advancedMouseInfo", false);
 	public static boolean keepWindowsInside = Utils.getprefb("keepWindowsInside", false);
+	public static boolean keep25PercentWindowSizeInside = Utils.getprefb("keep25PercentWindowSizeInside", false);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -555,7 +557,17 @@ public class OptWnd extends Window {
 				Utils.setprefb("CornerFPSSettingBool", val);
 				a = val;
 			}
-		}, UI.scale(230, 10));
+		}, UI.scale(230, 4));
+
+		topRightColumn = add(enableKeep25PercentWindowSizeInsideCheckBox = new CheckBox("Keep only 25% of window size inside"){
+			{a = (Utils.getprefb("keep25PercentWindowSizeInside", false));}
+			public void set(boolean val) {
+				keep25PercentWindowSizeInside = val;
+				Utils.setprefb("keep25PercentWindowSizeInside", val);
+				a = val;
+			}
+		}, topRightColumn.pos("bl").adds(0, 6));
+
 		topRightColumn = add(enableKeepWindowsInsideCheckBox = new CheckBox("Keep Windows in when Resizing Game"){
 			{a = (Utils.getprefb("keepWindowsInside", false));}
 			public void set(boolean val) {
@@ -2829,6 +2841,7 @@ public class OptWnd extends Window {
 		enableAdvancedMouseInfoCheckBox.tooltip = RichText.render("Holding Ctrl+Shift will show the Resource Path of the object or tile you are mousing over. Enabling this option will show additional information.\n$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
 		enableWrongResCheckBox.tooltip = RichText.render("$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
 		enableKeepWindowsInsideCheckBox.tooltip = RichText.render("Enabling this will force ALL Windows to be kept inside the Game Window, whenever you resize it.\n$col[185,185,185]{Note: By default, windows will remain in the same spot when you resize your Game Window, even if they're outside of it.", 300);
+		enableKeep25PercentWindowSizeInsideCheckBox.tooltip = RichText.render("$col[185,185,185]{This is always the case for large windows, like the Cattle Roster or Cook Book.}", 300);
 		granularityPositionLabel.tooltip = RichText.render("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
 		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in.\n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);

@@ -78,7 +78,7 @@ public class Window extends Widget implements DTarget {
 	public Deco deco;
     public boolean dt = false;
     public String cap;
-    private UI.Grab dm = null;
+    public UI.Grab dm = null;
     private Coord doff;
     public boolean decohide = false;
     public boolean large = false;
@@ -432,43 +432,40 @@ public class Window extends Widget implements DTarget {
 
 	public void preventDraggingOutside() {
 		if (gameui() != null) {
-			if (this.c.x < -UI.scale(14))
-				this.c.x = -UI.scale(14);
-			if (this.c.y < -UI.scale(14))
-				this.c.y = -UI.scale(14);
-			if (this.large) {
-				if (this.c.x > (gameui().sz.x - this.csz().x - UI.scale(68)))
-					this.c.x = gameui().sz.x - this.csz().x - UI.scale(68);
-				if (this.c.y > (gameui().sz.y - this.csz().y - UI.scale(62)))
-					this.c.y = gameui().sz.y - this.csz().y - UI.scale(62);
+			System.out.println("X = " + this.csz().x + "; Y = " + this.csz().y);
+			if (OptWnd.keep25PercentWindowSizeInside || this.csz().x > 800 || this.csz().y > 500) {
+				if (this.c.x < - UI.scale(14) - (int)(this.csz().x/1.333))
+					this.c.x = - UI.scale(14) - (int)(this.csz().x/1.333);
+				if (this.c.y < - UI.scale(14) - (int)(this.csz().y/1.333))
+					this.c.y = - UI.scale(14) - (int)(this.csz().y/1.333);
+				if (this.large) {
+					if (this.c.x > (gameui().sz.x - (int)(this.csz().x*0.25) - UI.scale(68)))
+						this.c.x = gameui().sz.x - (int)(this.csz().x*0.25) - UI.scale(68);
+					if (this.c.y > (gameui().sz.y - (int)(this.csz().y*0.25) - UI.scale(62)))
+						this.c.y = gameui().sz.y - (int)(this.csz().y*0.25) - UI.scale(62);
+				} else {
+					if (this.c.x > (gameui().sz.x - (int)(this.csz().x*0.25) - UI.scale(40)))
+						this.c.x = gameui().sz.x - (int)(this.csz().x*0.25) - UI.scale(40);
+					if (this.c.y > (gameui().sz.y - (int)(this.csz().y*0.25) - UI.scale(52)))
+						this.c.y = gameui().sz.y - (int)(this.csz().y*0.25) - UI.scale(52);
+				}
 			} else {
-				if (this.c.x > (gameui().sz.x - this.csz().x - UI.scale(40)))
-					this.c.x = gameui().sz.x - this.csz().x - UI.scale(40);
-				if (this.c.y > (gameui().sz.y - this.csz().y - UI.scale(52)))
-					this.c.y = gameui().sz.y - this.csz().y - UI.scale(52);
+				if (this.c.x < -UI.scale(14))
+					this.c.x = -UI.scale(14);
+				if (this.c.y < -UI.scale(14))
+					this.c.y = -UI.scale(14);
+				if (this.large) {
+					if (this.c.x > (gameui().sz.x - this.csz().x - UI.scale(68)))
+						this.c.x = gameui().sz.x - this.csz().x - UI.scale(68);
+					if (this.c.y > (gameui().sz.y - this.csz().y - UI.scale(62)))
+						this.c.y = gameui().sz.y - this.csz().y - UI.scale(62);
+				} else {
+					if (this.c.x > (gameui().sz.x - this.csz().x - UI.scale(40)))
+						this.c.x = gameui().sz.x - this.csz().x - UI.scale(40);
+					if (this.c.y > (gameui().sz.y - this.csz().y - UI.scale(52)))
+						this.c.y = gameui().sz.y - this.csz().y - UI.scale(52);
+				}
 			}
-		}
-	}
-
-	public static void preventDraggingOutside(Window window) {
-		Widget parent = window.parent;
-		GameUI gameui = null;
-		while (parent != null) {
-			if (parent instanceof GameUI) {
-				gameui = (GameUI) parent;
-				break;
-			}
-			parent = parent.parent;
-		}
-
-		if (gameui != null) {
-			if (window.c.x < -UI.scale(14))
-				window.c.x = -UI.scale(14);
-			if (window.c.y < -UI.scale(14))
-				window.c.y = -UI.scale(14);
-			if (window.c.x > (gameui.sz.x - window.csz().x - UI.scale(40)))
-				window.c.x = gameui.sz.x - window.csz().x - UI.scale(40);
-			if (window.c.y > (gameui.sz.y - window.csz().y - UI.scale(52)));
 		}
 	}
 
