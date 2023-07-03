@@ -2303,7 +2303,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			Long gobid = new Long((Integer) inf.clickargs()[1]);
 			Gob gob = glob.oc.getgob(gobid);
 			if(gob != null) {
-				if(ui.isCursor("gfx/hud/curs/study")) {
+				if(ui.isCursor("gfx/hud/curs/study") && clickb == 1) {
 					gameui().setDetectGob(gob);
 				}
 				if (ui.modmeta && gui.vhand == null) {

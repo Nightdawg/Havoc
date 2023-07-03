@@ -656,7 +656,7 @@ public class OptWnd extends Window {
 			public void set(boolean val) {
 				Utils.setprefb("showMineSupportRadii", val);
 				if (gameui() != null){
-					gameui().msg("Mine Support Radii are now" + (val ? "SHOWN" : "HIDDEN") + "!");
+					gameui().msg("Mine Support Radii are now " + (val ? "SHOWN" : "HIDDEN") + "!");
 				}
 				MSRad.show(val);
 				a = val;
@@ -669,7 +669,7 @@ public class OptWnd extends Window {
 				showMineSupportTiles = val;
 				if (gameui() != null){
 					ui.sess.glob.oc.gobAction(Gob::settingUpdateMiningSupports);
-					gameui().msg("Mine Support Safe Tiles are now" + (val ? "SHOWN" : "HIDDEN") + "!");
+					gameui().msg("Mine Support Safe Tiles are now " + (val ? "SHOWN" : "HIDDEN") + "!");
 				}
 				a = val;
 			}
@@ -975,7 +975,7 @@ public class OptWnd extends Window {
 					if (ui.sess != null)
 						ui.sess.glob.map.invalidateAll();
 					if (gameui() != null) {
-						gameui().msg("Flavour Objects now " + (val ? "HIDDEN" : "SHOWN") + "!");
+						gameui().msg("Flavour Objects are now now " + (val ? "HIDDEN" : "SHOWN") + "!");
 					}
 					a = val;
 				}
@@ -2874,7 +2874,7 @@ public class OptWnd extends Window {
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
 		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding Ctrl before right clicking an item or object instantly select the first available option from the flower menu.", 300);
-		autoswitchBunnyPlateBootsCheckBox.tooltip = RichText.render("Enabling this will cause your currently equipped Plate Boots to automatically swap with a pair of bunny slippers from your inventory, whenever you right click to chase a rabbit, and vice versa if you click on anything else or just left click to walk.\n$col[185,185,185]{I don't see many reason for which you'd ever want to disable this setting, but alas, I made it an option.}", 300);
+		autoswitchBunnyPlateBootsCheckBox.tooltip = RichText.render("Enabling this will cause your currently equipped Plate Boots to automatically swap with a pair of bunny slippers from your inventory, whenever you right click to chase a rabbit, and vice versa if you click on anything else or just left click to walk.\n$col[185,185,185]{I don't see any reason for which you'd ever want to disable this setting, but alas, I made it an option.}", 300);
 		saveCutleryCheckBox.tooltip = RichText.render("Enabling this will cause any cutlery that has 1 wear left to be instantly transferred from the table into your inventory.\n$col[185,185,185]{A warning message will be shown, to let you know that the item has been transferred.}", 300);
 		noCursorItemDroppingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: You can still drop the item on your cursor if you hold Ctrl.}", 300);
 		noCursorItemDroppingInWaterCheckBox.tooltip = RichText.render("Warning: If the previous option is Enabled, it will overwrite this one. You will still not be able to drop items in water.\n$col[185,185,185]{Note: You can still drop the item on your cursor if you hold Ctrl.}", 300);
