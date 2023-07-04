@@ -547,6 +547,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			if(Math.abs(telev - elev) < 0.0001) elev = telev;
 
 			dist = dist + ((tdist - dist) * cf);
+			if (dist > 4000) tdist = dist = 4000;
 			if(Math.abs(tdist - dist) < 0.0001) dist = tdist;
 
 			Coord3f mc = getcc();
