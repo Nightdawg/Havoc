@@ -50,7 +50,6 @@ public class Widget {
     private Widget prevtt;
     static Map<String, Factory> types = new TreeMap<String, Factory>();
 
-	protected final boolean i10n = i10n();
 
     @dolda.jglob.Discoverable
     @Target(ElementType.TYPE)
@@ -1532,5 +1531,4 @@ public class Widget {
 		}
 		return null;
 	}
-	protected boolean i10n() {return true;}
 }
