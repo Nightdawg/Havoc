@@ -1,7 +1,7 @@
 package haven.automated;
 
 import haven.*;
-import haven.automated.staticData.MiningStatic;
+import haven.automated.staticData.TileStatic;
 
 import java.util.*;
 
@@ -414,7 +414,7 @@ public class TunnelerBot extends Window implements Runnable {
             //Illegal argument exception wtf?
         }
         for (Gob gob : gobs) {
-            if (MiningStatic.ROCKS.contains(gob.getres().basename())) {
+            if (TileStatic.SUPPORT_MATERIALS.contains(gob.getres().basename())) {
                 gui.map.pfLeftClick(gob.rc.floor(), null);
                 AUtils.waitPf(gui);
 
@@ -426,7 +426,7 @@ public class TunnelerBot extends Window implements Runnable {
 
         for (WItem wItem : gui.maininv.getAllItems()) {
             try {
-                if (MiningStatic.ROCKS.contains(wItem.item.getres().basename())) {
+                if (TileStatic.SUPPORT_MATERIALS.contains(wItem.item.getres().basename())) {
                     //do something with rock
                 }
             } catch (Loading e) {
@@ -437,12 +437,12 @@ public class TunnelerBot extends Window implements Runnable {
     private boolean hasRocksInInv(int num) {
         int rocksAmount = 0;
         for (WItem wItem : gui.maininv.getAllItems()) {
-            if (MiningStatic.ROCKS.contains(wItem.item.getres().basename())) {
+            if (TileStatic.SUPPORT_MATERIALS.contains(wItem.item.getres().basename())) {
                 rocksAmount++;
             }
         }
         for (WItem wItem : gui.getAllContentsWindows()) {
-            if (MiningStatic.ROCKS.contains(wItem.item.getres().basename())) {
+            if (TileStatic.SUPPORT_MATERIALS.contains(wItem.item.getres().basename())) {
                 rocksAmount++;
             }
         }
@@ -483,7 +483,7 @@ public class TunnelerBot extends Window implements Runnable {
         for (int i = 0; i <= length; i++) {
             dirmul = dir.mul(11).mul(i);
             mineplace = place.add(dirmul);
-            if (!MiningStatic.MINE_WALKABLE_TILES.contains(AUtils.getTileName(mineplace, map))) {
+            if (!TileStatic.MINE_WALKABLE_TILES.contains(AUtils.getTileName(mineplace, map))) {
                 tilesToMine++;
             }
         }
@@ -512,7 +512,7 @@ public class TunnelerBot extends Window implements Runnable {
         Coord2d directionNorm = direction.div(dirLen);
         for (int i = 1; i < dirLen / 11; i++) {
             Coord2d addCoord = directionNorm.mul(11).mul(i);
-            if (!MiningStatic.MINE_WALKABLE_TILES.contains(AUtils.getTileName(fromd.add(addCoord).floor(), map))) {
+            if (!TileStatic.MINE_WALKABLE_TILES.contains(AUtils.getTileName(fromd.add(addCoord).floor(), map))) {
                 return false;
             }
         }
