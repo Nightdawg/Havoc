@@ -44,7 +44,7 @@ public class AUtils {
                 IMeter.Meter stam = gui.getmeter("stam", 0);
                 if (stam.a >= stoplevel)
                     break;
-            } while (gui.prog.prog >= 0);
+            } while (gui.prog != null && gui.prog.prog >= 0);
         }
     }
 
