@@ -114,8 +114,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	private RecipeCollector recipeCollector;
 	private Thread recipeCollectorThread;
 	public CookingRecipes cookbook;
-	public MiningAssistant miningAssistantWindow;
-	public Thread miningAssistantThread;
+	public MiningSafetyAssistant miningSafetyAssistantWindow;
+	public Thread miningSafetyAssistantThread;
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(GameUI.class, slot -> slot.wdg())

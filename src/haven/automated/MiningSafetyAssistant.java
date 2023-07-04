@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MiningAssistant extends Window implements Runnable {
+public class MiningSafetyAssistant extends Window implements Runnable {
     private final GameUI gui;
     private final boolean stop;
     public static boolean preventMiningOutsideSupport = Utils.getprefb("preventMiningOutsideSupport", false);
@@ -29,8 +29,8 @@ public class MiningAssistant extends Window implements Runnable {
     ArrayList<Gob> looseRocks = new ArrayList<>();
     private int counter = 0;
 
-    public MiningAssistant(GameUI gui) {
-        super(new Coord(180, 190), "Mining Assistant");
+    public MiningSafetyAssistant(GameUI gui) {
+        super(new Coord(180, 190), "Mining Safety Assistant");
         this.gui = gui;
         this.stop = false;
         Widget prev;
@@ -110,10 +110,10 @@ public class MiningAssistant extends Window implements Runnable {
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
         if((sender == this) && (msg == "close")) {
-            gui.miningAssistantThread.interrupt();
-            gui.miningAssistantThread = null;
+            gui.miningSafetyAssistantThread.interrupt();
+            gui.miningSafetyAssistantThread = null;
             reqdestroy();
-            gui.miningAssistantWindow = null;
+            gui.miningSafetyAssistantWindow = null;
         } else {
             super.wdgmsg(sender, msg, args);
         }

@@ -33,7 +33,7 @@ import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
 import haven.automated.EquipFromBelt;
-import haven.automated.MiningAssistant;
+import haven.automated.MiningSafetyAssistant;
 import haven.automated.OceanScoutBot;
 import haven.cookbook.CookingRecipes;
 
@@ -373,7 +373,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleMineSupportSafeTiles");
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleMineSupportRadii");
 
-		makeLocal("paginae/nightdawg/OtherTools/MiningAssistant");
+		makeLocal("paginae/nightdawg/OtherTools/MiningSafetyAssistant");
 		makeLocal("paginae/nightdawg/OtherTools/CookBook");
 	}
 
@@ -623,17 +623,17 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 				OptWnd.showMineSupportRadiiCheckBox.set(!OptWnd.showMineSupportRadiiCheckBox.a);
 			}
 		} else if (ad[1].equals("OtherTools")){
-			if (ad[2].equals("MiningAssistant")) {
-				if (gui.miningAssistantWindow == null && gui.miningAssistantThread == null) {
-					gui.miningAssistantWindow = new MiningAssistant(gui);
-					gui.miningAssistantWindow = gui.add(gui.miningAssistantWindow, new Coord(gui.sz.x/2 - gameui().miningAssistantWindow.sz.x/2, gui.sz.y/2 - gui.miningAssistantWindow.sz.y/2 - 200));
-					gui.miningAssistantThread = new Thread(gui.miningAssistantWindow, "miningAssistantThread");
-					gui.miningAssistantThread.start();
-				} else if (gui.miningAssistantWindow != null) {
-					gui.miningAssistantThread.interrupt();
-					gui.miningAssistantThread = null;
-					gui.miningAssistantWindow.reqdestroy();
-					gui.miningAssistantWindow = null;
+			if (ad[2].equals("MiningSafetyAssistant")) {
+				if (gui.miningSafetyAssistantWindow == null && gui.miningSafetyAssistantThread == null) {
+					gui.miningSafetyAssistantWindow = new MiningSafetyAssistant(gui);
+					gui.miningSafetyAssistantWindow = gui.add(gui.miningSafetyAssistantWindow, new Coord(gui.sz.x/2 - gameui().miningSafetyAssistantWindow.sz.x/2, gui.sz.y/2 - gui.miningSafetyAssistantWindow.sz.y/2 - 200));
+					gui.miningSafetyAssistantThread = new Thread(gui.miningSafetyAssistantWindow, "miningSafetyAssistantThread");
+					gui.miningSafetyAssistantThread.start();
+				} else if (gui.miningSafetyAssistantWindow != null) {
+					gui.miningSafetyAssistantThread.interrupt();
+					gui.miningSafetyAssistantThread = null;
+					gui.miningSafetyAssistantWindow.reqdestroy();
+					gui.miningSafetyAssistantWindow = null;
 				}
 			} else if (ad[2].equals("CookBook")) {
 				if(gui.cookbook == null){

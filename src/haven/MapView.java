@@ -27,7 +27,7 @@
 package haven;
 
 import haven.MCache.OverlayInfo;
-import haven.automated.MiningAssistant;
+import haven.automated.MiningSafetyAssistant;
 import haven.pathfinder.PFListener;
 import haven.pathfinder.Pathfinder;
 import haven.render.*;
@@ -3042,10 +3042,10 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	@Override
 	public void wdgmsg(String msg, Object... args) {
 		boolean safe = true;
-		if(MiningAssistant.preventMiningOutsideSupport){
+		if(MiningSafetyAssistant.preventMiningOutsideSupport){
 			Resource curs = ui.root.getcurs(Coord.z);
 			if (curs != null && curs.name.equals("gfx/hud/curs/mine") && msg.equals("sel")) {
-				safe = MiningAssistant.isAreaInSupportRange((Coord) args[0], (Coord) args[1], gameui());
+				safe = MiningSafetyAssistant.isAreaInSupportRange((Coord) args[0], (Coord) args[1], gameui());
 			}
 		}
 		if(safe){
