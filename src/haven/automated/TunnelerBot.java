@@ -605,6 +605,7 @@ public class TunnelerBot extends Window implements Runnable {
             stop = true;
             stop();
             reqdestroy();
+            gui.tunnelerBot = null;
         } else {
             super.wdgmsg(sender, msg, args);
         }
@@ -612,8 +613,12 @@ public class TunnelerBot extends Window implements Runnable {
 
     public void stop() {
         gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
-        if (gameui().map.pfthread != null) {
-            gameui().map.pfthread.interrupt();
+        if (gui.map.pfthread != null) {
+            gui.map.pfthread.interrupt();
+        }
+        if (gui.tunnelerBotThread != null) {
+            gui.tunnelerBotThread.interrupt();
+            gui.tunnelerBotThread = null;
         }
         this.destroy();
     }

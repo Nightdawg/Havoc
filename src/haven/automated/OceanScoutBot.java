@@ -6,6 +6,7 @@ import haven.pathfinder.Pathfinder;
 import haven.render.Model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 
 import static haven.OCache.posres;
@@ -236,7 +237,7 @@ public class OceanScoutBot extends Window implements Runnable {
 
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
-        if((sender == this) && (msg == "close")) {
+        if((sender == this) && (Objects.equals(msg, "close"))) {
             stop = true;
             stop();
             reqdestroy();
@@ -248,11 +249,11 @@ public class OceanScoutBot extends Window implements Runnable {
 
     public void stop() {
         gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
-        if (gameui().map.pfthread != null) {
-            gameui().map.pfthread.interrupt();
+        if (gui.map.pfthread != null) {
+            gui.map.pfthread.interrupt();
         }
-        if (gameui().shorelineScoutBotThread != null) {
-            gameui().shorelineScoutBotThread.interrupt();
+        if (gui.shorelineScoutBotThread != null) {
+            gui.shorelineScoutBotThread.interrupt();
             gui.shorelineScoutBotThread = null;
         }
         this.destroy();

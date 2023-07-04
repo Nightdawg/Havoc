@@ -35,6 +35,7 @@ import haven.Resource.AButton;
 import haven.automated.EquipFromBelt;
 import haven.automated.MiningSafetyAssistant;
 import haven.automated.OceanScoutBot;
+import haven.automated.TunnelerBot;
 import haven.cookbook.CookingRecipes;
 
 import java.util.*;
@@ -358,6 +359,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_fyrdsmanshield");
 
 		makeLocal("paginae/nightdawg/Bots/OceanShorelineScout");
+		makeLocal("paginae/nightdawg/Bots/AutoTunneler");
 
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleAnimalDangerRadii");
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleCritterCircleAuras");
@@ -579,19 +581,35 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 			gui.changeDecks(Integer.parseInt(ad[2]));
 		} else if (ad[1].equals("equipFromBelt")) {
 			new Thread(new EquipFromBelt(gui, ad[2]), "EquipFromBelt").start();
-		} else if (ad[1].equals("oceanShorelineScout")) {
-			if(gui.shorelineScoutBot == null && gui.shorelineScoutBotThread == null){
-				gui.shorelineScoutBot = new OceanScoutBot(gui);
-				gui.add(gui.shorelineScoutBot, new Coord(gui.sz.x/2 - gui.shorelineScoutBot.sz.x/2, gui.sz.y/2 - gui.shorelineScoutBot.sz.y/2 - 200));
-				gui.shorelineScoutBotThread = new Thread(gui.shorelineScoutBot,"OceanShorelineScout");
-				gui.shorelineScoutBotThread.start();
-			} else {
-				if (gui.shorelineScoutBot != null) {
-					gui.shorelineScoutBot.stop = true;
-					gui.shorelineScoutBot.stop();
-					gui.shorelineScoutBot.reqdestroy();
-					gui.shorelineScoutBot = null;
-					gui.shorelineScoutBotThread = null;
+		} else if (ad[1].equals("Bots")) {
+			if (ad[2].equals("OceanShorelineScout")) {
+				if (gui.shorelineScoutBot == null && gui.shorelineScoutBotThread == null) {
+					gui.shorelineScoutBot = new OceanScoutBot(gui);
+					gui.add(gui.shorelineScoutBot, new Coord(gui.sz.x / 2 - gui.shorelineScoutBot.sz.x / 2, gui.sz.y / 2 - gui.shorelineScoutBot.sz.y / 2 - 200));
+					gui.shorelineScoutBotThread = new Thread(gui.shorelineScoutBot, "OceanShorelineScout");
+					gui.shorelineScoutBotThread.start();
+				} else {
+					if (gui.shorelineScoutBot != null) {
+						gui.shorelineScoutBot.stop = true;
+						gui.shorelineScoutBot.stop();
+						gui.shorelineScoutBot.reqdestroy();
+						gui.shorelineScoutBot = null;
+						gui.shorelineScoutBotThread = null;
+					}
+				}
+			} else if (ad[2].equals("AutoTunneler")) {
+				if (gui.tunnelerBot == null && gui.tunnelerBotThread == null) {
+					gui.tunnelerBot = new TunnelerBot(gui);
+					gui.add(gui.tunnelerBot, new Coord(gui.sz.x/2 - gui.tunnelerBot.sz.x/2, gui.sz.y/2 - gui.tunnelerBot.sz.y/2 - 200));
+					gui.tunnelerBotThread = new Thread(gui.tunnelerBot, "AutoTunneler");
+					gui.tunnelerBotThread.start();
+				} else {
+					if (gui.tunnelerBot != null) {
+						gui.tunnelerBot.stop();
+						gui.tunnelerBot.reqdestroy();
+						gui.tunnelerBot = null;
+						gui.tunnelerBotThread = null;
+					}
 				}
 			}
 		} else if (ad[1].equals("CustomClientToggle")) {

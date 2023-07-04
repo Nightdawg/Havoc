@@ -111,6 +111,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	private Gob detectGob;
 	public OceanScoutBot shorelineScoutBot;
 	public Thread shorelineScoutBotThread;
+	public TunnelerBot tunnelerBot;
+	public Thread tunnelerBotThread;
 	private RecipeCollector recipeCollector;
 	private Thread recipeCollectorThread;
 	public CookingRecipes cookbook;
@@ -1563,10 +1565,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-			TunnelerBot tunnelerBot = new TunnelerBot(this);
-			this.add(tunnelerBot, new Coord(this.sz.x/2 - tunnelerBot.sz.x/2, this.sz.y/2 - tunnelerBot.sz.y/2 - 200));
-			Thread tunnelBoringBotThread = new Thread(tunnelerBot, "tunnelBoringBot");
-			tunnelBoringBotThread.start();
+
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
