@@ -29,6 +29,7 @@ package haven;
 import haven.automated.*;
 import haven.cookbook.CookingRecipes;
 import haven.cookbook.RecipeCollector;
+import haven.res.ui.stackinv.ItemStack;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -1562,7 +1563,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-
+			TunnelerBot tunnelerBot = new TunnelerBot(this);
+			this.add(tunnelerBot, new Coord(this.sz.x/2 - tunnelerBot.sz.x/2, this.sz.y/2 - tunnelerBot.sz.y/2 - 200));
+			Thread tunnelBoringBotThread = new Thread(tunnelerBot, "tunnelBoringBot");
+			tunnelBoringBotThread.start();
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
@@ -2174,6 +2178,22 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			}
 		}
 		return inventories;
+	}
+
+	public List<WItem> getAllContentsWindows() {
+		List<WItem> itemsInStacks = new ArrayList<>();
+		for (Widget wdg = lchild; wdg != null; wdg = wdg.prev) {
+			if (wdg instanceof GItem.ContentsWindow) {
+				GItem.ContentsWindow contentsWindow = (GItem.ContentsWindow) wdg;
+				if((contentsWindow.inv instanceof ItemStack)){
+					ItemStack stack = (ItemStack) contentsWindow.inv;
+					for(Map.Entry<GItem, WItem> entry: stack.wmap.entrySet()){
+						itemsInStacks.add(entry.getValue());
+					}
+				}
+			}
+		}
+		return itemsInStacks;
 	}
 
 	public List<Window> getAllWindows() {
