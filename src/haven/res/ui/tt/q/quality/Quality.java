@@ -8,8 +8,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
-import haven.MenuGrid.Pagina;
-
 /* >tt: Quality */
 @haven.FromResource(name = "ui/tt/q/quality", version = 25)
 public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
@@ -42,12 +40,12 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
                         if (info2 instanceof QBuff) {
                             if ((((Contents) info).content != null) && (((Contents) info).content.name != null)){
                                 if (((Contents) info).content.name.equals("Water")) {
-                                    return (new TexI(GItem.NumberInfo.numrenderStroked(((QBuff) info2).q, new Color(54, 175, 255, 255), true)));
+                                    return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(54, 175, 255, 255), true)));
                                 } else if (((Contents) info).content.name.equals("Tea")) {
-                                    return (new TexI(GItem.NumberInfo.numrenderStroked(((QBuff) info2).q, new Color(83, 161, 0, 255), true)));
+                                    return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(83, 161, 0, 255), true)));
                                 }
                             }
-                            return (new TexI(GItem.NumberInfo.numrenderStroked(((QBuff) info2).q, new Color(255, 255, 255, 255), true)));
+                            return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(255, 255, 255, 255), true)));
                         }
                     }
                 }
@@ -55,7 +53,7 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
         } catch (Exception ignored) {
         }
         if (!irrelevantQuality) {
-            return (new TexI(GItem.NumberInfo.numrenderStroked(q, new Color(255, 255, 255, 255), true)));
+            return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(q, new Color(255, 255, 255, 255), true)));
         } else {
             return (new TexI(GItem.NumberInfo.textrenderStroked("Empty", new Color(255, 78, 0, 255), true)));
         }

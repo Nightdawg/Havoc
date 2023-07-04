@@ -187,12 +187,12 @@ public class WItem extends Widget implements DTarget {
 		g.usestate(new ColorMask(olcol.get()));
 	    drawmain(g, spr);
 	    g.defstate();
+		drawDurabilityBars(g, sz);
 	    GItem.InfoOverlay<?>[] ols = itemols.get();
 	    if(ols != null) {
 		for(GItem.InfoOverlay<?> ol : ols)
 		    ol.draw(g);
 	    }
-		drawDurabilityBars(g, sz);
 		drawmeter(g, sz);
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
