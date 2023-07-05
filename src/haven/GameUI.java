@@ -1049,7 +1049,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	if(cmdline != null) {
 	    drawcmd(g, new Coord(blpw + UI.scale(10), by -= UI.scale(30)));
 	} else if(lastmsg != null) {
-	    if((Utils.rtime() - msgtime) > 3.0) {
+	    if((Utils.rtime() - msgtime) > 4.0) {
 		lastmsg = null;
 	    } else {
 		g.chcolor(0, 0, 0, 192);
@@ -1653,6 +1653,15 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public void msg(String msg, Color color) {
 	msg(msg, color, color);
     }
+
+	public void optionInfoMsg(String msg, Color color) {
+		msg(msg, color, color);
+		double now = Utils.rtime();
+		if(now - lastmsgsfx > 0.1) {
+			ui.sfx(RootWidget.msgsfx);
+			lastmsgsfx = now;
+		}
+	}
 
     private double lasterrsfx = 0;
     public void error(String msg) {

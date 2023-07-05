@@ -914,7 +914,7 @@ public class FightWnd extends Widget {
 		try {
 			if (!saves[index].text.equals("Unused save")) {
 				schoolsDropdown.change(new Pair(saves[index], index));
-				gameui().msg("Switched to deck : " + saves[index].text, Color.green);
+				gameui().msg("Switched to deck No." + (index+1) + ": " + saves[index].text, Color.orange);
 				ui.sfx(RootWidget.msgsfx);
 			} else {
 				gameui().msg("This is not a saved deck, not switching.", Color.red);

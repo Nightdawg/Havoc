@@ -47,6 +47,10 @@ public class OptWnd extends Window {
     public Panel current;
 	public static int cameraLmaoMessage = 1; // ND: Message for "cam" console command, idk where to put this lmao
 	AlarmWindow alarmWindow;
+	public static final Color msgGreen = new Color(8, 211, 0);
+	public static final Color msgGray = new Color(145, 145, 145);
+	public static final Color msgRed = new Color(197, 0, 0);
+	public static final Color msgYellow = new Color(218, 163, 0);
 
     public void chpanel(Panel p) {
 	if(current != null)
@@ -663,7 +667,7 @@ public class OptWnd extends Window {
 				GobGrowthInfo.showGobGrowthInfo = val;
 				if (gameui() != null) {
 					ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
-					gameui().msg("Plant Growth Info is now " + (val ? "SHOWN" : "HIDDEN") + "!");
+					gameui().optionInfoMsg("Plant Growth Info is now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgGray));
 				}
 				a = val;
 			}
@@ -674,7 +678,7 @@ public class OptWnd extends Window {
 			public void set(boolean val) {
 				Utils.setprefb("showMineSupportRadii", val);
 				if (gameui() != null){
-					gameui().msg("Mine Support Radii are now " + (val ? "SHOWN" : "HIDDEN") + "!");
+					gameui().optionInfoMsg("Mine Support Radii are now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgGray));
 				}
 				MSRad.show(val);
 				a = val;
@@ -687,7 +691,7 @@ public class OptWnd extends Window {
 				showMineSupportTiles = val;
 				if (gameui() != null){
 					ui.sess.glob.oc.gobAction(Gob::settingUpdateMiningSupports);
-					gameui().msg("Mine Support Safe Tiles are now " + (val ? "SHOWN" : "HIDDEN") + "!");
+					gameui().optionInfoMsg("Mine Support Safe Tiles are now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgGray));
 				}
 				a = val;
 			}
@@ -713,7 +717,7 @@ public class OptWnd extends Window {
 				beastDangerRadiiEnabled = val;
 				if (gameui() != null) {
 					ui.sess.glob.oc.gobAction(Gob::toggleBeastDangerRadii);
-					gameui().msg("Animal Danger Radii are now " + (val ? "SHOWN" : "HIDDEN") + "!");
+					gameui().optionInfoMsg("Animal Danger Radii are now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgGray));
 				}
 				a = val;
 			}
@@ -726,7 +730,7 @@ public class OptWnd extends Window {
 				critterAuraEnabled = val;
 				if (gameui() != null) {
 					ui.sess.glob.oc.gobAction(Gob::toggleCritterAuras);
-					gameui().msg("Critter Circle Auras are now " + (val ? "SHOWN" : "HIDDEN") + "!");
+					gameui().optionInfoMsg("Critter Circle Auras are now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgGray));
 				}
 				a = val;
 			}
@@ -994,7 +998,7 @@ public class OptWnd extends Window {
 					if (ui.sess != null)
 						ui.sess.glob.map.invalidateAll();
 					if (gameui() != null) {
-						gameui().msg("Flavour Objects are now now " + (val ? "HIDDEN" : "SHOWN") + "!");
+						gameui().optionInfoMsg("Flavour Objects are now now " + (val ? "HIDDEN" : "SHOWN") + "!", (val ? msgGray : msgGreen));
 					}
 					a = val;
 				}
@@ -1023,7 +1027,7 @@ public class OptWnd extends Window {
 					if (ui.sess != null)
 						ui.sess.glob.map.invalidateAll();
 					if (gameui() != null) {
-						gameui().msg("Flat World is now " + (val ? "ENABLED" : "DISABLED") + "!");
+						gameui().optionInfoMsg("Flat World is now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
 					}
 					a = val;
 				}
@@ -1037,7 +1041,7 @@ public class OptWnd extends Window {
 					if (ui.sess != null)
 						ui.sess.glob.map.invalidateAll();
 					if (gameui() != null) {
-						gameui().msg("Tile Smoothing is now " + (val ? "DISABLED" : "ENABLED") + "!");
+						gameui().optionInfoMsg("Tile Smoothing is now " + (val ? "DISABLED" : "ENABLED") + "!", (val ? msgRed : msgGreen));
 					}
 					a = val;
 				}
@@ -1051,7 +1055,7 @@ public class OptWnd extends Window {
 					if (ui.sess != null)
 						ui.sess.glob.map.invalidateAll();
 					if (gameui() != null) {
-						gameui().msg("Tile Transitions are now " + (val ? "DISABLED" : "ENABLED") + "!");
+						gameui().optionInfoMsg("Tile Transitions are now " + (val ? "DISABLED" : "ENABLED") + "!", (val ? msgRed : msgGreen));
 					}
 					a = val;
 				}
@@ -1371,7 +1375,7 @@ public class OptWnd extends Window {
 					Utils.setprefb("noCursorItemDropping", val);
 					GameUI.preventDropAnywhere = val;
 					if (gameui() != null) {
-						gameui().msg("No Item Dropping (Anywhere) is now " + (val ? "ENABLED" : "DISABLED") + "!");
+						gameui().optionInfoMsg("No Item Dropping (Anywhere) is now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
 					}
 					a = val;
 				}
@@ -1384,22 +1388,22 @@ public class OptWnd extends Window {
 					GameUI.preventWaterDrop = val;
 					if (gameui() != null) {
 						if (!GameUI.preventDropAnywhere) {
-							gameui().msg("No Item Dropping (in Water) is now " + (val ? "ENABLED" : "DISABLED") + "!");
+							gameui().optionInfoMsg("No Item Dropping (in Water) is now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
 						} else {
-							gameui().msg("No Item Dropping (in Water) is now " + (val ? "ENABLED" : "DISABLED") + "!" + (val ? "" : " (WARNING!!!: No Item Dropping (Anywhere) IS STILL ENABLED, and it overwrites this option!)"));
+							gameui().optionInfoMsg("No Item Dropping (in Water) is now " + (val ? "ENABLED" : "DISABLED") + "!" + (val ? "" : " (WARNING!!!: No Item Dropping (Anywhere) IS STILL ENABLED, and it overwrites this option!)"), (val ? msgGreen : msgYellow));
 						}
 					}
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
 
-			prev = add(autoDrinkTeaWhileWorking = new CheckBox("Automatically Drink Tea While Working."){
+			prev = add(autoDrinkTeaWhileWorking = new CheckBox("Automatically Drink Tea/Water While Working."){
 				{a = Utils.getprefb("autoDrinkTeaOrWater", false);}
 				public void set(boolean val) {
 					Utils.setprefb("autoDrinkTeaOrWater", val);
 					GameUI.autoDrinkTeaOrWater = val;
 					if (gameui() != null) {
-						gameui().msg("Auto-drinking Tea and Water is now " + (val ? "ENABLED" : "DISABLED") + "!");
+						gameui().optionInfoMsg("Auto-drinking Tea and Water is now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
 					}
 					a = val;
 				}
@@ -1548,7 +1552,7 @@ public class OptWnd extends Window {
 			add(damageInfoClearButton = new Button(UI.scale(70), "Clear", false).action(() -> {
 				GobDamageInfo.clearAllDamage(gameui());
 				if (gameui() != null) {
-					gameui().msg("All Combat Damage Info has been CLEARED!");
+					gameui().optionInfoMsg("All Combat Damage Info has been CLEARED!", msgYellow);
 				}
 			}), prev.pos("bl").adds(0, -34).x(UI.scale(210)));
 			prev = add(new Label("Other Combat Settings:"), prev.pos("bl").adds(0, 14).x(0));
@@ -1558,7 +1562,7 @@ public class OptWnd extends Window {
 					Utils.setprefb("autoPeaceCombat", val);
 					Fightview.autoPeaceSetting = val;
 					if (gameui() != null) {
-						gameui().msg("Autopeace Animals when combat starts is now " + (val ? "ENABLED" : "DISABLED") + ".");
+						gameui().optionInfoMsg("Autopeace Animals when combat starts is now " + (val ? "ENABLED" : "DISABLED") + ".", (val ? msgGreen : msgRed));
 					}
 					a = val;
 				}
@@ -2892,12 +2896,12 @@ public class OptWnd extends Window {
 	}
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
-		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding Ctrl before right clicking an item or object instantly select the first available option from the flower menu.", 300);
+		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding Ctrl before right clicking an item or object to instantly select the first available option from the flower menu.", 300);
 		autoswitchBunnyPlateBootsCheckBox.tooltip = RichText.render("Enabling this will cause your currently equipped Plate Boots to automatically swap with a pair of bunny slippers from your inventory, whenever you right click to chase a rabbit, and vice versa if you click on anything else or just left click to walk.\n$col[185,185,185]{I don't see any reason for which you'd ever want to disable this setting, but alas, I made it an option.}", 300);
 		saveCutleryCheckBox.tooltip = RichText.render("Enabling this will cause any cutlery that has 1 wear left to be instantly transferred from the table into your inventory.\n$col[185,185,185]{A warning message will be shown, to let you know that the item has been transferred.}", 300);
-		noCursorItemDroppingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: You can still drop the item on your cursor if you hold Ctrl.}", 300);
-		noCursorItemDroppingInWaterCheckBox.tooltip = RichText.render("Warning: If the previous option is Enabled, it will overwrite this one. You will still not be able to drop items in water.\n$col[185,185,185]{Note: You can still drop the item on your cursor if you hold Ctrl.}", 300);
-		autoDrinkTeaWhileWorking.tooltip = RichText.render("At <70% stamina automatically drink tea or water depending on your current energy.", 300);
+		noCursorItemDroppingCheckBox.tooltip = RichText.render("$col[185,185,185]{You can still drop the item on your cursor if you hold Ctrl.}\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 300);
+		noCursorItemDroppingInWaterCheckBox.tooltip = RichText.render("$col[218,163,0]{Warning: If the previous option is Enabled, it will overwrite this one. You will still not be able to drop items in water}.\n$col[185,185,185]{You can still drop the item on your cursor if you hold Ctrl.}\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 300);
+		autoDrinkTeaWhileWorking.tooltip = RichText.render("When your goes reaches below 70%, automatically drink Tea or Water (depending on your current Energy).", 300);
 	}
 
 	private void setTooltipsForGraphicsSettingsStuff(){
