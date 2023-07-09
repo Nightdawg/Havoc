@@ -651,27 +651,29 @@ public class GobIcon extends GAttrib {
 			toggleAll = cont.last(new CheckBox("Select All") {
 				@Override
 				public void changed(boolean val) {
-					list.items().forEach(icon -> {
-						// ND: Check if the tooltip of the icon is "Player", and make sure to always set it to true.
-						if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Player"))
-							icon.conf.show = true;
-						// ND: Check if the tooltip of the icon is "Cave Passage", and make sure to always set it to true.
-						else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Cave Passage"))
-							icon.conf.show = true;
-						// ND: Check if the tooltip of the icon is "Swirling Vortex", and make sure to always set it to true.
-						else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Swirling Vortex"))
-							icon.conf.show = true;
-							// ND: Check if the tooltip of the icon is "Boost Speed", and make sure to always set it to true.
-						else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Boost Speed"))
-							icon.conf.show = true;
-							// ND: Check if the tooltip of the icon is "Burrow", and make sure to always set it to true.
-						else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Burrow"))
-							icon.conf.show = true;
-						else
-							icon.conf.show = val;
-					});
-					if(save != null)
-						save.run();
+					try {
+						list.items().forEach(icon -> {
+							// ND: Check if the tooltip of the icon is "Player", and make sure to always set it to true.
+							if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Player"))
+								icon.conf.show = true;
+								// ND: Check if the tooltip of the icon is "Cave Passage", and make sure to always set it to true.
+							else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Cave Passage"))
+								icon.conf.show = true;
+								// ND: Check if the tooltip of the icon is "Swirling Vortex", and make sure to always set it to true.
+							else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Swirling Vortex"))
+								icon.conf.show = true;
+								// ND: Check if the tooltip of the icon is "Boost Speed", and make sure to always set it to true.
+							else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Boost Speed"))
+								icon.conf.show = true;
+								// ND: Check if the tooltip of the icon is "Burrow", and make sure to always set it to true.
+							else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Burrow"))
+								icon.conf.show = true;
+							else
+								icon.conf.show = val;
+						});
+						if (save != null)
+							save.run();
+					} catch (Loading ignored){} // ND: It crashes if you click on "Select all" while some buttons are still loading. This should prevent it. Idk what are the side effects of this, nor do I care.
 				}}, 0);
 			list = cont.last(new IconList(UI.scale(280, 500)), 0);
 
