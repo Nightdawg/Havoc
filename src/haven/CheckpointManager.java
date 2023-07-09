@@ -227,7 +227,7 @@ public class CheckpointManager extends Window implements Runnable {
                             Coord2d firstCoord = new Coord2d(calcX * 1100 + grid.gc.x * 1100 + xInitialOffset, calcY * 1100 + grid.gc.y * 1100 + yInitialOffset);
                             loadedCoords.add(firstCoord);
 
-                            for (int i = 0; i < arrayOfCheckpoints.length - 1; i++) {
+                            for (int i = 0; i < arrayOfCheckpoints.length; i++) {
                                 double checkpointX = Double.parseDouble(arrayOfCheckpoints[i].split(",")[0]);
                                 double checkpointY = Double.parseDouble(arrayOfCheckpoints[i].split(",")[1]);
                                 if(i == 0){
