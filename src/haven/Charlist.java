@@ -59,6 +59,8 @@ public class Charlist extends Widget {
 	sau.hide(); sad.hide();
 	resize(new Coord(bg.sz().x, sad.c.y + sad.sz.y));
 	Gob.alarmPlayed.clear();
+	Gob.batsLeaveMeAlone = false;
+	Gob.batsFearMe = false;
     }
 
     public static class Char {

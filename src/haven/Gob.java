@@ -82,6 +82,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private Overlay archeryVector;
 	private Overlay archeryRadius;
 
+	public static Boolean batsLeaveMeAlone = false; // ND: Check for Bat Cape
+	public static Boolean batsFearMe = false; // ND: Check for Bat Dungeon Experience (Defeated Bat Queen)
+
 	/**
 	 * This method is run after all gob attributes has been loaded first time
 	 * throwloading=true causes the loader/thread that ran the init to try again
@@ -579,14 +582,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	updstate();
 	if(virtual && ols.isEmpty() && (getattr(Drawable.class) == null))
 	    glob.oc.remove(this);
-		if(!playerAlarmPlayed && isMe == null) {
-			isMe();
-			if(isMe != null) {
-				initPlayerName();
-				playPlayerAlarm();
-				playerAlarmPlayed = true;
-			}
+	if(!playerAlarmPlayed && isMe == null) {
+		isMe();
+		if(isMe != null) {
+			initPlayerName();
+			playPlayerAlarm();
+			playerAlarmPlayed = true;
 		}
+	}
 	updateState();
     }
 
@@ -1861,7 +1864,15 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			if (resourceName.startsWith("gfx/kritter")){
 				if (knocked != null && knocked == false) {
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
-						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+						if (resourceName.endsWith("/bat")) {
+							if (batsFearMe || batsLeaveMeAlone) {
+								setDangerRadii(false);
+							} else {
+								setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+							}
+						} else {
+							setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+						}
 					}
 				} else if (knocked != null && knocked == true) {
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
@@ -1870,7 +1881,15 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				}
 				else if (isComposite) { // ND: Retarded workaround. Some of these stupid animals have no animation when STANDING STILL. They're not loading their fucking knocked status??? HOW? It's like they're not an instance of composite, ONLY when standing still.
 					if (Arrays.stream(BEASTDANGER_PATHS).anyMatch(resourceName::endsWith)) {
-						setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+						if (resourceName.endsWith("/bat")) {
+							if (batsFearMe || batsLeaveMeAlone) {
+								setDangerRadii(false);
+							} else {
+								setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+							}
+						} else {
+							setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+						}
 					}
 				}
 			}

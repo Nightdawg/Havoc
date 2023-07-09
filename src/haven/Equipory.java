@@ -232,6 +232,10 @@ public class Equipory extends Widget implements DTarget {
 			wmap.put(g, v);
 			delayBottomTextUpdate = System.currentTimeMillis();
 			updateBottomText = true;
+			if (g.resname().equals("gfx/invobjs/batcape")){
+				Gob.batsLeaveMeAlone = true;
+				ui.sess.glob.oc.gobAction(Gob::toggleBeastDangerRadii);
+			}
 		} else {
 			super.addchild(child, args);
 		}
@@ -260,6 +264,10 @@ public class Equipory extends Widget implements DTarget {
 		}
 		bonuses.update(slots);
 		updateBottomText = true;
+		if (i.resname().equals("gfx/invobjs/batcape")){
+			Gob.batsLeaveMeAlone = false;
+			ui.sess.glob.oc.gobAction(Gob::toggleBeastDangerRadii);
+		}
 	}
     }
 
