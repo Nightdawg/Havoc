@@ -541,7 +541,6 @@ public class TunnelerBot extends Window implements Runnable {
             Gob centerColumn = AUtils.closestGob(columns, gui.map.player().rc.floor());
             currentAnchorColumn = centerColumn.rc.floor().add(new Coord(direction).add(directionPerpendicular).mul(11));
             if (AUtils.getTileName(currentAnchorColumn, map).equals("mine")) {
-                AUtils.leftClick(gui, currentAnchorColumn);
                 Thread.sleep(500);
                 gui.map.pfLeftClick(currentAnchorColumn.sub(direction.mul(2 * 11)), null);
                 AUtils.waitPf(gui);
