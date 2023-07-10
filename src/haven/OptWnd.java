@@ -620,7 +620,7 @@ public class OptWnd extends Window {
 				Utils.setprefb("CornerFPSSettingBool", val);
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 20).x(230));
+		}, prev.pos("bl").adds(0, 20).x(UI.scale(230)));
 
 		rightColumn = add(enableSnapWindowsBackInsideCheckBox = new CheckBox("Snap windows back when dragged out"){
 			{a = (Utils.getprefb("snapWindowsBackInside", true));}
@@ -640,7 +640,7 @@ public class OptWnd extends Window {
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
 
-		prev = add(new Label("Advanced Display Settings"), leftColumn.pos("bl").adds(0, 18).x(150));
+		prev = add(new Label("Advanced Display Settings"), leftColumn.pos("bl").adds(0, 18).x(UI.scale(150)));
 
 		leftColumn = add(toggleGobHealthDisplayCheckBox = new CheckBox("Display Object Health Percentage"){
 			{a = (Utils.getprefb("gobHealthDisplayToggle", true));}
@@ -708,7 +708,7 @@ public class OptWnd extends Window {
 				}
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 20).x(230));
+		}, prev.pos("bl").adds(0, 20).x(UI.scale(230)));
 
 		rightColumn = add(toggleBeastDangerRadiiCheckBox = new CheckBox("Show Animal Danger Radii"){
 			{a = (Utils.getprefb("beastDangerRadii", true));}
@@ -757,7 +757,7 @@ public class OptWnd extends Window {
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
 
-		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 30).x(117));
+		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 30).x(UI.scale(117)));
 		setTooltipsForInterfaceSettingsStuff();
 	    pack();
 	}
@@ -1527,7 +1527,7 @@ public class OptWnd extends Window {
 					GobDamageInfo.toggleGobDamageInfo = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 12).x(16));
+			}, prev.pos("bl").adds(0, 12).x(UI.scale(16)));
 			prev = add(new Label("> Include:"), prev.pos("bl").adds(18, 3));
 			CheckBox woundsCheckBox;
 			prev = add(woundsCheckBox = new CheckBox("Wounds"){
@@ -1950,7 +1950,7 @@ public class OptWnd extends Window {
 					Utils.setpref("whitePlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(45, -2).x(139));
+			}, prev.pos("ur").adds(45, -2).x(UI.scale(139)));
 			prev = add(whitePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("whitePlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -1997,7 +1997,7 @@ public class OptWnd extends Window {
 					Utils.setpref("whiteVillageOrRealmPlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(0, -2).x(139));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(139)));
 			prev = add(whiteVillageOrRealmPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("whiteVillageOrRealmPlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -2619,10 +2619,10 @@ public class OptWnd extends Window {
 					alarmWindow.bottomNote.setcolor(Color.WHITE);
 					alarmWindow.bottomNote.c.x = UI.scale(140);
 				}
-			}),prev.pos("bl").adds(0, 18).x(51));
+			}),prev.pos("bl").adds(0, 18).x(UI.scale(51)));
 
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(131));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(131)));
 			setTooltipsForAlarmSettingsStuff();
 			pack();
 		}
