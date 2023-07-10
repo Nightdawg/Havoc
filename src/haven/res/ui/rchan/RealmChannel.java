@@ -71,7 +71,7 @@ public class RealmChannel extends ChatUI.MultiChat {
 		String nm = null;
 		if((nm == null) && (b != null))
 		    nm = b.name;
-			if (from.name != null){
+			if (nm != null && from.name != null){
 				nm = from.name + " [Memo: " + nm + "]";
 			}
 		if(nm == null)
