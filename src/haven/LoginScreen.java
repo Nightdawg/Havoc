@@ -214,6 +214,16 @@ public class LoginScreen extends Widget {
 	    }
 	}
 
+	private void enter2() {
+		if(user.text().equals("")) {
+			setfocus(user);
+		} else if(pwbox.visible && pass.text().equals("")) {
+			setfocus(pass);
+		} else {
+			LoginScreen.this.wdgmsg("login", creds(), pwbox.visible && saveaccount.state());
+		}
+	}
+
 	private AuthClient.Credentials creds() {
 	    byte[] token = this.token;
 	    AuthClient.Credentials ret;
@@ -324,7 +334,7 @@ public class LoginScreen extends Widget {
 				String pass = (String) args[1];
 				login.user.settext2(name);
 				login.pass.settext(pass);
-				login.enter();
+				login.enter2();
 			}
 			return;
 		}

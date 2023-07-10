@@ -12,14 +12,15 @@ public class AccountList extends Widget {
     public static final LinkedHashMap<String, String> accountmap = new LinkedHashMap<>();
     private static final Coord SZ = UI.scale(240, 30);
 
-    static {
-        AccountList.loadAccounts();
-    }
+//    static {
+//        AccountList.loadAccounts();
+//    }
 
     public int height, y;
     public final List<Account> accounts = new ArrayList<>();
 
     static void loadAccounts() {
+        accountmap.clear();
         String[] savedAccounts = Utils.getprefsa("savedAccounts", null);
         try {
             if (savedAccounts != null) {
@@ -91,6 +92,7 @@ public class AccountList extends Widget {
 
     public AccountList(int height) {
         super();
+        loadAccounts();
         this.height = height;
         this.sz = new Coord(SZ.x, SZ.y * height);
         y = 0;
