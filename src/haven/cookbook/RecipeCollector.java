@@ -112,6 +112,7 @@ public class RecipeCollector implements Runnable {
             throw new RuntimeException(e);
         }
     }
+
     private int insertFood(Connection conn, ParsedFoodInfo food, String hash) throws SQLException {
         double totalFep = 0.0;
         Map<String, String> fepMap = new HashMap<>();

@@ -4,6 +4,7 @@ import haven.Button;
 import haven.Label;
 import haven.Window;
 import haven.*;
+import haven.cookbook.importExport.ImportExportHelper;
 
 import java.awt.*;
 import java.sql.*;
@@ -25,7 +26,7 @@ public class CookingRecipes extends Window {
     }
 
     public CookingRecipes() {
-        super(UI.scale(1100, 650), "CookBook");
+        super(UI.scale(1100, 675), "CookBook");
         this.show = false;
         this.query = "";
         this.page = 1;
@@ -46,7 +47,7 @@ public class CookingRecipes extends Window {
                 setPage(1);
                 getData();
             }
-        }, UI.scale(740, 0));
+        }, UI.scale(740, 3));
         add(new Button(UI.scale(30), "<") {
             @Override
             public void click() {
@@ -56,8 +57,8 @@ public class CookingRecipes extends Window {
                     getData();
                 }
             }
-        }, UI.scale(780, 0));
-        this.pageLabel = add(new Label(String.valueOf(page)), UI.scale(826, 5));
+        }, UI.scale(780, 3));
+        this.pageLabel = add(new Label(String.valueOf(page)), UI.scale(826, 7));
         add(new Button(UI.scale(30), ">") {
             @Override
             public void click() {
@@ -65,7 +66,7 @@ public class CookingRecipes extends Window {
                 setPage(page + 1);
                 getData();
             }
-        }, UI.scale(860, 0));
+        }, UI.scale(860, 3));
         add(new Button(UI.scale(100), "Search") {
             @Override
             public void click() {
@@ -98,6 +99,20 @@ public class CookingRecipes extends Window {
 
         foodList = new FoodList(1090, 10);
         add(foodList, UI.scale(5, 50));
+
+        add(new Button(UI.scale(50), "Export") {
+            @Override
+            public void click() {
+                ImportExportHelper.exportRecipes(gameui());
+            }
+        }, UI.scale(1015, 658));
+
+        add(new Button(UI.scale(50), "Import") {
+            @Override
+            public void click() {
+                ImportExportHelper.importRecipes(gameui());
+            }
+        }, UI.scale(950, 658));
 
         getData();
     }
@@ -181,6 +196,7 @@ public class CookingRecipes extends Window {
             sql.append(page * 10 - 10);
 
             Statement stmt = conn.createStatement();
+
             ResultSet rs = stmt.executeQuery(sql.toString());
 
             java.util.List<ParsedFoodInfo> foods = new ArrayList<>();
@@ -217,7 +233,6 @@ public class CookingRecipes extends Window {
                 try {
                     addFood(new Food(food));
                 } catch (Exception ignored) {
-
                 }
             }
         } catch (SQLException e) {
@@ -433,8 +448,8 @@ public class CookingRecipes extends Window {
             scales.put("psy2", 585);
 
             Map<String, Color> colors = new HashMap<>();
-            colors.put("str1", new Color(124, 11, 11, 255));
-            colors.put("str2", new Color(196, 19, 19));
+            colors.put("str1", new Color(176, 6, 6, 255));
+            colors.put("str2", new Color(213, 0, 0));
             colors.put("agi1", new Color(80, 69, 189));
             colors.put("agi2", new Color(102, 84, 255));
             colors.put("int1", new Color(44, 154, 166));
@@ -475,7 +490,7 @@ public class CookingRecipes extends Window {
                 add(this.ingredient2, UI.scale(625, 21));
             } else if (food.ingredients.size() == 4) {
                 ingredient1.settext(food.ingredients.get(0).getName() + " " + food.ingredients.get(0).getPercentage() + "%, " + food.ingredients.get(1).getName() + " " + food.ingredients.get(1).getPercentage() + "%,");
-                ingredient2.settext(food.ingredients.get(2).getName() + " " + food.ingredients.get(2).getPercentage() + "%, " + food.ingredients.get(3).getName() + " " + food.ingredients.get(4).getPercentage() + "%");
+                ingredient2.settext(food.ingredients.get(2).getName() + " " + food.ingredients.get(2).getPercentage() + "%, " + food.ingredients.get(3).getName() + " " + food.ingredients.get(3).getPercentage() + "%");
                 add(this.ingredient1, UI.scale(625, 8));
                 add(this.ingredient2, UI.scale(625, 21));
             } else if (food.ingredients.size() == 5) {

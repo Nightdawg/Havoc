@@ -1,9 +1,10 @@
 package haven.cookbook;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class ParsedFoodInfo {
+public class ParsedFoodInfo implements Serializable {
     public Integer id;
     public String itemName;
     public String resourceName;
@@ -75,7 +76,7 @@ public class ParsedFoodInfo {
     }
 
 
-    public static class FoodIngredient {
+    public static class FoodIngredient implements Serializable {
         private final String name;
         private final Integer percentage;
 
@@ -118,7 +119,7 @@ public class ParsedFoodInfo {
             return percentage;
         }
     }
-    public static class FoodFEP {
+    public static class FoodFEP implements Serializable {
         private final String name;
         private final Double value;
 
