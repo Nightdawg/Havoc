@@ -72,7 +72,7 @@ public class LoginScreen extends Widget {
     public class Credbox extends Widget {
 	public final UserEntry user;
 	private final TextEntry pass;
-	private final CheckBox savetoken;
+	private final CheckBox saveaccount;
 	private final Button fbtn;
 	private final IButton exec;
 	private final Widget pwbox, tkbox;
@@ -90,7 +90,7 @@ public class LoginScreen extends Widget {
 	    }
 
 	    protected void changed() {
-		checktoken();
+//		checktoken();
 		//savetoken.set(token != null); ND: commented this, so the "remember me" doesn't untick whenever you write inside the username input.
 	    }
 
@@ -137,13 +137,13 @@ public class LoginScreen extends Widget {
 	    //pwbox.add(prev = new Label("Password", textf), Coord.z); //ND: replaced this with stroked text
 		pwbox.add(prev = new Label("Password", textf){{setstroked(Color.BLACK);}}, Coord.z);
 	    pwbox.add(pass = new TextEntry(this.sz.x, ""), prev.pos("bl").adds(0, 1)).pw = true;
-	    pwbox.add(savetoken = new CheckBox("Save Account", true), pass.pos("bl").adds(0, 10));
-		savetoken.set(true); //ND: Set this to true from the beginning. If they don't want to save, untick it.
+	    pwbox.add(saveaccount = new CheckBox("Save Account", true), pass.pos("bl").adds(0, 10));
+		saveaccount.set(true); //ND: Set this to true from the beginning. If they don't want to save, untick it.
 	    //savetoken.setgkey(kb_savtoken); //ND: Stupid keybind.
-	    savetoken.settip("Saving an account does not save your password, but rather " +
-			     "a randomly generated token that will be used to log in. " +
-			     "You can manage your saved tokens in your Account Settings.",
-			     true);
+//	    saveaccount.settip("Saving an account does not save your password, but rather " +
+//			     "a randomly generated token that will be used to log in. " +
+//			     "You can manage your saved tokens in your Account Settings.",
+//			     true);
 	    pwbox.pack();
 	    pwbox.hide();
 
@@ -207,7 +207,10 @@ public class LoginScreen extends Widget {
 	    } else if(pwbox.visible && pass.text().equals("")) {
 		setfocus(pass);
 	    } else {
-		LoginScreen.this.wdgmsg("login", creds(), pwbox.visible && savetoken.state());
+		if(saveaccount.state()) {
+			AccountList.storeAccount(user.text(), pass.text());
+		}
+		LoginScreen.this.wdgmsg("login", creds(), pwbox.visible && saveaccount.state());
 	    }
 	}
 
@@ -318,9 +321,9 @@ public class LoginScreen extends Widget {
 		if(sender == accounts) {
 			if("account".equals(msg)) {
 				String name = (String) args[0];
-				String token = (String) args[1];
+				String pass = (String) args[1];
 				login.user.settext2(name);
-				login.token = Utils.hex2byte(token);
+				login.pass.settext(pass);
 				login.enter();
 			}
 			return;

@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class AccountList extends Widget {
-    public static final String SAVED_TOKENS = "savedTokens";
     public static final LinkedHashMap<String, String> accountmap = new LinkedHashMap<>();
     private static final Coord SZ = UI.scale(240, 30);
 
@@ -21,23 +20,24 @@ public class AccountList extends Widget {
     public final List<Account> accounts = new ArrayList<>();
 
     static void loadAccounts() {
-        File accountList = new File(SAVED_TOKENS);
-         if(accountList.exists()) {
-             try {
-                 for(String s : Files.readAllLines(Paths.get(accountList.toURI()), StandardCharsets.UTF_8)) {
-                     String[] split = s.split("(;)");
-                     if(!accountmap.containsKey(split[0]))
-                         accountmap.put(split[0], split[1]);
-                 }
-             } catch(IOException e) {
-                 e.printStackTrace();
-             }
-         }
+        String[] savedAccounts = Utils.getprefsa("savedAccounts", null);
+        try {
+            if (savedAccounts != null) {
+                for (String s : savedAccounts) {
+                    String[] split = s.split("(;)");
+                    if (!accountmap.containsKey(split[0])) {
+                        accountmap.put(split[0], split[1]);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void storeAccount(String name, String token) {
+    public static void storeAccount(String name, String pass) {
         synchronized(accountmap) {
-            accountmap.put(name, token);
+            accountmap.put(name, pass);
         }
         saveAccounts();
     }
@@ -52,19 +52,18 @@ public class AccountList extends Widget {
     public static void saveAccounts() {
         synchronized(accountmap) {
             try {
-                BufferedWriter bw = Files.newBufferedWriter(Paths.get(new File(SAVED_TOKENS).toURI()), StandardCharsets.UTF_8);
+                String[] savedAccounts = new String[accountmap.size()];
+                int i = 0;
                 for(Map.Entry<String, String> e : accountmap.entrySet()) {
-                    bw.write(e.getKey() + ";" + e.getValue() + "\n");
+                    savedAccounts[i] = e.getKey() + ";" + e.getValue();
+                    i++;
                 }
-                bw.flush();
-                bw.close();
-            } catch(IOException e) {
+                Utils.setprefsa("savedAccounts", savedAccounts);
+            } catch(Exception e) {
                 e.printStackTrace();
             }
         }
     }
-
-    //TODO: find how to incorporate hostname without breaking stuff
     public static byte[] getToken(String user, String hostname) {
         synchronized (accountmap) {
             String token = accountmap.get(user);
@@ -73,14 +72,6 @@ public class AccountList extends Widget {
             } else {
                 return Utils.hex2byte(token);
             }
-        }
-    }
-
-    public static void setToken(String user, String hostname, byte[] token) {
-        if(token == null) {
-            removeToken(user, hostname);
-        } else {
-            storeAccount(user, Utils.byte2hex(token));
         }
     }
 

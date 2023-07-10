@@ -147,8 +147,8 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
 	public static void settoken(String user, String hostname, byte[] token) {
 		if(token == null) {
 			AccountList.removeToken(user, hostname);
-		} else {
-			AccountList.setToken(user, hostname, token);
+//		} else {
+//			AccountList.setToken(user, hostname, token);
 		}
 	}
 
