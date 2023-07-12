@@ -189,7 +189,7 @@ public class AlarmWindow extends Window {
 		public AlarmList(int w, int rows) {
 			this.rows = rows;
 			this.w = w;
-			this.sz = UI.scale(w, rowHeight * rows);
+			this.sz = new Coord (UI.scale(w), rowHeight * rows);
 			sb = new Scrollbar(rowHeight * rows, 0, 100);
 			add(sb, UI.scale(0, 0));
 		}
