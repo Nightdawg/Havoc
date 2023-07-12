@@ -255,7 +255,6 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 } else if (res.equals("gfx/terobjs/column")) {
                     if (support.rc.dist(tile) <= 125) {
                         inRange++;
-                        System.out.println(tile + " sup: " + support.rc);
                     }
                 } else if (res.equals("gfx/terobjs/minebeam")) {
                     if (support.rc.dist(tile) <= 150) {
