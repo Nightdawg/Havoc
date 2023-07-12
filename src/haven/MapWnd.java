@@ -1131,4 +1131,14 @@ public class MapWnd extends Window implements Console.Directory {
     public Map<String, Console.Command> findcmds() {
 	return(cmdmap);
     }
+
+	@Override
+	public boolean keydown(java.awt.event.KeyEvent ev) { // ND: do this to override the escape key being able to close the window
+		if(key_esc.match(ev)) {
+			return(false);
+		}
+		if(super.keydown(ev))
+			return(true);
+		return(false);
+	}
 }
