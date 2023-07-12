@@ -35,7 +35,13 @@ public class CheckpointManager extends Window implements Runnable {
     private String selectFilter = "";
     private Button saveButton;
     private Button loadButton;
+    private Label searchLabel;
+    private Label savedRoutesTitle;
+    private Label routeNameLabel;
+    private Label routeDistanceLabel;
+    private Label routeRemoveLabel;
     private RouteList routeList;
+    private final Text.Foundry savedRoutesTitleFoundry = new Text.Foundry(Text.sans, 14);
 
     static {
         try {
@@ -57,25 +63,35 @@ public class CheckpointManager extends Window implements Runnable {
         add(new Label("Remove"), UI.scale(296, 8));
         checkpointList = new CheckpointList(390, 5);
         add(checkpointList, UI.scale(5, 30));
-        pause = add(new Button(UI.scale(100), "Start") {
+        pause = add(new Button(UI.scale(50), "Start") {
             @Override
             public void click() {
                 paused = !paused;
                 this.change(paused ? "Start" : "Pause");
                 ui.root.wdgmsg("gk", 27);
             }
-        }, UI.scale(25, 170));
+        }, UI.scale(94, 180));
 
-        resizeButton = add(new Button(UI.scale(30), extendedView ? "↑" : "↓") {
+        // Add transform into area button
+        transformIntoArea = add(new Button(UI.scale(80), "Area Convert") {
+            @Override
+            public void click() {
+                transformIntoArea();
+            }
+        }, UI.scale(10, 180));
+        transformIntoArea.tooltip = RichText.render("If you want to scan a specific area on the map, draw a polygon with checkpoints, then press this button to convert it before starting.", 350);
+
+        resizeButton = add(new Button(UI.scale(26), "▼") {
             @Override
             public void click() {
                 toggleExtendWindow();
             }
-        }, UI.scale(332, 188));
+        }, UI.scale(332, 184));
+        resizeButton.tooltip = RichText.render("Show Routes Manager", 350);
 
         this.c = new Coord(100, 100);
 
-        add(estimatedArrivalTime = new Label(""), UI.scale(130, 180));
+        add(estimatedArrivalTime = new Label(""), UI.scale(150, 184));
 
 
     }
@@ -95,47 +111,60 @@ public class CheckpointManager extends Window implements Runnable {
             // Collapsing operations
 
             // Remove existing widgets
-            transformIntoArea.remove();
+            savedRoutesTitle.remove();
             routeNameInput.remove();
             selectFilterEntry.remove();
             saveButton.remove();
             loadButton.remove();
+            searchLabel.remove();
             resizeButton.remove();
             routeList.removeAllItems();
             routeList.remove();
+            routeNameLabel.remove();
+            routeDistanceLabel.remove();
+            routeRemoveLabel.remove();
 
             // Resize window
-            this.resize(350, 200);
+            this.resize(UI.scale(350), UI.scale(200));
 
             // Add resize button with ↓
-            resizeButton = add(new Button(UI.scale(30), "↓") {
+            resizeButton = add(new Button(UI.scale(26), "▼") {
                 @Override
                 public void click() {
                     toggleExtendWindow();
                 }
-            }, UI.scale(332, 188));
+            }, UI.scale(332, 184));
+            resizeButton.tooltip = RichText.render("Show Routes Manager", 350);
 
         } else {
             // Expanding operations
 
             // Resize window
-            this.resize(350, 500);
+            this.resize(UI.scale(350), UI.scale(561));
+
+            savedRoutesTitle = add(new Label("Routes Manager", savedRoutesTitleFoundry), UI.scale(124, 212));
+            searchLabel = add(new Label("Name:"), UI.scale(20, 243));
 
             // Add select filter entry
-            selectFilterEntry = add(new TextEntry(200, selectFilter) {
+            selectFilterEntry = add(new TextEntry(UI.scale(160), selectFilter) {
                 @Override
                 protected void changed() {
                     setSelectFilter(this.buf.line());
                 }
-            }, UI.scale(25, 225));
+            }, UI.scale(65, 240));
 
             // Add load button
-            loadButton = add(new Button(UI.scale(40), "load") {
+            loadButton = add(new Button(UI.scale(100), "Search", false) {
                 @Override
                 public void click() {
                     loadSavedRoutes();
+                    routeList.sb.val = 0;
                 }
-            }, UI.scale(237, 223));
+            }, UI.scale(237, 238));
+
+            routeNameLabel = add(new Label("Route Name"), UI.scale(50, 274));
+            routeDistanceLabel = add(new Label("Distance"), UI.scale(149, 274));
+            routeRemoveLabel = add(new Label("Remove"), UI.scale(296, 274));
 
             // Add route name input
             routeNameInput = add(new TextEntry(200, nameInput) {
@@ -143,37 +172,33 @@ public class CheckpointManager extends Window implements Runnable {
                 protected void changed() {
                     setNameInput(this.buf.line());
                 }
-            }, UI.scale(60, 490));
+            }, UI.scale(25, 521));
 
             // Add save button
-            saveButton = add(new Button(UI.scale(40), "save") {
+            saveButton = add(new Button(UI.scale(100), "Save Route", false) {
                 @Override
                 public void click() {
                     saveCurrentRoute();
                 }
-            }, UI.scale(267, 488));
-
-            // Add transform into area button
-            transformIntoArea = add(new Button(UI.scale(40), "Area") {
-                @Override
-                public void click() {
-                    transformIntoArea();
-                }
-            }, UI.scale(-13, 488));
+            }, UI.scale(237, 519));
 
             // Remove existing resize button
             resizeButton.remove();
 
             // Add resize button with ↑
-            resizeButton = add(new Button(UI.scale(30), "↑") {
+            resizeButton = add(new Button(UI.scale(26), "▲", false) {
                 @Override
                 public void click() {
                     toggleExtendWindow();
+                    preventDraggingOutside(); // ND: Retard proofing.
                 }
-            }, UI.scale(332, 488));
+            }, UI.scale(332, 545));
+            resizeButton.tooltip = RichText.render("Hide Routes Manager", 350);
 
             routeList = new RouteList(390, 7);
-            add(routeList, UI.scale(5, 260));
+            add(routeList, UI.scale(5, 295));
+            loadSavedRoutes();
+            routeList.sb.val = 0;
         }
 
         // Toggle the extendedView flag
@@ -264,6 +289,7 @@ public class CheckpointManager extends Window implements Runnable {
                     gui.error("No routes found with the given id.");
                 } else {
                     gui.msg("Successfully removed the route.");
+                    selectFilterEntry.settext("");
                     loadSavedRoutes();
                 }
             }
@@ -318,7 +344,6 @@ public class CheckpointManager extends Window implements Runnable {
 
     private void loadSavedRoutes() {
         String selectSql = "SELECT id, name, length FROM routes WHERE name like ? order by id";
-
         try (Connection conn = DriverManager.getConnection(DATABASE)) {
             try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
                 pstmt.setString(1, "%" + selectFilter + "%");
@@ -381,6 +406,8 @@ public class CheckpointManager extends Window implements Runnable {
                         gui.msg("New route saved.");
                         routeNameInput.settext("");
                         nameInput = "";
+                        selectFilterEntry.settext("");
+                        loadSavedRoutes();
                     } else {
                         throw new SQLException("Creating route failed, no ID obtained.");
                     }
@@ -527,7 +554,7 @@ public class CheckpointManager extends Window implements Runnable {
                 try {
                     double distance = getWholeDistance();
                     if (distance > 0 && gui.map.player().gobSpeed > 0) {
-                        estimatedArrivalTime.settext("est time ~ " + formatTime(Math.floor(distance / gui.map.player().gobSpeed)) + ", dist: " + Math.floor(distance));
+                        estimatedArrivalTime.settext("ETA: ~ " + formatTime(Math.floor(distance / gui.map.player().gobSpeed)) + ", dist: " + Math.floor(distance));
                     }
                 } catch (Exception ignored) {
                 }
@@ -695,7 +722,7 @@ public class CheckpointManager extends Window implements Runnable {
         public CheckpointList(int w, int rows) {
             this.rows = rows;
             this.w = w;
-            this.sz = UI.scale(w, rowHeight * rows);
+            this.sz = new Coord(UI.scale(w), rowHeight * rows);
             sb = new Scrollbar(rowHeight * rows, 0, 100);
             add(sb, UI.scale(0, 0));
         }
@@ -812,8 +839,8 @@ public class CheckpointManager extends Window implements Runnable {
         public CheckPoint(Coord2d coord, int checkpointNumber) {
             this.coord = coord;
             Widget prev;
-            this.checkpointNumber = new Label(Integer.toString(checkpointNumber), 30);
-            this.coordText = new Label(coord.floor().toString(), 100);
+            this.checkpointNumber = new Label(Integer.toString(checkpointNumber), UI.scale(30));
+            this.coordText = new Label(coord.floor().toString(), UI.scale(100));
             prev = add(this.checkpointNumber, UI.scale(20, 4));
             prev = add(this.coordText, prev.pos("ul").adds(44, 0));
 
@@ -859,6 +886,7 @@ public class CheckpointManager extends Window implements Runnable {
                         super.wdgmsg(sender, msg, args);
                     }
                 }
+
             }, prev.pos("ur").adds(12, 0));
 
             prev = add(new Button(UI.scale(26), "X") {
@@ -909,7 +937,7 @@ public class CheckpointManager extends Window implements Runnable {
         public RouteList(int w, int rows) {
             this.rows = rows;
             this.w = w;
-            this.sz = UI.scale(w, rowHeight * rows);
+            this.sz = new Coord(UI.scale(w), rowHeight * rows);
             sb = new Scrollbar(rowHeight * rows, 0, 100);
             add(sb, UI.scale(0, 0));
         }
@@ -924,16 +952,7 @@ public class CheckpointManager extends Window implements Runnable {
 
         public void addItem(Route item) {
             add(item);
-            if (items.size() > 1 && currentIndex == -1 && sb.val <= sb.max) {
-                sb.val = sb.max + 1;
-            }
-            if (currentIndex < 0 || currentIndex > listitems()) {
-                items.add(item);
-                setCurrentIndex(-1);
-            } else {
-                items.add(currentIndex, item);
-                setCurrentIndex(-1);
-            }
+            items.add(item);
         }
 
         public void deleteItem(Route item) {
@@ -1007,7 +1026,7 @@ public class CheckpointManager extends Window implements Runnable {
     }
 
     public static class Route extends Widget {
-        private final Label routeId;
+//        private final Label routeId;
         private final Label routeName;
         private final Label routeDistance;
         private final int id;
@@ -1015,15 +1034,15 @@ public class CheckpointManager extends Window implements Runnable {
         public Route(int id, String name, double distance) {
             this.id = id;
             Widget prev;
-            this.routeId = new Label(Integer.toString(id), 30);
-            this.routeName = new Label(name.length() > 10 ? name.substring(0,10).concat("...") : name, 60);
+//            this.routeId = new Label(Integer.toString(id), 30);
+            this.routeName = new Label(name.length() > 23 ? name.substring(0,23).concat("...") : name, 100);
             this.routeDistance = new Label(Double.toString(distance), 100);
-            prev = add(this.routeId, UI.scale(10, 4));
-            prev = add(this.routeName, prev.pos("ul").adds(20, 0));
-            prev = add(this.routeDistance, prev.pos("ul").adds(70, 0));
+//            prev = add(this.routeId, UI.scale(10, 4));
+            prev = add(this.routeName, UI.scale(10, 4));
+            prev = add(this.routeDistance, prev.pos("ul").adds(110, 0));
 
 
-            prev = add(new Button(UI.scale(50), "Launch") {
+            prev = add(new Button(UI.scale(50), "Load") {
                 @Override
                 public boolean mousedown(Coord c, int button) {
                     if (button != 1) {
@@ -1041,7 +1060,7 @@ public class CheckpointManager extends Window implements Runnable {
                 }
             }, prev.pos("ul").adds(70, -5));
 
-            prev = add(new Button(UI.scale(30), "Fix") {
+            prev = add(new Button(UI.scale(36), "Fix?") {
                 @Override
                 public boolean mousedown(Coord c, int button) {
                     if (button != 1) {
@@ -1056,7 +1075,7 @@ public class CheckpointManager extends Window implements Runnable {
                         super.wdgmsg(sender, msg, args);
                     }
                 }
-            }, prev.pos("ur").adds(5, 0));
+            }, prev.pos("ur").adds(4, 0));
 
             prev = add(new Button(UI.scale(25), "X") {
                 @Override
@@ -1075,7 +1094,7 @@ public class CheckpointManager extends Window implements Runnable {
                         super.wdgmsg(sender, msg, args);
                     }
                 }
-            }, prev.pos("ur").adds(5, 0));
+            }, prev.pos("ur").adds(4, 0));
         }
 
         @Override
@@ -1095,5 +1114,15 @@ public class CheckpointManager extends Window implements Runnable {
         public boolean mousedown(Coord c, int button) {
             return super.mousedown(c, button);
         }
+    }
+
+    @Override
+    public boolean keydown(java.awt.event.KeyEvent ev) { // ND: do this to override the escape key being able to close the window
+        if(key_esc.match(ev)) {
+            return(false);
+        }
+        if(super.keydown(ev))
+            return(true);
+        return(false);
     }
 }
