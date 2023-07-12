@@ -329,7 +329,7 @@ public class CookingRecipes extends Window {
         public FoodList(int w, int rows) {
             this.rows = rows;
             this.w = w;
-            this.sz = UI.scale(w, rowHeight * rows);
+            this.sz = new Coord(UI.scale(w), rowHeight * rows);
         }
 
         public void addFood(Food item) {
