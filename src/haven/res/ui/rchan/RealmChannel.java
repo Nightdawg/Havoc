@@ -10,7 +10,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 /* >wdg: RealmChannel */
-@FromResource(name = "ui/rchan", version = 20)
+@haven.FromResource(name = "ui/rchan", version = 21)
 public class RealmChannel extends ChatUI.MultiChat {
     private final Map<Long, Sender> senders = new HashMap<>();
 
@@ -63,21 +63,43 @@ public class RealmChannel extends ChatUI.MultiChat {
 	    this.w = w;
 	}
 
+	public class Rendered implements Indir<Text> {
+	    public final int w;
+	    public final String nm;
+	    public Rendered(int w, String nm) {
+		this.w = w;
+		this.nm = nm;
+	    }
+	    public Text get() {
+		return(ChatUI.fnd.render(RichText.Parser.quote(String.format("%s: %s", nm, text)), w, TextAttribute.FOREGROUND, from.color));
+	    }
+	}
+	private String nm() {
+	    BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from.bid);
+		if(b != null) {
+			if (from.name != null){
+				return (from.name + " [Memo: " + b.name + "]");
+			}
+		}
+		if(from.name != null)
+			return(from.name);
+		return("??? (Not Memorised)");
+	}
+	public Indir<Text> render(int w) {
+	    /* Saving cn right now is just for name lookup, but that
+	     * should go throught rmsgs instead. */
+	    return(new Rendered(w, cn = nm()));
+	}
+	public boolean valid(Indir<Text> data) {
+	    return(((Rendered)data).nm.equals(nm()));
+	}
+	/* Remove me */
 	private double lnmck = 0;
 	public Text text() {
 	    double now = Utils.rtime();
 	    if((r == null) || (now - lnmck > 1)) {
 		BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from.bid);
-		String nm = null;
-		if((nm == null) && (b != null))
-		    nm = b.name;
-			if (nm != null && from.name != null){
-				nm = from.name + " [Memo: " + nm + "]";
-			}
-		if(nm == null)
-		    nm = from.name;
-		if(nm == null)
-		    nm = "??? (Not Memorised)";
+		String nm = nm();
 		if((r == null) || !nm.equals(cn)) {
 			String line = RichText.Parser.quote(String.format("%s: %s", nm, text));
 			line = "[" + timestamp + "] " + line;
@@ -88,10 +110,12 @@ public class RealmChannel extends ChatUI.MultiChat {
 	    return(r);
 	}
 
+	/* Remove me */
 	public Tex tex() {
 	    return(text().tex());
 	}
 
+	/* Remove me */
 	public Coord sz() {
 	    if(r == null)
 		return(text().sz());
@@ -252,15 +276,12 @@ public class RealmChannel extends ChatUI.MultiChat {
 		if(now > from.muted) {
 		    Message cmsg = new PNamedMessage(from, line, iw());
 		    append(cmsg);
-		    if(urgency > 0)
-			notify(cmsg, urgency);
 		}
 	    }
 	} else if(msg == "err") {
 	    String err = (String)args[0];
 	    Message cmsg = new SimpleMessage(err, wcol, iw());
 	    append(cmsg);
-	    notify(cmsg, 3);
 	} else if(msg == "enter") {
 	} else if(msg == "leave") {
 	} else {
