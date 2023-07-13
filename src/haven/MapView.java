@@ -28,6 +28,7 @@ package haven;
 
 import haven.MCache.OverlayInfo;
 import haven.automated.MiningSafetyAssistant;
+import haven.automated.helpers.AreaSelectCallback;
 import haven.pathfinder.PFListener;
 import haven.pathfinder.Pathfinder;
 import haven.render.*;
@@ -69,6 +70,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 
 	private long lastmmhittest = System.currentTimeMillis();
 	private Coord lasthittestc = Coord.z;
+
+	private AreaSelectCallback areaSelectCallback;
+	public boolean areaSelect = false;
 
 	public final PartyHighlight partyHighlight;
 	public final PartyCircles partyCircles;
@@ -2388,6 +2392,17 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     public boolean mousedown(Coord c, int button) {
 	parent.setfocus(this);
 	Loader.Future<Plob> placing_l = this.placing;
+	if (button == 1 && areaSelect) {
+		synchronized (this) {
+			if (selection == null) {
+				selection = new Selector();
+			} else {
+				selection.destroy();
+				selection = null;
+				areaSelect = false;
+			}
+		}
+	}
 	if(button == 2) {
 	    if(((Camera)camera).click(c)) {
 		camdrag = ui.grabmouse(this);
@@ -2745,6 +2760,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		    tt = null;
 		    ol.destroy();
 		    mgrab.remove();
+			if (areaSelectCallback != null) {
+				areaSelectCallback.areaselect(ol.a.ul, ol.a.br);
+			}
 		    wdgmsg("sel", sc, ec, modflags);
 		    sc = null;
 		}
@@ -2925,6 +2943,17 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	public void pfDone(final Pathfinder thread) {
 		if (haven.pathfinder.Map.DEBUG_TIMINGS)
 			System.out.println("-= PF DONE =-");
+	}
+
+	public void registerAreaSelect(AreaSelectCallback callback) {
+		this.areaSelectCallback = callback;
+	}
+
+	public void unregisterAreaSelect() {
+		this.areaSelectCallback = null;
+		areaSelect = false;
+		selection.destroy();
+		selection = null;
 	}
 
 	public void pfLeftClick(Coord mc, String action) {

@@ -1,7 +1,7 @@
 package haven.automated;
 
 import haven.*;
-import haven.automated.staticData.TileStatic;
+import haven.automated.helpers.TileStatic;
 
 import java.util.*;
 

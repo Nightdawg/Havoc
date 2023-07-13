@@ -1,4 +1,4 @@
-package haven.automated.staticData;
+package haven.automated.helpers;
 
 import java.util.*;
 
