@@ -155,6 +155,17 @@ public class AUtils {
         return true;
     }
 
+    public static void unstuck(GameUI gui) throws InterruptedException {
+        Coord2d pc = gui.map.player().rc;
+        Random r = new Random();
+        for (int i = 0; i < 5; i++) {
+            int xAdd = r.nextInt(500) - 250;
+            int yAdd = r.nextInt(500) - 250;
+            gui.map.wdgmsg("click", Coord.z, pc.floor(posres).add(xAdd, yAdd), 1, 0);
+            Thread.sleep(100);
+        }
+    }
+
     public static ArrayList<Gob> getGobs(String name, GameUI gui) {
         ArrayList<Gob> gobs = new ArrayList<>();
         synchronized (gui.map.glob.oc) {
