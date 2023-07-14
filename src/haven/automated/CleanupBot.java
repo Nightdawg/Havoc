@@ -20,10 +20,12 @@ public class CleanupBot extends Window implements Runnable {
     private CheckBox stumpcheckBox;
     private CheckBox rockcheckBox;
     private CheckBox soilcheckBox;
+    private boolean active;
+    private Button activeButton;
 
 
     public CleanupBot(GameUI gui) {
-        super(new Coord(220, 105), "ULTIMATE DESTRUCTION");
+        super(new Coord(220, 105), "Cleanup Bot");
         this.gui = gui;
         stop = false;
         chopBushes = false;
@@ -87,14 +89,29 @@ public class CleanupBot extends Window implements Runnable {
                 a = val;
             }
         };
+
         add(soilcheckBox, new Coord(90, 20));
+
+        activeButton = new Button(50, "Start") {
+            @Override
+            public void click() {
+                active = !active;
+                if (active) {
+                    this.change("Stop");
+                } else {
+                    gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
+                    this.change("Start");
+                }
+            }
+        };
+        add(activeButton, new Coord(120, 70));
     }
 
     @Override
     public void run() {
         try {
             while (!stop) {
-                if (chopBushes || chopTrees || destroyStumps || chipRocks || destroySoil) {
+                if ((chopBushes || chopTrees || destroyStumps || chipRocks || destroySoil) && active) {
                     if (gui.getmeters("hp").get(1).a < 0.02) {
                         System.out.println("HP IS " + gui.getmeters("hp").get(1).a + " .. PORTING HOME!");
                         gui.act("travel", "hearth");
@@ -103,7 +120,7 @@ public class CleanupBot extends Window implements Runnable {
                         } catch (InterruptedException e) {
                         }
                     }
-                    else if (gameui().getmeter("nrj", 0).a < 0.75) {
+                    else if (gameui().getmeter("nrj", 0).a < 0.25) {
                         gui.error("Need food");
                         stop();
                     }
@@ -118,7 +135,6 @@ public class CleanupBot extends Window implements Runnable {
                         if (chipRocks) {
                             dropStones();
                         }
-
                         destroyGob(gob);
                     }
                 }
@@ -155,7 +171,9 @@ public class CleanupBot extends Window implements Runnable {
                 }
             }
         } else {
-            gui.error("Nothing left to destroy here! :3 Just watch the world burn, you are the arson!");
+            gui.error("Nothing left to destroy.");
+            activeButton.change("Start");
+            active = false;
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
