@@ -1,0 +1,103 @@
+package haven.automated;
+
+import haven.*;
+
+import java.util.ArrayList;
+import java.util.Objects;
+
+import static haven.OCache.posres;
+
+public class TarKilnCleanerBot extends Window implements Runnable {
+    private final CheckBox activeBox;
+    private GameUI gui;
+
+    private boolean stop;
+    private int phase = 1;
+    private boolean active;
+
+    public TarKilnCleanerBot(GameUI gui) {
+        super(new Coord(300, 300), "Tar Kiln Emptier");
+        this.gui = gui;
+        stop = false;
+        active = false;
+
+        activeBox = new CheckBox("Active") {
+            {
+                a = active;
+            }
+
+            public void set(boolean val) {
+                active = val;
+                a = val;
+                phase = 1;
+            }
+        };
+
+        add(activeBox, new Coord(40, 15));
+    }
+
+    @Override
+    public void run() {
+        try {
+            while (!stop) {
+                if (active) {
+                    if (phase == 1) {
+                        System.out.println("Phase 1");
+                        if (gui.vhand != null && gui.vhand.item != null) {
+                            gui.vhand.item.wdgmsg("drop", Coord.z);
+                        }
+
+                        ArrayList<Gob> tarKilns = AUtils.getGobs("gfx/terobjs/tarkiln", gui);
+
+                        Gob closest = null;
+                        for (Gob tarKiln : tarKilns) {
+                            if (closest == null || tarKiln.rc.dist(gui.map.player().rc) < closest.rc.dist(gui.map.player().rc)) {
+                                ResDrawable resDrawable = tarKiln.getattr(ResDrawable.class);
+                                if(resDrawable.sdt.peekrbuf(0) == 10 && resDrawable.sdt.peekrbuf(0) == 42){
+                                    closest = tarKiln;
+                                }
+                            }
+                        }
+
+                        if (closest == null) {
+                            active = false;
+                            activeBox.set(false);
+                            gameui().error("No full tar kilns nearby.");
+                            continue;
+                        }
+
+                        gui.map.pfLeftClick(closest.rc.floor(),null);
+                        Thread.sleep(500);
+                        AUtils.waitPf(gui);
+                        AUtils.rightClickGobAndSelectOption(gui, closest, 0);
+                        Thread.sleep(500);
+                        AUtils.waitProgBar(gui);
+                    }
+                }
+
+                Thread.sleep(200);
+            }
+        } catch (InterruptedException e) {
+            System.out.println("interrupted..");
+        }
+
+    }
+
+    @Override
+    public void wdgmsg(Widget sender, String msg, Object... args) {
+        if ((sender == this) && (Objects.equals(msg, "close"))) {
+            stop = true;
+            stop();
+            reqdestroy();
+        } else
+            super.wdgmsg(sender, msg, args);
+    }
+
+    public void stop() {
+        gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
+        if (gameui().map.pfthread != null) {
+            gameui().map.pfthread.interrupt();
+        }
+        this.destroy();
+    }
+}

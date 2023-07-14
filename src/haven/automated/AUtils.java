@@ -155,6 +155,12 @@ public class AUtils {
         return true;
     }
 
+    public static void waitProgBar(GameUI gui) throws InterruptedException {
+        while (gui.prog != null && gui.prog.prog >= 0) {
+            Thread.sleep(40);
+        }
+    }
+
     public static void unstuck(GameUI gui) throws InterruptedException {
         Coord2d pc = gui.map.player().rc;
         Random r = new Random();

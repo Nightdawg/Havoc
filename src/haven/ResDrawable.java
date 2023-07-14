@@ -35,7 +35,7 @@ import static haven.Sprite.decnum;
 public class ResDrawable extends Drawable implements EquipTarget {
     public final Indir<Resource> res;
     public final Sprite spr;
-    MessageBuf sdt;
+    public MessageBuf sdt;
     // private double delay = 0; XXXRENDER
 	private final String resid;
 
