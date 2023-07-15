@@ -170,6 +170,8 @@ public class Widget {
 	    synchronized(types) {
 		return(types.get(name));
 	    }
+	} else if (name.contains("ui/grainslot")) {
+		return new Grainslot.GrainSlotFactory();
 	} else {
 	    int ver = -1, p;
 	    if((p = name.indexOf(':')) > 0) {
