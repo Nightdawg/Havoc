@@ -146,37 +146,40 @@ public class CleanupBot extends Window implements Runnable {
     }
 
     private void destroyGob(Gob gob) throws InterruptedException {
-        if (gob != null) {
-            gui.map.pfLeftClick(gob.rc.floor().add(11, 0), null);
-            if (!AUtils.waitPf(gui)) {
-                AUtils.unstuck(gui);
-            }
-            AUtils.leftClick(gui, gob.rc.floor());
-            if (gob.rc.dist(gui.map.player().rc) < 11 * 5) {
-                Resource res = gob.getres();
-                clearhand();
-                if (res.name.contains("/trees/") && !res.name.endsWith("stump") && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk") || res.name.contains("/bushes/")) {
-                    AUtils.rightClickGobAndSelectOption(gui, gob, 0);
-                    gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 3, 0, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
-                    waitWhileWorking(5000);
-                } else if (res.name.contains("/bumlings/")) {
-                    AUtils.rightClickGobAndSelectOption(gui, gob, 0);
-                    gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 3, 0, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
-                    waitWhileWorking(5000);
-                } else if (res.name.endsWith("stump") || res.name.endsWith("/stockpile-soil")) {
-                    gui.act("destroy");
-                    gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 1, 0, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
-                    gui.map.wdgmsg("click", Coord.z, Coord.z, 3, 0);
-                    waitWhileWorking(5000);
-                }
-            }
+        if(gui.prog != null && gui.map.player().getPoses().contains("pickan") || gui.map.player().getPoses().contains("treechop") || gui.map.player().getPoses().contains("chopping") || gui.map.player().getPoses().contains("shoveldig") || gui.map.player().getPoses().contains("drinkan")){
+            waitWhileWorking(2000);
         } else {
-            gui.error("Nothing left to destroy.");
-            activeButton.change("Start");
-            active = false;
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+            if (gob != null) {
+                gui.map.pfLeftClick(gob.rc.floor().add(20, 0), null);
+                if (!AUtils.waitPf(gui)) {
+                    AUtils.unstuck(gui);
+                }
+                if (gob.rc.dist(gui.map.player().rc) < 11 * 5) {
+                    Resource res = gob.getres();
+                    clearhand();
+                    if (res.name.contains("/trees/") && !res.name.endsWith("stump") && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk") || res.name.contains("/bushes/")) {
+                        AUtils.rightClickGobAndSelectOption(gui, gob, 0);
+                        gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 3, 0, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
+                        waitWhileWorking(2000);
+                    } else if (res.name.contains("/bumlings/")) {
+                        AUtils.rightClickGobAndSelectOption(gui, gob, 0);
+                        gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 3, 0, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
+                        waitWhileWorking(2000);
+                    } else if (res.name.endsWith("stump") || res.name.endsWith("/stockpile-soil")) {
+                        gui.act("destroy");
+                        gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 1, 0, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
+                        gui.map.wdgmsg("click", Coord.z, Coord.z, 3, 0);
+                        waitWhileWorking(2000);
+                    }
+                }
+            } else {
+                gui.error("Nothing left to destroy.");
+                activeButton.change("Start");
+                active = false;
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                }
             }
         }
     }
