@@ -101,6 +101,46 @@ public class AUtils {
         gui.map.wdgmsg("click", Coord.z, new Coord2d(c.x, c.y).floor(posres), 1, 0);
     }
 
+    public static ArrayList<Gob> getGobsInSelectionStartingWith(String name, Coord start, Coord end, GameUI gui) {
+        ArrayList<Gob> selected = new ArrayList<>();
+        synchronized (gui.map.glob.oc) {
+            for (Gob gob : gui.map.glob.oc) {
+                if (gob.rc.x > start.x && gob.rc.x < end.x && gob.rc.y > start.y && gob.rc.y < end.y) {
+                    try {
+                        Resource res = gob.getres();
+                        if (res != null && res.name.startsWith(name)) {
+                            selected.add(gob);
+                        }
+                    } catch (Loading l) {
+                    }
+                }
+            }
+        }
+        return selected;
+    }
+
+    public static int countTiles(String name, Coord start, Coord end, GameUI gui) {
+        int count = 0;
+        for (int x = start.x+5; x < end.x; x+= 11) {
+            for (int y = start.y+5; y < end.y; y+= 11) {
+                String tilename = getTileName(new Coord(x,y), gui.map.glob.map);
+                if (name.equals(tilename)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public static int getDrawState(Gob gob) {
+        try {
+            return gob.getattr(ResDrawable.class).sdt.peekrbuf(0);
+        } catch (NullPointerException | Loading e) {
+            System.out.println(e.getClass() + " when trying to get drawstate from gob " + gob.id);
+        }
+        return 0;
+    }
+
     public static ArrayList<Gob> getAllGobs(GameUI gui) {
         ArrayList<Gob> gobs = new ArrayList<>();
         synchronized (gui.map.glob.oc) {
