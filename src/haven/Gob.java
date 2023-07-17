@@ -70,6 +70,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private final List<Overlay> dols = new ArrayList<>();
 	private Overlay customRadiusOverlay;
 	private Overlay customOverlay;
+	private Overlay gobpath = null;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
 	public int playerPoseUpdatedCounter = 0;
 	public Boolean isMannequin = null;
@@ -857,37 +858,61 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     }
 
     private void setattr(Class<? extends GAttrib> ac, GAttrib a) {
-	GAttrib prev = attr.remove(ac);
-	if(prev != null) {
-	    if((prev instanceof RenderTree.Node) && (prev.slots != null))
-		RUtils.multirem(new ArrayList<>(prev.slots));
-	    if(prev instanceof SetupMod)
-		setupmods.remove(prev);
-	}
-	if(a != null) {
-	    if(a instanceof RenderTree.Node && !a.skipRender) {
-		try {
-		    RUtils.multiadd(this.slots, (RenderTree.Node)a);
-		} catch(Loading l) {
-		    if(prev instanceof RenderTree.Node && !prev.skipRender) {
-			RUtils.multiadd(this.slots, (RenderTree.Node)prev);
-			attr.put(ac, prev);
-		    }
-		    if(prev instanceof SetupMod)
-			setupmods.add((SetupMod)prev);
-		    throw(l);
+		GAttrib prev = attr.remove(ac);
+		if (prev != null) {
+			if ((prev instanceof RenderTree.Node) && (prev.slots != null))
+				RUtils.multirem(new ArrayList<>(prev.slots));
+			if (prev instanceof SetupMod)
+				setupmods.remove(prev);
 		}
-	    }
-	    if(a instanceof SetupMod)
-		setupmods.add((SetupMod)a);
-	    attr.put(ac, a);
+		if (a != null) {
+			if (a instanceof RenderTree.Node && !a.skipRender) {
+				try {
+					RUtils.multiadd(this.slots, (RenderTree.Node) a);
+				} catch (Loading l) {
+					if (prev instanceof RenderTree.Node && !prev.skipRender) {
+						RUtils.multiadd(this.slots, (RenderTree.Node) prev);
+						attr.put(ac, prev);
+					}
+					if (prev instanceof SetupMod)
+						setupmods.add((SetupMod) prev);
+					throw (l);
+				}
+			}
+			if (a instanceof SetupMod)
+				setupmods.add((SetupMod) a);
+			attr.put(ac, a);
+		}
+		if (ac == Drawable.class) {
+			if (a != prev) drawableUpdated();
+		}
+		if (prev != null)
+			prev.dispose();
+
+
+		if (a instanceof Moving) {
+			if (getres() != null && getres().name.equals("gfx/borka/body")) {
+				if (gobpath != null) {
+					gobpath.remove();
+					gobpath = null;
+				}
+			}
+		}
+		if (a instanceof Homing) {
+			if (gobpath == null && a != null) {
+				gobpath = new Overlay(this, new GobPath(this, (Homing) a, GobPath.FOECOLOR));
+				addol(gobpath);
+			} else if (gobpath != null && a != null) {
+				gobpath.remove();
+				gobpath = new Overlay(this, new GobPath(this, (Homing) a, GobPath.FOECOLOR));
+				addol(gobpath);
+			} else if (gobpath != null) {
+				gobpath.remove();
+				gobpath = null;
+			}
+		}
 	}
-	if(ac == Drawable.class) {
-		if (a != prev) drawableUpdated();
-	}
-	if(prev != null)
-	    prev.dispose();
-    }
+
 
     public void setattr(GAttrib a) {
 	setattr(attrclass(a.getClass()), a);
