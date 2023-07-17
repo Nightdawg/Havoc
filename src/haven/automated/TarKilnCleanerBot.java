@@ -16,7 +16,7 @@ public class TarKilnCleanerBot extends Window implements Runnable {
     private boolean active;
 
     public TarKilnCleanerBot(GameUI gui) {
-        super(new Coord(300, 300), "Tar Kiln Emptier");
+        super(new Coord(150, 50), "Tar Kiln Emptier");
         this.gui = gui;
         stop = false;
         active = false;
@@ -42,10 +42,10 @@ public class TarKilnCleanerBot extends Window implements Runnable {
             while (!stop) {
                 if (active) {
                     if (phase == 1) {
-                        System.out.println("Phase 1");
                         if (gui.vhand != null && gui.vhand.item != null) {
                             gui.vhand.item.wdgmsg("drop", Coord.z);
                         }
+                        dropCoal();
 
                         ArrayList<Gob> tarKilns = AUtils.getGobs("gfx/terobjs/tarkiln", gui);
 
@@ -53,7 +53,7 @@ public class TarKilnCleanerBot extends Window implements Runnable {
                         for (Gob tarKiln : tarKilns) {
                             if (closest == null || tarKiln.rc.dist(gui.map.player().rc) < closest.rc.dist(gui.map.player().rc)) {
                                 ResDrawable resDrawable = tarKiln.getattr(ResDrawable.class);
-                                if(resDrawable.sdt.peekrbuf(0) == 10 && resDrawable.sdt.peekrbuf(0) == 42){
+                                if(resDrawable.sdt.peekrbuf(0) == 10 || resDrawable.sdt.peekrbuf(0) == 42){
                                     closest = tarKiln;
                                 }
                             }
@@ -66,12 +66,23 @@ public class TarKilnCleanerBot extends Window implements Runnable {
                             continue;
                         }
 
-                        gui.map.pfLeftClick(closest.rc.floor(),null);
-                        Thread.sleep(500);
-                        AUtils.waitPf(gui);
-                        AUtils.rightClickGobAndSelectOption(gui, closest, 0);
-                        Thread.sleep(500);
-                        AUtils.waitProgBar(gui);
+                        if(gui.prog == null) {
+                            int[][] options = {{33, 0}, {-33, 0}, {0, 33}, {0, -33}};
+
+                            for (int[] option : options) {
+                                Coord newCoord = closest.rc.floor().add(option[0], option[1]);
+                                gui.map.pfLeftClick(newCoord, null);
+                                Thread.sleep(500);
+                                AUtils.waitPf(gui);
+
+                                if (gui.map.player().rc.dist(new Coord2d(newCoord)) < 40) {
+                                    break;
+                                }
+                            }
+                            AUtils.rightClickGobAndSelectOption(gui, closest, 0);
+                            Thread.sleep(2000);
+                            AUtils.waitProgBar(gui);
+                        }
                     }
                 }
 
@@ -80,7 +91,15 @@ public class TarKilnCleanerBot extends Window implements Runnable {
         } catch (InterruptedException e) {
             System.out.println("interrupted..");
         }
+    }
 
+    private void dropCoal() {
+        for (WItem wItem : gameui().maininv.getAllItems()) {
+            GItem gitem = wItem.item;
+            if (gitem.getname().contains("Coal")) {
+                gitem.wdgmsg("drop", new Coord(wItem.item.sz.x / 2, wItem.item.sz.y / 2));
+            }
+        }
     }
 
     @Override
