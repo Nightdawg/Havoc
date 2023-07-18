@@ -22,6 +22,9 @@ public class Grainslot extends Widget implements DTarget, ItemInfo.Owner {
 	ebtn.hide(); tbtn.hide(); pbtn.hide();
     }
 
+	public ItemInfo.Raw getRawinfo() {
+		return rawinfo;
+	}
 
 	public static class GrainSlotFactory implements Factory {
 		public Widget create(UI ui, Object[] args) {

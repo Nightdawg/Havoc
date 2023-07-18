@@ -2,71 +2,52 @@ package haven.automated;
 
 import haven.*;
 import haven.Button;
-import haven.Label;
 import haven.Window;
 import haven.automated.helpers.AreaSelectCallback;
+import haven.automated.helpers.FarmingStatic;
 
 import java.util.*;
 
 import static haven.OCache.posres;
 
 public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
+    private List<TurnipField> fields;
+    private Map<Gob, Integer> granaries;
     private final GameUI gui;
     private boolean stop;
-
-    private int stage = 0;
-
-    //Permanent button to select area after;
-    private Button areaSelectButton;
-
     private Coord farmNW;
     private Coord farmSE;
-
-    private Button resetButton;
-
-    //Selecting area changes stage to 1;
-
-    //Visible only in stage 1;
-    private CheckBox fieldOneCb;
-    private CheckBox fieldTwoCb;
-    private CheckBox fieldThreeCb;
-    private CheckBox fieldFourCb;
-    private CheckBox fieldFiveCb;
-    private CheckBox fieldSixCb;
-    private CheckBox fieldSevenCb;
-    private CheckBox fieldEightCb;
-    private CheckBox fieldNineCb;
-    private CheckBox fieldTenCb;
-    private CheckBox fieldElevenCb;
-    private CheckBox fieldTwelveCb;
-
-    private Button startScanningButton;
-
-    List<Integer> fieldsSelected;
+    private int stage;
+    private final List<Integer> fieldsSelected;
     private boolean harvest;
     private boolean plant;
+    private List<Coord2d> coordQueue;
+    private int scanIndex;
 
-    //After its finished set stage to 2
-
-    //Visible in stage 2;
-    private CheckBox harvestCheckbox;
-    private CheckBox plantCheckbox;
-
+    private final Button areaSelectButton;
+    private final Button resetButton;
+    private final CheckBox fieldOneCb;
+    private final CheckBox fieldTwoCb;
+    private final CheckBox fieldThreeCb;
+    private final CheckBox fieldFourCb;
+    private final CheckBox fieldFiveCb;
+    private final CheckBox fieldSixCb;
+    private final CheckBox fieldSevenCb;
+    private final CheckBox fieldEightCb;
+    private final CheckBox fieldNineCb;
+    private final CheckBox fieldTenCb;
+    private final CheckBox fieldElevenCb;
+    private final CheckBox fieldTwelveCb;
+    private final Button startScanningButton;
+    private final CheckBox harvestCheckbox;
+    private final CheckBox plantCheckbox;
     private Button startBot;
-    //Clicking goes to stage 2 if harvest or harvest + plant selected;
-    //Clicking goes to stage 3 if plant only selected;
-    //gui msg to select at least one is not selected;
-
-    // visible in stage 3,4
-    private Label cropsLeftToHarvestLabel;
-    private Label cropsLeftToPlantLabel;
-
-    private int currentField;
-
 
     public TurnipBot(GameUI gui) {
         super(new Coord(300, 200), "TurnipFarmer");
         this.gui = gui;
+        setStageZero();
+
         areaSelectButton = add(new Button(100, "Select Area") {
             @Override
             public void click() {
@@ -79,112 +60,18 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         resetButton = add(new Button(100, "Reset") {
             @Override
             public void click() {
-               setStageZero();
+                setStageZero();
+                stop();
             }
         }, UI.scale(150, 15));
 
-
-//        fieldsLeftLabel = new Label("Fields: 0");
-//        add(fieldsLeftLabel, new Coord(15, 60));
-    }
-
-    @Override
-    public void areaselect(Coord a, Coord b) {
-        if(b.mul(MCache.tilesz2).x - a.mul(MCache.tilesz2).x < 1089 &&  b.mul(MCache.tilesz2).y - a.mul(MCache.tilesz2).y < 1089){
-            this.farmNW = a.mul(MCache.tilesz2);
-            this.farmSE = b.mul(MCache.tilesz2);
-            gui.msg("Area selected: " + (farmSE.x - farmNW.x) + "x" + (farmSE.y - farmNW.y));
-            gui.map.unregisterAreaSelect();
-            setStageOne();
-        } else {
-            gui.msg("Incorrect size. You must select your entire farm plot 99x99 including palisade.");
-            gui.map.unregisterAreaSelect();
-        }
-    }
-
-
-
-    @Override
-    public void run() {
-        while (!stop) {
-            if("active" == "active"){
-                if (gameui().getmeter("nrj", 0).a < 0.25) {
-                    gui.error("Energy critical. Farmer stopping.");
-                    stop();
-                }
-                else if (gui.getmeter("stam", 0).a < 0.40) {
-                    try {
-                        AUtils.drinkTillFull(gui, 0.99, 0.99);
-                    } catch (InterruptedException e) {
-                        System.out.println("Drinking interrupted.");
-                    }
-                }
-
-
-
-
-
-
-
-
-            }
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException ignored) {
-            }
-        }
-    }
-
-
-
-
-
-
-
-    private void setStageZero(){
-        stage = 0;
-
-        if(farmNW != null){
-            farmNW = null;
-        }
-        if(farmSE != null){
-            farmSE = null;
-        }
-
-        if(fieldOneCb != null){fieldOneCb.remove();}
-        if(fieldTwoCb != null){fieldTwoCb.remove();}
-        if(fieldThreeCb != null){fieldThreeCb.remove();}
-        if(fieldFourCb != null){fieldFourCb.remove();}
-        if(fieldFiveCb != null){fieldFiveCb.remove();}
-        if(fieldSixCb != null){fieldSixCb.remove();}
-        if(fieldSevenCb != null){fieldSevenCb.remove();}
-        if(fieldEightCb != null){fieldEightCb.remove();}
-        if(fieldNineCb != null){fieldNineCb.remove();}
-        if(fieldTenCb != null){fieldTenCb.remove();}
-        if(fieldElevenCb != null){fieldElevenCb.remove();}
-        if(fieldTwelveCb != null){fieldTwelveCb.remove();}
-
-        if(startScanningButton != null){startScanningButton.remove();}
-
-        if(harvestCheckbox != null){harvestCheckbox.remove();}
-        if(plantCheckbox != null){plantCheckbox.remove();}
-
-        if(startBot != null){startBot.remove();}
-
-        if(cropsLeftToHarvestLabel != null){cropsLeftToHarvestLabel.remove();}
-        if(cropsLeftToPlantLabel != null){cropsLeftToPlantLabel.remove();}
-
-        gui.msg("Turnip Bot reset. Select area again.");
-    }
-
-    private void setStageOne(){
-        stage = 1;
         fieldOneCb = new CheckBox("1") {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 1);
                 } else {
                     fieldsSelected.add(1);
@@ -198,8 +85,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 2);
                 } else {
                     fieldsSelected.add(2);
@@ -213,8 +101,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 3);
                 } else {
                     fieldsSelected.add(3);
@@ -228,8 +117,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 4);
                 } else {
                     fieldsSelected.add(4);
@@ -243,8 +133,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 5);
                 } else {
                     fieldsSelected.add(5);
@@ -258,8 +149,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 6);
                 } else {
                     fieldsSelected.add(6);
@@ -273,8 +165,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 7);
                 } else {
                     fieldsSelected.add(7);
@@ -288,8 +181,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 8);
                 } else {
                     fieldsSelected.add(8);
@@ -303,8 +197,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 9);
                 } else {
                     fieldsSelected.add(9);
@@ -318,8 +213,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 10);
                 } else {
                     fieldsSelected.add(10);
@@ -334,8 +230,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 11);
                 } else {
                     fieldsSelected.add(11);
@@ -349,8 +246,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
-                if(!val){
+                if (!val) {
                     fieldsSelected.remove((Integer) 12);
                 } else {
                     fieldsSelected.add(12);
@@ -360,10 +258,13 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         };
         add(fieldTwelveCb, UI.scale(215, 90));
 
+        fieldsSelected = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12));
+
         harvestCheckbox = new CheckBox("Harvest") {
             {
                 a = true;
             }
+
             public void set(boolean val) {
                 harvest = val;
                 a = val;
@@ -375,6 +276,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             {
                 a = true;
             }
+
             public void set(boolean val) {
                 plant = val;
                 a = val;
@@ -385,40 +287,276 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         startScanningButton = add(new Button(50, "Scan") {
             @Override
             public void click() {
-                setStageTwo();
+                setStageOne();
             }
         }, UI.scale(150, 115));
 
-        fieldsSelected = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12));
-        harvest = true;
-        plant = true;
-
-        gui.msg("Area Selected, Choose fields and actions.");
     }
 
-    private void setStageTwo(){
-        Collections.sort(fieldsSelected);
-        System.out.println(fieldsSelected.toString());
-        System.out.println("harvest: " + harvest + " plant: " + plant);
-
-        gui.msg("Bot is now scanning area & calculating granary space.");
+    @Override
+    public void areaselect(Coord a, Coord b) {
+        if (b.mul(MCache.tilesz2).x - a.mul(MCache.tilesz2).x == 1089 && b.mul(MCache.tilesz2).y - a.mul(MCache.tilesz2).y == 1089) {
+            this.farmNW = a.mul(MCache.tilesz2);
+            this.farmSE = b.mul(MCache.tilesz2);
+            gui.msg("Area selected: " + (farmSE.x - farmNW.x) + "x" + (farmSE.y - farmNW.y));
+            gui.map.unregisterAreaSelect();
+        } else {
+            gui.msg("Incorrect size. You must select your entire farm plot 99x99 including palisade.");
+            gui.map.unregisterAreaSelect();
+        }
     }
 
-    private void setStageThree(){
-        stage = 3;
+
+    @Override
+    public void run() {
+        while (!stop) {
+            if (stage > 0 && farmNW != null && farmSE != null) {
+                checkHealthStaminaEnergy();
+            }
+
+            if (stage == 1 && farmNW != null && farmSE != null) {
+                scanFieldsAndGranaries();
+            }
+
+            if (stage == 2 && farmNW != null && farmSE != null) {
+                depositIfFullInventory();
+                harvestFieldByField();
+            }
 
 
+
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ignored) {
+            }
+        }
+    }
+
+
+    private void setStageZero() {
+        stage = 0;
+        farmNW = null;
+        farmSE = null;
+        gui.msg("Select field area, and choose fields & actions.");
+    }
+
+    private void setStageOne() {
+        if (farmNW != null && farmSE != null) {
+            if (fieldsSelected.size() == 0) {
+                gui.error("Select at least one field.");
+            } else {
+                Collections.sort(fieldsSelected);
+                fields = new ArrayList<>();
+                granaries = new HashMap<>();
+                for (int i : fieldsSelected){
+                    fields.add(new TurnipField(i, farmNW));
+                }
+
+                scanIndex = 0;
+                coordQueue = new ArrayList<>();
+                coordQueue.add(new Coord2d(farmNW).add(280.5, 434.5));
+                coordQueue.add(new Coord2d(farmNW).add(225.5, 544.5));
+                coordQueue.add(new Coord2d(farmNW).add(280.5, 654.5));
+
+                coordQueue.add(new Coord2d(farmNW).add(544.5, 522.5));
+
+                coordQueue.add(new Coord2d(farmNW).add(808.5, 434.5));
+                coordQueue.add(new Coord2d(farmNW).add(863.5, 544.5));
+                coordQueue.add(new Coord2d(farmNW).add(808.5, 654.5));
+
+
+                stage = 1;
+                gui.msg("Stage one. Scanning, please wait.");
+            }
+        } else {
+            gui.error("Need to select area first.");
+        }
+    }
+
+    private void setStageTwo() {
+        stage = 2;
         gui.msg("Currently Harvesting field nr: " + "todo number");
     }
 
-    private void setStageFour(){
-        stage = 4;
-
+    private void setStageThree() {
+        stage = 3;
+        for(TurnipField field : fields){
+            System.out.println("Field nr: " + field.fieldIndex + ", coords from: " + field.fieldNW + " to: " + field.fieldSE + ", turnipsZero: " + field.turnipStageZero.size() + ", turnipsToHarvest: " + field.turnipHarvestable.size());
+        }
+        for(Map.Entry<Gob, Integer> entry : granaries.entrySet()){
+            System.out.println(entry.getKey().id + " - " + entry.getValue());
+        }
 
         gui.msg("Currently planting field nr: " + "todo number");
     }
 
+    private void depositIfFullInventory(){
+        //todo
+    }
 
+    private void harvestFieldByField(){
+        //todo
+    }
+
+    private void checkHealthStaminaEnergy() {
+        if (gui.getmeters("hp").get(1).a < 0.02) {
+            System.out.println("Low HP, porting home.");
+            gui.act("travel", "hearth");
+            try {
+                Thread.sleep(8000);
+            } catch (InterruptedException ignored) {
+            }
+        } else if (gui.getmeter("nrj", 0).a < 0.30) {
+            gui.error("Energy critical. Farmer stopping.");
+            stop();
+        } else if (gui.getmeter("stam", 0).a < 0.50) {
+            try {
+                AUtils.drinkTillFull(gui, 0.99, 0.99);
+            } catch (InterruptedException e) {
+                System.out.println("Drinking interrupted.");
+            }
+        }
+    }
+
+    private void scanFieldsAndGranaries() {
+        try {
+            if (scanIndex == 0) {
+                gui.map.pfLeftClick(coordQueue.get(0).floor(), null);
+                AUtils.waitPf(gui);
+                if (gui.map.player().rc.dist(coordQueue.get(0)) < 5) {
+                    processField(1);
+                    processField(2);
+                    processField(3);
+                    scanIndex++;
+                }
+            } else if (scanIndex == 1) {
+                gui.map.pfLeftClick(coordQueue.get(1).floor(), null);
+                AUtils.waitPf(gui);
+                if (gui.map.player().rc.dist(coordQueue.get(1)) < 5) {
+                    processGranary();
+                    scanIndex++;
+                }
+            } else if (scanIndex == 2) {
+                gui.map.pfLeftClick(coordQueue.get(2).floor(), null);
+                AUtils.waitPf(gui);
+                if (gui.map.player().rc.dist(coordQueue.get(2)) < 5) {
+                    processField(7);
+                    processField(8);
+                    processField(9);
+                    scanIndex++;
+                }
+            } else if (scanIndex == 3) {
+                gui.map.pfLeftClick(coordQueue.get(3).floor(), null);
+                AUtils.waitPf(gui);
+                if (gui.map.player().rc.dist(coordQueue.get(3)) < 5) {
+                    processGranary();
+                    scanIndex++;
+                }
+            } else if (scanIndex == 4) {
+                gui.map.pfLeftClick(coordQueue.get(4).floor(), null);
+                AUtils.waitPf(gui);
+                if (gui.map.player().rc.dist(coordQueue.get(4)) < 5) {
+                    processField(4);
+                    processField(5);
+                    processField(6);
+                    scanIndex++;
+                }
+            } else if (scanIndex == 5) {
+                gui.map.pfLeftClick(coordQueue.get(5).floor(), null);
+                AUtils.waitPf(gui);
+                if (gui.map.player().rc.dist(coordQueue.get(5)) < 5) {
+                    processGranary();
+                    scanIndex++;
+                }
+            } else if (scanIndex == 6) {
+                gui.map.pfLeftClick(coordQueue.get(6).floor(), null);
+                AUtils.waitPf(gui);
+                if (gui.map.player().rc.dist(coordQueue.get(6)) < 5) {
+                    processField(10);
+                    processField(11);
+                    processField(12);
+                    scanIndex++;
+                }
+            } else {
+                if (harvest) {
+                    setStageTwo();
+                } else {
+                    setStageThree();
+                }
+            }
+
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            System.out.println("Bot interrupted?");
+        }
+    }
+
+    private void processGranary(){
+        try {
+        Gob granary = AUtils.getGobNearPlayer("gfx/terobjs/granary", gui);
+        if(granary != null){
+            gui.map.pfRightClick(granary, -1, 3, 0 , null);
+            AUtils.waitPf(gui);
+            Thread.sleep(1000);
+            while(FarmingStatic.grainSlots.size() == 0){
+                Thread.sleep(1000);
+            }
+            int seeds = 0;
+            for(Grainslot grainslot: FarmingStatic.grainSlots){
+                try {
+                    if(grainslot.getRawinfo() != null){
+                        int amount = 0;
+                        boolean turnip = false;
+                        for(ItemInfo info : grainslot.info()){
+                            if(info instanceof GItem.Amount){
+                                amount = ((GItem.Amount) info).itemnum();
+                            }
+                            if(info instanceof ItemInfo.Name){
+                                if(((ItemInfo.Name) info).original.contains("Turnip")){
+                                    turnip = true;
+                                }
+                            }
+                        }
+                        if(turnip){
+                            seeds += amount;
+                        }
+                    }
+                } catch (NullPointerException ignored){}
+            }
+            granaries.put(granary, seeds);
+        }
+        } catch (InterruptedException ignored){}
+    }
+
+    private void processField(int index) {
+        TurnipField field = getFieldByIndex(index);
+        if (field != null) {
+            List<Gob> crops = AUtils.getGobsInSelectionStartingWith("gfx/terobjs/plants/turnip", field.getFieldNW(), field.getFieldSE(), gui);
+            if (!crops.isEmpty()) {
+                List<Gob> freshCrops = new ArrayList<>();
+                List<Gob> cropsToHarvest = new ArrayList<>();
+                for (Gob crop : crops) {
+                    if (AUtils.getDrawState(crop) == 0) {
+                        freshCrops.add(crop);
+                    } else {
+                        cropsToHarvest.add(crop);
+                    }
+                }
+                field.setTurnipHarvestable(cropsToHarvest);
+                field.setTurnipStageZero(freshCrops);
+            }
+        }
+    }
+
+    public TurnipField getFieldByIndex(int index) {
+        for (TurnipField field : fields) {
+            if (field.fieldIndex == index) {
+                return field;
+            }
+        }
+        return null;
+    }
 
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
@@ -431,10 +569,70 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
     }
 
     public void stop() {
-        gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
-        if (gameui().map.pfthread != null) {
-            gameui().map.pfthread.interrupt();
+        gui.map.wdgmsg("click", Coord.z, gui.map.player().rc.floor(posres), 1, 0);
+        if (gui.map.pfthread != null) {
+            gui.map.pfthread.interrupt();
         }
+        stage = 0;
+        ui.root.wdgmsg("gk", 27);
         this.destroy();
+    }
+
+    private static class TurnipField {
+        private final int fieldIndex;
+
+        private int line;
+        private int chunk;
+
+        private final Coord fieldNW;
+        private final Coord fieldSE;
+
+        private List<Gob> turnipStageZero;
+        private List<Gob> turnipHarvestable;
+
+        public TurnipField(int fieldIndex, Coord farmNW) {
+            this.fieldIndex = fieldIndex;
+            Coord calculated = calculateNW(fieldIndex, farmNW);
+            this.fieldNW = calculated;
+            this.fieldSE = calculated.add(165, 506);
+            this.turnipStageZero = new ArrayList<>();
+            this.turnipHarvestable = new ArrayList<>();
+            this.line = 0;
+            this.chunk = 0;
+        }
+
+        public Coord getFieldNW() {
+            return fieldNW;
+        }
+
+        public Coord getFieldSE() {
+            return fieldSE;
+        }
+
+        private Coord calculateNW(int index, Coord farmNW){
+            Coord coord;
+            if(index < 7){
+                coord = new Coord(farmNW.x + 22 + ((index - 1) * 187) , farmNW.y + 11);
+            } else {
+                coord = new Coord(farmNW.x + 22 + ((index - 7) * 187) , farmNW.y + 572);
+            }
+            return coord;
+        }
+
+        public void setTurnipStageZero(List<Gob> turnipStageZero) {
+            this.turnipStageZero = turnipStageZero;
+        }
+
+        public void setTurnipHarvestable(List<Gob> turnipHarvestable) {
+            this.turnipHarvestable = turnipHarvestable;
+        }
+
+        public void setLine(int line) {
+            this.line = line;
+        }
+
+        public void setChunk(int chunk) {
+            this.chunk = chunk;
+        }
     }
 }

@@ -121,6 +121,25 @@ public class AUtils {
         return selected;
     }
 
+    public static Gob getGobNearPlayer(String name, GameUI gui) {
+        Coord playerCoord = gui.map.player().rc.floor();
+        synchronized (gui.map.glob.oc) {
+            for (Gob gob : gui.map.glob.oc) {
+                if (gob.rc.x > playerCoord.x - 55 && gob.rc.x < playerCoord.x + 55 && gob.rc.y > playerCoord.y - 55 && gob.rc.y < playerCoord.y + 55) {
+                    try {
+                        Resource res = gob.getres();
+                        if (res != null && res.name.equals(name)) {
+                            return gob;
+                        }
+                    } catch (Loading l) {
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+
     public static int countTiles(String name, Coord start, Coord end, GameUI gui) {
         int count = 0;
         for (int x = start.x+5; x < end.x; x+= 11) {
