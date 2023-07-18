@@ -4,6 +4,8 @@ import haven.*;
 
 import java.util.*;
 
+import static haven.MCache.cmaps;
+import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 
 public class AUtils {
@@ -210,6 +212,16 @@ public class AUtils {
             gui.map.wdgmsg("click", Coord.z, pc.floor(posres).add(xAdd, yAdd), 1, 0);
             Thread.sleep(100);
         }
+    }
+
+    public static void getGridHeightAvg(GameUI gui){
+        Coord playerCoord = gui.map.player().rc.floor(tilesz);
+        MCache.Grid grid = gui.ui.sess.glob.map.getgrid(playerCoord.div(cmaps));
+        float height = 0;
+        for(float z : grid.z){
+            height = height + z;
+        }
+        System.out.println(height/10000);
     }
 
     public static ArrayList<Gob> getGobs(String name, GameUI gui) {
