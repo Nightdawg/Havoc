@@ -1,276 +1,91 @@
 package haven.automated;
 
+import com.sun.source.tree.Tree;
 import haven.*;
 import haven.Button;
 import haven.Window;
 import haven.automated.helpers.AreaSelectCallback;
 import haven.automated.helpers.FarmingStatic;
+import haven.automated.helpers.TileStatic;
+import haven.res.ui.tt.q.quality.Quality;
 
 import java.util.*;
 
 import static haven.OCache.posres;
 
 public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
-    private List<TurnipField> fields;
-    private Map<Gob, Integer> granaries;
     private final GameUI gui;
     private boolean stop;
-    private Coord farmNW;
-    private Coord farmSE;
-    private int stage;
-    private final List<Integer> fieldsSelected;
-    private boolean harvest;
-    private boolean plant;
-    private List<Coord2d> coordQueue;
-    private int scanIndex;
+    private Coord coordNW;
+    private Coord coordSE;
 
-    private final Button areaSelectButton;
+    private final Button fieldSelectButton;
+    private final Button granarySelectButton;
+    private boolean selectGranary;
     private final Button resetButton;
-    private final CheckBox fieldOneCb;
-    private final CheckBox fieldTwoCb;
-    private final CheckBox fieldThreeCb;
-    private final CheckBox fieldFourCb;
-    private final CheckBox fieldFiveCb;
-    private final CheckBox fieldSixCb;
-    private final CheckBox fieldSevenCb;
-    private final CheckBox fieldEightCb;
-    private final CheckBox fieldNineCb;
-    private final CheckBox fieldTenCb;
-    private final CheckBox fieldElevenCb;
-    private final CheckBox fieldTwelveCb;
-    private final Button startScanningButton;
-    private final CheckBox harvestCheckbox;
+
+    private List<TurnipField> fields;
+    private final Label fieldsLabel;
+    private Gob granary;
+    private final Label granaryLabel;
+
+    private boolean plant = true;
     private final CheckBox plantCheckbox;
-    private Button startBot;
+
+    private boolean active;
+    private final Button startButton;
+
+    private Coord closestFieldCoord = null;
+    private int currentField;
+    private int stage;
 
     public TurnipBot(GameUI gui) {
         super(new Coord(300, 200), "TurnipFarmer");
         this.gui = gui;
-        setStageZero();
+        this.fields = new ArrayList<>();
+        currentField = 0;
+        stage = 0;
 
-        areaSelectButton = add(new Button(100, "Select Area") {
+        fieldSelectButton = add(new Button(60, "Field") {
             @Override
             public void click() {
+                selectGranary = false;
                 gui.map.registerAreaSelect((AreaSelectCallback) this.parent);
-                gui.msg("Select Farm Grid");
+                gui.msg("Select single field.");
                 gui.map.areaSelect = true;
             }
         }, UI.scale(15, 15));
 
-        resetButton = add(new Button(100, "Reset") {
+        granarySelectButton = add(new Button(60, "Granary") {
             @Override
             public void click() {
-                setStageZero();
-                stop();
+                selectGranary = true;
+                gui.map.registerAreaSelect((AreaSelectCallback) this.parent);
+                gui.msg("Select area with granary.");
+                gui.map.areaSelect = true;
+            }
+        }, UI.scale(80, 15));
+
+        resetButton = add(new Button(50, "Reset") {
+            @Override
+            public void click() {
+                fields.clear();
+                fieldsLabel.settext("Fields: 0");
+                granary = null;
+                granaryLabel.settext("Granary: ✘");
+                active = false;
+                startButton.change("Start");
+                currentField = 0;
+                stage = 0;
+                closestFieldCoord = null;
             }
         }, UI.scale(150, 15));
 
-        fieldOneCb = new CheckBox("1") {
-            {
-                a = true;
-            }
+        fieldsLabel = new Label("Fields: 0");
+        add(fieldsLabel, UI.scale(50, 50));
 
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 1);
-                } else {
-                    fieldsSelected.add(1);
-                }
-                a = val;
-            }
-        };
-        add(fieldOneCb, UI.scale(15, 60));
-
-        fieldTwoCb = new CheckBox("2") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 2);
-                } else {
-                    fieldsSelected.add(2);
-                }
-                a = val;
-            }
-        };
-        add(fieldTwoCb, UI.scale(55, 60));
-
-        fieldThreeCb = new CheckBox("3") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 3);
-                } else {
-                    fieldsSelected.add(3);
-                }
-                a = val;
-            }
-        };
-        add(fieldThreeCb, UI.scale(95, 60));
-
-        fieldFourCb = new CheckBox("4") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 4);
-                } else {
-                    fieldsSelected.add(4);
-                }
-                a = val;
-            }
-        };
-        add(fieldFourCb, UI.scale(135, 60));
-
-        fieldFiveCb = new CheckBox("5") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 5);
-                } else {
-                    fieldsSelected.add(5);
-                }
-                a = val;
-            }
-        };
-        add(fieldFiveCb, UI.scale(175, 60));
-
-        fieldSixCb = new CheckBox("6") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 6);
-                } else {
-                    fieldsSelected.add(6);
-                }
-                a = val;
-            }
-        };
-        add(fieldSixCb, UI.scale(215, 60));
-
-        fieldSevenCb = new CheckBox("7") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 7);
-                } else {
-                    fieldsSelected.add(7);
-                }
-                a = val;
-            }
-        };
-        add(fieldSevenCb, UI.scale(15, 90));
-
-        fieldEightCb = new CheckBox("8") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 8);
-                } else {
-                    fieldsSelected.add(8);
-                }
-                a = val;
-            }
-        };
-        add(fieldEightCb, UI.scale(55, 90));
-
-        fieldNineCb = new CheckBox("9") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 9);
-                } else {
-                    fieldsSelected.add(9);
-                }
-                a = val;
-            }
-        };
-        add(fieldNineCb, UI.scale(95, 90));
-
-        fieldTenCb = new CheckBox("10") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 10);
-                } else {
-                    fieldsSelected.add(10);
-                }
-                a = val;
-            }
-        };
-        add(fieldTenCb, UI.scale(135, 90));
-
-
-        fieldElevenCb = new CheckBox("11") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 11);
-                } else {
-                    fieldsSelected.add(11);
-                }
-                a = val;
-            }
-        };
-        add(fieldElevenCb, UI.scale(175, 90));
-
-        fieldTwelveCb = new CheckBox("12") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                if (!val) {
-                    fieldsSelected.remove((Integer) 12);
-                } else {
-                    fieldsSelected.add(12);
-                }
-                a = val;
-            }
-        };
-        add(fieldTwelveCb, UI.scale(215, 90));
-
-        fieldsSelected = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12));
-
-        harvestCheckbox = new CheckBox("Harvest") {
-            {
-                a = true;
-            }
-
-            public void set(boolean val) {
-                harvest = val;
-                a = val;
-            }
-        };
-        add(harvestCheckbox, UI.scale(15, 120));
+        granaryLabel = new Label("Granary: ✘");
+        add(granaryLabel, UI.scale(120, 50));
 
         plantCheckbox = new CheckBox("Plant") {
             {
@@ -282,12 +97,17 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
                 a = val;
             }
         };
-        add(plantCheckbox, UI.scale(80, 120));
+        add(plantCheckbox, UI.scale(70, 80));
 
-        startScanningButton = add(new Button(50, "Scan") {
+        startButton = add(new Button(50, "Start") {
             @Override
             public void click() {
-                setStageOne();
+                active = !active;
+                if (active) {
+                    this.change("Stop");
+                } else {
+                    this.change("Start");
+                }
             }
         }, UI.scale(150, 115));
 
@@ -295,37 +115,50 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
 
     @Override
     public void areaselect(Coord a, Coord b) {
-        if (b.mul(MCache.tilesz2).x - a.mul(MCache.tilesz2).x == 1089 && b.mul(MCache.tilesz2).y - a.mul(MCache.tilesz2).y == 1089) {
-            this.farmNW = a.mul(MCache.tilesz2);
-            this.farmSE = b.mul(MCache.tilesz2);
-            gui.msg("Area selected: " + (farmSE.x - farmNW.x) + "x" + (farmSE.y - farmNW.y));
+        this.coordNW = a.mul(MCache.tilesz2);
+        this.coordSE = b.mul(MCache.tilesz2);
+        if(selectGranary){
+            List<Gob> granaries = AUtils.getGobsInSelectionStartingWith("gfx/terobjs/granary", coordNW, coordSE, gui);
+            if(granaries.size() == 1){
+                granary = granaries.get(0);
+                granaryLabel.settext("Granary: ✔");
+                gui.msg("Granary found.");
+            } else {
+                gui.msg("No granary in selected area.");
+            }
             gui.map.unregisterAreaSelect();
         } else {
-            gui.msg("Incorrect size. You must select your entire farm plot 99x99 including palisade.");
+            fields.add(new TurnipField(fields.size(), coordNW, coordSE));
+            fieldsLabel.settext("Fields: " + fields.size());
+            gui.msg("Area selected: " + (coordSE.x - coordNW.x) + "x" + (coordSE.y - coordNW.y));
             gui.map.unregisterAreaSelect();
         }
     }
 
-
     @Override
     public void run() {
         while (!stop) {
-            if (stage > 0 && farmNW != null && farmSE != null) {
-                checkHealthStaminaEnergy();
+            if (active) {
+                if (fields.size() > 0 && granary != null) {
+                    checkHealthStaminaEnergy();
+                    if(stage == 0){
+                        if(getFieldByIndex(currentField).closestCoord == null){
+                            setClosestFieldCoord();
+                        } else {
+                            if(gui.maininv.getFreeSpace() < 15){
+                                depositIfFullInventory();
+                            } else {
+                                gui.map.pfLeftClick(closestFieldCoord, null);
+                            }
+//                          harvestCurrentField();
+                        }
+                    } else if (stage == 1){
+                        gui.msg("Currently planting field nr: " + (currentField + 1));
+//                            getSeedsIfNotEnough();
+//                            plantCurrentField();
+                    }
+                }
             }
-
-            if (stage == 1 && farmNW != null && farmSE != null) {
-                scanFieldsAndGranaries();
-            }
-
-            if (stage == 2 && farmNW != null && farmSE != null) {
-                depositIfFullInventory();
-                harvestFieldByField();
-            }
-
-
-
-
             try {
                 Thread.sleep(200);
             } catch (InterruptedException ignored) {
@@ -333,70 +166,87 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         }
     }
 
+    private void setClosestFieldCoord(){
+        TurnipField field = getFieldByIndex(currentField);
+        Coord[] coords = {
+                field.fieldNW.add(5, 5),
+                new Coord(field.fieldSE.x, field.fieldNW.y).add(-5, 5),
+                field.fieldNW.add(-5, -5),
+                new Coord(field.fieldNW.x, field.fieldSE.y).add(5, -5)
+        };
 
-    private void setStageZero() {
-        stage = 0;
-        farmNW = null;
-        farmSE = null;
-        gui.msg("Select field area, and choose fields & actions.");
+        Optional<Coord> minCoord = Arrays.stream(coords).min(Comparator.comparingDouble(coord -> coord.dist(granary.rc.floor())));
+        field.setClosestCoord(minCoord.get());
+        closestFieldCoord = minCoord.get();
     }
 
-    private void setStageOne() {
-        if (farmNW != null && farmSE != null) {
-            if (fieldsSelected.size() == 0) {
-                gui.error("Select at least one field.");
-            } else {
-                Collections.sort(fieldsSelected);
-                fields = new ArrayList<>();
-                granaries = new HashMap<>();
-                for (int i : fieldsSelected){
-                    fields.add(new TurnipField(i, farmNW));
+    private void depositIfFullInventory() {
+        try {
+            int freeSpace = gui.maininv.getFreeSpace();
+            Thread.sleep(300);
+            if (freeSpace < 15 && FarmingStatic.grainSlots.size() == 0) {
+                gui.map.pfRightClick(granary, -1, 3, 0, null);
+                AUtils.waitPf(gui);
+                Thread.sleep(1000);
+            } else if (freeSpace < 15 && FarmingStatic.grainSlots.size() == 10) {
+                for (WItem wItem : gui.maininv.getAllItems()) {
+                    try {
+                        if (wItem.item.getres() != null && wItem.item.getres().name.equals("gfx/invobjs/seed-turnip")) {
+                            double quality = 0;
+                            int amount = 0;
+                            for(ItemInfo info : wItem.item.info()){
+                                if(info instanceof Quality){
+                                    quality = ((Quality) info).q;
+                                } else if (info instanceof GItem.Amount){
+                                    amount = ((GItem.Amount) info).itemnum();
+                                }
+                            }
+
+                            Grainslot firstEmpty = null;
+                            Grainslot matchingQl = null;
+                            for(Grainslot grainslot : FarmingStatic.grainSlots){
+                                if(grainslot.getRawinfo() == null){
+                                    firstEmpty = grainslot;
+                                } else {
+                                    boolean turnip = false;
+                                    boolean fitAll = false;
+                                    boolean qlMatch = false;
+                                    for(ItemInfo info : grainslot.info()){
+                                        if(info instanceof GItem.Amount){
+                                            if(((GItem.Amount) info).itemnum() + amount <= 200000){
+                                                fitAll = true;
+                                            }
+                                        } else if (info instanceof Quality && ((Quality) info).q == quality){
+                                            qlMatch = true;
+                                        } else if (info instanceof ItemInfo.Name && ((ItemInfo.Name) info).original.contains("Turnip")){
+                                            turnip = true;
+                                        }
+                                    }
+                                    if(turnip && fitAll && qlMatch){
+                                        matchingQl = grainslot;
+                                    }
+                                }
+                            }
+                            if(matchingQl != null){
+                                wItem.item.wdgmsg("take", Coord.z);
+                                matchingQl.wdgmsg("drop", 0);
+                            } else if (firstEmpty != null) {
+                                wItem.item.wdgmsg("take", Coord.z);
+                                Thread.sleep(100);
+                                firstEmpty.wdgmsg("drop", 0);
+                                Thread.sleep(100);
+                            } else {
+                                active = false;
+                                startButton.change("Start");
+                                gui.error("No space in granary. Stopping.");
+                            }
+                        }
+                    } catch (Loading e) {
+                    }
                 }
-
-                scanIndex = 0;
-                coordQueue = new ArrayList<>();
-                coordQueue.add(new Coord2d(farmNW).add(280.5, 434.5));
-                coordQueue.add(new Coord2d(farmNW).add(225.5, 544.5));
-                coordQueue.add(new Coord2d(farmNW).add(280.5, 654.5));
-
-                coordQueue.add(new Coord2d(farmNW).add(544.5, 522.5));
-
-                coordQueue.add(new Coord2d(farmNW).add(808.5, 434.5));
-                coordQueue.add(new Coord2d(farmNW).add(863.5, 544.5));
-                coordQueue.add(new Coord2d(farmNW).add(808.5, 654.5));
-
-
-                stage = 1;
-                gui.msg("Stage one. Scanning, please wait.");
             }
-        } else {
-            gui.error("Need to select area first.");
+        } catch (InterruptedException ignored) {
         }
-    }
-
-    private void setStageTwo() {
-        stage = 2;
-        gui.msg("Currently Harvesting field nr: " + "todo number");
-    }
-
-    private void setStageThree() {
-        stage = 3;
-        for(TurnipField field : fields){
-            System.out.println("Field nr: " + field.fieldIndex + ", coords from: " + field.fieldNW + " to: " + field.fieldSE + ", turnipsZero: " + field.turnipStageZero.size() + ", turnipsToHarvest: " + field.turnipHarvestable.size());
-        }
-        for(Map.Entry<Gob, Integer> entry : granaries.entrySet()){
-            System.out.println(entry.getKey().id + " - " + entry.getValue());
-        }
-
-        gui.msg("Currently planting field nr: " + "todo number");
-    }
-
-    private void depositIfFullInventory(){
-        //todo
-    }
-
-    private void harvestFieldByField(){
-        //todo
     }
 
     private void checkHealthStaminaEnergy() {
@@ -419,135 +269,64 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         }
     }
 
-    private void scanFieldsAndGranaries() {
-        try {
-            if (scanIndex == 0) {
-                gui.map.pfLeftClick(coordQueue.get(0).floor(), null);
-                AUtils.waitPf(gui);
-                if (gui.map.player().rc.dist(coordQueue.get(0)) < 5) {
-                    processField(1);
-                    processField(2);
-                    processField(3);
-                    scanIndex++;
-                }
-            } else if (scanIndex == 1) {
-                gui.map.pfLeftClick(coordQueue.get(1).floor(), null);
-                AUtils.waitPf(gui);
-                if (gui.map.player().rc.dist(coordQueue.get(1)) < 5) {
-                    processGranary();
-                    scanIndex++;
-                }
-            } else if (scanIndex == 2) {
-                gui.map.pfLeftClick(coordQueue.get(2).floor(), null);
-                AUtils.waitPf(gui);
-                if (gui.map.player().rc.dist(coordQueue.get(2)) < 5) {
-                    processField(7);
-                    processField(8);
-                    processField(9);
-                    scanIndex++;
-                }
-            } else if (scanIndex == 3) {
-                gui.map.pfLeftClick(coordQueue.get(3).floor(), null);
-                AUtils.waitPf(gui);
-                if (gui.map.player().rc.dist(coordQueue.get(3)) < 5) {
-                    processGranary();
-                    scanIndex++;
-                }
-            } else if (scanIndex == 4) {
-                gui.map.pfLeftClick(coordQueue.get(4).floor(), null);
-                AUtils.waitPf(gui);
-                if (gui.map.player().rc.dist(coordQueue.get(4)) < 5) {
-                    processField(4);
-                    processField(5);
-                    processField(6);
-                    scanIndex++;
-                }
-            } else if (scanIndex == 5) {
-                gui.map.pfLeftClick(coordQueue.get(5).floor(), null);
-                AUtils.waitPf(gui);
-                if (gui.map.player().rc.dist(coordQueue.get(5)) < 5) {
-                    processGranary();
-                    scanIndex++;
-                }
-            } else if (scanIndex == 6) {
-                gui.map.pfLeftClick(coordQueue.get(6).floor(), null);
-                AUtils.waitPf(gui);
-                if (gui.map.player().rc.dist(coordQueue.get(6)) < 5) {
-                    processField(10);
-                    processField(11);
-                    processField(12);
-                    scanIndex++;
-                }
-            } else {
-                if (harvest) {
-                    setStageTwo();
-                } else {
-                    setStageThree();
-                }
-            }
+//    private void processGranary() {
+//        try {
+//            Gob granary = AUtils.getGobNearPlayer("gfx/terobjs/granary", gui);
+//            if (granary != null) {
+//                gui.map.pfRightClick(granary, -1, 3, 0, null);
+//                AUtils.waitPf(gui);
+//                Thread.sleep(1000);
+//                while (FarmingStatic.grainSlots.size() == 0) {
+//                    Thread.sleep(1000);
+//                }
+//                int seeds = 0;
+//                for (Grainslot grainslot : FarmingStatic.grainSlots) {
+//                    try {
+//                        if (grainslot.getRawinfo() != null) {
+//                            int amount = 0;
+//                            boolean turnip = false;
+//                            for (ItemInfo info : grainslot.info()) {
+//                                if (info instanceof GItem.Amount) {
+//                                    amount = ((GItem.Amount) info).itemnum();
+//                                }
+//                                if (info instanceof ItemInfo.Name) {
+//                                    if (((ItemInfo.Name) info).original.contains("Turnip")) {
+//                                        turnip = true;
+//                                    }
+//                                }
+//                            }
+//                            if (turnip) {
+//                                seeds += amount;
+//                            }
+//                        }
+//                    } catch (NullPointerException ignored) {
+//                    }
+//                }
+//                granaries.put(granary, seeds);
+//            }
+//        } catch (InterruptedException ignored) {
+//        }
+//    }
 
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            System.out.println("Bot interrupted?");
-        }
-    }
-
-    private void processGranary(){
-        try {
-        Gob granary = AUtils.getGobNearPlayer("gfx/terobjs/granary", gui);
-        if(granary != null){
-            gui.map.pfRightClick(granary, -1, 3, 0 , null);
-            AUtils.waitPf(gui);
-            Thread.sleep(1000);
-            while(FarmingStatic.grainSlots.size() == 0){
-                Thread.sleep(1000);
-            }
-            int seeds = 0;
-            for(Grainslot grainslot: FarmingStatic.grainSlots){
-                try {
-                    if(grainslot.getRawinfo() != null){
-                        int amount = 0;
-                        boolean turnip = false;
-                        for(ItemInfo info : grainslot.info()){
-                            if(info instanceof GItem.Amount){
-                                amount = ((GItem.Amount) info).itemnum();
-                            }
-                            if(info instanceof ItemInfo.Name){
-                                if(((ItemInfo.Name) info).original.contains("Turnip")){
-                                    turnip = true;
-                                }
-                            }
-                        }
-                        if(turnip){
-                            seeds += amount;
-                        }
-                    }
-                } catch (NullPointerException ignored){}
-            }
-            granaries.put(granary, seeds);
-        }
-        } catch (InterruptedException ignored){}
-    }
-
-    private void processField(int index) {
-        TurnipField field = getFieldByIndex(index);
-        if (field != null) {
-            List<Gob> crops = AUtils.getGobsInSelectionStartingWith("gfx/terobjs/plants/turnip", field.getFieldNW(), field.getFieldSE(), gui);
-            if (!crops.isEmpty()) {
-                List<Gob> freshCrops = new ArrayList<>();
-                List<Gob> cropsToHarvest = new ArrayList<>();
-                for (Gob crop : crops) {
-                    if (AUtils.getDrawState(crop) == 0) {
-                        freshCrops.add(crop);
-                    } else {
-                        cropsToHarvest.add(crop);
-                    }
-                }
-                field.setTurnipHarvestable(cropsToHarvest);
-                field.setTurnipStageZero(freshCrops);
-            }
-        }
-    }
+//    private void processField(int index) {
+//        TurnipField field = getFieldByIndex(index);
+//        if (field != null) {
+//            List<Gob> crops = AUtils.getGobsInSelectionStartingWith("gfx/terobjs/plants/turnip", field.getFieldNW(), field.getFieldSE(), gui);
+//            if (!crops.isEmpty()) {
+//                List<Gob> freshCrops = new ArrayList<>();
+//                List<Gob> cropsToHarvest = new ArrayList<>();
+//                for (Gob crop : crops) {
+//                    if (AUtils.getDrawState(crop) == 0) {
+//                        freshCrops.add(crop);
+//                    } else {
+//                        cropsToHarvest.add(crop);
+//                    }
+//                }
+//                field.setTurnipHarvestable(cropsToHarvest);
+//                field.setTurnipStageZero(freshCrops);
+//            }
+//        }
+//    }
 
     public TurnipField getFieldByIndex(int index) {
         for (TurnipField field : fields) {
@@ -573,32 +352,25 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         if (gui.map.pfthread != null) {
             gui.map.pfthread.interrupt();
         }
-        stage = 0;
-        ui.root.wdgmsg("gk", 27);
         this.destroy();
     }
 
     private static class TurnipField {
         private final int fieldIndex;
 
-        private int line;
-        private int chunk;
-
         private final Coord fieldNW;
         private final Coord fieldSE;
+        private Coord closestCoord;
 
         private List<Gob> turnipStageZero;
         private List<Gob> turnipHarvestable;
 
-        public TurnipField(int fieldIndex, Coord farmNW) {
+        public TurnipField(int fieldIndex, Coord farmNW, Coord farmSE) {
             this.fieldIndex = fieldIndex;
-            Coord calculated = calculateNW(fieldIndex, farmNW);
-            this.fieldNW = calculated;
-            this.fieldSE = calculated.add(165, 506);
+            this.fieldNW = farmNW;
+            this.fieldSE = farmSE;
             this.turnipStageZero = new ArrayList<>();
             this.turnipHarvestable = new ArrayList<>();
-            this.line = 0;
-            this.chunk = 0;
         }
 
         public Coord getFieldNW() {
@@ -609,30 +381,8 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             return fieldSE;
         }
 
-        private Coord calculateNW(int index, Coord farmNW){
-            Coord coord;
-            if(index < 7){
-                coord = new Coord(farmNW.x + 22 + ((index - 1) * 187) , farmNW.y + 11);
-            } else {
-                coord = new Coord(farmNW.x + 22 + ((index - 7) * 187) , farmNW.y + 572);
-            }
-            return coord;
-        }
-
-        public void setTurnipStageZero(List<Gob> turnipStageZero) {
-            this.turnipStageZero = turnipStageZero;
-        }
-
-        public void setTurnipHarvestable(List<Gob> turnipHarvestable) {
-            this.turnipHarvestable = turnipHarvestable;
-        }
-
-        public void setLine(int line) {
-            this.line = line;
-        }
-
-        public void setChunk(int chunk) {
-            this.chunk = chunk;
+        public void setClosestCoord(Coord closestCoord) {
+            this.closestCoord = closestCoord;
         }
     }
 }
