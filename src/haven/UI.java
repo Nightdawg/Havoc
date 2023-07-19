@@ -400,7 +400,7 @@ public class UI {
 	if(rcvr != null){
 		rcvr.rcvmsg(id, msg, args);
 		//todo for dev purposes uncomment line below
-		//System.out.println("id: " + id + ", msg: " + msg + ", args: " + Arrays.toString(args));
+//		System.out.println("id: " + id + ", msg: " + msg + ", args: " + Arrays.toString(args) + " - " + getwidget(id).getClass().getName());
 	}
     }
 	

@@ -7,7 +7,8 @@ import static haven.Inventory.invsq;
 @haven.FromResource(name = "ui/grainslot", version = 20)
 public class Grainslot extends Widget implements DTarget, ItemInfo.Owner {
 	public final Label lbl;
-    public final Button tbtn, pbtn, ebtn;
+	public boolean autoTake = false;
+    public final Button tbtn, pbtn, ebtn, ybtn;
     public Indir<Resource> icon;
     private ItemInfo.Raw rawinfo = null;
     private Tex iconc;
@@ -15,15 +16,42 @@ public class Grainslot extends Widget implements DTarget, ItemInfo.Owner {
     public Grainslot() {
 	super(UI.scale(390, 40));
 	lbl = adda(new Label(""), sz.y, sz.y / 2, 0, 0.5);
-	int w = UI.scale(60), m = UI.scale(5);
-	ebtn = adda(new Button(w, "Empty", () -> wdgmsg("empty")), sz.x, sz.y / 2, 1.0, 0.5);
-	tbtn = adda(new Button(w, "Take", () -> wdgmsg("take")), ebtn.c.x - m, sz.y / 2, 1.0, 0.5);
-	pbtn = adda(new Button(w, "Put", () -> wdgmsg("put")), tbtn.c.x - m, sz.y / 2, 1.0, 0.5);
-	ebtn.hide(); tbtn.hide(); pbtn.hide();
+	int w = UI.scale(45), m = UI.scale(5);
+	ebtn = adda(new Button(w, "Empty", () -> wdgmsg("empty")), sz.x-5, sz.y / 2, 1, 0.5);
+	tbtn = adda(new Button(w, "Take", () -> wdgmsg("take")), ebtn.c.x - m, sz.y / 2, 1, 0.5);
+	pbtn = adda(new Button(w, "Put", this::putUpgraded), tbtn.c.x - m, sz.y / 2, 1, 0.5);
+	ybtn = adda(new Button(w, "Auto", this::takeFromHere), pbtn.c.x - m, sz.y / 2, 1, 0.5);
+	ebtn.hide(); tbtn.hide(); pbtn.hide(); ybtn.hide();
     }
 
 	public ItemInfo.Raw getRawinfo() {
 		return rawinfo;
+	}
+
+	public void takeFromHere(){
+		if(rawinfo != null) {
+			autoTake = !autoTake;
+			if (autoTake) {
+				ybtn.change("Stop");
+			} else {
+				ybtn.change("Auto");
+			}
+		}
+	}
+
+	public void disableTake(){
+		autoTake = false;
+		ybtn.change("Auto");
+	}
+
+	public void putUpgraded(){
+		for(Grainslot grainslot : FarmingStatic.grainSlots){
+			if(grainslot.autoTake){
+				grainslot.wdgmsg("take");
+				break;
+			}
+		}
+		wdgmsg("put");
 	}
 
 	public static class GrainSlotFactory implements Factory {
@@ -111,7 +139,11 @@ public class Grainslot extends Widget implements DTarget, ItemInfo.Owner {
 	    iconc = null;
 	    int bfl = (Integer)args[2];
 	    tbtn.show((bfl & 1) != 0);
+		if((bfl & 1) == 0){
+			disableTake();
+		}
 	    pbtn.show((bfl & 2) != 0);
+		ybtn.show((bfl & 2) != 0);
 	    ebtn.show((bfl & 4) != 0);
 	    rawinfo = (args.length > 3) ? new ItemInfo.Raw((Object[])args[3]) : null;
 	    info = null;
