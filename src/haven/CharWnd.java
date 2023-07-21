@@ -853,10 +853,12 @@ public class CharWnd extends Window {
 	    this.res = res;
 	    this.mtime = mtime;
 	    this.score = score;
+		try {
 		if (res.get().name.equals("paginae/exp/nightqueen")) { // ND: Bat Dungeon Experience (Defeated Bat Queen)
 			Gob.batsFearMe = true;
 			ui.sess.glob.oc.gobAction(Gob::toggleBeastDangerRadii);
 		}
+		} catch (Exception ignored){}
 	}
 
 	public String rendertext() {
