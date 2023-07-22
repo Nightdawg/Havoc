@@ -121,6 +121,45 @@ public class AUtils {
         return selected;
     }
 
+    public static void rightClickGob(GameUI gui, Gob gob, int mods) {
+        gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 3, mods, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
+    }
+
+    public static Gob getClosestCropInSelectionStartingWith(String name, Coord start, Coord end, GameUI gui, int stageP) {
+        Gob closestGob = null;
+        double minDist = Double.MAX_VALUE;
+        Coord2d player = gui.map.player().rc;
+
+        synchronized (gui.map.glob.oc) {
+            for (Gob gob : gui.map.glob.oc) {
+                if (gob.rc.x > start.x && gob.rc.x < end.x && gob.rc.y > start.y && gob.rc.y < end.y) {
+                    try {
+                        Resource res = gob.getres();
+                        if (res != null && res.name.equals(name)) {
+                            int stage = AUtils.getDrawState(gob);
+                            double dist = player.dist(gob.rc);
+                            if(dist < minDist && (stage == stageP)) {
+                                minDist = dist;
+                                closestGob = gob;
+                            }
+                        }
+                    } catch (Loading l) {
+                    }
+                }
+            }
+        }
+        return closestGob;
+    }
+
+    public static boolean isPlayerInSelectedArea(Coord start, Coord end, GameUI gui) {
+        try {
+            Coord2d player = gui.map.player().rc;
+            return player.x > start.x && player.x < end.x && player.y > start.y && player.y < end.y;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
     public static Gob getGobNearPlayer(String name, GameUI gui) {
         Coord playerCoord = gui.map.player().rc.floor();
         synchronized (gui.map.glob.oc) {

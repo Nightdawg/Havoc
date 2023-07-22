@@ -22,6 +22,11 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
 	return(new Quality(owner, ((Number)args[1]).doubleValue()));
     }
 
+    public boolean equals(double quality) {
+        final double TOLERANCE = 1;
+        return Math.abs(this.q - quality) < TOLERANCE;
+    }
+
     private static final String[] EMPTY_INDICATOR = { // ND: Only show the quality as "Empty" for these specific containers
             "Birchbark Kuksa", "Bucket", "Waterskin", "Waterflask", "Glass Jug",
     };
