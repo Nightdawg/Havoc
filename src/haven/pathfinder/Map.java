@@ -228,7 +228,10 @@ public class Map {
     }
 
     public void excludeGob(Gob gob) {
-        Hitbox hb = gob.collisionBox.fx;
+        Hitbox hb = null;
+        if(gob.collisionBox != null){
+            hb = gob.collisionBox.fx;
+        }
         if (hb == null || hb.model == null || hb.model.bbox == null) {
             //System.out.println("EXCLUDE: gob hb for " + gob.getres() + " was null");
             return;
