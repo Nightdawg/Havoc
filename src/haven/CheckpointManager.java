@@ -27,6 +27,7 @@ public class CheckpointManager extends Window implements Runnable {
     private final Button pause;
     private Coord2d lastPlayerCoord;
     private Button transformIntoArea;
+    private Button reverseButton;
     private Button resizeButton;
     private boolean extendedView;
     private TextEntry routeNameInput;
@@ -70,7 +71,7 @@ public class CheckpointManager extends Window implements Runnable {
                 this.change(paused ? "Start" : "Pause");
                 ui.root.wdgmsg("gk", 27);
             }
-        }, UI.scale(94, 180));
+        }, UI.scale(97, 184));
 
         // Add transform into area button
         transformIntoArea = add(new Button(UI.scale(80), "Area Convert") {
@@ -78,7 +79,7 @@ public class CheckpointManager extends Window implements Runnable {
             public void click() {
                 transformIntoArea();
             }
-        }, UI.scale(10, 180));
+        }, UI.scale(15, 184));
         transformIntoArea.tooltip = RichText.render("If you want to scan a specific area on the map, draw a polygon with checkpoints, then press this button to convert it before starting.", 350);
 
         resizeButton = add(new Button(UI.scale(26), "▼") {
@@ -93,7 +94,13 @@ public class CheckpointManager extends Window implements Runnable {
 
         add(estimatedArrivalTime = new Label(""), UI.scale(150, 184));
 
-
+        reverseButton = add(new Button(UI.scale(26), "⭮") {
+            @Override
+            public void click() {
+                checkpointList.reverseCheckpoints(gui);
+            }
+        }, UI.scale(-10, 184));
+        reverseButton.tooltip = RichText.render("Reverse path.", 350);
     }
 
     public void toggleExtendWindow() {
@@ -725,6 +732,13 @@ public class CheckpointManager extends Window implements Runnable {
             this.sz = new Coord(UI.scale(w), rowHeight * rows);
             sb = new Scrollbar(rowHeight * rows, 0, 100);
             add(sb, UI.scale(0, 0));
+        }
+
+        public void reverseCheckpoints(GameUI gui){
+            if(items.size() > 1){
+                gui.msg("Route reversed.");
+                Collections.reverse(items);
+            }
         }
 
         public CheckPoint listitem(int i) {
