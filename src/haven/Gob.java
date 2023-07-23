@@ -27,6 +27,7 @@
 package haven;
 
 import haven.render.*;
+import haven.res.gfx.fx.msrad.MSRad;
 import haven.sprites.*;
 
 import javax.sound.sampled.AudioFormat;
@@ -67,7 +68,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private GobGrowthInfo growthInfo;
 	private GobQualityInfo qualityInfo;
 	private final List<Overlay> dols = new ArrayList<>();
-	private Overlay customAnimalOverlay;
+	private Overlay customRadiusOverlay;
 	private Overlay customOverlay;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
 	public int playerPoseUpdatedCounter = 0;
@@ -93,6 +94,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		Resource res = getres();
 		if (res != null) {
 			initiateSupportOverlays();
+			toggleMineLadderRadius();
+			toggleBeeSkepRadius();
+			toggleTroughsRadius();
 			if (getattr(Drawable.class) instanceof Composite) {
 				try {
 					initComp((Composite)getattr(Drawable.class));
@@ -140,8 +144,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 		if (knocked != null && knocked) {
 			try {
-				removeOl(customAnimalOverlay);
-				customAnimalOverlay = null;
+				removeOl(customRadiusOverlay);
+				customRadiusOverlay = null;
 			} catch (Exception np){
 			}
 		} else {
@@ -1832,6 +1836,33 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		return isMe;
 	}
 
+	public void toggleMineLadderRadius() {
+		if (getres() != null) {
+			String resourceName = getres().name;
+			if (resourceName.equals("gfx/terobjs/ladder")){
+				setRadiusOl(100F, AuraCircleSprite.darkgreen, MSRad.show);
+			}
+		}
+	}
+
+	public void toggleBeeSkepRadius() {
+		if (getres() != null) {
+			String resourceName = getres().name;
+			if (resourceName.equals("gfx/terobjs/beehive")){
+				setRadiusOl(150F, AuraCircleSprite.yellow, OptWnd.showBeeSkepsRadii);
+			}
+		}
+	}
+
+	public void toggleTroughsRadius() {
+		if (getres() != null) {
+			String resourceName = getres().name;
+			if (resourceName.equals("gfx/terobjs/trough")){
+				setRadiusOl(200F, AuraCircleSprite.orange, OptWnd.showFoodTroughsRadii);
+			}
+		}
+	}
+
 	public static final String[] CRITTERAURA_PATHS = {
 			"gfx/kritter/bayshrimp/bayshrimp",
 			"gfx/kritter/bogturtle/bogturtle",
@@ -2021,13 +2052,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					return;
 				}
 			}
-			customAnimalOverlay = new Overlay(this, new AnimalDangerRadiiSprite(this, null, radius, col));
+			customRadiusOverlay = new Overlay(this, new AnimalDangerRadiiSprite(this, null, radius, col));
 			synchronized (ols) {
-				addol(customAnimalOverlay);
+				addol(customRadiusOverlay);
 			}
-		} else if (customAnimalOverlay != null) {
-			removeOl(customAnimalOverlay);
-			customAnimalOverlay = null;
+		} else if (customRadiusOverlay != null) {
+			removeOl(customRadiusOverlay);
+			customRadiusOverlay = null;
 		}
 	}
 
@@ -2038,13 +2069,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					return;
 				}
 			}
-			customAnimalOverlay = new Overlay(this, new AuraCircleSprite(this, col));
+			customRadiusOverlay = new Overlay(this, new AuraCircleSprite(this, col));
 			synchronized (ols) {
-				addol(customAnimalOverlay);
+				addol(customRadiusOverlay);
 			}
-		} else if (customAnimalOverlay != null) {
-			removeOl(customAnimalOverlay);
-			customAnimalOverlay = null;
+		} else if (customRadiusOverlay != null) {
+			removeOl(customRadiusOverlay);
+			customRadiusOverlay = null;
 		}
 	}
 

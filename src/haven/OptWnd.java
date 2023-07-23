@@ -469,11 +469,15 @@ public class OptWnd extends Window {
 	public static CheckBox showWorkstationStageCheckBox;
 	public static CheckBox showMineSupportRadiiCheckBox;
 	public static CheckBox showMineSupportSafeTilesCheckBox;
+	public static CheckBox showBeeSkepsRadiiCheckBox;
+	public static CheckBox showFoodTroughsRadiiCheckBox;
 	public static boolean critterAuraEnabled = Utils.getprefb("critterAuras", false);
 	public static boolean beastDangerRadiiEnabled = Utils.getprefb("beastDangerRadii", true);
 	public static boolean showContainerFullness = Utils.getprefb("showContainerFullness", true);
 	public static boolean showWorkstationStage = Utils.getprefb("showWorkstationStage", true);
 	public static boolean showMineSupportTiles = Utils.getprefb("showMineSupportTiles", false);
+	public static boolean showBeeSkepsRadii = Utils.getprefb("showBeeSkepsRadii", false);
+	public static boolean showFoodTroughsRadii = Utils.getprefb("showFoodTroughsRadii", false);
 	public static boolean advancedMouseInfo = Utils.getprefb("advancedMouseInfo", false);
 	public static boolean dragWindowsInWhenResizing = Utils.getprefb("dragWindowsInWhenResizing", false);
 	public static boolean snapWindowsBackInside = Utils.getprefb("snapWindowsBackInside", true);
@@ -677,10 +681,11 @@ public class OptWnd extends Window {
 			{a = (Utils.getprefb("showMineSupportRadii", false));}
 			public void set(boolean val) {
 				Utils.setprefb("showMineSupportRadii", val);
+				MSRad.show(val);
 				if (gameui() != null){
+					ui.sess.glob.oc.gobAction(Gob::toggleMineLadderRadius);
 					gameui().optionInfoMsg("Mine Support Radii are now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgGray));
 				}
-				MSRad.show(val);
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 16));
@@ -692,6 +697,32 @@ public class OptWnd extends Window {
 				if (gameui() != null){
 					ui.sess.glob.oc.gobAction(Gob::settingUpdateMiningSupports);
 					gameui().optionInfoMsg("Mine Support Safe Tiles are now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgGray));
+				}
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 6));
+
+		leftColumn = add(showBeeSkepsRadiiCheckBox = new CheckBox("Show Bee Skeps Radii"){
+			{a = (Utils.getprefb("showBeeSkepsRadii", false));}
+			public void set(boolean val) {
+				Utils.setprefb("showBeeSkepsRadii", val);
+				showBeeSkepsRadii = val;
+				if (gameui() != null){
+					ui.sess.glob.oc.gobAction(Gob::toggleBeeSkepRadius);
+					gameui().optionInfoMsg("Bee Skeps Radii are now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgGray));
+				}
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 16));
+
+		leftColumn = add(showFoodTroughsRadiiCheckBox = new CheckBox("Show Food Troughs Radii"){
+			{a = (Utils.getprefb("showFoodTroughsRadii", false));}
+			public void set(boolean val) {
+				Utils.setprefb("showFoodTroughsRadii", val);
+				showFoodTroughsRadii = val;
+				if (gameui() != null){
+					ui.sess.glob.oc.gobAction(Gob::toggleTroughsRadius);
+					gameui().optionInfoMsg("Food Troughs Radii are now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgGray));
 				}
 				a = val;
 			}
