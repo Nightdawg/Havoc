@@ -67,6 +67,10 @@ public class CheckpointManager extends Window implements Runnable {
         pause = add(new Button(UI.scale(50), "Start") {
             @Override
             public void click() {
+                if(!paused && checkpointList.items.size() > 1){
+                    checkpointList.setCurrentIndex(0);
+                    addCoord(gui.map.player().rc);
+                }
                 paused = !paused;
                 this.change(paused ? "Start" : "Pause");
                 ui.root.wdgmsg("gk", 27);
