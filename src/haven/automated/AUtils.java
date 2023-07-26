@@ -138,7 +138,7 @@ public class AUtils {
                         if (res != null && res.name.equals(name)) {
                             int stage = AUtils.getDrawState(gob);
                             double dist = player.dist(gob.rc);
-                            if(dist < minDist && (stage == stageP)) {
+                            if(dist < minDist && (stage >= stageP)) {
                                 minDist = dist;
                                 closestGob = gob;
                             }

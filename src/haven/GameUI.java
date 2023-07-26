@@ -1565,7 +1565,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-			FishingBot turnipBot = new FishingBot(this);
+			TurnipBot turnipBot = new TurnipBot(this);
 			add(turnipBot, new Coord(this.sz.x / 2 - turnipBot.sz.x / 2, this.sz.y / 2 - turnipBot.sz.y / 2 - 200));
 			Thread turnipBotThread = new Thread(turnipBot, "TurnipBot");
 			turnipBotThread.start();

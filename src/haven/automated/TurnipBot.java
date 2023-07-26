@@ -26,8 +26,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
 
     private boolean active;
     private final Button startButton;
-
-    private Coord closestFieldCoord = null;
+    
     private int currentField;
     private int stage;
 
@@ -69,7 +68,6 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
                 startButton.change("Start");
                 currentField = 0;
                 stage = 0;
-                closestFieldCoord = null;
             }
         }, UI.scale(150, 15));
 
@@ -145,15 +143,18 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
                 clearhand();
                 dropTurnips();
                 if (fields.size() > 0 && granary != null) {
-                    TurnipField curField = getFieldByIndex(currentField);
+                    TurnipField currentField = getFieldByIndex(this.currentField);
                     checkHealthStaminaEnergy();
-                    if (curField == null) {
+                    if (currentField == null) {
                         resetFarmBot();
                     } else {
-                        if (curField.closestCoord == null) {
-                            setClosestFieldCoord();
+                        if (currentField.closestCoord == null) {
+                            TurnipField field = getFieldByIndex(this.currentField);
+                            currentField.closestCoord = new Coord(0,0);
+                            field.initializeHarvestingSegments();
+                            field.initializePlantingSegments();
                         } else {
-                            handleStage(curField);
+                            handleStage(currentField);
                         }
                     }
                 }
@@ -162,99 +163,117 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         }
     }
 
-    private void setClosestFieldCoord() {
-        TurnipField field = getFieldByIndex(currentField);
-        Coord[] coords = {
-                field.fieldNW.add(5, 5), // top-left
-                new Coord(field.fieldSE.x, field.fieldNW.y).add(-5, 5), // top-right
-                field.fieldSE.add(-5, -5), // bottom-right
-                new Coord(field.fieldNW.x, field.fieldSE.y).add(5, -5) // bottom-left
-        };
-
-        Optional<Coord> minCoord = Arrays.stream(coords).min(Comparator.comparingDouble(coord -> coord.dist(granary.rc.floor())));
-        field.setClosestCoord(minCoord.get());
-        closestFieldCoord = minCoord.get();
-    }
-
-    private void handleStage(TurnipField curField) {
+    private void handleStage(TurnipField currentField) {
         switch (stage) {
             case 0:
-                handleStage0(curField);
+                handleStage0(currentField);
                 break;
             case 1:
-                handleStage1();
+                handleStage1(currentField);
                 break;
             case 2:
-                handleStage2(curField);
+                handleStage2(currentField);
+                break;
+            case 3:
+                handleStage3(currentField);
                 break;
         }
     }
 
-    private void handleStage0(TurnipField curField) {
+    private void handleStage0(TurnipField currentField) {
+        sleep(100);
         if (gui.maininv.getFreeSpace() < 1) {
             depositIfFullInventory();
         } else {
-            processField(curField);
+            if(currentField.currentIndex == currentField.harvestingSegments.size()){
+                stage = 1;
+                gui.msg("Field finished, Depositing seeds");
+            } else {
+                FieldSegment currentFieldSegment = currentField.harvestingSegments.get(currentField.currentIndex);
+                processField(currentField, currentFieldSegment);
+            }
         }
     }
 
-    private void handleStage1() {
+    private void handleStage1(TurnipField currentField) {
         if (checkIfSeedsInInventory()) {
             depositAllSeeds();
         } else {
-            stage = 2;
-            gui.msg("Seeds deposited, planting.");
+            if(plant){
+                new Thread(new EquipFromBelt(gui, "tsacks"), "EquipFromBelt").start();
+                stage = 2;
+                currentField.setCurrentIndex(0);
+                gui.msg("Seeds deposited, planting.");
+            } else {
+                stage = 0;
+                gui.msg("Planting skipped. Next field");
+            }
+
         }
     }
 
-    private void handleStage2(TurnipField curField) {
-        List<Gob> gobs = AUtils.getGobsInSelectionStartingWith("gfx/terobjs/plants/turnip", curField.getFieldNW(), curField.getFieldSE(), gui);
-        if (!checkIfSeedsInInventory() && gobs.size() < curField.size) {
-            getHighestQualitySeeds();
-        } else if (checkIfSeedsInInventory() && gobs.size() < curField.size) {
-            plantSeeds(curField);
-        } else if (gobs.size() >= curField.size) {
+    private void handleStage2(TurnipField currentField) {
+        if(currentField.currentIndex == currentField.plantingSegments.size()){
+            stage = 3;
+            this.currentField++;
+            gui.msg("Field finished, Depositing seeds");
+        } else {
+            FieldSegment currentFieldSegment = currentField.plantingSegments.get(currentField.currentIndex);
+            List<Gob> gobs = AUtils.getGobsInSelectionStartingWith("gfx/terobjs/plants/turnip", currentFieldSegment.topLeft, currentFieldSegment.bottomRight, gui);
+            if (!checkIfSeedsInInventory() && gobs.size() < currentFieldSegment.size) {
+                getHighestQualitySeeds();
+            } else if (checkIfSeedsInInventory() && gobs.size() < currentFieldSegment.size) {
+                plantSeeds(currentFieldSegment);
+                System.out.println("planting");
+            } else if (gobs.size() >= currentFieldSegment.size) {
+                currentField.setCurrentIndex(currentField.currentIndex+1);
+            }
+        }
+    }
+
+    private void handleStage3(TurnipField currentField) {
+        if (checkIfSeedsInInventory()) {
+            depositAllSeeds();
+        } else {
+            new Thread(new EquipFromBelt(gui, "scythe"), "EquipFromBelt").start();
             stage = 0;
-            currentField++;
-            gui.msg("Going for next field.");
+            currentField.setCurrentIndex(0);
+            gui.msg("Seeds deposited, going to next field.");
         }
     }
 
-    private void processField(TurnipField curField) {
-        if (!AUtils.isPlayerInSelectedArea(curField.getFieldNW(), curField.getFieldSE(), gui)) {
+    private void processField(TurnipField currentField, FieldSegment currentFieldSegment) {
+        if (!AUtils.isPlayerInSelectedArea(currentFieldSegment.topLeft, currentFieldSegment.bottomRight, gui)) {
             try {
-                Thread.sleep(1000);
-                gui.map.pfLeftClick(closestFieldCoord, null);
+                Thread.sleep(300);
+                gui.map.pfLeftClick(currentFieldSegment.initCoord, null);
                 AUtils.waitPf(gui);
+                Thread.sleep(300);
             } catch (InterruptedException ignored) {
             }
         } else {
-            Gob closest = AUtils.getClosestCropInSelectionStartingWith("gfx/terobjs/plants/turnip", curField.getFieldNW(), curField.getFieldSE(), gui, 1);
+            Gob closest = AUtils.getClosestCropInSelectionStartingWith("gfx/terobjs/plants/turnip", currentFieldSegment.topLeft, currentFieldSegment.bottomRight, gui, 1);
             if (closest == null) {
-                if (plant) {
-                    stage = 1;
-                    gui.msg("Depositing seeds");
-                } else {
-                    gui.msg("Going for next field.");
-                    currentField++;
-                }
+                currentField.setCurrentIndex(currentField.currentIndex+1);
+                gui.msg("Harvesting next row.");
             } else {
                 if (gui.map.player().getv() == 0 && gui.prog == null) {
                     AUtils.rightClickGob(gui, closest, 1);
-                    gui.map.wdgmsg("sel", curField.fieldNW.div(11), curField.fieldSE.div(11).sub(1, 1), 0);
+                    gui.map.wdgmsg("sel", currentFieldSegment.start.div(11), currentFieldSegment.end.sub(1, 1).div(11), 0);
                 } else {
-                    sleep(1000);
+                    sleep(500);
                 }
             }
         }
     }
 
-    private void plantSeeds(TurnipField curField) {
-        if (!AUtils.isPlayerInSelectedArea(curField.getFieldNW(), curField.getFieldSE(), gui)) {
+    private void plantSeeds(FieldSegment currentFieldSegment) {
+        if (!AUtils.isPlayerInSelectedArea(currentFieldSegment.topLeft, currentFieldSegment.bottomRight, gui)) {
             try {
-                Thread.sleep(1000);
-                gui.map.pfLeftClick(closestFieldCoord, null);
+                Thread.sleep(300);
+                gui.map.pfLeftClick(currentFieldSegment.initCoord, null);
                 AUtils.waitPf(gui);
+                Thread.sleep(300);
             } catch (InterruptedException ignored) {
             }
         } else {
@@ -270,12 +289,12 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
                 }
                 if (firstSeedInInventory != null) {
                     firstSeedInInventory.wdgmsg("iact", Coord.z, 1);
-                    gui.map.wdgmsg("sel", curField.fieldNW.div(11), curField.fieldSE.div(11).sub(1, 1), 0);
+                    gui.map.wdgmsg("sel", currentFieldSegment.start.div(11), currentFieldSegment.end.sub(1, 1).div(11), 0);
                 } else {
                     gui.error("Something went wrong.");
                 }
             } else {
-                sleep(1000);
+                sleep(500);
             }
         }
     }
@@ -321,17 +340,16 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
 
         if (best != null) {
             while (gui.maininv.getFreeSpace() > 0) {
+                System.out.println(gui.maininv.getFreeSpace());
                 takeSeeds(best, gui.maininv.getFreeSpace());
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ignored) {
-                }
+                sleep(1000);
             }
         }
     }
 
     private void takeSeeds(Grainslot best, int freeSpace) {
         for (int i = 0; i < freeSpace; i++) {
+            System.out.println(i);
             best.wdgmsg("take");
         }
     }
@@ -346,8 +364,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
 
     private void handleSeedsDeposit(boolean checkFreeSpace) {
         try {
-            int freeSpace = checkFreeSpace ? gui.maininv.getFreeSpace() : 1; // Assign freeSpace value only if checkFreeSpace is true
-
+            int freeSpace = checkFreeSpace ? gui.maininv.getFreeSpace() : 0;
             Thread.sleep(300);
             if (freeSpace < 1 && FarmingStatic.grainSlots.size() == 0) {
                 gui.map.pfRightClick(granary, -1, 3, 0, null);
@@ -424,6 +441,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         if (gui.getmeters("hp").get(1).a < 0.1) {
             System.out.println("Low HP, porting home.");
             gui.act("travel", "hearth");
+            stop();
             try {
                 Thread.sleep(8000);
             } catch (InterruptedException ignored) {
@@ -459,7 +477,6 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         startButton.change("Start");
         currentField = 0;
         stage = 0;
-        closestFieldCoord = null;
     }
 
     private void sleep(int duration) {
@@ -492,18 +509,24 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         private final int size;
         private final int height;
         private final int width;
+        private int currentIndex;
 
         private final Coord fieldNW;
         private final Coord fieldSE;
         private Coord closestCoord;
+        private List<FieldSegment> harvestingSegments;
+        private List<FieldSegment> plantingSegments;
 
         public TurnipField(int fieldIndex, Coord farmNW, Coord farmSE) {
+            this.harvestingSegments = new ArrayList<>();
+            this.plantingSegments = new ArrayList<>();
             this.fieldIndex = fieldIndex;
             this.height = (farmSE.y - farmNW.y) / 11;
             this.width = (farmSE.x - farmNW.x) / 11;
             this.size = height * width;
             this.fieldNW = farmNW;
             this.fieldSE = farmSE;
+            this.currentIndex = 0;
         }
 
         public Coord getFieldNW() {
@@ -516,6 +539,87 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
 
         public void setClosestCoord(Coord closestCoord) {
             this.closestCoord = closestCoord;
+        }
+
+        public void setCurrentIndex(int currentIndex) {
+            this.currentIndex = currentIndex;
+        }
+
+        public void initializeHarvestingSegments() {
+            boolean isStartLeft = true;
+
+            for (int i = 0; i < height; i += 3) {
+                int top = fieldNW.y + i*11;
+                int bottom = Math.min(fieldNW.y + i*11 + 33, fieldSE.y);
+
+                Coord start = new Coord(isStartLeft ? fieldNW.x : fieldSE.x, top);
+                Coord end = new Coord(isStartLeft ? fieldSE.x : fieldNW.x, bottom);
+
+                int numberOfRows = (bottom - top) / 11;
+
+                harvestingSegments.add(new FieldSegment(start, end, isStartLeft, numberOfRows));
+
+                isStartLeft = !isStartLeft;
+            }
+        }
+
+        public void initializePlantingSegments() {
+            boolean isStartLeft = true;
+
+            for (int i = 0; i < height; i += 2) {
+                int top = fieldNW.y + i*11;
+                int bottom = Math.min(fieldNW.y + i*11 + 22, fieldSE.y);
+
+                Coord start = new Coord(isStartLeft ? fieldNW.x : fieldSE.x, top);
+                Coord end = new Coord(isStartLeft ? fieldSE.x : fieldNW.x, bottom);
+
+                plantingSegments.add(new FieldSegment(start, end, isStartLeft,(fieldNW.y + i*11 + 22 > fieldSE.y) ? 1 : 2));
+
+                isStartLeft = !isStartLeft;
+            }
+        }
+
+    }
+
+    private static class FieldSegment {
+        private final Coord start;
+        private final Coord end;
+        private final Coord topLeft;
+        private final Coord bottomRight;
+        private final Coord initCoord;
+        private final int height;
+        private final int width;
+        private final int size;
+
+        public FieldSegment(Coord start, Coord end, boolean isStartLeft, int rows) {
+            this.start = start;
+            this.end = end;
+
+            this.height = Math.abs(end.y - start.y) / 11;
+            this.width = Math.abs(end.x - start.x) / 11;
+            this.size = height * width;
+
+            int topLeftX = Math.min(start.x, end.x);
+            int topLeftY = Math.min(start.y, end.y);
+            this.topLeft = new Coord(topLeftX, topLeftY);
+
+            int bottomRightX = Math.max(start.x, end.x);
+            int bottomRightY = Math.max(start.y, end.y);
+            this.bottomRight = new Coord(bottomRightX, bottomRightY);
+
+            if (isStartLeft) {
+                if(rows == 1){
+                    this.initCoord = start.add(4, 5);
+                } else {
+                    this.initCoord = start.add(4, 16);
+                }
+            } else {
+                if(rows == 1){
+                    this.initCoord = start.add(-4, 5);
+                } else {
+                    this.initCoord = start.add(-4, 16);
+                }
+            }
         }
     }
 }
