@@ -1414,7 +1414,7 @@ public class ChatUI extends Widget {
 	public void mousemove(Coord c) {
 		if (dm != null) {
 			if (resizehoriz) {
-				resize(Math.max(UI.scale(410), Math.min(parent.sz.x - UI.scale(142), sz.x + c.x - doff.x)), savedh);
+				resize(Math.max(UI.scale(410), Math.min(parent.sz.x - UI.scale(226), sz.x + c.x - doff.x)), savedh);
 				doff = c;
 			} else {
 				if (GameUI.questObjectivesPanel != null){ // ND: IF IT EXISTS.
