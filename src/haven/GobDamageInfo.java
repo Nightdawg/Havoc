@@ -16,9 +16,9 @@ public class GobDamageInfo extends GobInfo {
     private static final Color SHP_C = Utils.col16(SHP);
     private static final Color HHP_C = Utils.col16(HHP);
     private static final Color ARM_C = Utils.col16(ARM);
-    public static boolean toggleGobDamageInfo = true;
-    public static boolean toggleGobDamageInfoWounds = true;
-    public static boolean toggleGobDamageInfoArmor = true;
+    public static boolean toggleGobDamageInfo = Utils.getprefb("GobDamageInfoToggled", true);
+    public static boolean toggleGobDamageInfoWounds = Utils.getprefb("GobDamageInfoWoundsToggled", true);
+    public static boolean toggleGobDamageInfoArmor = Utils.getprefb("GobDamageInfoArmorToggled", true);
     public static void setDamageBackgroundColor(boolean enableBackground){
         if (enableBackground) BG = new Color(0, 0, 0, 80);
         else BG = new Color(0, 0, 0, 0);
@@ -35,8 +35,8 @@ public class GobDamageInfo extends GobInfo {
 
     public GobDamageInfo(Gob owner) {
         super(owner);
-        up(15.4f);
-        center = new Pair<>(0.52, 2.0);
+        up(17.1f); // ND: Default was 12.0 // ND: For each 3.4 added here, add 1.0 at "b:" in the pair below. It's probably not 100% correct, but it's super close.
+        center = new Pair<>(0.5, 2.5); // Default was 0.5, 1.0
         if(gobDamage.containsKey(gob.id)) {
             damage = gobDamage.get(gob.id);
         } else {

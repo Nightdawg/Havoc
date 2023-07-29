@@ -1473,9 +1473,6 @@ public class OptWnd extends Window {
 			Fightsess.showKeybindCombatSetting = Utils.getprefb("showCombatHotkeysUI", true);
 			Fightsess.markCombatTargetSetting = Utils.getprefb("markCurrentCombatTarget", true);
 			Fightview.autoPeaceSetting = Utils.getprefb("autoPeaceCombat", false);
-			GobDamageInfo.toggleGobDamageInfo = Utils.getprefb("GobDamageInfoToggled", true);
-			GobDamageInfo.toggleGobDamageInfoWounds = Utils.getprefb("GobDamageInfoWoundsToggled", true);
-			GobDamageInfo.toggleGobDamageInfoArmor = Utils.getprefb("GobDamageInfoArmorToggled", true);
 
 			prev = add(new Label("Combat UI:"), 0, 0);
 			prev = add(new CheckBox("Use Improved Combat UI"){

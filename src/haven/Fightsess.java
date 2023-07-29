@@ -251,11 +251,11 @@ public class Fightsess extends Widget {
 	public void draw(GOut g) {
 		updatepos();
 		GameUI gui = gameui();
+		tickAlert++;
+		if(tickAlert > 20){
+			tickAlert = 0;
+		}
 		if (Fightsess.drawFloatingCombatData) {
-			tickAlert++;
-			if(tickAlert > 20){
-				tickAlert = 0;
-			}
 			try {
 				for (Map.Entry<Fightview.Relation, Coord> entry : relations.entrySet()) {
 					Fightview.Relation otherRelation = entry.getKey();
