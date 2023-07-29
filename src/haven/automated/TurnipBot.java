@@ -22,6 +22,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
     private Gob granary;
     private final Label granaryLabel;
 
+    private boolean harvest = true;
     private boolean plant = true;
 
     private boolean active;
@@ -77,7 +78,19 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         granaryLabel = new Label("Granary: ✘");
         add(granaryLabel, UI.scale(120, 50));
 
-        CheckBox plantCheckbox = new CheckBox("Plant") {
+
+        add(new CheckBox("Harvest") {
+            {
+                a = true;
+            }
+
+            public void set(boolean val) {
+                harvest = val;
+                a = val;
+            }
+        }, UI.scale(70, 80));
+
+        add(new CheckBox("Plant") {
             {
                 a = true;
             }
@@ -86,8 +99,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
                 plant = val;
                 a = val;
             }
-        };
-        add(plantCheckbox, UI.scale(70, 80));
+        }, UI.scale(140, 80));
+
+
 
         startButton = add(new Button(50, "Start") {
             @Override
@@ -140,8 +154,19 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
     public void run() {
         while (!stop) {
             if (active) {
+                if(!FarmingStatic.turnipDrop){
+                    FarmingStatic.turnipDrop = true;
+                }
+                if(!harvest && !plant){
+                 startButton.change("start");
+                 active = false;
+                 gui.msg("Need to choose either harvest, plant or both");
+                }
+
+                if(stage < 2 && !harvest){
+                    stage = 2;
+                }
                 clearhand();
-                dropTurnips();
                 if (fields.size() > 0 && granary != null) {
                     TurnipField currentField = getFieldByIndex(this.currentField);
                     checkHealthStaminaEnergy();
@@ -154,9 +179,15 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
                             field.initializeHarvestingSegments();
                             field.initializePlantingSegments();
                         } else {
+                            //need to empty inv before using so can equip scythe - uh just force scythe before clicking start maybe?
+                            //also some kind of checkbox if tsacks or wbindles - self explanatory
                             handleStage(currentField);
                         }
                     }
+                }
+            } else {
+                if(FarmingStatic.turnipDrop){
+                    FarmingStatic.turnipDrop = false;
                 }
             }
             sleep(200);
@@ -207,6 +238,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             } else {
                 stage = 0;
                 gui.msg("Planting skipped. Next field");
+                this.currentField++;
             }
 
         }
@@ -224,7 +256,6 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
                 getHighestQualitySeeds();
             } else if (checkIfSeedsInInventory() && gobs.size() < currentFieldSegment.size) {
                 plantSeeds(currentFieldSegment);
-                System.out.println("planting");
             } else if (gobs.size() >= currentFieldSegment.size) {
                 currentField.setCurrentIndex(currentField.currentIndex+1);
             }
@@ -235,8 +266,12 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         if (checkIfSeedsInInventory()) {
             depositAllSeeds();
         } else {
-            new Thread(new EquipFromBelt(gui, "scythe"), "EquipFromBelt").start();
-            stage = 0;
+            if(harvest){
+                new Thread(new EquipFromBelt(gui, "scythe"), "EquipFromBelt").start();
+                stage = 0;
+            } else {
+                stage = 2;
+            }
             currentField.setCurrentIndex(0);
             gui.msg("Seeds deposited, going to next field.");
         }
@@ -340,7 +375,6 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
 
         if (best != null) {
             while (gui.maininv.getFreeSpace() > 0) {
-                System.out.println(gui.maininv.getFreeSpace());
                 takeSeeds(best, gui.maininv.getFreeSpace());
                 sleep(1000);
             }
@@ -349,7 +383,6 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
 
     private void takeSeeds(Grainslot best, int freeSpace) {
         for (int i = 0; i < freeSpace; i++) {
-            System.out.println(i);
             best.wdgmsg("take");
         }
     }
@@ -449,9 +482,9 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         } else if (gui.getmeter("nrj", 0).a < 0.30) {
             gui.error("Energy critical. Farmer stopping.");
             stop();
-        } else if (gui.getmeter("stam", 0).a < 0.50) {
+        } else if (gui.getmeter("stam", 0).a < 0.40) {
             try {
-                AUtils.drinkTillFull(gui, 0.98, 0.98);
+                AUtils.drinkTillFull(gui, 0.99, 0.99);
             } catch (InterruptedException e) {
                 System.out.println("Drinking interrupted.");
             }
@@ -492,6 +525,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             stop = true;
             stop();
             reqdestroy();
+            FarmingStatic.turnipDrop = false;
         } else
             super.wdgmsg(sender, msg, args);
     }
@@ -608,7 +642,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             this.bottomRight = new Coord(bottomRightX, bottomRightY);
 
             if (isStartLeft) {
-                if(rows == 1){
+                if(rows == 1 || rows == 2){
                     this.initCoord = start.add(4, 5);
                 } else {
                     this.initCoord = start.add(4, 16);
