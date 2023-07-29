@@ -469,6 +469,7 @@ public class OptWnd extends Window {
 	public static CheckBox showQuickSlotsBar;
 	public static CheckBox showContainerFullnessCheckBox;
 	public static CheckBox showWorkstationStageCheckBox;
+	public static CheckBox displayGatePassabilityBoxesCheckBox;
 	public static CheckBox showMineSupportRadiiCheckBox;
 	public static CheckBox showMineSupportSafeTilesCheckBox;
 	public static CheckBox showBeeSkepsRadiiCheckBox;
@@ -477,6 +478,8 @@ public class OptWnd extends Window {
 	public static boolean beastDangerRadiiEnabled = Utils.getprefb("beastDangerRadii", true);
 	public static boolean showContainerFullness = Utils.getprefb("showContainerFullness", true);
 	public static boolean showWorkstationStage = Utils.getprefb("showWorkstationStage", true);
+	public static boolean displayGatePassabilityBoxes = Utils.getprefb("displayGatePassabilityBoxes", false);
+
 	public static boolean showMineSupportTiles = Utils.getprefb("showMineSupportTiles", false);
 	public static boolean showBeeSkepsRadii = Utils.getprefb("showBeeSkepsRadii", false);
 	public static boolean showFoodTroughsRadii = Utils.getprefb("showFoodTroughsRadii", false);
@@ -789,6 +792,18 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
+
+		rightColumn = add(displayGatePassabilityBoxesCheckBox = new CheckBox("Display Combat Passability on Gates"){
+			{a = (Utils.getprefb("displayGatePassabilityBoxes", false));}
+			public void set(boolean val) {
+				Utils.setprefb("displayGatePassabilityBoxes", val);
+				displayGatePassabilityBoxes = val;
+				if (gameui() != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+				}
+				a = val;
+			}
+		}, rightColumn.pos("bl").adds(0, 16));
 
 		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 30).x(UI.scale(117)));
 		setTooltipsForInterfaceSettingsStuff();
@@ -2924,6 +2939,13 @@ public class OptWnd extends Window {
 				"\n$col[185,0,0]{Red: }$col[255,255,255]{Full}\n$col[224,213,0]{Yellow: }$col[255,255,255]{Contains items}\n$col[0,185,0]{Green: }$col[255,255,255]{Empty}", 300);
 		showWorkstationStageCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Workstation Objects (Drying Frame, Tanning Tub, Garden Pot, Cheese Rack), to indicate their progress stage:" +
 				"\n$col[185,0,0]{Red: }$col[255,255,255]{Finished}\n$col[224,213,0]{Yellow: }$col[255,255,255]{In progress}\n$col[0,185,0]{Green: }$col[255,255,255]{Ready for use}\n$col[160,160,160]{Gray: }$col[255,255,255]{Unprepared}", 300);
+		displayGatePassabilityBoxesCheckBox.tooltip = RichText.render("Enabling this will cause a collision box to be displayed under gates at all times.\nThe displayed colors depend on the gate type, and your combat status." +
+				"\n=====================" +
+				"\n$col[0,160,0]{Green: }$col[185,185,185]{Normal Gate, Open and Passable, even in combat}" +
+				"\n$col[224,213,0]{Yellow: }$col[185,185,185]{Visitor Gate, Open and Passable (you're out of combat)}" +
+				"\n$col[224,150,0]{Orange: }$col[185,185,185]{Visitor Gate, Open, but NOT Passable (you're in combat)}" +
+				"\n$col[185,0,0]{Red: }$col[185,185,185]{Normal/Visitor Gate, Closed, so it's NOT Passable}" +
+				"\n=====================", 320);
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){

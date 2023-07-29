@@ -16,11 +16,13 @@ public class HitboxFilled extends SlottedNode implements Rendered {
 	public static String[] savedColorSetting = Utils.getprefsa("hitboxFilled" + "_colorSetting", new String[]{"0", "225", "255", "200"});
 	public static Color SOLID_COLOR = new Color(Integer.parseInt(savedColorSetting[0]), Integer.parseInt(savedColorSetting[1]), Integer.parseInt(savedColorSetting[2]), Integer.parseInt(savedColorSetting[3]));
 	private static final Color CLOSEDGATE_COLOR = new Color(218, 0, 0, 100);
-	private static final Color OPENVISITORGATE_COLOR = new Color(255, 233, 0, 100);
+	private static final Color OPENVISITORGATE_COLOR_NoCombat = new Color(255, 233, 0, 100);
+	private static final Color OPENVISITORGATE_COLOR_Combat = new Color(255, 150, 0, 100);
 	private static final Color PASSABLE_COLOR = new Color(0, 217, 30, 100);
 	public static Pipe.Op SOLID = Pipe.Op.compose(new BaseColor(SOLID_COLOR), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
 	private static final Pipe.Op CLOSEDGATE = Pipe.Op.compose(new BaseColor(CLOSEDGATE_COLOR), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
-	private static final Pipe.Op OPENVISITORGATE = Pipe.Op.compose(new BaseColor(OPENVISITORGATE_COLOR), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+	private static final Pipe.Op OPENVISITORGATE_NoCombat = Pipe.Op.compose(new BaseColor(OPENVISITORGATE_COLOR_NoCombat), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+	private static final Pipe.Op OPENVISITORGATE_Combat = Pipe.Op.compose(new BaseColor(OPENVISITORGATE_COLOR_Combat), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
 	private static final Pipe.Op PASSABLE = Pipe.Op.compose(new BaseColor(PASSABLE_COLOR), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
 	private Pipe.Op state = SOLID;
 	private boolean issaGate = false;
@@ -58,8 +60,9 @@ public class HitboxFilled extends SlottedNode implements Rendered {
 			boolean top = true;
 			//Pipe.Op newState = passable() ? (top ? PASSABLE_TOP : PASSABLE) : (top ? (issaGate ? CLOSEDGATE_TOP : SOLID_TOP) : (issaGate ? CLOSEDGATE : SOLID));
 			Pipe.Op newState;
+			boolean inCombat = gob.glob.sess.ui.gui.fv != null && gob.glob.sess.ui.gui.fv.current != null;
 			if (passable()){
-				if (issaVisitorGate) newState = OPENVISITORGATE; else newState = PASSABLE;
+				if (issaVisitorGate) newState = (inCombat) ? OPENVISITORGATE_Combat : OPENVISITORGATE_NoCombat; else newState = PASSABLE;
 			} else {
 				if (issaGate) newState = CLOSEDGATE; else newState = SOLID;
 			}

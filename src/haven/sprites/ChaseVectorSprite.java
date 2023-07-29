@@ -32,30 +32,32 @@ public class ChaseVectorSprite extends Sprite implements PView.Render2D {
                     if (mv != null) {
                         if (mov instanceof Homing) {
                             Gob Target = gob.glob.oc.getgob(((Homing) mov).tgt);
-                            Color chaserColor;
-                            if (gob.isMe()) {
-                                chaserColor = MAINCOLOR;
-                            } else if (gob.isPartyMember() && !gob.isMe()) {
-                                chaserColor = FRIENDCOLOR;
-                            } else if (Target.isMe() || Target.isPartyMember()) {
-                                chaserColor = FOECOLOR;
-                            } else {
-                                chaserColor = UNKNOWNCOLOR;
-                            }
                             if (Target != null) {
-                                Coord ChaserCoord = mv.screenxf(gob.getc()).round2();
-                                Coord TargetCoord = mv.screenxf(Target.getc()).round2();
-                                g.chcolor(Color.BLACK);
-                                g.line(ChaserCoord, TargetCoord, 5);
-                                g.chcolor(chaserColor);
-                                g.line(ChaserCoord, TargetCoord, 3);
-                                g.chcolor();
+                                Color chaserColor;
+                                if (gob.isMe()) {
+                                    chaserColor = MAINCOLOR;
+                                } else if (gob.isPartyMember() && !gob.isMe()) {
+                                    chaserColor = FRIENDCOLOR;
+                                } else if (Target.isMe() || Target.isPartyMember()) {
+                                    chaserColor = FOECOLOR;
+                                } else {
+                                    chaserColor = UNKNOWNCOLOR;
+                                }
+                                if (Target != null) {
+                                    Coord ChaserCoord = mv.screenxf(gob.getc()).round2();
+                                    Coord TargetCoord = mv.screenxf(Target.getc()).round2();
+                                    g.chcolor(Color.BLACK);
+                                    g.line(ChaserCoord, TargetCoord, 5);
+                                    g.chcolor(chaserColor);
+                                    g.line(ChaserCoord, TargetCoord, 3);
+                                    g.chcolor();
+                                }
                             }
                         }
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
     }

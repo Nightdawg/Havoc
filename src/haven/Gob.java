@@ -1416,6 +1416,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 		boolean doHide = false;
 		boolean doShowHidingBox = false;
+		boolean isGate = false;
 		Resource res = Gob.this.getres();
 		if (res != null) {
 			if (OptWnd.hideTreesSetting && res.name.startsWith("gfx/terobjs/trees") && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk")) {
@@ -1443,7 +1444,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				doHide = hideObjects;
 				doShowHidingBox = true;
 			} else if (res.name.startsWith("gfx/terobjs/arch") && res.name.endsWith("gate")) {//gates
-				doShowHidingBox = true;
+				isGate = true;
 			}
 			Drawable d = getattr(Drawable.class);
 			if (d != null && d.skipRender != doHide) {
@@ -1458,7 +1459,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					glob.loader.defer(() -> RUtils.multiadd(tmpSlots, d), null);
 				}
 			}
-			if (hideObjects && doShowHidingBox) {
+			if ((hideObjects && doShowHidingBox) || (isGate && OptWnd.displayGatePassabilityBoxes)) {
 				if (hidingBox != null) {
 					if (!hidingBox.show(true)) {
 						hidingBox.fx.updateState();

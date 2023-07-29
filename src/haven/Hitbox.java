@@ -15,17 +15,20 @@ public class Hitbox extends SlottedNode implements Rendered {
 	private static final float Z = 0.1f;
 	private static final Color SOLID_COLOR = new Color(255, 255, 255, 235);
 	private static final Color CLOSEDGATE_COLOR = new Color(218, 0, 0, 235);
-	private static final Color OPENVISITORGATE_COLOR = new Color(255, 233, 0, 235);
+	private static final Color OPENVISITORGATE_COLOR_NoCombat = new Color(255, 233, 0, 235);
+	private static final Color OPENVISITORGATE_COLOR_Combat = new Color(255, 150, 0, 235);
 	private static final Color PASSABLE_COLOR = new Color(0, 217, 30, 230);
 	private static final float WIDTH = 2f;
 	private static final Pipe.Op TOP = Pipe.Op.compose(Rendered.last, States.Depthtest.none, States.maskdepth);
 	private static final Pipe.Op SOLID = Pipe.Op.compose(new BaseColor(SOLID_COLOR), new States.LineWidth(WIDTH));
 	private static final Pipe.Op CLOSEDGATE = Pipe.Op.compose(new BaseColor(CLOSEDGATE_COLOR), new States.LineWidth(WIDTH));
-	private static final Pipe.Op OPENVISITORGATE = Pipe.Op.compose(new BaseColor(OPENVISITORGATE_COLOR), new States.LineWidth(WIDTH));
+	private static final Pipe.Op OPENVISITORGATE_NoCombat = Pipe.Op.compose(new BaseColor(OPENVISITORGATE_COLOR_NoCombat), new States.LineWidth(WIDTH));
+	private static final Pipe.Op OPENVISITORGATE_Combat = Pipe.Op.compose(new BaseColor(OPENVISITORGATE_COLOR_Combat), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
 	private static final Pipe.Op PASSABLE = Pipe.Op.compose(new BaseColor(PASSABLE_COLOR), new States.LineWidth(WIDTH));
 	private static final Pipe.Op SOLID_TOP = Pipe.Op.compose(SOLID, TOP);
 	private static final Pipe.Op CLOSEDGATE_TOP = Pipe.Op.compose(CLOSEDGATE, TOP);
-	private static final Pipe.Op OPENVISITORGATE_TOP = Pipe.Op.compose(OPENVISITORGATE, TOP);
+	private static final Pipe.Op OPENVISITORGATE_TOP_NoCombat = Pipe.Op.compose(OPENVISITORGATE_NoCombat, TOP);
+	private static final Pipe.Op OPENVISITORGATE_TOP_Combat = Pipe.Op.compose(OPENVISITORGATE_Combat, TOP);
 	private static final Pipe.Op PASSABLE_TOP = Pipe.Op.compose(PASSABLE, TOP);
 	private Pipe.Op state = SOLID;
 	private boolean issaGate = false;
@@ -63,11 +66,12 @@ public class Hitbox extends SlottedNode implements Rendered {
 			boolean top = true;
 			//Pipe.Op newState = passable() ? (top ? PASSABLE_TOP : PASSABLE) : (top ? (issaGate ? CLOSEDGATE_TOP : SOLID_TOP) : (issaGate ? CLOSEDGATE : SOLID));
 			Pipe.Op newState;
+			boolean inCombat = gob.glob.sess.ui.gui.fv != null && gob.glob.sess.ui.gui.fv.current != null;
 			if (passable()){
 				if (top) {
-					if (issaVisitorGate) newState = OPENVISITORGATE_TOP; else newState = PASSABLE_TOP;
+					if (issaVisitorGate) newState = (inCombat) ? OPENVISITORGATE_TOP_Combat : OPENVISITORGATE_TOP_NoCombat; else newState = PASSABLE_TOP;
 				} else {
-					if (issaVisitorGate) newState = OPENVISITORGATE; else newState = PASSABLE;
+					if (issaVisitorGate) newState = (inCombat) ? OPENVISITORGATE_Combat : OPENVISITORGATE_NoCombat; else newState = PASSABLE;
 				}
 			} else {
 				if (top){

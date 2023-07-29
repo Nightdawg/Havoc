@@ -400,7 +400,6 @@ public class Fightview extends Widget {
 	    return(null);
 	return(ui.sess.getres(num));
     }
-
     public void uimsg(String msg, Object... args) {
         if(msg == "new") {
             Relation rel = new Relation(uint32((Integer)args[0]));
@@ -409,6 +408,7 @@ public class Fightview extends Widget {
 	    rel.oip = (Integer)args[3];
             lsrel.addFirst(rel);
 	    updrel();
+		ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
             return;
         } else if(msg == "del") {
             Relation rel = getrel(uint32((Integer)args[0]));
@@ -418,6 +418,7 @@ public class Fightview extends Widget {
 	    if(rel == current)
 		setcur(null);
 	    updrel();
+		ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
             return;
         } else if(msg == "upd") {
             Relation rel = getrel(uint32((Integer)args[0]));
