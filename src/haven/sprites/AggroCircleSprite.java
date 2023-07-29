@@ -12,7 +12,7 @@ public class AggroCircleSprite extends ColoredCircleSprite {
     private boolean alive = true;
 
     public AggroCircleSprite(final Gob g) {
-        super(g, col, 3.7f, 5.4f, 0.55f);
+        super(g, col, 4.6f, 6.1f, 0.5f);
     }
 
     public void rem() {

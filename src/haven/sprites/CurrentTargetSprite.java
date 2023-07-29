@@ -10,36 +10,36 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 public class CurrentTargetSprite extends Sprite {
-    public static final int id = -59129521;
     private static final ObstMesh mesh;
     private static final BaseColor col = new BaseColor(new Color(255, 0, 0, 255));
 
     static {
 	final Coord2d[][] shapes = new Coord2d[2][4];
 	final Coord2d offset = new Coord2d(11, 0);
+	final int thickness = 5;
 	{
-	    shapes[0][0] = offset.rotate(Math.toRadians(45 - 7));
-	    shapes[0][1] = offset.rotate(Math.toRadians(45 + 7));
-	    shapes[0][2] = offset.rotate(Math.toRadians(225 - 7));
-	    shapes[0][3] = offset.rotate(Math.toRadians(225 + 7));
+	    shapes[0][0] = offset.rotate(Math.toRadians(45 - thickness));
+	    shapes[0][1] = offset.rotate(Math.toRadians(45 + thickness));
+	    shapes[0][2] = offset.rotate(Math.toRadians(225 - thickness));
+	    shapes[0][3] = offset.rotate(Math.toRadians(225 + thickness));
 
-		shapes[1][0] = offset.rotate(Math.toRadians(135 - 7));
-		shapes[1][1] = offset.rotate(Math.toRadians(135 + 7));
-		shapes[1][2] = offset.rotate(Math.toRadians(315 - 7));
-		shapes[1][3] = offset.rotate(Math.toRadians(315 + 7));
+		shapes[1][0] = offset.rotate(Math.toRadians(135 - thickness));
+		shapes[1][1] = offset.rotate(Math.toRadians(135 + thickness));
+		shapes[1][2] = offset.rotate(Math.toRadians(315 - thickness));
+		shapes[1][3] = offset.rotate(Math.toRadians(315 + thickness));
 
-//		shapes[2][0] = offset.rotate(Math.toRadians(0 - 8));
-//		shapes[2][1] = offset.rotate(Math.toRadians(0 + 8));
-//		shapes[2][2] = offset.rotate(Math.toRadians(180 - 8));
-//		shapes[2][3] = offset.rotate(Math.toRadians(180 + 8));
+//		shapes[2][0] = offset.rotate(Math.toRadians(0 - thickness));
+//		shapes[2][1] = offset.rotate(Math.toRadians(0 + thickness));
+//		shapes[2][2] = offset.rotate(Math.toRadians(180 - thickness));
+//		shapes[2][3] = offset.rotate(Math.toRadians(180 + thickness));
 //
-//		shapes[3][0] = offset.rotate(Math.toRadians(90 - 8));
-//		shapes[3][1] = offset.rotate(Math.toRadians(90 + 8));
-//		shapes[3][2] = offset.rotate(Math.toRadians(270 - 8));
-//		shapes[3][3] = offset.rotate(Math.toRadians(270 + 8));
+//		shapes[3][0] = offset.rotate(Math.toRadians(90 - thickness));
+//		shapes[3][1] = offset.rotate(Math.toRadians(90 + thickness));
+//		shapes[3][2] = offset.rotate(Math.toRadians(270 - thickness));
+//		shapes[3][3] = offset.rotate(Math.toRadians(270 + thickness));
 
 	}
-	mesh = makeMesh(shapes, col.color(), 0.6F);
+	mesh = makeMesh(shapes, col.color(), 0.55F);
     }
 
     public CurrentTargetSprite(final Gob g) {
