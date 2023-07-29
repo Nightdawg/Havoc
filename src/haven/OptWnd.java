@@ -1453,9 +1453,11 @@ public class OptWnd extends Window {
 	public static CheckBox partyMembersHighlightCheckBox;
 	public static CheckBox partyMembersCirclesCheckBox;
 	public static CheckBox aggroedEnemiesCirclesCheckBox;
+	public static CheckBox drawChaseVectorsCheckBox;
 	public static Button damageInfoClearButton;
 	public static boolean partyMembersHighlight = Utils.getprefb("partyMembersHighlight", false);
 	public static boolean partyMembersCircles = Utils.getprefb("partyMembersCircles", true);
+	public static boolean drawChaseVectors = Utils.getprefb("drawChaseVectors", true);
 	public class NDCombatSettingsPanel extends Panel {
 		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
 			return (cont.addhl(new Coord(0, y), cont.sz.x,
@@ -1633,6 +1635,15 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6));
+
+			prev = add(drawChaseVectorsCheckBox = new CheckBox("Draw Chase Vectors"){
+				{a = Utils.getprefb("drawChaseVectors", true);}
+				public void set(boolean val) {
+					Utils.setprefb("drawChaseVectors", val);
+					drawChaseVectors = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 16));
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForCombatSettingsStuff();
@@ -2924,6 +2935,14 @@ public class OptWnd extends Window {
 				"\n$col[255,255,255]{White: }$col[185,185,185]{Yourself}\n$col[0,74,208]{Blue: }$col[185,185,185]{Party Leader}\n$col[0,160,0]{Green: }$col[185,185,185]{Other Members}" +
 				"\n=====================" +
 				"\n$col[185,185,185]{Note: If you are the party leader, your circle's color will always be $col[0,74,208]{Blue}, rather than $col[255,255,255]{White}.}", 300);
+		drawChaseVectorsCheckBox.tooltip = RichText.render("If this setting is enabled, colored lines will be drawn between chasers and chased targets." +
+				"\n=====================" +
+				"\n$col[255,255,255]{White: }$col[185,185,185]{You are the chaser}" +
+				"\n$col[0,160,0]{Green: }$col[185,185,185]{A party member is the chaser}" +
+				"\n$col[185,0,0]{Red: }$col[185,185,185]{A player or animal is chasing you or a party member}" +
+				"\n$col[224,213,0]{Yellow: }$col[185,185,185]{Someone/something is chasing a non-party member or animal}" +
+				"\n=====================" +
+				"\n$col[185,185,185]{Note: Chase vectors include queuing attacks, clicking a critter to pick up, or simply following someone.}", 350);
 	}
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);

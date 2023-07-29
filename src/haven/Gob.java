@@ -70,7 +70,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private final List<Overlay> dols = new ArrayList<>();
 	private Overlay customRadiusOverlay;
 	private Overlay customOverlay;
-	private Overlay gobpath = null;
+	private Overlay gobChaseVector = null;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
 	public int playerPoseUpdatedCounter = 0;
 	public Boolean isMannequin = null;
@@ -891,24 +891,22 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 
 		if (a instanceof Moving) {
-			if (getres() != null && getres().name.equals("gfx/borka/body")) {
-				if (gobpath != null) {
-					gobpath.remove();
-					gobpath = null;
-				}
+			if (gobChaseVector != null) {
+				gobChaseVector.remove();
+				gobChaseVector = null;
 			}
 		}
 		if (a instanceof Homing) {
-			if (gobpath == null && a != null) {
-				gobpath = new Overlay(this, new GobPath(this, (Homing) a, GobPath.FOECOLOR));
-				addol(gobpath);
-			} else if (gobpath != null && a != null) {
-				gobpath.remove();
-				gobpath = new Overlay(this, new GobPath(this, (Homing) a, GobPath.FOECOLOR));
-				addol(gobpath);
-			} else if (gobpath != null) {
-				gobpath.remove();
-				gobpath = null;
+			if (gobChaseVector == null && a != null) {
+				gobChaseVector = new Overlay(this, new ChaseVectorSprite(this, (Homing) a));
+				addol(gobChaseVector);
+			} else if (gobChaseVector != null && a != null) {
+				gobChaseVector.remove();
+				gobChaseVector = new Overlay(this, new ChaseVectorSprite(this, (Homing) a));
+				addol(gobChaseVector);
+			} else if (gobChaseVector != null) {
+				gobChaseVector.remove();
+				gobChaseVector = null;
 			}
 		}
 	}
@@ -1800,6 +1798,25 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			return false;
 
 		return true;
+	}
+
+	public boolean isPartyMember() {
+		synchronized (glob.party.memb) {
+			for (Party.Member m : glob.party.memb.values()) {
+				if (m.gobid == id)
+					return true;
+			}
+		}
+		return false;
+	}
+	public boolean isPartyLeader (){
+		synchronized (glob.party.memb) {
+			for (Party.Member m : glob.party.memb.values()) {
+				if (m == glob.party.leader)
+					return true;
+			}
+		}
+		return false;
 	}
 
 	public void playPlayerAlarm() {

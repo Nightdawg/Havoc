@@ -37,7 +37,6 @@ import haven.render.*;
 import haven.render.sl.*;
 
 public class Glob {
-	public WeakReference<UI> ui;
     public final OCache oc = new OCache(this);
     public final MCache map;
     public final Session sess;
