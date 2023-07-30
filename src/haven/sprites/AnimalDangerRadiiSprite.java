@@ -13,7 +13,7 @@ import java.nio.ShortBuffer;
 // @FromResource(name = "gfx/fx/bprad", version = 8)
 // ND: If you move the class, it no longer overwrites loftar's resource
 public class AnimalDangerRadiiSprite extends Sprite {
-	static final Pipe.Op blacc = Pipe.Op.compose(new BaseColor(new Color(0, 0, 0, 140)), new States.LineWidth(4));
+	static final Pipe.Op blacc = Pipe.Op.compose(new BaseColor(new Color(0, 0, 0, 140)), new States.LineWidth(4), Clickable.No);
     VertexBuf.VertexData posa;
     VertexBuf vbuf;
     Model smod, emod;
