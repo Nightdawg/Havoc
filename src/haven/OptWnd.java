@@ -794,13 +794,14 @@ public class OptWnd extends Window {
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
 
-		rightColumn = add(displayGatePassabilityBoxesCheckBox = new CheckBox("Display Combat Passability on Gates"){
+		rightColumn = add(displayGatePassabilityBoxesCheckBox = new CheckBox("Display Gate Combat Passability"){
 			{a = (Utils.getprefb("displayGatePassabilityBoxes", false));}
 			public void set(boolean val) {
 				Utils.setprefb("displayGatePassabilityBoxes", val);
 				displayGatePassabilityBoxes = val;
 				if (gameui() != null) {
 					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					gameui().optionInfoMsg("Gate Combat Passability is now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgRed));
 				}
 				a = val;
 			}
@@ -2941,7 +2942,7 @@ public class OptWnd extends Window {
 				"\n$col[185,185,185]{Honestly, fuck this setting.}", UI.scale(300));
 		interfaceScaleHSlider.tooltip = RichText.render("$col[218,163,0]{Warning:} This setting is by no means perfect, and it can mess up many things." +
 				"\nLots of things might become messed up when this is set above 1.00x, and some might even completely break." +
-				"\n$col[185,185,185]{Honestly, fuck this setting.}", UI.scale(300));
+				"\n$col[185,185,185]{Honestly, fuck this setting. Unless you're on a 4K or 8K display, keep this at 1.00x.}", UI.scale(300));
 		granularityPositionLabel.tooltip = RichText.render("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", UI.scale(300));
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", UI.scale(300));
 		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in.\n$col[218,163,0]{Note:} $col[185,185,185]{By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", UI.scale(300));
@@ -2960,7 +2961,8 @@ public class OptWnd extends Window {
 				"\n$col[224,213,0]{Yellow: }$col[185,185,185]{Visitor Gate, Open and Passable (you're out of combat)}" +
 				"\n$col[224,150,0]{Orange: }$col[185,185,185]{Visitor Gate, Open, but NOT Passable (you're in combat)}" +
 				"\n$col[185,0,0]{Red: }$col[185,185,185]{Normal/Visitor Gate, Closed, so it's NOT Passable}" +
-				"\n=====================", UI.scale(320));
+				"\n=====================" +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		highlightCliffsCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 	}
 
