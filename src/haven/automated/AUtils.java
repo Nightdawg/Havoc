@@ -273,13 +273,15 @@ public class AUtils {
     }
 
     public static void getGridHeightAvg(GameUI gui){
-        Coord playerCoord = gui.map.player().rc.floor(tilesz);
-        MCache.Grid grid = gui.ui.sess.glob.map.getgrid(playerCoord.div(cmaps));
-        float height = 0;
-        for(float z : grid.z){
-            height = height + z;
-        }
-        gui.msg("Current grid height is: " + height/10000);
+        try {
+            Coord playerCoord = gui.map.player().rc.floor(tilesz);
+            MCache.Grid grid = gui.ui.sess.glob.map.getgrid(playerCoord.div(cmaps));
+            float height = 0;
+            for (float z : grid.z) {
+                height = height + z;
+            }
+            gui.msg("Current grid height is: " + height / 10000);
+        } catch (Loading ignored) {}
     }
 
     public static ArrayList<Gob> getGobs(String name, GameUI gui) {

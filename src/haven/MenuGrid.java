@@ -378,6 +378,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/CookBook");
 		makeLocal("paginae/nightdawg/OtherTools/Add9CoalScript");
 		makeLocal("paginae/nightdawg/OtherTools/Add12CoalScript");
+		makeLocal("paginae/nightdawg/OtherTools/GridHeightCalculator");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -668,6 +669,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 				gui.runActionThread(new Thread(new AddCoalToSmelter(gui, 9), "Add9Coal"));
 			} else if (ad[2].equals("Add12Coal")) {
 				gui.runActionThread(new Thread(new AddCoalToSmelter(gui, 12), "Add12Coal"));
+			} else if (ad[2].equals("GridHeightCalculator")) {
+				AUtils.getGridHeightAvg(gui);
 			}
 		}
 	}
