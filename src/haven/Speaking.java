@@ -62,7 +62,7 @@ public class Speaking extends GAttrib implements RenderTree.Node, PView.Render2D
 
     public void draw(GOut g, Pipe state) {
 	Coord sc = Homo3D.obj2view(new Coord3f(0, 0, zo), state, Area.sized(g.sz())).round2();
-	draw(g, sc.add(sx, UI.scale(-8))); // ND: decreased ay to raise the chat bubbles further above the head
+	draw(g, sc.add(sx, UI.scale(-10))); // ND: decreased ay to raise the chat bubbles further above the head
     }
 
     @OCache.DeltaType(OCache.OD_SPEECH)

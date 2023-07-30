@@ -142,6 +142,7 @@ public class Fightsess extends Widget {
 	for (Fightview.Relation rel : fv.lsrel) {
 		try {
 			Coord3f rawc = map.glob.oc.getgob(rel.gobid).placed.getc();
+			rawc.z = rawc.z + 15;
 			if (rawc == null)
 				continue;
 			relations.put(rel, map.screenxf(rawc).round2());
@@ -556,19 +557,7 @@ public class Fightsess extends Widget {
 	}
 
 	private void drawCombatData(GOut g, Fightview.Relation rels, Coord sc) {
-		int scaledY = sc.y - UI.scale(140);
-		if (MapView.publicCurrentCameraName == 1){
-			double angle = MapView.freeCamAngle;
-			if (MapView.freeCamAngle < 0){
-				angle = - MapView.freeCamAngle;
-			}
-			double scale = 10 / MapView.publicFreeCamDist;
-			scaledY = sc.y - UI.scale(110) - (int)(3900 * scale) + (int)((1500*angle)*scale);
-		} else {
-			double scale = 50 / MapView.publicOrthoCamDist;
-			scaledY = sc.y - UI.scale(110) - (int)(UI.scale(332) * scale);
-		}
-
+		int scaledY = sc.y - UI.scale(90);
 		Coord topLeftFrame = new Coord(sc.x - UI.scale(43), scaledY);
 		boolean openings;
 		boolean cleaveUsed = false;

@@ -35,8 +35,8 @@ public class GobDamageInfo extends GobInfo {
 
     public GobDamageInfo(Gob owner) {
         super(owner);
-        up(17.1f); // ND: Default was 12.0 // ND: For each 3.4 added here, add 1.0 at "b:" in the pair below. It's probably not 100% correct, but it's super close.
-        center = new Pair<>(0.5, 2.5); // Default was 0.5, 1.0
+        up(15); // ND: Default was 12.0 // ND: For each 3.4 added here, add 1.0 at "b:" in the pair below. It's probably not 100% correct, but it's super close.
+        center = new Pair<>(0.5, 1.0); // Default was 0.5, 1.0
         if(gobDamage.containsKey(gob.id)) {
             damage = gobDamage.get(gob.id);
         } else {
