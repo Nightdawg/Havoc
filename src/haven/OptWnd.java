@@ -470,6 +470,7 @@ public class OptWnd extends Window {
 	public static CheckBox showContainerFullnessCheckBox;
 	public static CheckBox showWorkstationStageCheckBox;
 	public static CheckBox displayGatePassabilityBoxesCheckBox;
+	public static CheckBox highlightCliffsCheckBox;
 	public static CheckBox showMineSupportRadiiCheckBox;
 	public static CheckBox showMineSupportSafeTilesCheckBox;
 	public static CheckBox showBeeSkepsRadiiCheckBox;
@@ -479,7 +480,7 @@ public class OptWnd extends Window {
 	public static boolean showContainerFullness = Utils.getprefb("showContainerFullness", true);
 	public static boolean showWorkstationStage = Utils.getprefb("showWorkstationStage", true);
 	public static boolean displayGatePassabilityBoxes = Utils.getprefb("displayGatePassabilityBoxes", false);
-
+	public static boolean highlightCliffs = Utils.getprefb("highlightCliffs", false);
 	public static boolean showMineSupportTiles = Utils.getprefb("showMineSupportTiles", false);
 	public static boolean showBeeSkepsRadii = Utils.getprefb("showBeeSkepsRadii", false);
 	public static boolean showFoodTroughsRadii = Utils.getprefb("showFoodTroughsRadii", false);
@@ -804,6 +805,20 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 16));
+
+		rightColumn = add(highlightCliffsCheckBox = new CheckBox("Highlight Cliffs (Red Overlay)"){
+			{a = (Utils.getprefb("highlightCliffs", false));}
+			public void set(boolean val) {
+				Utils.setprefb("highlightCliffs", val);
+				highlightCliffs = val;
+				if (ui.sess != null)
+					ui.sess.glob.map.invalidateAll();
+				if (gameui() != null) {
+					gameui().optionInfoMsg("Cliff Highlighting is now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
+				}
+				a = val;
+			}
+		}, rightColumn.pos("bl").adds(0, 6));
 
 		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 30).x(UI.scale(117)));
 		setTooltipsForInterfaceSettingsStuff();
@@ -2946,6 +2961,7 @@ public class OptWnd extends Window {
 				"\n$col[224,150,0]{Orange: }$col[185,185,185]{Visitor Gate, Open, but NOT Passable (you're in combat)}" +
 				"\n$col[185,0,0]{Red: }$col[185,185,185]{Normal/Visitor Gate, Closed, so it's NOT Passable}" +
 				"\n=====================", UI.scale(320));
+		highlightCliffsCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){

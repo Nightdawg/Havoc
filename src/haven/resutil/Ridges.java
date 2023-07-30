@@ -26,6 +26,7 @@
 
 package haven.resutil;
 
+import java.awt.*;
 import java.util.*;
 import haven.*;
 import haven.render.*;
@@ -33,8 +34,6 @@ import haven.MapMesh.Scan;
 import haven.MapMesh.Model;
 import haven.Surface.Vertex;
 import haven.Tiler.MPart;
-import haven.Tiler.SModel;
-import haven.Tiler.VertFactory;
 import haven.Surface.MeshVertex;
 import static haven.Utils.clip;
 
@@ -53,6 +52,17 @@ public class Ridges implements MapMesh.ConsHooks {
     public interface RidgeTile {
 	public double breakz();
     }
+
+	public static class RMPart extends MPart{
+		public RMPart(RMPart... parts){
+			super(parts);
+			this.mat = new MixColor(new Color(255, 0, 0, 170));
+		}
+		public RMPart (Coord lc, Coord gc, Surface.Vertex[] v, float[] tcx, float[] tcy, int[] f) {
+			super(lc, gc, v, tcx, tcy, f);
+			this.mat = new MixColor(new Color(255, 0, 0, 170));
+		}
+	}
 
     public static class RPart extends MPart {
 	public float[] rcx, rcy;
@@ -353,8 +363,11 @@ public class Ridges implements MapMesh.ConsHooks {
 	    tcy[i] = clip(-(gv[i].y - pc.y) / tilesz.y, 0, 1);
 	}
 	mkfaces(gv, srfi);
-	gnd[ms.ts.o(tc)] = new MPart(tc, tc.add(m.ul), gv, tcx, tcy, srfi);
-
+	if (OptWnd.highlightCliffs){
+		gnd[ms.ts.o(tc)] = new RMPart(tc, tc.add(m.ul), gv, tcx, tcy, srfi);
+	} else {
+		gnd[ms.ts.o(tc)] = new MPart(tc, tc.add(m.ul), gv, tcx, tcy, srfi);
+	}
 	Vertex[] cls = new Vertex[] {ms.new Vertex(close)};
 	if(edgelc(tc, dir))
 	    ridge[ms.ts.o(tc)] = connect(tc, edges[eo(tc, dir)], cls);
@@ -383,7 +396,11 @@ public class Ridges implements MapMesh.ConsHooks {
 	    tcy[i] = clip(-(gv[i].y - pc.y) / tilesz.y, 0, 1);
 	}
 	mkfaces(gv, srfi);
-	gnd[ms.ts.o(tc)] = new MPart(tc, tc.add(m.ul), gv, tcx, tcy, srfi);
+	if (OptWnd.highlightCliffs){
+		gnd[ms.ts.o(tc)] = new RMPart(tc, tc.add(m.ul), gv, tcx, tcy, srfi);
+	} else {
+		gnd[ms.ts.o(tc)] = new MPart(tc, tc.add(m.ul), gv, tcx, tcy, srfi);
+	}
 
 	if(edgelc(tc, dir))
 	    ridge[ms.ts.o(tc)] = connect(tc, edges[eo(tc, dir)], edges[eo(tc, dir + 2)]);
@@ -412,7 +429,11 @@ public class Ridges implements MapMesh.ConsHooks {
 	    tcy[i] = clip(-(gv[i].y - pc.y) / tilesz.y, 0, 1);
 	}
 	mkfaces(gv, d1rfi);
-	gnd[ms.ts.o(tc)] = new MPart(tc, tc.add(m.ul), gv, tcx, tcy, d1rfi);
+	if (OptWnd.highlightCliffs){
+		gnd[ms.ts.o(tc)] = new RMPart(tc, tc.add(m.ul), gv, tcx, tcy, d1rfi);
+	} else {
+		gnd[ms.ts.o(tc)] = new MPart(tc, tc.add(m.ul), gv, tcx, tcy, d1rfi);
+	}
 
 	if(edgelc(tc, dir))
 	    ridge[ms.ts.o(tc)] = connect(tc, edges[eo(tc, dir)], edges[eo(tc, (dir + 1) % 4)]);
