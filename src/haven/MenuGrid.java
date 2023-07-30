@@ -32,10 +32,7 @@ import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
-import haven.automated.EquipFromBelt;
-import haven.automated.MiningSafetyAssistant;
-import haven.automated.OceanScoutBot;
-import haven.automated.TunnelerBot;
+import haven.automated.*;
 import haven.cookbook.CookingRecipes;
 
 import java.util.*;
@@ -378,6 +375,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 
 		makeLocal("paginae/nightdawg/OtherTools/MiningSafetyAssistant");
 		makeLocal("paginae/nightdawg/OtherTools/CookBook");
+		makeLocal("paginae/nightdawg/OtherTools/Add9CoalScript");
+		makeLocal("paginae/nightdawg/OtherTools/Add12CoalScript");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -662,6 +661,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.add(gui.cookbook, new Coord(gui.sz.x/2 - gui.cookbook.sz.x/2, gui.sz.y/2 - gui.cookbook.sz.y/2 - 200));
 				}
 				gui.cookbook.toggleShow();
+			} else if (ad[2].equals("Add9Coal")) {
+				gui.runActionThread(new Thread(new AddCoalToSmelter(gui, 9), "Add9Coal"));
+			} else if (ad[2].equals("Add12Coal")) {
+				gui.runActionThread(new Thread(new AddCoalToSmelter(gui, 12), "Add12Coal"));
 			}
 		}
 	}
