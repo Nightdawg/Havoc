@@ -2919,7 +2919,7 @@ public class OptWnd extends Window {
 		enableCornerFPSCheckBox.tooltip = RichText.render("Enabling this will display the current FPS in the top-right corner of the screen.", 300);
 		enableAdvancedMouseInfoCheckBox.tooltip = RichText.render("Holding Ctrl+Shift will show the Resource Path of the object or tile you are mousing over. Enabling this option will show additional information.\n$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
 		enableWrongResCheckBox.tooltip = RichText.render("$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", 300);
-		enableDragWindowsInWhenResizingCheckBox.tooltip = RichText.render("Enabling this will force ALL Windows to be dragged back inside the Game Window, whenever you resize it.\n$col[185,185,185]{Note: By default, windows will remain in the same spot when you resize your Game Window, even if they're outside of it.", 300);
+		enableDragWindowsInWhenResizingCheckBox.tooltip = RichText.render("Enabling this will force ALL Windows to be dragged back inside the Game Window, whenever you resize it.\n$col[218,163,0]{Note:} $col[185,185,185]{By default, windows will remain in the same spot when you resize your Game Window, even if they're outside of it.", 300);
 		enableSnapWindowsBackInsideCheckBox.tooltip = RichText.render("Enabling this cause most windows to be fully snapped back into your Game's Window.\nBy default, when you try to drag a window outside of your Game Window, it will only pop 25% of it back in.\n$col[185,185,185]{Large windows like the Cattle Roster or Cook Book will always are not affected by this setting. The 25% rule always applies to them.}", 300);
 		interfaceScaleLabel.tooltip = RichText.render("$col[218,163,0]{Warning:} This setting is by no means perfect, and it can mess up many things." +
 				"\nLots of things might become messed up when this is set above 1.00x, and some might even completely break." +
@@ -2929,12 +2929,12 @@ public class OptWnd extends Window {
 				"\n$col[185,185,185]{Honestly, fuck this setting.}", 300);
 		granularityPositionLabel.tooltip = RichText.render("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", 300);
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", 300);
-		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in.\n$col[185,185,185]{Note: By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
-		showQuickSlotsBar.tooltip = RichText.render("Note: The Quick Switch keybinds ('Right Hand' and 'Left Hand') will still work, regardless of this widget being visible or not.", 300);
-		toggleGobGrowthInfoCheckBox.tooltip = RichText.render("Enabling this will show the following growth information:\n$col[185,185,185]{> Trees and Bushes will display their current growth percentage\n> Crops will display their growth stage as \"Current / Final\"\n}Note: If a Tree or Bush is not showing a percentage, that means it is fully grown, and can be harvested.\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 300);
-		toggleGobCollisionBoxesDisplayCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a Hotkey.}", 300);
-		toggleBeastDangerRadiiCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
-		toggleCritterAurasCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
+		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in.\n$col[218,163,0]{Note:} $col[185,185,185]{By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", 300);
+		showQuickSlotsBar.tooltip = RichText.render("$col[218,163,0]{Note:} The Quick Switch keybinds ('Right Hand' and 'Left Hand') will still work, regardless of this widget being visible or not.", 300);
+		toggleGobGrowthInfoCheckBox.tooltip = RichText.render("Enabling this will show the following growth information:\n$col[185,185,185]{> Trees and Bushes will display their current growth percentage\n> Crops will display their growth stage as \"Current / Final\"\n}$col[218,163,0]{Note:} If a Tree or Bush is not showing a percentage, that means it is fully grown, and can be harvested.\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 300);
+		toggleGobCollisionBoxesDisplayCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using a Hotkey.}", 300);
+		toggleBeastDangerRadiiCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 320);
+		toggleCritterAurasCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 320);
 		showContainerFullnessCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Container Objects, to indicate their fullness:" +
 				"\n$col[185,0,0]{Red: }$col[255,255,255]{Full}\n$col[224,213,0]{Yellow: }$col[255,255,255]{Contains items}\n$col[0,185,0]{Green: }$col[255,255,255]{Empty}", 300);
 		showWorkstationStageCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Workstation Objects (Drying Frame, Tanning Tub, Garden Pot, Cheese Rack), to indicate their progress stage:" +
@@ -2949,19 +2949,19 @@ public class OptWnd extends Window {
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){
-		toggleGobDamageInfoCheckBox.tooltip = RichText.render("Enabling this will display the total amount of damage players and animals took.\nNote: The damage you will see saved above players/animals is the total damage you saw the entity take, while inside of your view range. This is not all of the damage said entity might have taken recently.\n$col[185,185,185]{If you change any of the settings below, you will need a damage update in order to see the changes (for example, deal some damage to the player/animal).}", 300);
-		damageInfoClearButton.tooltip = RichText.render("Clears all damage info.\n$col[185,185,185]{Note: This can also be done using an Action Button.}", 320);
-		toggleAutoPeaceCheckbox.tooltip = RichText.render("Enabling this will automatically set your status to 'Peace' when combat is initiated with a new target (animals only). Toggling this on while in combat will also autopeace all animals you are currently fighting.\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 300);
+		toggleGobDamageInfoCheckBox.tooltip = RichText.render("Enabling this will display the total amount of damage players and animals took.\n$col[218,163,0]{Note:} The damage you will see saved above players/animals is the total damage you saw the entity take, while inside of your view range. This is not all of the damage said entity might have taken recently.\n$col[185,185,185]{If you change any of the settings below, you will need a damage update in order to see the changes (for example, deal some damage to the player/animal).}", 300);
+		damageInfoClearButton.tooltip = RichText.render("Clears all damage info.\n$col[218,163,0]{Note:} $col[185,185,185]{This can also be done using an Action Button.}", 320);
+		toggleAutoPeaceCheckbox.tooltip = RichText.render("Enabling this will automatically set your status to 'Peace' when combat is initiated with a new target (animals only). Toggling this on while in combat will also autopeace all animals you are currently fighting.\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 300);
 		partyMembersHighlightCheckBox.tooltip = RichText.render("Enabling this will put a color highlight over all party members." +
 				"\n=====================" +
 				"\n$col[255,255,255]{White: }$col[185,185,185]{Yourself}\n$col[0,74,208]{Blue: }$col[185,185,185]{Party Leader}\n$col[0,160,0]{Green: }$col[185,185,185]{Other Members}" +
 				"\n=====================" +
-				"\n$col[185,185,185]{Note: If you are the party leader, your color highlight will always be $col[0,74,208]{Blue}, rather than $col[255,255,255]{White}.}", 300);
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{If you are the party leader, your color highlight will always be $col[0,74,208]{Blue}, rather than $col[255,255,255]{White}.}", 300);
 		partyMembersCirclesCheckBox.tooltip = RichText.render("Enabling this will put a colored circle under all party members." +
 				"\n=====================" +
 				"\n$col[255,255,255]{White: }$col[185,185,185]{Yourself}\n$col[0,74,208]{Blue: }$col[185,185,185]{Party Leader}\n$col[0,160,0]{Green: }$col[185,185,185]{Other Members}" +
 				"\n=====================" +
-				"\n$col[185,185,185]{Note: If you are the party leader, your circle's color will always be $col[0,74,208]{Blue}, rather than $col[255,255,255]{White}.}", 300);
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{If you are the party leader, your circle's color will always be $col[0,74,208]{Blue}, rather than $col[255,255,255]{White}.}", 300);
 		drawChaseVectorsCheckBox.tooltip = RichText.render("If this setting is enabled, colored lines will be drawn between chasers and chased targets." +
 				"\n=====================" +
 				"\n$col[255,255,255]{White: }$col[185,185,185]{You are the chaser}" +
@@ -2969,32 +2969,33 @@ public class OptWnd extends Window {
 				"\n$col[185,0,0]{Red: }$col[185,185,185]{A player or animal is chasing you or a party member}" +
 				"\n$col[224,213,0]{Yellow: }$col[185,185,185]{Someone/something is chasing a non-party member or animal}" +
 				"\n=====================" +
-				"\n$col[185,185,185]{Note: Chase vectors include queuing attacks, clicking a critter to pick up, or simply following someone.}", 350);
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{Chase vectors include queuing attacks, clicking a critter to pick up, or simply following someone.}" +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{Chase vectors sometimes don't show when chasing a critter that is standing still. The client treats this as something else for some reason.}", 350);
 	}
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", 300);
 		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding Ctrl before right clicking an item or object to instantly select the first available option from the flower menu.", 300);
 		autoswitchBunnyPlateBootsCheckBox.tooltip = RichText.render("Enabling this will cause your currently equipped Plate Boots to automatically swap with a pair of bunny slippers from your inventory, whenever you right click to chase a rabbit, and vice versa if you click on anything else or just left click to walk.\n$col[185,185,185]{I don't see any reason for which you'd ever want to disable this setting, but alas, I made it an option.}", 300);
 		saveCutleryCheckBox.tooltip = RichText.render("Enabling this will cause any cutlery that has 1 wear left to be instantly transferred from the table into your inventory.\n$col[185,185,185]{A warning message will be shown, to let you know that the item has been transferred.}", 300);
-		noCursorItemDroppingCheckBox.tooltip = RichText.render("$col[185,185,185]{You can still drop the item on your cursor if you hold Ctrl.}\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 300);
-		noCursorItemDroppingInWaterCheckBox.tooltip = RichText.render("$col[218,163,0]{Warning:} If the previous option is Enabled, it will overwrite this one. You will still not be able to drop items in water.\n$col[185,185,185]{You can still drop the item on your cursor if you hold Ctrl.}\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 300);
+		noCursorItemDroppingCheckBox.tooltip = RichText.render("$col[185,185,185]{You can still drop the item on your cursor if you hold Ctrl.}\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 300);
+		noCursorItemDroppingInWaterCheckBox.tooltip = RichText.render("$col[218,163,0]{Warning:} If the previous option is Enabled, it will overwrite this one. You will still not be able to drop items in water.\n$col[185,185,185]{You can still drop the item on your cursor if you hold Ctrl.}\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 300);
 		autoDrinkTeaWhileWorking.tooltip = RichText.render("When your goes reaches below 70%, automatically drink Tea or Water (depending on your current Energy).", 300);
 	}
 
 	private void setTooltipsForGraphicsSettingsStuff(){
 		nightVisionLabel.tooltip = RichText.render("Increasing this will simulate daytime lighting during the night.\n$col[185,185,185]{It slightly affects the light levels during the day too.}", 280);
 		nightVisionResetButton.tooltip = RichText.render("Reset to default", 300);
-		disableWeatherEffectsCheckBox.tooltip = RichText.render("Note: This disables *ALL* weather and camera effects, including rain effects, drunkenness distortion, drug high, valhalla gray overlay, camera shake, and any other similar effects.", 300);
-		disableFlavourObjectsCheckBox.tooltip = RichText.render("Note: This only disables random objects that appear in the world which you cannot interact with.\n$col[185,185,185]{Players usually disable flavour objects to improve visibility, especially in combat.}\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
-		flatWorldCheckBox.tooltip = RichText.render("Enabling this will make the entire game world terrain flat.\n$col[185,185,185]{Cliffs will still be drawn with their relative height, scaled down.}\n$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
-		tileTransitionsCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
-		tileSmoothingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
-		showMineSupportRadiiCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
-		showMineSupportSafeTilesCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using an Action Button.}", 320);
+		disableWeatherEffectsCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} This disables *ALL* weather and camera effects, including rain effects, drunkenness distortion, drug high, valhalla gray overlay, camera shake, and any other similar effects.", 300);
+		disableFlavourObjectsCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} This only disables random objects that appear in the world which you cannot interact with.\n$col[185,185,185]{Players usually disable flavour objects to improve visibility, especially in combat.}\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 320);
+		flatWorldCheckBox.tooltip = RichText.render("Enabling this will make the entire game world terrain flat.\n$col[185,185,185]{Cliffs will still be drawn with their relative height, scaled down.}\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 320);
+		tileTransitionsCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 320);
+		tileSmoothingCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 320);
+		showMineSupportRadiiCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 320);
+		showMineSupportSafeTilesCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", 320);
 	}
 
 	private void setTooltipsForHidingSettingsStuff(){
-		toggleGobHidingCheckBox.tooltip = RichText.render("$col[185,185,185]{Note: This option can also be turned on/off using a Hotkey.", 300);
+		toggleGobHidingCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using a Hotkey.", 300);
 	}
 
 	private void setTooltipsForAlarmSettingsStuff(){
