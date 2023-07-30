@@ -194,6 +194,13 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
         }
     }
 
+    private void stopToDrink(){
+        ui.root.wdgmsg("gk", 27);
+        if (gui.map.pfthread != null) {
+            gui.map.pfthread.interrupt();
+        }
+    }
+
     private void handleStage(TurnipField currentField) {
         switch (stage) {
             case 0:
@@ -484,6 +491,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             stop();
         } else if (gui.getmeter("stam", 0).a < 0.40) {
             try {
+                stopToDrink();
                 AUtils.drinkTillFull(gui, 0.99, 0.99);
             } catch (InterruptedException e) {
                 System.out.println("Drinking interrupted.");

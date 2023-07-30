@@ -279,7 +279,7 @@ public class AUtils {
         for(float z : grid.z){
             height = height + z;
         }
-        System.out.println(height/10000);
+        gui.msg("Current grid height is: " + height/10000);
     }
 
     public static ArrayList<Gob> getGobs(String name, GameUI gui) {
