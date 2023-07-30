@@ -2540,9 +2540,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 						if (res != null) {
 							if (OptWnd.advancedMouseInfo)
 								tooltip = RichText.render("Tile Resource Path: " + "$col[255,200,0]{" + res.name + "}" +
-									" \nMC: " + mc.floor(), 400);
+									" \nMC: " + mc.floor(), UI.scale(400));
 							else
-								tooltip = RichText.render("Tile Resource Path: " + "$col[255,200,0]{" + res.name + "}", 400);
+								tooltip = RichText.render("Tile Resource Path: " + "$col[255,200,0]{" + res.name + "}", UI.scale(400));
 							return;
 						}
 					}

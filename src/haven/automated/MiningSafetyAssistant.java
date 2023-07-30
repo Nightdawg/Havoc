@@ -47,7 +47,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
             }
         };
         prev = add(preventUnsafeMiningCb, new Coord(10, 20));
-        preventUnsafeMiningCb.tooltip = RichText.render("This option will prevent selecting mining area even \npartially outside (visible) mining supports range. \n(Cannot select area outside view range)", 300);
+        preventUnsafeMiningCb.tooltip = RichText.render("This option will prevent selecting mining area even \npartially outside (visible) mining supports range. \n(Cannot select area outside view range)", UI.scale(300));
 
         stopUnsafeMiningCb = new CheckBox("Stop unsafe mining.") {
             {
@@ -61,7 +61,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
             }
         };
         prev = add(stopUnsafeMiningCb, prev.pos("bl").adds(0,20));
-        stopUnsafeMiningCb.tooltip = RichText.render("If currently mined tile is outside support range \nmining will stop. (Drinking animation overrides mining \nand delay bot reaction - not 100% safe)", 300);
+        stopUnsafeMiningCb.tooltip = RichText.render("If currently mined tile is outside support range \nmining will stop. (Drinking animation overrides mining \nand delay bot reaction - not 100% safe)", UI.scale(300));
 
         stopMiningFiftyCb = new CheckBox("Stop mining <50.") {
             {
@@ -75,7 +75,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
             }
         };
         prev = add(stopMiningFiftyCb, prev.pos("bl").adds(0,20));
-        stopMiningFiftyCb.tooltip = RichText.render("If currently mined tile is withing support range \nbelow 50% hp mining will stop.", 300);
+        stopMiningFiftyCb.tooltip = RichText.render("If currently mined tile is withing support range \nbelow 50% hp mining will stop.", UI.scale(300));
 
 
         stopMiningTwentyFiveCb = new CheckBox("Stop mining <25.") {
@@ -90,7 +90,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
             }
         };
         prev = add(stopMiningTwentyFiveCb, prev.pos("bl").adds(0,20));
-        stopMiningTwentyFiveCb.tooltip = RichText.render("If currently mined tile is withing support range \nbelow 25% hp mining will stop.", 300);
+        stopMiningTwentyFiveCb.tooltip = RichText.render("If currently mined tile is withing support range \nbelow 25% hp mining will stop.", UI.scale(300));
 
         stopMiningLooseRockCb = new CheckBox("Stop mining near loose rock.") {
             {
@@ -104,7 +104,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
             }
         };
         prev = add(stopMiningLooseRockCb, prev.pos("bl").adds(0,20));
-        stopMiningLooseRockCb.tooltip = RichText.render("If currently mined tile is withing ~9 tiles from any \nloose rock mining will stop.", 300);
+        stopMiningLooseRockCb.tooltip = RichText.render("If currently mined tile is withing ~9 tiles from any \nloose rock mining will stop.", UI.scale(300));
     }
 
     @Override

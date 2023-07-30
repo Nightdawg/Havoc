@@ -35,18 +35,18 @@ public class AlarmWindow extends Window {
 		super(UI.scale(825, 400), "Custom Alarm Manager");
 		Widget prev;
 		prev = add(enabledLabel = new Label("Enabled"), UI.scale(38,10));
-		enabledLabel.tooltip = RichText.render("This checkbox determines whether the alarm will be triggered, or not.\n$col[185,185,185]{I added this checkbox so you don't have to delete the entire alarm if you just want to turn it off for a while.}", 300);
+		enabledLabel.tooltip = RichText.render("This checkbox determines whether the alarm will be triggered, or not.\n$col[185,185,185]{I added this checkbox so you don't have to delete the entire alarm if you just want to turn it off for a while.}", UI.scale(300));
 		prev = add(alarmNameLabel = new Label("Alarm Name"), prev.pos("ul").adds(73, 0));
 
-		alarmNameLabel.tooltip = RichText.render("You can set this to whatever you want, or even leave empty. It's here just to help you find your alarms easier in the list.", 300);
+		alarmNameLabel.tooltip = RichText.render("You can set this to whatever you want, or even leave empty. It's here just to help you find your alarms easier in the list.", UI.scale(300));
 		prev = add(resPathLabel = new Label("Resource Path"), prev.pos("ul").adds(170, 0));
-		resPathLabel.tooltip = RichText.render("This is the resource path of the entity type for which you want to throw an alarm.\n$col[200,0,0]{Note: This field can not be changed after the alarm has been added!}", 300);
+		resPathLabel.tooltip = RichText.render("This is the resource path of the entity type for which you want to throw an alarm.\n$col[200,0,0]{Note: This field can not be changed after the alarm has been added!}", UI.scale(300));
 		prev = add(soundFileLabel = new Label("Sound File"), prev.pos("ul").adds(180, 0));
-		soundFileLabel.tooltip = RichText.render("This is the name of the .wav sound file that will be played when the alarm is triggered.\nThe file must be present in the \"Alarms\" folder.\n$col[185,185,185]{You don't need to include the file extension in this box, but it must always be a .wav file!}", 300);
+		soundFileLabel.tooltip = RichText.render("This is the name of the .wav sound file that will be played when the alarm is triggered.\nThe file must be present in the \"Alarms\" folder.\n$col[185,185,185]{You don't need to include the file extension in this box, but it must always be a .wav file!}", UI.scale(300));
 		prev = add(new Label("Volume"), prev.pos("ul").adds(120, 0));
 		prev = add(dontTriggerCheckboxLabel = new Label("Also trigger for"), prev.pos("ul").adds(73, -6));
 		prev = add(dontTriggerCheckboxLabel2 = new Label("KO'd or Dead"), prev.pos("ul").adds(2, 14));
-		dontTriggerCheckboxLabel.tooltip = dontTriggerCheckboxLabel2.tooltip = RichText.render("This checkbox only affects entities that can be knocked out or dead (for example, animals).", 300);
+		dontTriggerCheckboxLabel.tooltip = dontTriggerCheckboxLabel2.tooltip = RichText.render("This checkbox only affects entities that can be knocked out or dead (for example, animals).", UI.scale(300));
 
 
 		al = new AlarmList(825, 10);
@@ -63,19 +63,19 @@ public class AlarmWindow extends Window {
 		prev = add(enabledLabel = new Label("Enabled"), prev.pos("ul").adds(0, 43).x(UI.scale(38)));
 		Label alarmNameLabel2;
 		prev = add(alarmNameLabel2 = new Label("Alarm Name"), prev.pos("ul").adds(73, 0));
-		alarmNameLabel2.tooltip = RichText.render("You can set this to whatever you want, or even leave empty. It's here just to help you find your alarms easier in the list.", 300);
+		alarmNameLabel2.tooltip = RichText.render("You can set this to whatever you want, or even leave empty. It's here just to help you find your alarms easier in the list.", UI.scale(300));
 		Label resPathLabel2;
 		prev = add(resPathLabel2 = new Label("Resource Path"), prev.pos("ul").adds(170, 0));
-		resPathLabel2.tooltip = RichText.render("This is the resource path of the entity type for which you want to throw an alarm.\n$col[200,0,0]{Note: This field can not be changed after the alarm has been added!}", 300);
+		resPathLabel2.tooltip = RichText.render("This is the resource path of the entity type for which you want to throw an alarm.\n$col[200,0,0]{Note: This field can not be changed after the alarm has been added!}", UI.scale(300));
 		Label soundFileLabel2;
 		prev = add(soundFileLabel2 = new Label("Sound File"), prev.pos("ul").adds(180, 0));
-		soundFileLabel2.tooltip = RichText.render("This is the name of the .wav sound file that will be played when the alarm is triggered.\nThe file must be present in the \"Alarms\" folder.\n$col[185,185,185]{You don't need to include the file extension in this box, but it must always be a .wav file!}", 300);
+		soundFileLabel2.tooltip = RichText.render("This is the name of the .wav sound file that will be played when the alarm is triggered.\nThe file must be present in the \"Alarms\" folder.\n$col[185,185,185]{You don't need to include the file extension in this box, but it must always be a .wav file!}", UI.scale(300));
 		prev = add(new Label("Volume"), prev.pos("ul").adds(120, 0));
 		Label dontTriggerCheckboxLabel0;
 		prev = add(dontTriggerCheckboxLabel0 = new Label("Also trigger for"), prev.pos("ul").adds(73, -6));
 		Label dontTriggerCheckboxLabel02;
 		prev = add(dontTriggerCheckboxLabel02 = new Label("KO'd or Dead"), prev.pos("ul").adds(2, 14));
-		dontTriggerCheckboxLabel0.tooltip = dontTriggerCheckboxLabel02.tooltip = RichText.render("This checkbox only affects entities that can be knocked out or dead (for example, animals).", 300);
+		dontTriggerCheckboxLabel0.tooltip = dontTriggerCheckboxLabel02.tooltip = RichText.render("This checkbox only affects entities that can be knocked out or dead (for example, animals).", UI.scale(300));
 
 		CheckBox enabled;
 		prev = add(enabled = new CheckBox("") {

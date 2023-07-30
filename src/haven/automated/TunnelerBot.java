@@ -71,7 +71,7 @@ public class TunnelerBot extends Window implements Runnable {
 
         miningDirectionLabel = new Label("N");
         add(miningDirectionLabel, new Coord(54, 40));
-        miningDirectionLabel.tooltip = RichText.render("Choose mining direction N-E-S-W (on map)", 300);
+        miningDirectionLabel.tooltip = RichText.render("Choose mining direction N-E-S-W (on map)", UI.scale(300));
 
         mineToTheLeftCheckbox = new CheckBox("Left") {
             {
@@ -85,7 +85,7 @@ public class TunnelerBot extends Window implements Runnable {
             }
         };
         add(mineToTheLeftCheckbox, new Coord(15, 95));
-        mineToTheLeftCheckbox.tooltip = RichText.render("Mine left branch near every column.\nIf disabled but other option (right) is\nenabled still need to mine 1 tile this way.", 300);
+        mineToTheLeftCheckbox.tooltip = RichText.render("Mine left branch near every column.\nIf disabled but other option (right) is\nenabled still need to mine 1 tile this way.", UI.scale(300));
 
         mineToTheRightCheckbox = new CheckBox("Right") {
             {
@@ -99,7 +99,7 @@ public class TunnelerBot extends Window implements Runnable {
             }
         };
         add(mineToTheRightCheckbox, new Coord(60, 95));
-        mineToTheRightCheckbox.tooltip = RichText.render("Mine right branch near every column.", 300);
+        mineToTheRightCheckbox.tooltip = RichText.render("Mine right branch near every column.", UI.scale(300));
 
         CheckBox roadBox = new CheckBox("Autoroad") {
             {

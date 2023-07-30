@@ -68,7 +68,7 @@ public class FishingBot extends Window implements Runnable {
 
         fishingDirLabel = new Label("N");
         add(fishingDirLabel, new Coord(54, 40));
-        fishingDirLabel.tooltip = RichText.render("Choose water direction. 4 Tiles in front of player.", 300);
+        fishingDirLabel.tooltip = RichText.render("Choose water direction. 4 Tiles in front of player.", UI.scale(300));
     }
 
 

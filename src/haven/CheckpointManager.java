@@ -84,7 +84,7 @@ public class CheckpointManager extends Window implements Runnable {
                 transformIntoArea();
             }
         }, UI.scale(15, 184));
-        transformIntoArea.tooltip = RichText.render("If you want to scan a specific area on the map, draw a polygon with checkpoints, then press this button to convert it before starting.", 350);
+        transformIntoArea.tooltip = RichText.render("If you want to scan a specific area on the map, draw a polygon with checkpoints, then press this button to convert it before starting.", UI.scale(350));
 
         resizeButton = add(new Button(UI.scale(26), "▼") {
             @Override
@@ -92,7 +92,7 @@ public class CheckpointManager extends Window implements Runnable {
                 toggleExtendWindow();
             }
         }, UI.scale(332, 184));
-        resizeButton.tooltip = RichText.render("Show Routes Manager", 350);
+        resizeButton.tooltip = RichText.render("Show Routes Manager", UI.scale(350));
 
         this.c = new Coord(100, 100);
 
@@ -104,7 +104,7 @@ public class CheckpointManager extends Window implements Runnable {
                 checkpointList.reverseCheckpoints(gui);
             }
         }, UI.scale(-10, 184));
-        reverseButton.tooltip = RichText.render("Reverse path.", 350);
+        reverseButton.tooltip = RichText.render("Reverse path.", UI.scale(350));
     }
 
     public void toggleExtendWindow() {
@@ -145,7 +145,7 @@ public class CheckpointManager extends Window implements Runnable {
                     toggleExtendWindow();
                 }
             }, UI.scale(332, 184));
-            resizeButton.tooltip = RichText.render("Show Routes Manager", 350);
+            resizeButton.tooltip = RichText.render("Show Routes Manager", UI.scale(350));
 
         } else {
             // Expanding operations
@@ -204,7 +204,7 @@ public class CheckpointManager extends Window implements Runnable {
                     preventDraggingOutside(); // ND: Retard proofing.
                 }
             }, UI.scale(332, 545));
-            resizeButton.tooltip = RichText.render("Hide Routes Manager", 350);
+            resizeButton.tooltip = RichText.render("Hide Routes Manager", UI.scale(350));
 
             routeList = new RouteList(390, 7);
             add(routeList, UI.scale(5, 295));
