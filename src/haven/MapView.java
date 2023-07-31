@@ -514,10 +514,20 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     }
     static {camtypes.put("ortho", SOrthoCam.class);}
 
-	public static int cameraAxisReverter = 1;
-	public static void NDrevertTheAxis(boolean reverted){
-		if (reverted) cameraAxisReverter = -1;
-		else cameraAxisReverter = 1;
+	public static int orthoCameraAxisReverter = 1;
+	public static void NDrevertOrthoAxis(boolean reverted){
+		if (reverted) orthoCameraAxisReverter = -1;
+		else orthoCameraAxisReverter = 1;
+	}
+	public static int freeCamXAxisReverter = 1;
+	public static void NDrevertfreeCamXAxis(boolean reverted){
+		if (reverted) freeCamXAxisReverter = -1;
+		else freeCamXAxisReverter = 1;
+	}
+	public static int freeCamYAxisReverter = 1;
+	public static void NDrevertfreeCamYAxis(boolean reverted){
+		if (reverted) freeCamYAxisReverter = -1;
+		else freeCamYAxisReverter = 1;
 	}
 	public static boolean freeCamTiltBool = false;
 	public static float cameraHeightDistance = 15f;
@@ -569,7 +579,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		}
 
 		public void drag(Coord c) {
-			telev = elevorig - cameraAxisReverter * ((float)(c.y - dragorig.y) / 100.0f);
+			telev = elevorig - freeCamYAxisReverter * ((float)(c.y - dragorig.y) / 100.0f);
 			if (freeCamTiltBool){
 				if(telev < -0.5f) telev = -0.5f;
 			}
@@ -578,7 +588,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			}
 			if(telev > (Math.PI / 2.0)) telev = (float)Math.PI / 2.0f;
 			freeCamAngle = telev;
-			tangl = anglorig + cameraAxisReverter * ((float)(c.x - dragorig.x) / 100.0f);
+			tangl = anglorig + freeCamXAxisReverter * ((float)(c.x - dragorig.x) / 100.0f);
 		}
 
 		public boolean wheel(Coord c, int amount) {
@@ -698,7 +708,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		}
 
 		public void drag(Coord c) {
-			tangl = anglorig + cameraAxisReverter * ((float)(c.x - dragorig.x) / 100.0f);
+			tangl = anglorig + orthoCameraAxisReverter * ((float)(c.x - dragorig.x) / 100.0f);
 		}
 
 		public void release() {

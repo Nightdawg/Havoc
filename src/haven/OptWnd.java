@@ -1154,6 +1154,8 @@ public class OptWnd extends Window {
 	private static HSlider orthoCamZoomSpeedSlider;
 	private static Button orthoCamZoomSpeedResetButton;
 	private static CheckBox revertCameraAxisCheckBox;
+	private static CheckBox revertFreeCameraXAxisCheckBox;
+	private static CheckBox revertFreeCameraYAxisCheckBox;
 	private static CheckBox allowLowerFreeCamTilt;
 	public class NDCamSettingsPanel extends Panel {
 
@@ -1162,21 +1164,41 @@ public class OptWnd extends Window {
 			Widget FreePrev; // ND: used to calculate the positions for the NDFree camera settings
 			Widget OrthoPrev; // ND: used to calculate the positions for the NDOrtho camera settings
 
-			MapView.NDrevertTheAxis(Utils.getprefb("CamAxisSettingBool", true));
+			MapView.NDrevertOrthoAxis(Utils.getprefb("CamAxisSettingBool", true));
+			MapView.NDrevertfreeCamXAxis(Utils.getprefb("FreeCamXAxisSettingBool", true));
+			MapView.NDrevertfreeCamYAxis(Utils.getprefb("FreeCamYAxisSettingBool", true));
+
 			MapView.isometricNDOrtho = !Utils.getprefb("unlockedNDOrtho", true);
 			MapView.freeCamTiltBool = Utils.getprefb("allowLowerTiltBool", false);
 
 			prev = add(new Label(""), 0, 0);
 
 			prev = add(new Label("Selected Camera Settings:"), prev.pos("bl").adds(0, 50));
-			prev = add(revertCameraAxisCheckBox = new CheckBox("Revert Camera Look Axes"){
-				{a = (Utils.getprefb("CamAxisSettingBool", true));}
+			prev = add(revertFreeCameraXAxisCheckBox = new CheckBox("Revert X Axis"){
+				{a = (Utils.getprefb("FreeCamXAxisSettingBool", true));}
 				public void set(boolean val) {
-					Utils.setprefb("CamAxisSettingBool", val);
-					MapView.NDrevertTheAxis(val);
+					Utils.setprefb("FreeCamXAxisSettingBool", val);
+					MapView.NDrevertfreeCamXAxis(val);
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 6));
+			add(revertFreeCameraYAxisCheckBox = new CheckBox("Revert Y Axis"){
+				{a = (Utils.getprefb("FreeCamYAxisSettingBool", true));}
+				public void set(boolean val) {
+					Utils.setprefb("FreeCamYAxisSettingBool", val);
+					MapView.NDrevertfreeCamYAxis(val);
+					a = val;
+				}
+			}, prev.pos("ul").adds(110, 0));
+
+			prev = add(revertCameraAxisCheckBox = new CheckBox("Revert Ortho Look Axis"){
+				{a = (Utils.getprefb("CamAxisSettingBool", true));}
+				public void set(boolean val) {
+					Utils.setprefb("CamAxisSettingBool", val);
+					MapView.NDrevertOrthoAxis(val);
+					a = val;
+				}
+			}, prev.pos("ul").adds(0, 0));
 			OrthoPrev = add(unlockedOrthoCamCheckBox = new CheckBox("Unlocked Ortho Camera"){
 				{a = Utils.getprefb("unlockedNDOrtho", true);}
 				public void set(boolean val) {
@@ -2914,12 +2936,15 @@ public class OptWnd extends Window {
 		freeCamHeightSlider.visible = bool;
 		freeCamHeightResetButton.visible = bool;
 		allowLowerFreeCamTilt.visible = bool;
+		revertFreeCameraXAxisCheckBox.visible = bool;
+		revertFreeCameraYAxisCheckBox.visible = bool;
 	}
 	private void setOrthoCameraSettingsVisibility(boolean bool){
 		unlockedOrthoCamCheckBox.visible = bool;
 		orthoCamZoomSpeedLabel.visible = bool;
 		orthoCamZoomSpeedSlider.visible = bool;
 		orthoCamZoomSpeedResetButton.visible = bool;
+		revertCameraAxisCheckBox.visible = bool;
 	}
 	private void setTooltipsForCameraSettingsStuff(){
 		revertCameraAxisCheckBox.tooltip = RichText.render("Enabling this will revert the Vertical and Horizontal axes when dragging the camera to look around.\n$col[185,185,185]{I don't know why Loftar inverts them in the first place...}", UI.scale(280));
