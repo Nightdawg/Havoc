@@ -71,7 +71,7 @@ public class RealmChannel extends ChatUI.MultiChat {
 		this.nm = nm;
 	    }
 	    public Text get() {
-		return(ChatUI.fnd.render(RichText.Parser.quote(String.format("%s: %s", nm, text)), w, TextAttribute.FOREGROUND, from.color));
+		return(ChatUI.fnd.render(RichText.Parser.quote(String.format("%s: %s", "[" + timestamp + "] " + nm, text)), w, TextAttribute.FOREGROUND, from.color));
 	    }
 	}
 	private String nm() {

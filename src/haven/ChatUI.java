@@ -929,16 +929,13 @@ public class ChatUI extends Widget {
 		}
 
 		public Text get() {
-		    return(fnd.render(RichText.Parser.quote(String.format("%s: %s", nm, text)), w, TextAttribute.FOREGROUND, col));
+		    return(fnd.render(RichText.Parser.quote(String.format("%s: %s", "[" + timestamp + "] " + nm, text)), w, TextAttribute.FOREGROUND, col));
 		}
 	    }
 
 	    private String nm() {
 		BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
 		return((b == null) ? "??? (Not Memorised)" : b.name);
-//			TODO: Check this after merging, Nightdawg
-//			String line = RichText.Parser.quote(String.format("%s: %s", nm, text));
-//			line = "[" + timestamp + "] " + line;
 	    }
 
 	    public Indir<Text> render(int w) {
@@ -1690,7 +1687,7 @@ public class ChatUI extends Widget {
 	if(dm != null) {
 		dm.remove();
 		dm = null;
-		Utils.setprefi("chatsize", UI.unscale(sz.y));
+		Utils.setprefc("chatsize", UI.unscale(sz));
 		resizehoriz = false;
 		return(true);
 	} else {

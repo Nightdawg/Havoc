@@ -431,7 +431,7 @@ public class Window extends Widget implements DTarget {
     }
 
 	public void preventDraggingOutside() {
-		if (gameui() != null) {
+		if (gameui() != null && !(this instanceof MapWnd)) {
 			if (this.csz().x > 800 || this.csz().y > 500 || !OptWnd.snapWindowsBackInside) {
 				if (this.c.x < - UI.scale(14) - (int)(this.csz().x/1.333))
 					this.c.x = - UI.scale(14) - (int)(this.csz().x/1.333);
