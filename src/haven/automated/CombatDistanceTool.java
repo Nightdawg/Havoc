@@ -12,7 +12,7 @@ public class CombatDistanceTool extends Window implements Runnable {
     private final GameUI gui;
     public boolean stop;
 
-    private Label currentDistanceLabel;
+    private final Label currentDistanceLabel;
 
     private String value;
 
