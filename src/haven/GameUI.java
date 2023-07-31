@@ -276,7 +276,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	this.genus = genus;
 	setcanfocus(true);
 	setfocusctl(true);
-	chat = add(new ChatUI(0, 0));
+	chat = add(new ChatUI());
 	chat.hresize(chat.savedh); // ND: I think I need to keep this cause of "clearanims(Spring.class);", whatever that is.
 	chat.resize(chat.savedw,chat.savedh); // ND: Added this to set both sizes
 	chat.show();
@@ -501,7 +501,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	ui.cons.clearout();
 	super.dispose();
     }
-
+    
     public class Hidepanel extends Widget {
 	public final String id;
 	public final Coord g;
@@ -1059,10 +1059,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    }
 	}
 	if(!chat.visible()) {
-	    chat.drawsmall(g, new Coord(blpw + UI.scale(10), by), UI.scale(50));
+	    chat.drawsmall(g, new Coord(blpw + UI.scale(10), by), UI.scale(100));
 	}
     }
-
+    
     private String iconconfname() {
 	StringBuilder buf = new StringBuilder();
 	buf.append("data/mm-icons");
@@ -1635,7 +1635,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			detectGob = gob;
 		}
 	}
-    
+
     public void msg(String msg, Color color, Color logcol) {
 	msgtime = Utils.rtime();
 	lastmsg = msgfoundry.render(msg, color);
@@ -1807,26 +1807,26 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		    Tex glow;
 		    {
 			this.tooltip = RichText.render("Chat ($col[255,200,0]{Ctrl+C})", 0); // ND: Chat button tooltip
-			glow = new TexI(PUtils.rasterimg(PUtils.blurmask(up.getRaster(), 2, 2, Color.WHITE)));
+			glow = new TexI(PUtils.rasterimg(PUtils.blurmask(up.getRaster(), UI.scale(2), UI.scale(2), Color.WHITE)));
 		    }
 
 		    public void click() {
-			if(chat.targeth == 0) {
-			    chat.sresize(chat.savedh);
-			    setfocus(chat);
+			if(chat.targetshow) {
+			    chat.sshow(false);
 			} else {
-			    chat.sresize(0);
+			    chat.sshow(true);
+			    setfocus(chat);
 			}
-			Utils.setprefb("chatvis", chat.targeth != 0);
+			Utils.setprefb("chatvis", chat.targetshow);
 		    }
 
 		    public void draw(GOut g) {
 			super.draw(g);
 			Color urg = chat.urgcols[chat.urgency];
 			if(urg != null) {
-			    GOut g2 = g.reclipl(new Coord(-2, -2), g.sz().add(4, 4));
+			    GOut g2 = g.reclipl2(UI.scale(-4, -4), g.sz().add(UI.scale(4, 4)));
 			    g2.chcolor(urg.getRed(), urg.getGreen(), urg.getBlue(), 128);
-			    g2.image(glow, Coord.z, UI.scale(glow.sz()));
+			    g2.image(glow, Coord.z);
 			}
 		    }
 		}, sz, 1, 1);
@@ -2113,7 +2113,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			}
 		}
 	}
-    
+
     {
 		actionBar1 = add(new NDActionBar(kb_actbar1, 1, false));
 		actionBar2 = add(new NDActionBar(kb_actbar2, 2, false));
@@ -2128,7 +2128,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		if (!Utils.getprefb("showActionBar4", false))
 			actionBar4.hide();
     }
-
+    
     private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
     {
 	cmdmap.put("afk", new Console.Command() {
