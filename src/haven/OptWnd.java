@@ -3009,7 +3009,7 @@ public class OptWnd extends Window {
 				"\n=====================" +
 				"\n$col[255,255,255]{White: }$col[185,185,185]{You are the chaser}" +
 				"\n$col[0,160,0]{Green: }$col[185,185,185]{A party member is the chaser}" +
-				"\n$col[185,0,0]{Red: }$col[185,185,185]{A player or animal is chasing you or a party member}" +
+				"\n$col[185,0,0]{Red: }$col[185,185,185]{A player is chasing you or a party member}" +
 				"\n$col[224,213,0]{Yellow: }$col[185,185,185]{Someone/something is chasing a non-party member or animal}" +
 				"\n=====================" +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{Chase vectors include queuing attacks, clicking a critter to pick up, or simply following someone.}" +
