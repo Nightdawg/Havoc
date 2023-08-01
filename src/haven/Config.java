@@ -29,10 +29,7 @@ package haven;
 import java.net.URL;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.function.*;
 import java.io.*;
 import java.nio.file.*;
@@ -359,6 +356,135 @@ public class Config {
 			"petrifiedshell",
 			"strangecrystal"
 	));
+
+	public static final Map<String, String[]> cures = new HashMap<>();
+
+	static {
+		cures.put("paginae/wound/addervenom", new String[]{
+				"gfx/invobjs/jar-snakejuice"
+		});
+		cures.put("paginae/wound/antburn", new String[]{
+				"gfx/invobjs/herbs/yarrow"
+		});
+		cures.put("paginae/wound/beesting", new String[]{
+				"gfx/invobjs/antpaste",
+				"gfx/invobjs/graygrease",
+				"gfx/invobjs/kelpcream"
+		});
+		cures.put("paginae/wound/blackeye", new String[]{
+				"gfx/invobjs/hartshornsalve",
+				"gfx/invobjs/honeybroadaid",
+				"gfx/invobjs/rootfill",
+				"gfx/invobjs/toadbutter"
+		});
+		cures.put("paginae/wound/bladekiss", new String[]{
+				"gfx/invobjs/gauze",
+				"gfx/invobjs/toadbutter"
+		});
+		cures.put("paginae/wound/blunttrauma", new String[]{
+				"gfx/invobjs/camomilecompress",
+				"gfx/invobjs/gauze",
+				"gfx/invobjs/hartshornsalve",
+				"gfx/invobjs/leech",
+				"gfx/invobjs/opium",
+				"gfx/invobjs/toadbutter"
+		});
+		cures.put("paginae/wound/bruise", new String[]{
+				"gfx/invobjs/leech"
+		});
+		cures.put("paginae/wound/coalcough", new String[]{
+				"gfx/invobjs/opium"
+		});
+		cures.put("paginae/wound/concussion", new String[]{
+				"gfx/invobjs/coldcompress",
+				"gfx/invobjs/opium"
+		});
+		cures.put("paginae/wound/crabcaressed", new String[]{
+				"gfx/invobjs/antpaste"
+		});
+		cures.put("paginae/wound/cruelincision", new String[]{
+				"gfx/invobjs/gauze",
+				"gfx/invobjs/rootfill",
+				"gfx/invobjs/stitchpatch"
+		});
+		cures.put("paginae/wound/deepcut", new String[]{
+				"gfx/invobjs/coldcut",
+				"gfx/invobjs/gauze",
+				"gfx/invobjs/herbs/waybroad",
+				"gfx/invobjs/honeybroadaid",
+				"gfx/invobjs/rootfill",
+				"gfx/invobjs/stingingpoultice"
+		});
+		cures.put("paginae/wound/fellslash", new String[]{
+				"gfx/invobjs/gauze",
+		});
+		cures.put("paginae/wound/infectedsore", new String[]{
+				"gfx/invobjs/antpaste",
+				"gfx/invobjs/camomilecompress",
+				"gfx/invobjs/opium",
+				"gfx/invobjs/soapbar"
+		});
+		cures.put("paginae/wound/jellysting", new String[]{
+				"gfx/invobjs/graygrease"
+		});
+		cures.put("paginae/wound/leechburns", new String[]{
+				"gfx/invobjs/toadbutter"
+		});
+		cures.put("paginae/wound/midgebite", new String[]{
+				"gfx/invobjs/herbs/yarrow"
+		});
+		cures.put("paginae/wound/nastylaceration", new String[]{
+				"gfx/invobjs/stitchpatch",
+				"gfx/invobjs/toadbutter"
+		});
+		cures.put("paginae/wound/nicksnknacks", new String[]{
+				"gfx/invobjs/herbs/yarrow",
+				"gfx/invobjs/honeybroadaid"
+		});
+		cures.put("paginae/wound/paginae/wound/punchsore", new String[]{
+				"gfx/invobjs/mudointment",
+				"gfx/invobjs/opium"
+		});
+		cures.put("paginae/wound/sandfleabites", new String[]{
+				"gfx/invobjs/graygrease",
+				"gfx/invobjs/herbs/yarrow"
+		});
+		cures.put("paginae/wound/scrapesncuts", new String[]{
+				"gfx/invobjs/herbs/yarrow",
+				"gfx/invobjs/honeybroadaid",
+				"gfx/invobjs/mudointment"
+		});
+		cures.put("paginae/wound/sealfinger", new String[]{
+				"gfx/invobjs/antpaste",
+				"gfx/invobjs/hartshornsalve",
+				"gfx/invobjs/kelpcream"
+		});
+		cures.put("paginae/wound/severemauling", new String[]{
+				"gfx/invobjs/hartshornsalve",
+				"gfx/invobjs/opium"
+		});
+		cures.put("paginae/wound/somethingbroken", new String[]{
+				"gfx/invobjs/splint"
+		});
+		cures.put("paginae/wound/swampfever", new String[]{
+				"gfx/invobjs/jar-snakejuice"
+		});
+		cures.put("paginae/wound/swollenbump", new String[]{
+				"gfx/invobjs/coldcompress",
+				"gfx/invobjs/coldcut",
+				"gfx/invobjs/leech",
+				"gfx/invobjs/stingingpoultice"
+		});
+		cures.put("paginae/wound/unfaced", new String[]{
+				"gfx/invobjs/kelpcream",
+				"gfx/invobjs/leech",
+				"gfx/invobjs/mudointment",
+				"gfx/invobjs/toadbutter"
+		});
+		cures.put("paginae/wound/wretchedgore", new String[]{
+				"gfx/invobjs/stitchpatch"
+		});
+	}
 
     public static void cmdline(String[] args) {
 	PosixArgs opt = PosixArgs.getopt(args, "hdPGfU:r:A:u:C:p:");

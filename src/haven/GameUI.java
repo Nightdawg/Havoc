@@ -97,6 +97,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean preventDropAnywhere = Utils.getprefb("noCursorItemDropping", false);
 	public static boolean preventWaterDrop = Utils.getprefb("noCursorItemDroppingInWater", false);
 	public static boolean autoDrinkTeaOrWater = Utils.getprefb("autoDrinkTeaOrWater", false);
+	public static boolean autoFlowerSelect = Utils.getprefb("autoFlowerMenuSelect", false);
 
 	public static boolean muteNonFriendly = false;
 
@@ -118,6 +119,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public CookingRecipes cookbook;
 	public MiningSafetyAssistant miningSafetyAssistantWindow;
 	public Thread miningSafetyAssistantThread;
+
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(GameUI.class, slot -> slot.wdg())
@@ -1559,16 +1561,15 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 //			msg("VehicleSpeed display " + (vehicleSpeed ? "enabled" : "disabled"));
 			msg("Not yet implemented");
 		} else if (kb_toggleMuteNonFriendly.key().match(ev)) {
-			msg(muteNonFriendly ? "Non-Friendly players muted" : "Non-Friendly players unmuted");
+			msg(muteNonFriendly ? "Non-Friendly players muted" : "Non-Friendly players unm uted");
 			muteNonFriendly = !muteNonFriendly;
 		} else if (kb_toggleWalkWithPathfinder.key().match(ev)) {
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-			TurnipBot turnipBot = new TurnipBot(this);
+			AutoFlowerWindow turnipBot = new AutoFlowerWindow();
 			add(turnipBot, new Coord(this.sz.x / 2 - turnipBot.sz.x / 2, this.sz.y / 2 - turnipBot.sz.y / 2 - 200));
-			Thread turnipBotThread = new Thread(turnipBot, "TurnipBot");
-			turnipBotThread.start();
+
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);

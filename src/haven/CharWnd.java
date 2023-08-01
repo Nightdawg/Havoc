@@ -957,6 +957,13 @@ public class CharWnd extends Window {
 		buf.append("$img[" + res.name + "]\n\n");
 		buf.append("$b{$font[serif,16]{" + res.flayer(Resource.tooltip).t + "}}\n\n\n");
 		buf.append(res.flayer(Resource.pagina).text);
+			if (Config.cures.containsKey(res.name)) {
+				buf.append("\n\nTreated with:\n");
+				for (String c : Config.cures.get(res.name)) {
+					buf.append("$img[" + c + "]");
+					buf.append(Resource.remote().load(c).get().layer(Resource.tooltip).t + "\n");
+				}
+			}
 		return(buf.toString());
 	    }
 
