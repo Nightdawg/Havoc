@@ -87,6 +87,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public static Boolean batsLeaveMeAlone = false; // ND: Check for Bat Cape
 	public static Boolean batsFearMe = false; // ND: Check for Bat Dungeon Experience (Defeated Bat Queen)
 
+	public ArrayList<Gob> occupants = new ArrayList<Gob>();
+	public Long occupiedGobID = null;
+
 	/**
 	 * This method is run after all gob attributes has been loaded first time
 	 * throwloading=true causes the loader/thread that ran the init to try again
@@ -889,25 +892,46 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (prev != null)
 			prev.dispose();
 
-
+		if(ac == Moving.class && a == null) {
+			if (occupiedGobID != null){
+				if (glob.oc.getgob(occupiedGobID) != null){
+					glob.oc.getgob(occupiedGobID).occupants.remove(this);
+					occupiedGobID = null;
+				}
+			}
+		}
 		if (a instanceof Moving) {
 			if (gobChaseVector != null) {
 				gobChaseVector.remove();
 				gobChaseVector = null;
 			}
 		}
-		if (a instanceof Homing) {
-			if (gobChaseVector == null && a != null) {
-				gobChaseVector = new Overlay(this, new ChaseVectorSprite(this, (Homing) a));
-				addol(gobChaseVector);
-			} else if (gobChaseVector != null && a != null) {
-				gobChaseVector.remove();
-				gobChaseVector = new Overlay(this, new ChaseVectorSprite(this, (Homing) a));
-				addol(gobChaseVector);
-			} else if (gobChaseVector != null) {
-				gobChaseVector.remove();
-				gobChaseVector = null;
+		if (a instanceof Following) {
+			Following following = (Following) a;
+			occupiedGobID = following.tgt;
+			ArrayList<Gob> passengersArray = ChaseVectorSprite.passengersMap.get(occupiedGobID);
+			if (passengersArray != null) {
+				passengersArray.add(this);
+				ChaseVectorSprite.passengersMap.put(occupiedGobID, passengersArray);
+			} else {
+				ArrayList<Gob> newPassengersArray = new ArrayList<Gob>();
+				newPassengersArray.add(this);
+				ChaseVectorSprite.passengersMap.put(occupiedGobID, newPassengersArray);
 			}
+		}
+		if (a instanceof Homing) {
+			Homing homing = (Homing) a;
+				if (gobChaseVector == null && homing != null) {
+					gobChaseVector = new Overlay(this, new ChaseVectorSprite(this, homing));
+					addol(gobChaseVector);
+				} else if (gobChaseVector != null && homing != null) {
+					gobChaseVector.remove();
+					gobChaseVector = new Overlay(this, new ChaseVectorSprite(this, homing));
+					addol(gobChaseVector);
+				} else if (gobChaseVector != null) {
+					gobChaseVector.remove();
+					gobChaseVector = null;
+				}
 		}
 	}
 

@@ -56,6 +56,10 @@ public class Homing extends Moving {
     public double getv() {
 	return(v);
     }
+
+	public Gob tgt() {
+		return(gob.glob.oc.getgob(this.tgt));
+	}
     
     public void move(Coord2d c) {
 	dist = 0;
