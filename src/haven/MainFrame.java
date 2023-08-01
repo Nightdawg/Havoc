@@ -55,9 +55,6 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 		try {
 			FlowerMenu.createDatabaseIfNotExist();
 			FlowerMenu.fillAutoChooseMap();
-			if(FlowerMenu.autoChoose.size() == 0){
-				FlowerMenu.addInit();
-			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

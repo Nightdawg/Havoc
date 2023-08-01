@@ -2960,13 +2960,11 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		if(!Gob.showCollisionBoxes){
 			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(true);
 		}
-		System.out.println("Pathfinding to coord + " + mc);
 		try{
 		Gob player = player();
 		if (player == null)
 			return;
 		if (mc.dist(player.rc.floor()) > 11 * MAX_TILE_RANGE) {
-			System.out.println("mc dist; " + mc.dist(player.rc.floor()));
 			Coord between = mc.sub(player.rc.floor());
 			double mul = 11 * MAX_TILE_RANGE / mc.dist(player.rc.floor());
 			mc = player.rc.floor().add(between.mul(mul));

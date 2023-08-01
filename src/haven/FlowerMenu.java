@@ -27,12 +27,8 @@
 package haven;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.sql.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.lang.Math.PI;
 
@@ -54,7 +50,7 @@ public class FlowerMenu extends Widget {
 	//AutoFlowerStuff
 	private static final String DATABASE = "jdbc:sqlite:static_data.db";
 	public final String[] options;
-	public static Map<String, Boolean> autoChoose = new HashMap<>();
+	public static Map<String, Boolean> autoChoose = new TreeMap<>();
 	private static String nextAutoSel;
 
 
@@ -339,9 +335,9 @@ public class FlowerMenu extends Widget {
 		}
 	}
 
-	public static void addInit(){
-		autoChoose.put("Chop", false);
-		checkAndInsertFlowerMenuOption("Chop");
+	public static void updateValue(String name, boolean value) {
+		autoChoose.put(name, value);
+		updateDbValue(name, value);
 	}
 
 	private void addOptionsToDatabase(String[] options) {
@@ -353,6 +349,21 @@ public class FlowerMenu extends Widget {
 				}
 			}
 		} catch (Exception ignored) {
+		}
+	}
+
+
+
+	public static void updateDbValue(String flowerMenuOptionName, boolean newValue) {
+		try (Connection conn = DriverManager.getConnection(DATABASE)) {
+			String updateSql = "UPDATE flower_menu_options SET auto_use = ? WHERE name = ?";
+			try (PreparedStatement updatePstmt = conn.prepareStatement(updateSql)) {
+				updatePstmt.setBoolean(1, newValue);
+				updatePstmt.setString(2, flowerMenuOptionName);
+				updatePstmt.executeUpdate();
+			}
+		} catch (SQLException e) {
+			System.out.println("Problem with updating flower menu option in the database.");
 		}
 	}
 
@@ -376,7 +387,7 @@ public class FlowerMenu extends Widget {
 	}
 
 	public static void fillAutoChooseMap() {
-		String sql = "SELECT name, auto_use FROM flower_menu_options";
+		String sql = "SELECT name, auto_use FROM flower_menu_options order by name";
 		try (Connection conn = DriverManager.getConnection(DATABASE);
 			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			ResultSet rs = pstmt.executeQuery();
