@@ -1071,18 +1071,20 @@ public class ChatUI extends Widget {
 		Integer from = (Integer)args[0];
 		long gobid = Utils.uint32((Integer)args[1]);
 		String line = (String)args[2];
-		Color col = Color.WHITE;
-		synchronized(ui.sess.glob.party.memb) {
-		    Party.Member pm = ui.sess.glob.party.memb.get(gobid);
-		    if(pm != null)
-			col = pm.col;
-		}
-		if(from == null) {
-		    append(new MyMessage(line), -1);
-		} else {
-		    Message cmsg = new NamedMessage(from, line, Utils.blendcol(col, Color.WHITE, 0.5));
-		    append(cmsg, urgency);
-		}
+			if(process(line, gobid)) {
+				Color col = Color.WHITE;
+				synchronized (ui.sess.glob.party.memb) {
+					Party.Member pm = ui.sess.glob.party.memb.get(gobid);
+					if (pm != null)
+						col = pm.col;
+				}
+				if (from == null) {
+					append(new MyMessage(line), -1);
+				} else {
+					Message cmsg = new NamedMessage(from, line, Utils.blendcol(col, Color.WHITE, 0.5));
+					append(cmsg, urgency);
+				}
+			}
 	    } else {
 		super.uimsg(msg, args);
 	    }
