@@ -92,7 +92,7 @@ public class ChaseVectorSprite extends Sprite implements PView.Render2D {
                                         chaserColor = MAINCOLOR;
                                     } else if (gob.isPartyMember() && !gob.isMe()) {
                                         chaserColor = FRIENDCOLOR;
-                                    } else if ((gob.getres().name.equals("gfx/borka/male") || gob.getres().name.equals("gfx/borka/female")) && (target.isMe() || target.isPartyMember())) {
+                                    } else if ((gob.getres().name.equals("gfx/borka/body")) && (target.isMe() || target.isPartyMember())) {
                                         chaserColor = FOECOLOR;
                                     } else {
                                         chaserColor = UNKNOWNCOLOR;
