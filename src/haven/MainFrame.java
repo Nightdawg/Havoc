@@ -30,6 +30,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.*;
+import java.sql.*;
 import java.util.*;
 import java.lang.reflect.*;
 
@@ -49,6 +50,18 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	    javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
 	} catch(Exception e) {}
     }
+
+	static {
+		try {
+			FlowerMenu.createDatabaseIfNotExist();
+			FlowerMenu.fillAutoChooseMap();
+			if(FlowerMenu.autoChoose.size() == 0){
+				FlowerMenu.addInit();
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
     DisplayMode findmode(int w, int h) {
 	GraphicsDevice dev = getGraphicsConfiguration().getDevice();

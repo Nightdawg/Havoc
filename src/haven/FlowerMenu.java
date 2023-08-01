@@ -28,6 +28,12 @@ package haven;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.sql.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import static java.lang.Math.PI;
 
 public class FlowerMenu extends Widget {
@@ -43,6 +49,14 @@ public class FlowerMenu extends Widget {
     public static final int ph = UI.scale(30), ppl = 8;
     public Petal[] opts;
     private UI.Grab mg, kg;
+
+
+	//AutoFlowerStuff
+	private static final String DATABASE = "jdbc:sqlite:static_data.db";
+	public final String[] options;
+	public static Map<String, Boolean> autoChoose = new HashMap<>();
+	private static String nextAutoSel;
+
 
     @RName("sm")
     public static class $_ implements Factory {
@@ -228,6 +242,8 @@ public class FlowerMenu extends Widget {
 
     public FlowerMenu(String... options) {
 	super(Coord.z);
+	this.options = options;
+	addOptionsToDatabase(options);
 	opts = new Petal[options.length];
 	for(int i = 0; i < options.length; i++) {
 	    add(opts[i] = new Petal(options[i], i));
@@ -293,4 +309,115 @@ public class FlowerMenu extends Widget {
 	    wdgmsg("cl", option.num, ui.modflags());
 	}
     }
+
+	public static void setNextSelection(String name) {
+		nextAutoSel = name;
+	}
+
+	public void tryAutoSelect() {
+		if (nextAutoSel != null) {
+			int i = 0;
+			for (String option : options) {
+				if (option.equals(nextAutoSel)) {
+					ui.rcvr.rcvmsg(ui.lastid, "cl", i, ui.modflags());
+					nextAutoSel = null;
+					return;
+				}
+				i++;
+			}
+			ui.rcvr.rcvmsg(ui.lastid, "cl", -1, ui.modflags());
+			nextAutoSel = null;
+		}
+		else {
+			int i = 0;
+			for (String option : options) {
+				if (autoChoose.get(option)) {
+					ui.rcvr.rcvmsg(ui.lastid, "cl", i, ui.modflags());
+				}
+				i++;
+			}
+		}
+	}
+
+	public static void addInit(){
+		autoChoose.put("Chop", false);
+		checkAndInsertFlowerMenuOption("Chop");
+	}
+
+	private void addOptionsToDatabase(String[] options) {
+		try {
+			for (String option : options) {
+				if (autoChoose.get(option) == null) {
+					autoChoose.put(option, false);
+					checkAndInsertFlowerMenuOption(option);
+				}
+			}
+		} catch (Exception ignored) {
+		}
+	}
+
+	private static void checkAndInsertFlowerMenuOption(String flowerMenuOptionName) {
+		try (Connection conn = DriverManager.getConnection(DATABASE)) {
+			String checkSql = "SELECT count(*) FROM flower_menu_options WHERE name = ?";
+			try (PreparedStatement pstmt = conn.prepareStatement(checkSql)) {
+				pstmt.setString(1, flowerMenuOptionName);
+				ResultSet rs = pstmt.executeQuery();
+				if (rs.getInt(1) == 0) { // if record doesn't exist
+					String insertSql = "INSERT INTO flower_menu_options(name) VALUES(?)";
+					try (PreparedStatement insertPstmt = conn.prepareStatement(insertSql)) {
+						insertPstmt.setString(1, flowerMenuOptionName);
+						insertPstmt.executeUpdate();
+					}
+				}
+			}
+		} catch (SQLException ignored) {
+			System.out.println("Problem with inserting flower menu option to database.");
+		}
+	}
+
+	public static void fillAutoChooseMap() {
+		String sql = "SELECT name, auto_use FROM flower_menu_options";
+		try (Connection conn = DriverManager.getConnection(DATABASE);
+			 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String name = rs.getString("name");
+				boolean autoUse = rs.getBoolean("auto_use");
+				autoChoose.put(name, autoUse);
+			}
+		} catch (SQLException e) {
+			System.out.println("Problem with fetching flower menu options from database.");
+		}
+	}
+
+	public static void createDatabaseIfNotExist() throws SQLException {
+		try (Connection conn = DriverManager.getConnection(DATABASE)) {
+			if (conn != null) {
+				createSchemaElementIfNotExist(conn, "flower_menu_options",
+						"id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+								"name VARCHAR(255) UNIQUE NOT NULL, " +
+								"auto_use BOOLEAN DEFAULT FALSE NOT NULL",
+						"table");
+			}
+		}
+	}
+
+	private static void createSchemaElementIfNotExist(Connection conn, String name, String definitions, String type) throws SQLException {
+		if (!schemaElementExists(conn, name, type)) {
+			String sql = type.equals("table") ? "CREATE TABLE " + name + " (\n" + definitions + "\n);" : "CREATE INDEX " + name + " ON " + definitions + ";";
+			try (Statement stmt = conn.createStatement()) {
+				stmt.execute(sql);
+			}
+			System.out.println("A new " + type + " (" + name + ") has been created in the database.");
+		}
+	}
+
+	private static boolean schemaElementExists(Connection conn, String name, String type) throws SQLException {
+		String checkExistsQuery = "SELECT name FROM sqlite_master WHERE type='" + type + "' AND name='" + name + "';";
+		try (Statement stmt = conn.createStatement();
+			 ResultSet rs = stmt.executeQuery(checkExistsQuery)) {
+			return rs.next();
+		}
+	}
+
 }
