@@ -3010,10 +3010,10 @@ public class OptWnd extends Window {
 				"\n$col[255,255,255]{White: }$col[185,185,185]{You are the chaser}" +
 				"\n$col[0,160,0]{Green: }$col[185,185,185]{A party member is the chaser}" +
 				"\n$col[185,0,0]{Red: }$col[185,185,185]{A player is chasing you or a party member}" +
-				"\n$col[224,213,0]{Yellow: }$col[185,185,185]{Someone/something is chasing a non-party member or animal}" +
+				"\n$col[224,213,0]{Yellow: }$col[185,185,185]{An animal is the chaser, OR random (non-party) players are chasing each other}" +
 				"\n=====================" +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{Chase vectors include queuing attacks, clicking a critter to pick up, or simply following someone.}" +
-				"\n$col[218,163,0]{Note:} $col[185,185,185]{Chase vectors sometimes don't show when chasing a critter that is standing still. The client treats this as something else for some reason.}", UI.scale(350));
+				"\n$col[218,163,0]{Disclaimer:} $col[185,185,185]{Chase vectors sometimes don't show when chasing a critter that is standing still. The client treats this as something else for some reason and I can't fix it.}", UI.scale(430));
 	}
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", UI.scale(300));
