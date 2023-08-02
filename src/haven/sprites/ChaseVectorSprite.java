@@ -48,42 +48,44 @@ public class ChaseVectorSprite extends Sprite implements PView.Render2D {
                             if (target != null) {
                                 Resource targetRes = target.getres();
 			                    if (Arrays.stream(IGNOREDCHASEVECTORS).noneMatch(gob.getres().name::contains) && Arrays.stream(IGNOREDCHASEVECTORS).noneMatch(targetRes.name::contains)) {
-                                    if (gob.getres().name.equals("gfx/terobjs/vehicle/rowboat")) {
-                                        for (Gob occupant : gob.occupants) {
-                                            if (occupant.getPoses().contains("rowboat-d") || occupant.getPoses().contains("rowing")) {
+                                    if (gob.occupants.size() > 0){
+                                        if (gob.getres().name.equals("gfx/terobjs/vehicle/rowboat")) {
+                                            for (Gob occupant : gob.occupants) {
+                                                if (occupant.getPoses().contains("rowboat-d") || occupant.getPoses().contains("rowing")) {
+                                                    if (occupant.occupiedGobID == gob.id) {
+                                                        gob = occupant;
+                                                    }
+                                                }
+                                            }
+                                        } else if (gob.getres().name.equals("gfx/terobjs/vehicle/knarr")) {
+                                            for (Gob occupant : gob.occupants) {
+                                                if (occupant.getPoses().contains("knarrman9")) {
+                                                    if (occupant.occupiedGobID == gob.id) {
+                                                        gob = occupant;
+                                                    }
+                                                }
+                                            }
+                                        } else if (gob.getres().name.equals("gfx/terobjs/vehicle/spark")) {
+                                            for (Gob occupant : gob.occupants) {
+                                                if (occupant.getPoses().contains("sparkan-idle") || occupant.getPoses().contains("sparkan-sparkan")) {
+                                                    if (occupant.occupiedGobID == gob.id) {
+                                                        gob = occupant;
+                                                    }
+                                                }
+                                            }
+                                        } else if (gob.getres().name.equals("gfx/terobjs/vehicle/snekkja")) {
+                                            for (Gob occupant : gob.occupants) {
+                                                if (occupant.getPoses().contains("snekkjaman4")) {
+                                                    if (occupant.occupiedGobID == gob.id) {
+                                                        gob = occupant;
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            for (Gob occupant : gob.occupants) {
                                                 if (occupant.occupiedGobID == gob.id) {
                                                     gob = occupant;
                                                 }
-                                            }
-                                        }
-                                    } else if (gob.getres().name.equals("gfx/terobjs/vehicle/knarr")) {
-                                        for (Gob occupant : gob.occupants) {
-                                            if (occupant.getPoses().contains("knarrman9")) {
-                                                if (occupant.occupiedGobID == gob.id) {
-                                                    gob = occupant;
-                                                }
-                                            }
-                                        }
-                                    } else if (gob.getres().name.equals("gfx/terobjs/vehicle/spark")) {
-                                        for (Gob occupant : gob.occupants) {
-                                            if (occupant.getPoses().contains("sparkan-idle") || occupant.getPoses().contains("sparkan-sparkan")) {
-                                                if (occupant.occupiedGobID == gob.id) {
-                                                    gob = occupant;
-                                                }
-                                            }
-                                        }
-                                    } else if (gob.getres().name.equals("gfx/terobjs/vehicle/snekkja")) {
-                                        for (Gob occupant : gob.occupants) {
-                                            if (occupant.getPoses().contains("snekkjaman4")) {
-                                                if (occupant.occupiedGobID == gob.id) {
-                                                    gob = occupant;
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        for (Gob occupant : gob.occupants) {
-                                            if (occupant.occupiedGobID == gob.id) {
-                                                gob = occupant;
                                             }
                                         }
                                     }
