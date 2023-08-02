@@ -186,9 +186,8 @@ public class OceanScoutBot extends Window implements Runnable {
 
     private boolean isGobCollision(Coord t) {
         for (Gob gob : nearbyGobs) {
-            if (gob != null && gob.collisionBox.fx != null && gob.collisionBox.fx.model != null && gob.collisionBox.fx.model.bbox != null) {
-                Model.BoundingBox bb = gob.collisionBox.fx.model.bbox;
-                if (Pathfinder.isInsideBoundBox(gob.rc.floor(), gob.a, bb, t)) {
+            if (gob != null && gob.getres() != null) {
+                if (Pathfinder.isInsideBoundBox(gob.rc.floor(), gob.a, gob.getres().name, t)) {
                     return true;
                 }
             }

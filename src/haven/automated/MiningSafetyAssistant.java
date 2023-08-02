@@ -324,7 +324,6 @@ public class MiningSafetyAssistant extends Window implements Runnable {
         int tilesCountY = Math.abs(one.y - two.y) + 1;
         for (int x = 0; x < tilesCountX; x++) {
             for (int y = 0; y < tilesCountY; y++) {
-                System.out.println(new Coord2d(northWestCoord.x + (x * 11) + 5.5, northWestCoord.y + (y * 11) + 5.5));
                 tiles.add(new Coord2d(northWestCoord.x + (x * 11) + 5.5, northWestCoord.y + (y * 11) + 5.5));
             }
         }

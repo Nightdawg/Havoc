@@ -146,7 +146,7 @@ public class Map {
                 Resource res = gob.getres();
                 ResDrawable rd = gob.getattr(ResDrawable.class);
                 if (rd != null) {
-                    if (res.name.endsWith("/pow") && (rd.sdt.peekrbuf(0) != 33 || rd.sdt.peekrbuf(0) != 17)) {
+                    if (res.name.endsWith("/pow") && (rd.sdt.peekrbuf(0) != 33 && rd.sdt.peekrbuf(0) != 17)) {
                         addGobToList(new Coord(-4, -4), new Coord(4, 4), gob);
                     }
                 }
@@ -171,40 +171,16 @@ public class Map {
                             return;
                         }
 
-                        if (collisionBox.coords.length > 3) {
-                            double minX = Double.MAX_VALUE;
-                            double minY = Double.MAX_VALUE;
-                            double maxX = Double.MIN_VALUE;
-                            double maxY = Double.MIN_VALUE;
-
-                            for (Coord2d coord : collisionBox.coords) {
-                                minX = Math.min(minX, coord.x);
-                                minY = Math.min(minY, coord.y);
-                                maxX = Math.max(maxX, coord.x);
-                                maxY = Math.max(maxY, coord.y);
-                            }
-                            addGobToList(new Coord2d(minX, minY).floor(), new Coord2d(maxX, maxY).floor(), gob);
-                        }
-
-                        // Otherwise, find the minimum and maximum x and y values for 3 coordinates
                         double minX = Double.MAX_VALUE;
                         double minY = Double.MAX_VALUE;
                         double maxX = Double.MIN_VALUE;
                         double maxY = Double.MIN_VALUE;
 
                         for (Coord2d coord : collisionBox.coords) {
-                            if (coord.x < minX) {
-                                minX = coord.x;
-                            }
-                            if (coord.y < minY) {
-                                minY = coord.y;
-                            }
-                            if (coord.x > maxX) {
-                                maxX = coord.x;
-                            }
-                            if (coord.y > maxY) {
-                                maxY = coord.y;
-                            }
+                            minX = Math.min(minX, coord.x);
+                            minY = Math.min(minY, coord.y);
+                            maxX = Math.max(maxX, coord.x);
+                            maxY = Math.max(maxY, coord.y);
                         }
                         addGobToList(new Coord2d(minX, minY).floor(), new Coord2d(maxX, maxY).floor(), gob);
                     }
@@ -291,22 +267,7 @@ public class Map {
         dbg.rect(ca.x, ca.y, cb.x, cb.y, cc.x, cc.y, cd.x, cd.y, Color.CYAN);
     }
 
-    public void excludeGob(Gob gob) {
-        Hitbox hb = null;
-        if (gob.collisionBox != null) {
-            hb = gob.collisionBox.fx;
-        }
-        if (hb == null || hb.model == null || hb.model.bbox == null) {
-            //System.out.println("EXCLUDE: gob hb for " + gob.getres() + " was null");
-            return;
-        }
-
-        Coord bboxa = hb.model.bbox.a;
-        Coord bboxb = hb.model.bbox.b;
-
-        //System.out.println("EXCLUDE: gob hb for " + gob.getres() + " with hb: " + bboxa + " and " + bboxb);
-
-        // gob coordinate relative to the origin (player's location)
+    public void excludeGob(Coord topLeftPoint, Coord bottomRightPoint, Gob gob) {
         int gcx = origin - (plc.x - gob.rc.floor().x);
         int gcy = origin - (plc.y - gob.rc.floor().y);
 
@@ -314,10 +275,10 @@ public class Map {
         // FIXME: should rotate around pixel's center
         double cos = Math.cos(gob.a);
         double sin = Math.sin(gob.a);
-        Coord ca = Utils.rotate(gcx + bboxa.x - plbbox, gcy + bboxa.y - plbbox, gcx, gcy, cos, sin);
-        Coord cb = Utils.rotate(gcx + bboxb.x + plbbox, gcy + bboxa.y - plbbox, gcx, gcy, cos, sin);
-        Coord cc = Utils.rotate(gcx + bboxb.x + plbbox, gcy + bboxb.y + plbbox, gcx, gcy, cos, sin);
-        Coord cd = Utils.rotate(gcx + bboxa.x - plbbox, gcy + bboxb.y + plbbox, gcx, gcy, cos, sin);
+        Coord ca = Utils.rotate(gcx + topLeftPoint.x - plbbox, gcy + topLeftPoint.y - plbbox, gcx, gcy, cos, sin);
+        Coord cb = Utils.rotate(gcx + bottomRightPoint.x + plbbox, gcy + topLeftPoint.y - plbbox, gcx, gcy, cos, sin);
+        Coord cc = Utils.rotate(gcx + bottomRightPoint.x + plbbox, gcy + bottomRightPoint.y + plbbox, gcx, gcy, cos, sin);
+        Coord cd = Utils.rotate(gcx + topLeftPoint.x - plbbox, gcy + bottomRightPoint.y + plbbox, gcx, gcy, cos, sin);
 
         // exclude the gob if it's near map edges so we won't need to do bounds checks all later on
         if (ca.x - mapborder < 0 || ca.y - mapborder < 0 || ca.x + mapborder >= sz || ca.y + mapborder >= sz ||
