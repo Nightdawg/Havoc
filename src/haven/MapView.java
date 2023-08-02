@@ -783,6 +783,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	this.glob = glob;
 	this.cc = cc;
 	this.plgob = plgob;
+	glob.oc.getgob(plgob).delattr(KinInfo.class); // ND: This is only needed for Valhalla. That's the only time plgob seems to change while you're playing. I guess it will work anytime anyway.
 	basic.add(new Outlines(false));
 	basic.add(this.gobs = new Gobs());
 	basic.add(this.terrain = new Terrain());
