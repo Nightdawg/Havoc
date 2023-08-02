@@ -202,7 +202,6 @@ public class Pathfinder implements Runnable {
             }
         }
         terminate = true;
-        OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(false);
     }
 
     static public boolean isInsideBoundBox(Coord gobRc, double gobA, Model.BoundingBox gobBBox, Coord point) {

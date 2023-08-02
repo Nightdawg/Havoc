@@ -2968,9 +2968,6 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	}
 
 	public void pfLeftClick(Coord mc, String action) {
-		if(!Gob.showCollisionBoxes){
-			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(true);
-		}
 		try{
 		Gob player = player();
 		if (player == null)
@@ -3006,9 +3003,6 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	}
 
 	public void pfRightClick(Gob gob, int meshid, int clickb, int modflags, String action) {
-		if (!Gob.showCollisionBoxes) {
-			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(true);
-		}
 		Gob player = player();
 		if (player == null)
 			return;

@@ -157,10 +157,8 @@ public class Map {
                     if (res.name.contains("gate") && (rd.sdt.peekrbuf(0) != 1)){
                         if(gob.getres().name.contains("big")){
                             addGobToList(new Coord(-5, -16), new Coord(5, 16), gob);
-                            System.out.println("adding gob " + gob.getres().name);
                         } else {
                             addGobToList(new Coord(-5, -11), new Coord(5, 11), gob);
-                            System.out.println("adding gob " + gob.getres().name);
                         }
                     }
                 }
