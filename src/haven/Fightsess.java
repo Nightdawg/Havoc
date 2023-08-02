@@ -50,7 +50,7 @@ public class Fightsess extends Widget {
     public static final Coord indbframeo = (indframe.sz().sub(off)).div(2);
     public static final Tex useframe = Resource.loadtex("gfx/hud/combat/lastframe");
     public static final Coord useframeo = (useframe.sz().sub(off)).div(2);
-    public static final int actpitch = UI.scale(50);
+    public static final int actpitch = UI.scale(52);
 	public static final Text.Foundry ipAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 16);
 	public static final Text.Foundry openingAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 12);
 	public static final Text.Foundry cleaveAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 10);
@@ -229,7 +229,7 @@ public class Fightsess extends Widget {
 	};
 
     private static Coord actc(int i) {
-	int rl = 5;
+	int rl = singleRowCombatMovesSetting ? 10 : 5;
 	return(new Coord((actpitch * (i % rl)) - (((rl - 1) * actpitch) / 2), UI.scale(125) + ((i / rl) * actpitch)));
     }
 
@@ -249,6 +249,7 @@ public class Fightsess extends Widget {
 
 	public static boolean markCombatTargetSetting = true;
 	public static boolean showKeybindCombatSetting = true;
+	public static boolean singleRowCombatMovesSetting = true;
 	public void draw(GOut g) {
 		updatepos();
 		GameUI gui = gameui();
@@ -509,7 +510,7 @@ public class Fightsess extends Widget {
 						if (keybindString.contains("Alt")) {
 							keybindString = keybindString.replace("Alt", "a");
 						}
-						g.aimage(new TexI(Utils.outline2(keybindsFoundry.render(keybindString).img, Color.BLACK, true)), ca.add(img.sz()), 0.95, 0.95);
+						g.aimage(new TexI(Utils.outline2(keybindsFoundry.render(keybindString).img, Color.BLACK, true)), ca.add((int)(img.sz().x/2), img.sz().y + UI.scale(8)), 0.5, 0.5);
 					}
 					//
 					if(i == use) {

@@ -1526,6 +1526,7 @@ public class OptWnd extends Window {
 			Fightsess.drawFloatingCombatData = Utils.getprefb("drawFloatingCombatData", true);
 			Fightsess.drawFloatingCombatDataOnCur = Utils.getprefb("drawFloatingCombatDataOnCurrentTarget ", true);
 			Fightsess.showKeybindCombatSetting = Utils.getprefb("showCombatHotkeysUI", true);
+			Fightsess.singleRowCombatMovesSetting = Utils.getprefb("singleRowCombatMoves", false);
 			Fightsess.markCombatTargetSetting = Utils.getprefb("markCurrentCombatTarget", true);
 			Fightview.autoPeaceSetting = Utils.getprefb("autoPeaceCombat", false);
 
@@ -1580,6 +1581,14 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(16, 10));
+			prev = add(new CheckBox("Use single row for Combat Moves"){
+				{a = Utils.getprefb("singleRowCombatMoves", false);}
+				public void set(boolean val) {
+					Utils.setprefb("singleRowCombatMoves", val);
+					Fightsess.singleRowCombatMovesSetting = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
 
 			prev = add(new CheckBox("Display Combat Data above Current Target"){
 				{a = Utils.getprefb("drawFloatingCombatData", true);}
