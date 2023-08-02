@@ -742,6 +742,7 @@ public class CheckpointManager extends Window implements Runnable {
             if(items.size() > 1){
                 gui.msg("Route reversed.");
                 Collections.reverse(items);
+                refreshCheckpointNumbers();
             }
         }
 
