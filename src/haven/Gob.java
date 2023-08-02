@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.automated.helpers.HitBoxes;
 import haven.render.*;
 import haven.res.gfx.fx.msrad.MSRad;
 import haven.sprites.*;
@@ -101,6 +102,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			toggleMineLadderRadius();
 			toggleBeeSkepRadius();
 			toggleTroughsRadius();
+			HitBoxes.addHitBox(this);
 			if (getattr(Drawable.class) instanceof Composite) {
 				try {
 					initComp((Composite)getattr(Drawable.class));
