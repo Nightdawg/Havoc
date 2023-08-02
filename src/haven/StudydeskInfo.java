@@ -3,6 +3,7 @@ package haven;
 import haven.resutil.Curiosity;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,6 +25,10 @@ public class StudydeskInfo extends Widget {
     private Collection curioCounter = new ArrayList(); //used to see if the number of curios on the table changes to redraw the addons
 
     private static int currentSliderValue = Utils.getprefi("curiotimetarget", 600);
+
+    private BufferedImage renderedImage;
+    private Tex texImage;
+    public static long delayTextUpdate;
 
 
     public StudydeskInfo(int x, int y, Inventory studyInv) {
@@ -55,7 +60,6 @@ public class StudydeskInfo extends Widget {
                 studyhours.settext(String.format(days == 1 ? (hours == 1 ? "%d Day and %d Hour" : "%d Day and %d Hours") : (hours == 1 ? "%d Days and %d Hour" : "%d Days and %d Hours"), days, hours));
             }
         }, UI.scale(new Coord(0, 75)));
-
     }
 
     private static final Coord totalLPCoord = UI.scale(new Coord(0, 15));
@@ -64,70 +68,87 @@ public class StudydeskInfo extends Widget {
 
     public void draw(GOut g) {
         super.draw(g);
-        int sizeY = 0;
-        int y = UI.scale(40);
-        int totalLP = 0;
-        int totalAttn = 0;
-        HashMap<String, Double> studyTimes = new HashMap<String, Double>();
-        HashMap<String, Integer> AttnTotal = new HashMap<String, Integer>();
-        List<Curio> curiolist = new ArrayList<>();
-        for (WItem wItem : studyInv.getAllItems()) {
-            try {
-                Curiosity ci = ItemInfo.find(Curiosity.class, wItem.item.info());
-                totalLP += ci.exp;
-                        curiolist.add(new Curio(wItem.item.getname(),
-                                studyTimes.get(wItem.item.getname()) == null ? wItem.item.studytime : studyTimes.get(wItem.item.getname()) + wItem.item.studytime,
-                                ci.exp));
-                studyTimes.put(wItem.item.getname(), studyTimes.get(wItem.item.getname()) == null ? wItem.item.studytime : studyTimes.get(wItem.item.getname()) + wItem.item.studytime);
-                AttnTotal.put(wItem.item.getname(), AttnTotal.get(wItem.item.getname()) == null ? ci.mw : AttnTotal.get(wItem.item.getname()));
-            } catch (NullPointerException | Loading qq) {
-            }
+        long now = System.currentTimeMillis();
+        if ((now - delayTextUpdate) > 100) {
+            render();
         }
-        g.image(Text.render("Total LP: " + String.format("%,d", totalLP)).tex(), totalLPCoord);
-
-        List<Map.Entry<String, Integer>> lst2 = AttnTotal.entrySet().stream().sorted((e1, e2) -> e1.getValue().compareTo(e2.getValue())).collect(Collectors.toList());
-        for (Map.Entry<String, Integer> entry : lst2) {
-            totalAttn += entry.getValue();
-        }
-        g.image(Text.render("Total Attention: " + String.format("%,d", totalAttn)).tex(), totalAttentionCoord);
-
-        //iterates the curio list to only print out total study times for unique curios
-        List<Map.Entry<String, Double>> lst = studyTimes.entrySet().stream().sorted((e1, e2) -> e1.getValue().compareTo(e2.getValue())).collect(Collectors.toList());
-        for (Map.Entry<String, Double> entry : lst) {
-            curioCounter.add(entry.getKey());
-            int LP = 0;
-            for (Curio c : curiolist) {
-                if (c.curioName.equals(entry.getKey()))
-                    LP += c.lpgain;
-            }
-            String imageText = entry.getKey() + ": " + sensibleTimeFormat(entry.getValue()) + " - " + sensibleLPFormat(LP);
-            Coord imageCoord = new Coord(UI.scale(10), y);
-            if (entry.getValue() > currentSliderValue * 3) {
-                g.image(Utils.outline2(Text.render(imageText, CURIOHIGH).img, Color.BLACK), imageCoord);
-            } else if (entry.getValue() < currentSliderValue) {
-                g.image(Utils.outline2(Text.render(imageText, CURIOLOW).img, Color.BLACK), imageCoord);
-            } else {
-                g.image(Utils.outline2(Text.render(imageText, CURIOTARGET).img, Color.BLACK), imageCoord);
-            }
-            y += UI.scale(15);
-            sizeY += UI.scale(15);
-            curios.add(entry.getKey());
-        }
-
-        if (curiocount != curioCounter.size()) {
-
-            studyhours.move(new Coord(UI.scale(110), y + UI.scale(15)));
-            curiosliderlabel.move(new Coord(0, y + UI.scale(15)));
-            curioslider.move(new Coord(0, y + UI.scale(39)));
-
-            sizeY += UI.scale(100);
-            resize(this.sz.x, sizeY);
-
-            parent.pack();
-        }
-
+        g.image(texImage, new Coord(0, 0));
     }
+    public void render(){
+        try {
+            int sizeY = 0;
+            int y = UI.scale(40);
+            int totalLP = 0;
+            int totalAttn = 0;
+            HashMap<String, Double> studyTimes = new HashMap<String, Double>();
+            HashMap<String, Integer> AttnTotal = new HashMap<String, Integer>();
+            List<Curio> curiolist = new ArrayList<>();
+            renderedImage = new BufferedImage(UI.scale(1000), UI.scale(2000), 2);
+            Graphics2D g2d = renderedImage.createGraphics();
+            for (WItem wItem : studyInv.getAllItems()) {
+                try {
+                    Curiosity ci = ItemInfo.find(Curiosity.class, wItem.item.info());
+                    totalLP += ci.exp;
+                    curiolist.add(new Curio(wItem.item.getname(),
+                            studyTimes.get(wItem.item.getname()) == null ? wItem.item.studytime : studyTimes.get(wItem.item.getname()) + wItem.item.studytime,
+                            ci.exp));
+                    studyTimes.put(wItem.item.getname(), studyTimes.get(wItem.item.getname()) == null ? wItem.item.studytime : studyTimes.get(wItem.item.getname()) + wItem.item.studytime);
+                    AttnTotal.put(wItem.item.getname(), AttnTotal.get(wItem.item.getname()) == null ? ci.mw : AttnTotal.get(wItem.item.getname()));
+                } catch (NullPointerException | Loading qq) {
+                }
+            }
+//        g.image(Text.render("Total LP: " + String.format("%,d", totalLP)).tex(), totalLPCoord);
+            g2d.drawImage(Utils.outline2(Text.render("Total LP: " + String.format("%,d", totalLP)).img, Color.BLACK), totalLPCoord.x, totalLPCoord.y, null);
+            List<Map.Entry<String, Integer>> lst2 = AttnTotal.entrySet().stream().sorted((e1, e2) -> e1.getValue().compareTo(e2.getValue())).collect(Collectors.toList());
+            for (Map.Entry<String, Integer> entry : lst2) {
+                totalAttn += entry.getValue();
+            }
+//        g.image(Text.render("Total Attention: " + String.format("%,d", totalAttn)).tex(), totalAttentionCoord);
+            g2d.drawImage(Utils.outline2(Text.render("Total Attention: " + String.format("%,d", totalAttn)).img, Color.BLACK), totalAttentionCoord.x, totalAttentionCoord.y, null);
+            //iterates the curio list to only print out total study times for unique curios
+            List<Map.Entry<String, Double>> lst = studyTimes.entrySet().stream().sorted((e1, e2) -> e1.getValue().compareTo(e2.getValue())).collect(Collectors.toList());
+            for (Map.Entry<String, Double> entry : lst) {
+                curioCounter.add(entry.getKey());
+                int LP = 0;
+                for (Curio c : curiolist) {
+                    if (c.curioName.equals(entry.getKey()))
+                        LP += c.lpgain;
+                }
+                String imageText = entry.getKey() + ": " + sensibleTimeFormat(entry.getValue()) + " - " + sensibleLPFormat(LP);
+                Coord imageCoord = new Coord(UI.scale(10), y);
+                if (entry.getValue() > currentSliderValue * 3) {
+//                g.image(Utils.outline2(Text.render(imageText, CURIOHIGH).img, Color.BLACK), imageCoord);
+                    g2d.drawImage(Utils.outline2(Text.render(imageText, CURIOHIGH).img, Color.BLACK), imageCoord.x, imageCoord.y, null);
+                } else if (entry.getValue() < currentSliderValue) {
+//                g.image(Utils.outline2(Text.render(imageText, CURIOLOW).img, Color.BLACK), imageCoord);
+                    g2d.drawImage(Utils.outline2(Text.render(imageText, CURIOLOW).img, Color.BLACK), imageCoord.x, imageCoord.y, null);
+                } else {
+//                g.image(Utils.outline2(Text.render(imageText, CURIOTARGET).img, Color.BLACK), imageCoord);
+                    g2d.drawImage(Utils.outline2(Text.render(imageText, CURIOTARGET).img, Color.BLACK), imageCoord.x, imageCoord.y, null);
+                }
+                y += UI.scale(15);
+                sizeY += UI.scale(15);
+                curios.add(entry.getKey());
+            }
 
+            if (curiocount != curioCounter.size()) {
+
+                studyhours.move(new Coord(UI.scale(110), y + UI.scale(15)));
+                curiosliderlabel.move(new Coord(0, y + UI.scale(15)));
+                curioslider.move(new Coord(0, y + UI.scale(39)));
+
+                sizeY += UI.scale(100);
+                resize(this.sz.x, sizeY);
+
+                g2d.dispose();
+                parent.pack();
+            }
+            renderedImage = renderedImage.getSubimage(0, 0, parent.sz.x, parent.sz.y);
+            texImage = new TexI(renderedImage);
+            StudydeskInfo.delayTextUpdate = System.currentTimeMillis();
+        } catch (Exception ignored){
+        }
+    }
 
     // Input time as minutes
     String sensibleTimeFormat(Double time) {
