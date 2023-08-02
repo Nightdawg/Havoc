@@ -554,7 +554,7 @@ public class Fightsess extends Widget {
 		g.rect(sc, new Coord(msz.x, msz.y));
 
 		g.chcolor(Color.WHITE);
-		g.atextstroked(IMeter.characterCurrentHealth+" ("+(Utils.fmt1DecPlace((int)(m.a*100)))+"% HHP)", new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5, Color.WHITE, Color.BLACK, Text.num12boldFnd);
+		g.aimage(Text.renderstroked((IMeter.characterCurrentHealth+" ("+(Utils.fmt1DecPlace((int)(m.a*100)))+"% HHP)"), Text.num12boldFnd).tex(), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5);
 	}
 
 	private void drawCombatData(GOut g, Fightview.Relation rels, Coord sc) {
@@ -621,9 +621,8 @@ public class Fightsess extends Widget {
 		int oipOffset = rels.oip < 10 ? 78 : rels.oip < 100 ? 81 : 86;
 
 		//add ip / oip text
-		g.atextstroked(Integer.toString(rels.ip), new Coord(topLeftFrame.x + UI.scale(ipOffset), topLeftFrame.y + UI.scale(13)), 1, 0.5, ipcol, Color.black, ipAdditionalFont);
-		g.atextstroked(Integer.toString(rels.oip), new Coord(topLeftFrame.x + UI.scale(oipOffset), topLeftFrame.y + UI.scale(13)), 1, 0.5, oipcol, Color.black, ipAdditionalFont);
-
+		g.aimage(Text.renderstroked(Integer.toString(rels.ip), ipAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(ipOffset), topLeftFrame.y + UI.scale(13)), 1, 0.5);
+		g.aimage(Text.renderstroked(Integer.toString(rels.oip), ipAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(oipOffset), topLeftFrame.y + UI.scale(13)), 1, 0.5);
 		//maneuver
 		for (Buff buff : rels.buffs.children(Buff.class)) {
 			try {
@@ -693,7 +692,7 @@ public class Fightsess extends Widget {
 				g.chcolor(255, 255, 255, 255);
 
 				int valueOffset = opening.value < 10 ? 15 : opening.value< 100 ? 19 : 22;
-				g.atextstroked(String.valueOf(opening.value), new Coord(topLeftFrame.x + UI.scale(openingOffsetX) + UI.scale(valueOffset) - UI.scale(1), topLeftFrame.y + UI.scale(43)), 1, 0.5, Color.WHITE, Color.BLACK, openingAdditionalFont);
+				g.aimage(Text.renderstroked(String.valueOf(opening.value), openingAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(openingOffsetX) + UI.scale(valueOffset) - UI.scale(1), topLeftFrame.y + UI.scale(43)), 1, 0.5);
 				if (iterator == 2) openingOffsetX += 22;
 				else openingOffsetX += 21;
 				iterator += 1;
@@ -712,7 +711,7 @@ public class Fightsess extends Widget {
 			g.chcolor(new Color(213, 0, 0, 255));
 			g.frect(new Coord(topLeftFrame.x + UI.scale(2), topLeftFrame.y - UI.scale(11)), UI.scale(new Coord((int) ((82 * timer)/cleaveDuration), 12)));
 			g.chcolor(new Color(255, 255, 255, 255));
-			g.atextstroked(getCooldownTime(timer), new Coord(topLeftFrame.x + UI.scale(52), topLeftFrame.y - UI.scale(6)), 1, 0.5, Color.WHITE, Color.BLACK, cleaveAdditionalFont);
+			g.aimage(Text.renderstroked(getCooldownTime(timer), cleaveAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(52), topLeftFrame.y - UI.scale(6)), 1, 0.5);
 		}
 
 		//add defense cooldown indicator, just like cleave
@@ -727,7 +726,7 @@ public class Fightsess extends Widget {
 			g.chcolor(new Color(227, 136, 0, 255));
 			g.frect(new Coord(topLeftFrame.x + UI.scale(2), topLeftFrame.y - UI.scale(11)), UI.scale(new Coord((int) ((82 * timer)/rels.lastDefenceDuration), 12)));
 			g.chcolor(new Color(255, 255, 255, 255));
-			g.atextstroked(getCooldownTime(timer), new Coord(topLeftFrame.x + UI.scale(52), topLeftFrame.y - UI.scale(6)), 1, 0.5, Color.WHITE, Color.BLACK, cleaveAdditionalFont);
+			g.aimage(Text.renderstroked(getCooldownTime(timer), cleaveAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(52), topLeftFrame.y - UI.scale(6)), 1, 0.5);
 		}
 		g.chcolor(255, 255, 255, 255);
 	}
@@ -765,7 +764,7 @@ public class Fightsess extends Widget {
 		g.line(new Coord(sc.x+w1, sc.y), new Coord(sc.x+w1, sc.y+msz.y), 1);
 		g.rect(sc, new Coord(msz.x, msz.y));
 		g.chcolor(Color.WHITE);
-		g.atextstroked(Utils.fmt1DecPlace((int)(m.a*100)), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5, Color.WHITE, Color.BLACK, Text.num12boldFnd);
+		g.aimage(Text.renderstroked(Utils.fmt1DecPlace((int)(m.a*100)), Text.num12boldFnd).tex(), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5);
 	}
 	public static String fmt1DecPlace(double value) {
 		double rvalue = (double) Math.round(value * 10) / 10;
