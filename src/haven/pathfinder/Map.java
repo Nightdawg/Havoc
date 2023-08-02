@@ -2,6 +2,7 @@ package haven.pathfinder;
 
 
 import haven.*;
+import haven.automated.helpers.HitBoxes;
 
 import java.awt.*;
 import java.util.List;
@@ -34,12 +35,12 @@ public class Map {
     private final TraversableObstacle[][] pomap = new TraversableObstacle[sz][sz];
     private final ArrayList<TraversableObstacle> tocandidates = new ArrayList<TraversableObstacle>(300);
     public Coord plc;
-    private Coord endc;
+    private final Coord endc;
     private final MCache mcache;
     private Vertex vxstart;
     private Vertex vxend;
 
-    private Dbg dbg;
+    private final Dbg dbg;
     private final static boolean DEBUG = false;
     public final static boolean DEBUG_TIMINGS = false;
 
@@ -77,7 +78,7 @@ public class Map {
 
                 // exclude destination tile
                 if (endc.x < gcx + tbbax + plbbox && endc.x > gcx + tbbax - plbbox &&
-                     endc.y < gcy + tbbby + plbbox && endc.y > gcy + tbbay - plbbox)   {
+                        endc.y < gcy + tbbby + plbbox && endc.y > gcy + tbbay - plbbox) {
                     continue;
                 }
 
@@ -134,71 +135,136 @@ public class Map {
         }
     }
 
-    public void addGob(Gob gob) {
-        Hitbox hb = gob.collisionBox.fx;
-        if (hb == null || hb.model == null || hb.model.bbox == null) {
-            //System.out.println("ADDGOB: gob hb for " + gob.getres() + " was null");
+    public void analyzeGobHitBoxes(Gob gob) {
+        if (gob.getres() == null) {
             return;
         }
 
-        Coord bboxa = hb.model.bbox.a;
-        Coord bboxb = hb.model.bbox.b;
+        if (HitBoxes.collisionBoxMap.get(gob.getres().name) != null) {
+            HitBoxes.CollisionBox[] collisionBoxes = HitBoxes.collisionBoxMap.get(gob.getres().name);
+            if (gob.getres().name.contains("/pow")) {
+                Resource res = gob.getres();
+                ResDrawable rd = gob.getattr(ResDrawable.class);
+                if (rd != null) {
+                    if (res.name.endsWith("/pow") && (rd.sdt.peekrbuf(0) != 33 || rd.sdt.peekrbuf(0) != 17)) {
+                        addGobToList(new Coord(-4, -4), new Coord(4, 4), gob);
+                    }
+                }
+            } else if (gob.getres().name.contains("gate")){
+                Resource res = gob.getres();
+                ResDrawable rd = gob.getattr(ResDrawable.class);
+                if (rd != null){
+                    if (res.name.contains("gate") && (rd.sdt.peekrbuf(0) != 1)){
+                        if(gob.getres().name.contains("big")){
+                            addGobToList(new Coord(-5, -16), new Coord(5, 16), gob);
+                            System.out.println("adding gob " + gob.getres().name);
+                        } else {
+                            addGobToList(new Coord(-5, -11), new Coord(5, 11), gob);
+                            System.out.println("adding gob " + gob.getres().name);
+                        }
+                    }
+                }
+            } else {
+                for (HitBoxes.CollisionBox collisionBox : collisionBoxes) {
+                    if (!collisionBox.hitAble) {
+                        return;
+                    } else {
+                        if (collisionBox.coords == null || collisionBox.coords.length < 3) {
+                            return;
+                        }
 
-        //System.out.println("ADDGOB: gob hb for " + gob.getres() + " with hb: " + bboxa + " and " + bboxb);
-        
-        // gob coordinate relative to the origin (player's location)
+                        if (collisionBox.coords.length > 3) {
+                            double minX = Double.MAX_VALUE;
+                            double minY = Double.MAX_VALUE;
+                            double maxX = Double.MIN_VALUE;
+                            double maxY = Double.MIN_VALUE;
+
+                            for (Coord2d coord : collisionBox.coords) {
+                                minX = Math.min(minX, coord.x);
+                                minY = Math.min(minY, coord.y);
+                                maxX = Math.max(maxX, coord.x);
+                                maxY = Math.max(maxY, coord.y);
+                            }
+                            addGobToList(new Coord2d(minX, minY).floor(), new Coord2d(maxX, maxY).floor(), gob);
+                        }
+
+                        // Otherwise, find the minimum and maximum x and y values for 3 coordinates
+                        double minX = Double.MAX_VALUE;
+                        double minY = Double.MAX_VALUE;
+                        double maxX = Double.MIN_VALUE;
+                        double maxY = Double.MIN_VALUE;
+
+                        for (Coord2d coord : collisionBox.coords) {
+                            if (coord.x < minX) {
+                                minX = coord.x;
+                            }
+                            if (coord.y < minY) {
+                                minY = coord.y;
+                            }
+                            if (coord.x > maxX) {
+                                maxX = coord.x;
+                            }
+                            if (coord.y > maxY) {
+                                maxY = coord.y;
+                            }
+                        }
+                        addGobToList(new Coord2d(minX, minY).floor(), new Coord2d(maxX, maxY).floor(), gob);
+                    }
+                }
+            }
+        }
+    }
+
+    public void addGobToList(Coord topLeftPoint, Coord bottomRightPoint, Gob gob) {
         int gcx = origin - (plc.x - gob.rc.floor().x);
         int gcy = origin - (plc.y - gob.rc.floor().y);
 
-        // since non 90 degrees incremental rotation is wonky we slightly increase the bounding box for such gobs
-        // FIXME: but really should rotate around pixel's center
+
         int rotadj = 0;
         if (gob.a != 0 && gob.a != Math.PI && gob.a != Math.PI / 2.0 && gob.a != (3 * Math.PI) / 2) {
             rotadj = 1;
         }
         Coord ca, cb, cc, cd, wa, wb, wc, wd, clra, clrb, clrc, clrd;
 
-        // do not rotate square gobs
-        // FIXME: rotating rasters realiably to mach actual bounding boxes is very tricky. need better way...
-        if (Math.abs(bboxa.x) + Math.abs(bboxb.x) == Math.abs(bboxa.y) + Math.abs(bboxb.y) && rotadj == 0) {
+        if (Math.abs(topLeftPoint.x) + Math.abs(bottomRightPoint.x) == Math.abs(topLeftPoint.y) + Math.abs(bottomRightPoint.y) && rotadj == 0) {
             // bounding box
-            ca = new Coord(gcx + bboxa.x - plbbox, gcy + bboxa.y - plbbox);
-            cb = new Coord(gcx + bboxb.x + plbbox, gcy + bboxa.y - plbbox);
-            cc = new Coord(gcx + bboxb.x + plbbox, gcy + bboxb.y + plbbox);
-            cd = new Coord(gcx + bboxa.x - plbbox, gcy + bboxb.y + plbbox);
+            ca = new Coord(gcx + topLeftPoint.x - plbbox, gcy + topLeftPoint.y - plbbox);
+            cb = new Coord(gcx + bottomRightPoint.x + plbbox, gcy + topLeftPoint.y - plbbox);
+            cc = new Coord(gcx + bottomRightPoint.x + plbbox, gcy + bottomRightPoint.y + plbbox);
+            cd = new Coord(gcx + topLeftPoint.x - plbbox, gcy + bottomRightPoint.y + plbbox);
 
             // calculate waypoints located on the angular bisector of the corner
-            wa = new Coord(gcx + bboxa.x - way, gcy + bboxa.y - way);
-            wb = new Coord(gcx + bboxb.x + way, gcy + bboxa.y - way);
-            wc = new Coord(gcx + bboxb.x + way, gcy + bboxb.y + way);
-            wd = new Coord(gcx + bboxa.x - way, gcy + bboxb.y + way);
+            wa = new Coord(gcx + topLeftPoint.x - way, gcy + topLeftPoint.y - way);
+            wb = new Coord(gcx + bottomRightPoint.x + way, gcy + topLeftPoint.y - way);
+            wc = new Coord(gcx + bottomRightPoint.x + way, gcy + bottomRightPoint.y + way);
+            wd = new Coord(gcx + topLeftPoint.x - way, gcy + bottomRightPoint.y + way);
 
             // calculate TO clearance vertices
-            clra = new Coord(gcx + bboxa.x - clr, gcy + bboxa.y - clr);
-            clrb = new Coord(gcx + bboxb.x + clr, gcy + bboxa.y - clr);
-            clrc = new Coord(gcx + bboxb.x + clr, gcy + bboxb.y + clr);
-            clrd = new Coord(gcx + bboxa.x - clr, gcy + bboxb.y + clr);
+            clra = new Coord(gcx + topLeftPoint.x - clr, gcy + topLeftPoint.y - clr);
+            clrb = new Coord(gcx + bottomRightPoint.x + clr, gcy + topLeftPoint.y - clr);
+            clrc = new Coord(gcx + bottomRightPoint.x + clr, gcy + bottomRightPoint.y + clr);
+            clrd = new Coord(gcx + topLeftPoint.x - clr, gcy + bottomRightPoint.y + clr);
         } else {
             // rotate the bounding box.
             // FIXME: should rotate around pixel's center
             double cos = Math.cos(gob.a);
             double sin = Math.sin(gob.a);
-            ca = Utils.rotate(gcx + bboxa.x - plbbox, gcy + bboxa.y - plbbox, gcx, gcy, cos, sin);
-            cb = Utils.rotate(gcx + bboxb.x + plbbox, gcy + bboxa.y - plbbox, gcx, gcy, cos, sin);
-            cc = Utils.rotate(gcx + bboxb.x + plbbox, gcy + bboxb.y + plbbox, gcx, gcy, cos, sin);
-            cd = Utils.rotate(gcx + bboxa.x - plbbox, gcy + bboxb.y + plbbox, gcx, gcy, cos, sin);
+            ca = Utils.rotate(gcx + topLeftPoint.x - plbbox, gcy + topLeftPoint.y - plbbox, gcx, gcy, cos, sin);
+            cb = Utils.rotate(gcx + bottomRightPoint.x + plbbox, gcy + topLeftPoint.y - plbbox, gcx, gcy, cos, sin);
+            cc = Utils.rotate(gcx + bottomRightPoint.x + plbbox, gcy + bottomRightPoint.y + plbbox, gcx, gcy, cos, sin);
+            cd = Utils.rotate(gcx + topLeftPoint.x - plbbox, gcy + bottomRightPoint.y + plbbox, gcx, gcy, cos, sin);
 
             // calculate waypoints located on the angular bisector of the corner
-            wa = Utils.rotate(gcx + bboxa.x - way - rotadj, gcy + bboxa.y - way - rotadj, gcx, gcy, cos, sin);
-            wb = Utils.rotate(gcx + bboxb.x + way + rotadj, gcy + bboxa.y - way - rotadj, gcx, gcy, cos, sin);
-            wc = Utils.rotate(gcx + bboxb.x + way + rotadj, gcy + bboxb.y + way + rotadj, gcx, gcy, cos, sin);
-            wd = Utils.rotate(gcx + bboxa.x - way - rotadj, gcy + bboxb.y + way + rotadj, gcx, gcy, cos, sin);
+            wa = Utils.rotate(gcx + topLeftPoint.x - way - rotadj, gcy + topLeftPoint.y - way - rotadj, gcx, gcy, cos, sin);
+            wb = Utils.rotate(gcx + bottomRightPoint.x + way + rotadj, gcy + topLeftPoint.y - way - rotadj, gcx, gcy, cos, sin);
+            wc = Utils.rotate(gcx + bottomRightPoint.x + way + rotadj, gcy + bottomRightPoint.y + way + rotadj, gcx, gcy, cos, sin);
+            wd = Utils.rotate(gcx + topLeftPoint.x - way - rotadj, gcy + bottomRightPoint.y + way + rotadj, gcx, gcy, cos, sin);
 
             // calculate TO clearance vertices
-            clra = Utils.rotate(gcx + bboxa.x - clr - rotadj, gcy + bboxa.y - clr - rotadj, gcx, gcy, cos, sin);
-            clrb = Utils.rotate(gcx + bboxb.x + clr - rotadj, gcy + bboxa.y - clr - rotadj, gcx, gcy, cos, sin);
-            clrc = Utils.rotate(gcx + bboxb.x + clr + rotadj, gcy + bboxb.y + clr + rotadj, gcx, gcy, cos, sin);
-            clrd = Utils.rotate(gcx + bboxa.x - clr - rotadj, gcy + bboxb.y + clr + rotadj, gcx, gcy, cos, sin);
+            clra = Utils.rotate(gcx + topLeftPoint.x - clr - rotadj, gcy + topLeftPoint.y - clr - rotadj, gcx, gcy, cos, sin);
+            clrb = Utils.rotate(gcx + bottomRightPoint.x + clr - rotadj, gcy + topLeftPoint.y - clr - rotadj, gcx, gcy, cos, sin);
+            clrc = Utils.rotate(gcx + bottomRightPoint.x + clr + rotadj, gcy + bottomRightPoint.y + clr + rotadj, gcx, gcy, cos, sin);
+            clrd = Utils.rotate(gcx + topLeftPoint.x - clr - rotadj, gcy + bottomRightPoint.y + clr + rotadj, gcx, gcy, cos, sin);
         }
 
         // exclude gobs near map edges so we won't need to do bounds checks all over the place
@@ -221,7 +287,7 @@ public class Map {
         HashMap<Integer, Utils.MinMax> raster = Utils.plotRect(map, ca, cb, cc, cd, CELL_BLK);
 
         // store traversable obstacles candidates
-        if (bboxb.x <= tomaxside && bboxb.y <= tomaxside)
+        if (bottomRightPoint.x <= tomaxside && bottomRightPoint.y <= tomaxside)
             tocandidates.add(new TraversableObstacle(wa, wb, wc, wd, clra, clrb, clrc, clrd, raster));
 
         dbg.rect(ca.x, ca.y, cb.x, cb.y, cc.x, cc.y, cd.x, cd.y, Color.CYAN);
@@ -229,7 +295,7 @@ public class Map {
 
     public void excludeGob(Gob gob) {
         Hitbox hb = null;
-        if(gob.collisionBox != null){
+        if (gob.collisionBox != null) {
             hb = gob.collisionBox.fx;
         }
         if (hb == null || hb.model == null || hb.model.bbox == null) {
@@ -241,7 +307,7 @@ public class Map {
         Coord bboxb = hb.model.bbox.b;
 
         //System.out.println("EXCLUDE: gob hb for " + gob.getres() + " with hb: " + bboxa + " and " + bboxb);
-        
+
         // gob coordinate relative to the origin (player's location)
         int gcx = origin - (plc.x - gob.rc.floor().x);
         int gcy = origin - (plc.y - gob.rc.floor().y);
@@ -432,22 +498,22 @@ public class Map {
             System.out.println("Vertices Sanitization: " + (double) (System.nanoTime() - start) / 1000000.0 + " ms.");
 
         // clear area around starting position in case char is on the bounding box boundary
-        if (map[origin][origin-1] == CELL_BLK)
-            map[origin][origin-1] = CELL_FREE;
-        if (map[origin-1][origin-1] == CELL_BLK)
-            map[origin-1][origin-1] = CELL_FREE;
-        if (map[origin+1][origin-1] == CELL_BLK)
-            map[origin+1][origin-1] = CELL_FREE;
-        if (map[origin-1][origin] == CELL_BLK)
-            map[origin-1][origin] = CELL_FREE;
-        if (map[origin+1][origin] == CELL_BLK)
-            map[origin+1][origin] = CELL_FREE;
-        if (map[origin-1][origin+1] == CELL_BLK)
-            map[origin-1][origin+1] = CELL_FREE;
-        if (map[origin][origin+1] == CELL_BLK)
-            map[origin][origin+1] = CELL_FREE;
-        if (map[origin+1][origin+1] == CELL_BLK)
-            map[origin+1][origin+1] = CELL_FREE;
+        if (map[origin][origin - 1] == CELL_BLK)
+            map[origin][origin - 1] = CELL_FREE;
+        if (map[origin - 1][origin - 1] == CELL_BLK)
+            map[origin - 1][origin - 1] = CELL_FREE;
+        if (map[origin + 1][origin - 1] == CELL_BLK)
+            map[origin + 1][origin - 1] = CELL_FREE;
+        if (map[origin - 1][origin] == CELL_BLK)
+            map[origin - 1][origin] = CELL_FREE;
+        if (map[origin + 1][origin] == CELL_BLK)
+            map[origin + 1][origin] = CELL_FREE;
+        if (map[origin - 1][origin + 1] == CELL_BLK)
+            map[origin - 1][origin + 1] = CELL_FREE;
+        if (map[origin][origin + 1] == CELL_BLK)
+            map[origin][origin + 1] = CELL_FREE;
+        if (map[origin + 1][origin + 1] == CELL_BLK)
+            map[origin + 1][origin + 1] = CELL_FREE;
 
 
         // test if direct path is clear

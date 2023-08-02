@@ -4,7 +4,6 @@ package haven.pathfinder;
 import haven.*;
 import haven.render.Model;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -68,7 +67,6 @@ public class Pathfinder implements Runnable {
             moveinterupted = false;
             pathfind(mv.player().rc.floor());
         } while (moveinterupted && !terminate);
-
         notifyListeners();
     }
 
@@ -95,7 +93,7 @@ public class Pathfinder implements Runnable {
                     m.excludeGob(gob);
                     continue;
                 }
-                m.addGob(gob);
+                m.analyzeGobHitBoxes(gob);
             }
         }
 
@@ -170,7 +168,7 @@ public class Pathfinder implements Runnable {
             while (!moveinterupted && !terminate) {
                 if (!player.isMoving()) {
                     try {
-                        Thread.sleep(150);
+                        Thread.sleep(25);
                     } catch (InterruptedException e1) {
                         return;
                     }
@@ -179,7 +177,7 @@ public class Pathfinder implements Runnable {
                 }
 
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(50);
                 } catch (InterruptedException e1) {
                     return;
                 }

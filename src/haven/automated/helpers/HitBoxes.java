@@ -58,12 +58,8 @@ public class HitBoxes {
             try {
                 extractCollisionBoxesFromResource(gob);
             } catch (Loading ignored){}
-
         }
-
     }
-
-
 
     private static CollisionBox[] extractCollisionBoxesFromResource(Gob gob) {
         Resource res = gob.getres();
@@ -114,14 +110,10 @@ public class HitBoxes {
                 CollisionBox collisionBox = new CollisionBox(o.bc, o.ac, hitAble, false);
                 collisionBoxesList.add(collisionBox);
             }
-            boolean isAdd = true;
-            if(res.name.endsWith("gate") || res.name.endsWith("/pow")){
-                isAdd = false;
-            }
+
             CollisionBox[] collisionBoxes = collisionBoxesList.toArray(new CollisionBox[0]);
-            if (isAdd) {
-                collisionBoxMap.put(res.name, collisionBoxes);
-            }
+            collisionBoxMap.put(res.name, collisionBoxes);
+
             return (collisionBoxes);
         } catch (Exception ignore) {
         }
@@ -167,22 +159,20 @@ public class HitBoxes {
     public static boolean checkHitAble(Gob gob) {
         if (gob.getres() != null) {
             Resource res = gob.getres();
-            ResDrawable rd = gob.getattr(ResDrawable.class);
-            if (rd != null)
-                if (res.name.endsWith("/pow") && (rd.sdt.peekrbuf(0) == 33 || rd.sdt.peekrbuf(0) == 17))
-                    return (false);
             if (res.name.equals("gfx/terobjs/vflag"))
                 return (false);
         }
         return (true);
     }
 
-
-
+    public static CollisionBox getGateCollision(Gob gob){
+        //add to pathfinder to see gates i guess manually
+        return null;
+    }
 
     public static class CollisionBox {
-        private Coord2d[] coords;
-        private boolean hitAble;
+        public Coord2d[] coords;
+        public boolean hitAble;
 
         public CollisionBox(Coord a, Coord b) {
             this.coords = new Coord2d[] {
