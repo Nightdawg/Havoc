@@ -1,16 +1,12 @@
 package haven;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
+
 
 public class AccountList extends Widget {
     public static final LinkedHashMap<String, String> accountmap = new LinkedHashMap<>();
     private static final Coord SZ = UI.scale(240, 30);
+    static AES aes = new AES();
 
 //    static {
 //        AccountList.loadAccounts();
@@ -25,7 +21,8 @@ public class AccountList extends Widget {
         try {
             if (savedAccounts != null) {
                 for (String s : savedAccounts) {
-                    String[] split = s.split("(;)");
+                    String s2 = aes.decrypt(s);
+                    String[] split = s2.split("(;)");
                     if (!accountmap.containsKey(split[0])) {
                         accountmap.put(split[0], split[1]);
                     }
@@ -56,7 +53,7 @@ public class AccountList extends Widget {
                 String[] savedAccounts = new String[accountmap.size()];
                 int i = 0;
                 for(Map.Entry<String, String> e : accountmap.entrySet()) {
-                    savedAccounts[i] = e.getKey() + ";" + e.getValue();
+                    savedAccounts[i] = aes.encrypt(e.getKey() + ";" + e.getValue());
                     i++;
                 }
                 Utils.setprefsa("savedAccounts", savedAccounts);
@@ -92,6 +89,7 @@ public class AccountList extends Widget {
 
     public AccountList(int height) {
         super();
+        aes.initFromStrings("wBCp/zPaHn+iQSYOl1hixA==", "nRcpTpDouSq60iRT");
         loadAccounts();
         this.height = height;
         this.sz = new Coord(SZ.x, SZ.y * height);
