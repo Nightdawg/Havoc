@@ -33,7 +33,7 @@ import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
 import haven.automated.*;
-import haven.cookbook.CookingRecipes;
+import haven.automated.cookbook.CookingRecipes;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package haven.cookbook.importExport;
+package haven.automated.cookbook.importExport;
 
 import haven.*;
 

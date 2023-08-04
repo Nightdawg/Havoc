@@ -1,4 +1,4 @@
-package haven.cookbook;
+package haven.automated.cookbook;
 
 import java.io.Serializable;
 import java.util.ArrayList;

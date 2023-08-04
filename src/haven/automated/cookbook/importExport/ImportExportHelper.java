@@ -1,8 +1,8 @@
-package haven.cookbook.importExport;
+package haven.automated.cookbook.importExport;
 
 import haven.GameUI;
 import haven.HackThread;
-import haven.cookbook.ParsedFoodInfo;
+import haven.automated.cookbook.ParsedFoodInfo;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

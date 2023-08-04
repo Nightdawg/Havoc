@@ -27,8 +27,8 @@
 package haven;
 
 import haven.automated.*;
-import haven.cookbook.CookingRecipes;
-import haven.cookbook.RecipeCollector;
+import haven.automated.cookbook.CookingRecipes;
+import haven.automated.cookbook.RecipeCollector;
 import haven.res.ui.stackinv.ItemStack;
 
 import java.awt.*;
@@ -1567,7 +1567,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-
+			OreCounter oreCounter = new OreCounter(this);
+			add(oreCounter, new Coord(this.sz.x / 2 - oreCounter.sz.x / 2, this.sz.y / 2 - oreCounter.sz.y / 2 - 200));
+			Thread oreCounterThread = new Thread(oreCounter, "oreCounter");
+			oreCounterThread.start();
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);

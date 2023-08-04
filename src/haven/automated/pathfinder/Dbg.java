@@ -1,4 +1,4 @@
-package haven.pathfinder;
+package haven.automated.pathfinder;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

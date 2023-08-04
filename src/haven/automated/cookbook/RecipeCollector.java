@@ -1,4 +1,4 @@
-package haven.cookbook;
+package haven.automated.cookbook;
 
 import haven.ItemInfo;
 import haven.res.ui.tt.q.qbuff.QBuff;

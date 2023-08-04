@@ -1,10 +1,10 @@
-package haven.cookbook;
+package haven.automated.cookbook;
 
 import haven.Button;
 import haven.Label;
 import haven.Window;
 import haven.*;
-import haven.cookbook.importExport.ImportExportHelper;
+import haven.automated.cookbook.importExport.ImportExportHelper;
 
 import java.awt.*;
 import java.sql.*;

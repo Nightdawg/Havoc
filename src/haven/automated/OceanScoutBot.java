@@ -2,8 +2,7 @@ package haven.automated;
 
 
 import haven.*;
-import haven.pathfinder.Pathfinder;
-import haven.render.Model;
+import haven.automated.pathfinder.Pathfinder;
 
 import java.util.ArrayList;
 import java.util.Objects;

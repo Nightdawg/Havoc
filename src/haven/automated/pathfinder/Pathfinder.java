@@ -1,9 +1,8 @@
-package haven.pathfinder;
+package haven.automated.pathfinder;
 
 
 import haven.*;
 import haven.automated.helpers.HitBoxes;
-import haven.render.Model;
 
 import java.util.Iterator;
 import java.util.Set;

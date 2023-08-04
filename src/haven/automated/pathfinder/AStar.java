@@ -1,4 +1,4 @@
-package haven.pathfinder;
+package haven.automated.pathfinder;
 
 import java.util.Map;
 import java.util.*;

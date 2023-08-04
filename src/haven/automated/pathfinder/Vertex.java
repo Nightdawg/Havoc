@@ -1,4 +1,4 @@
-package haven.pathfinder;
+package haven.automated.pathfinder;
 
 import java.util.HashSet;
 import java.util.Set;

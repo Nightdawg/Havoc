@@ -29,8 +29,8 @@ package haven;
 import haven.MCache.OverlayInfo;
 import haven.automated.MiningSafetyAssistant;
 import haven.automated.helpers.AreaSelectCallback;
-import haven.pathfinder.PFListener;
-import haven.pathfinder.Pathfinder;
+import haven.automated.pathfinder.PFListener;
+import haven.automated.pathfinder.Pathfinder;
 import haven.render.*;
 import haven.render.sl.Type;
 import haven.render.sl.Uniform;
@@ -2952,7 +2952,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	}
 
 	public void pfDone(final Pathfinder thread) {
-		if (haven.pathfinder.Map.DEBUG_TIMINGS)
+		if (haven.automated.pathfinder.Map.DEBUG_TIMINGS)
 			System.out.println("-= PF DONE =-");
 	}
 
@@ -2987,9 +2987,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			}
 
 			Coord src = player.rc.floor();
-			int gcx = haven.pathfinder.Map.origin - (src.x - mc.x);
-			int gcy = haven.pathfinder.Map.origin - (src.y - mc.y);
-			if (gcx < 0 || gcx >= haven.pathfinder.Map.sz || gcy < 0 || gcy >= haven.pathfinder.Map.sz)
+			int gcx = haven.automated.pathfinder.Map.origin - (src.x - mc.x);
+			int gcy = haven.automated.pathfinder.Map.origin - (src.y - mc.y);
+			if (gcx < 0 || gcx >= haven.automated.pathfinder.Map.sz || gcy < 0 || gcy >= haven.automated.pathfinder.Map.sz)
 				return;
 
 			pf = new Pathfinder(this, new Coord(gcx, gcy), action);
@@ -3020,9 +3020,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			}
 
 			Coord src = player.rc.floor();
-			int gcx = haven.pathfinder.Map.origin - (src.x - gob.rc.floor().x);
-			int gcy = haven.pathfinder.Map.origin - (src.y - gob.rc.floor().y);
-			if (gcx < 0 || gcx >= haven.pathfinder.Map.sz || gcy < 0 || gcy >= haven.pathfinder.Map.sz)
+			int gcx = haven.automated.pathfinder.Map.origin - (src.x - gob.rc.floor().x);
+			int gcy = haven.automated.pathfinder.Map.origin - (src.y - gob.rc.floor().y);
+			if (gcx < 0 || gcx >= haven.automated.pathfinder.Map.sz || gcy < 0 || gcy >= haven.automated.pathfinder.Map.sz)
 				return;
 
 			pf = new Pathfinder(this, new Coord(gcx, gcy), gob, meshid, clickb, modflags, action);

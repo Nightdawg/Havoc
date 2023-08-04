@@ -1,4 +1,4 @@
-package haven.pathfinder;
+package haven.automated.pathfinder;
 
 public class Edge {
     public final Vertex src;

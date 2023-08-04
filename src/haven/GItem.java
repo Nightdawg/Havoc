@@ -27,7 +27,7 @@
 package haven;
 
 import haven.automated.helpers.FarmingStatic;
-import haven.cookbook.RecipeCollector;
+import haven.automated.cookbook.RecipeCollector;
 import haven.res.ui.tt.q.qbuff.QBuff;
 
 import java.awt.*;
