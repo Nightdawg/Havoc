@@ -16,7 +16,7 @@ import static haven.OCache.posres;
 
 public class MiningSafetyAssistant extends Window implements Runnable {
     private final GameUI gui;
-    private final boolean stop;
+    private boolean stop;
     public static boolean preventMiningOutsideSupport = Utils.getprefb("preventMiningOutsideSupport", false);
     private final CheckBox preventUnsafeMiningCb;
     private boolean stopMiningWhenOutsideSupport = Utils.getprefb("stopMiningWhenOutsideSupport", false);
@@ -195,6 +195,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
         if ((sender == this) && (msg == "close")) {
+            stop = true;
             gui.miningSafetyAssistantThread.interrupt();
             gui.miningSafetyAssistantThread = null;
             reqdestroy();
