@@ -118,7 +118,6 @@ public class HitBoxes {
 
             collisionBoxMap.put(res.name, collisionBoxes);
             saveCollisionBoxMapEntry(res.name, collisionBoxes);
-            System.out.println("adding new");
 
             return (collisionBoxes);
         } catch (Exception ignore) {
