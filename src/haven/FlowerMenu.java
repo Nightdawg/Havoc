@@ -325,12 +325,14 @@ public class FlowerMenu extends Widget {
 			nextAutoSel = null;
 		}
 		else {
-			int i = 0;
-			for (String option : options) {
-				if (autoChoose.get(option)) {
-					ui.rcvr.rcvmsg(ui.lastid, "cl", i, ui.modflags());
+			if(GameUI.autoFlowerSelect){
+				int i = 0;
+				for (String option : options) {
+					if (autoChoose.get(option)) {
+						ui.rcvr.rcvmsg(ui.lastid, "cl", i, ui.modflags());
+					}
+					i++;
 				}
-				i++;
 			}
 		}
 	}

@@ -90,11 +90,13 @@ public class FishingBot extends Window implements Runnable {
 
     private int contentAnalysis(WItem item) {
         int count = 0;
-        for (ItemInfo info : item.item.info()) {
-            if (info instanceof ItemInfo.Contents) {
-                count++;
+        try {
+            for (ItemInfo info : item.item.info()) {
+                if (info instanceof ItemInfo.Contents) {
+                    count++;
+                }
             }
-        }
+        } catch (Loading ignored){}
         return count;
     }
 

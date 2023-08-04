@@ -263,7 +263,7 @@ public class UI {
 	    bind(wdg, id);
 		if (wdg instanceof FightWnd) {
 			fightwnd = new WeakReference<>((FightWnd) wdg);
-		} else if (wdg instanceof FlowerMenu && GameUI.autoFlowerSelect){
+		} else if (wdg instanceof FlowerMenu){
 			((FlowerMenu) wdg).tryAutoSelect();
 		}
 	}
