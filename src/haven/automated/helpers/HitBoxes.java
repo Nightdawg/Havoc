@@ -2,9 +2,12 @@ package haven.automated.helpers;
 
 import haven.*;
 
+import java.io.*;
+import java.sql.*;
 import java.util.*;
 
 public class HitBoxes {
+    private static final String DATABASE = "jdbc:sqlite:static_data.db";
     public static Map<String, CollisionBox[]> collisionBoxMap = new HashMap<>();
 
     private static Set<String> passableGobs = new HashSet<>(Arrays.asList(
@@ -112,7 +115,10 @@ public class HitBoxes {
             }
 
             CollisionBox[] collisionBoxes = collisionBoxesList.toArray(new CollisionBox[0]);
+
             collisionBoxMap.put(res.name, collisionBoxes);
+            saveCollisionBoxMapEntry(res.name, collisionBoxes);
+            System.out.println("adding new");
 
             return (collisionBoxes);
         } catch (Exception ignore) {
@@ -165,12 +171,100 @@ public class HitBoxes {
         return (true);
     }
 
-    public static CollisionBox getGateCollision(Gob gob){
-        //add to pathfinder to see gates i guess manually
-        return null;
+    public static void loadCollisionBoxMap() {
+        try (Connection conn = DriverManager.getConnection(DATABASE)) {
+            if (conn != null) {
+                String sql = "SELECT key, value FROM collision_box_map;";
+                try (Statement stmt = conn.createStatement();
+                     ResultSet rs = stmt.executeQuery(sql)) {
+                    while (rs.next()) {
+                        String key = rs.getString("key");
+                        String serialized = rs.getString("value");
+                        CollisionBox[] collisionBoxes = deserialize(serialized);
+                        if (collisionBoxes != null) {
+                            collisionBoxMap.put(key, collisionBoxes);
+                        }
+                    }
+                } catch (SQLException e) {
+                    System.err.println("Error while executing SQL statement: " + e.getMessage());
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error while connecting to database: " + e.getMessage());
+        }
     }
 
-    public static class CollisionBox {
+    public static CollisionBox[] deserialize(String s) {
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(Base64.getDecoder().decode(s));
+             ObjectInputStream ois = new ObjectInputStream(bais)) {
+            return (CollisionBox[]) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error while deserializing CollisionBox[]: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static void saveCollisionBoxMapEntry(String key, CollisionBox[] collisionBoxes) {
+        String serialized = serialize(collisionBoxes);
+        if (serialized != null) {
+            try (Connection conn = DriverManager.getConnection(DATABASE)) {
+                if (conn != null) {
+                    String sql = "INSERT OR REPLACE INTO collision_box_map (key, value) VALUES (?, ?);";
+                    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                        pstmt.setString(1, key);
+                        pstmt.setString(2, serialized);
+                        pstmt.executeUpdate();
+                    } catch (SQLException e) {
+                        System.err.println("Error while executing SQL statement: " + e.getMessage());
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("Error while connecting to database: " + e.getMessage());
+            }
+        }
+    }
+
+    public static String serialize(CollisionBox[] collisionBoxes) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(collisionBoxes);
+            return Base64.getEncoder().encodeToString(baos.toByteArray());
+        } catch (IOException e) {
+            System.err.println("Error while serializing CollisionBox[]: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static void createDatabaseIfNotExist() throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DATABASE)) {
+            if (conn != null) {
+                createSchemaElementIfNotExist(conn, "collision_box_map",
+                        "key VARCHAR(255) PRIMARY KEY NOT NULL, " +
+                                "value BLOB NOT NULL",
+                        "table");
+            }
+        }
+    }
+
+    private static void createSchemaElementIfNotExist(Connection conn, String name, String definitions, String type) throws SQLException {
+        if (!schemaElementExists(conn, name, type)) {
+            String sql = type.equals("table") ? "CREATE TABLE " + name + " (\n" + definitions + "\n);" : "CREATE INDEX " + name + " ON " + definitions + ";";
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute(sql);
+            }
+            System.out.println("A new " + type + " (" + name + ") has been created in the database.");
+        }
+    }
+
+    private static boolean schemaElementExists(Connection conn, String name, String type) throws SQLException {
+        String checkExistsQuery = "SELECT name FROM sqlite_master WHERE type='" + type + "' AND name='" + name + "';";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(checkExistsQuery)) {
+            return rs.next();
+        }
+    }
+
+    public static class CollisionBox implements Serializable {
         public Coord2d[] coords;
         public boolean hitAble;
 

@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.automated.helpers.HitBoxes;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -55,6 +57,8 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 		try {
 			FlowerMenu.createDatabaseIfNotExist();
 			FlowerMenu.fillAutoChooseMap();
+			HitBoxes.createDatabaseIfNotExist();
+			HitBoxes.loadCollisionBoxMap();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
