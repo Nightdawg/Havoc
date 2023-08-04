@@ -18,7 +18,7 @@ public class OreCounter extends Window implements Runnable {
     private OreList oreList;
 
     public OreCounter(GameUI gui) {
-        super(new Coord(200, 20), "Mining Counter");
+        super(new Coord(200, 20), "Ore & Rock Counter");
         this.gui = gui;
         this.stop = false;
         this.oreList = new OreList(250, 20);
@@ -155,7 +155,7 @@ public class OreCounter extends Window implements Runnable {
                 nameLbl.setcolor(Color.YELLOW);
             }
             countLbl = new Label(String.valueOf(count), 100);
-            if(count>50){
+            if(count>50 && ore){
                 countLbl.setcolor(Color.RED);
             }
 
