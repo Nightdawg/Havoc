@@ -27,6 +27,7 @@
 package haven;
 
 import haven.MCache.OverlayInfo;
+import haven.automated.AUtils;
 import haven.automated.MiningSafetyAssistant;
 import haven.automated.helpers.AreaSelectCallback;
 import haven.automated.pathfinder.PFListener;
@@ -2965,6 +2966,18 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		areaSelect = false;
 		selection.destroy();
 		selection = null;
+	}
+
+	public void pfLeftClickPrecise(Coord mc, String action){
+		haven.automated.pathfinder.Map.plbbox = 2;
+		pfLeftClick(mc, action);
+		haven.automated.pathfinder.Map.plbbox = 3;
+	}
+
+	public void pfRightClickPrecise(Gob gob, int meshid, int clickb, int modflags, String action){
+		haven.automated.pathfinder.Map.plbbox = 2;
+		pfRightClick(gob, meshid, clickb, modflags, action);
+		haven.automated.pathfinder.Map.plbbox = 3;
 	}
 
 	public void pfLeftClick(Coord mc, String action) {

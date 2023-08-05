@@ -240,7 +240,6 @@ public class Pathfinder implements Runnable {
             }
         }
         terminate = true;
-        OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(false);
     }
 
 

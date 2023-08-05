@@ -363,23 +363,30 @@ public class Map {
     private void buildVisGraph(List<Vertex> vertices, byte block) {
         int visedges = 0;
         int edges = 0;
-        for (Vertex vert : vertices) {
-            for (Vertex vert2 : vertices) {
-                if (vert == vert2)
-                    continue;
 
-                edges++;
-                if (Utils.isVisible(map, dbg, vert.x, vert.y, vert2.x, vert2.y, block)) {
-                    visedges++;
-                    int dx = vert.x - vert2.x;
-                    int dy = vert.y - vert2.y;
-                    vert.edges.add(new Edge(vert, vert2, Math.sqrt(dx * dx + dy * dy)));
+        for (int i = 0; i < vertices.size(); i++) {
+            for (int j = i + 1; j < vertices.size(); j++) {
+                Vertex vert1 = vertices.get(i);
+                Vertex vert2 = vertices.get(j);
+
+                edges += 2;
+
+                if (Utils.isVisible(map, dbg, vert1.x, vert1.y, vert2.x, vert2.y, block)) {
+                    int dx = vert1.x - vert2.x;
+                    int dy = vert1.y - vert2.y;
+                    double distance = Math.sqrt(dx * dx + dy * dy);
+
+                    visedges += 2;
+                    vert1.edges.add(new Edge(vert1, vert2, distance));
+                    vert2.edges.add(new Edge(vert2, vert1, distance));
                 }
             }
         }
+
         if (DEBUG_TIMINGS)
-            System.out.println("          Edges: " + visedges + " / " + edges + " (vxs: " + vertices.size() + ")");
+            System.out.println("Edges: " + visedges + " / " + edges + " (vxs: " + vertices.size() + ")");
     }
+
 
     private List<Vertex> recalcVertices(Iterable<Edge> path) {
         List<Vertex> vertices = new ArrayList<Vertex>();
