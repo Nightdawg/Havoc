@@ -31,6 +31,7 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 import haven.ItemInfo.AttrCache;
+import haven.automated.AutoFlowerRepeater;
 import haven.resutil.Curiosity;
 
 import static haven.Inventory.sqsz;
@@ -280,7 +281,7 @@ public class WItem extends Widget implements DTarget {
 				return true;
 			}
 		}
-	    if (ui.modshift) {
+		if (ui.modshift) {
 			item.wdgmsg("transfer", c, 1);
 			return(true);
 	    } else if (ui.modctrl) {
@@ -292,35 +293,12 @@ public class WItem extends Widget implements DTarget {
 	    }
 	    return(true);
 	} else if(btn == 3) {
-		// TODO: Make this a script Action Button instead
-//		if(OptWnd.massSplitCtrlShiftAlt && ui.modctrl && ui.modmeta && ui.modshift){
-//			String name = item.getname();
-//			if(name.contains("Block of") || name.equals("Pumpkin") || name.contains("gfx/invobjs/fish-")){
-//				if(name.contains("Block of")){
-//					name = "Block of";
-//				} else if (name.contains("gfx/invobjs/fish-")){
-//					name = "gfx/invobjs/fish-";
-//				}
-//				String finalName = name;
-//				List<WItem> wItems = gameui().getAllInventories().stream()
-//						.flatMap(inventory -> inventory.getItemsPartial(finalName).stream())
-//						.collect(Collectors.toList());
-//				int last = ui.lastid;
-//				for(WItem wItem: wItems){
-//					wItem.item.wdgmsg("iact", c, 0);
-//					ui.rcvr.rcvmsg((last+1), "cl", 0, 0);
-//					last += 6;
-//				}
-//			}
-//		}
 		if (ui.modmeta && !ui.modctrl) {
 			if (inv) {
 				wdgmsg("transfer-identical", item, true);
 				return true;
 			}
-		}
-		//System.out.println(item.getname());
-		if (ui.modctrl && OptWnd.instantFlowerMenuCTRL) {
+		} else if (ui.modctrl && OptWnd.instantFlowerMenuCTRL && (!ui.modshift || !ui.modmeta)) {
 			String itemname = item.getname();
 			int option = 0;
 			if (itemname.toLowerCase().contains("lettuce")) {
@@ -329,6 +307,9 @@ public class WItem extends Widget implements DTarget {
 			item.wdgmsg("iact", c, ui.modflags());
 			ui.rcvr.rcvmsg(ui.lastid+1, "cl", option, 0);
 		} else {
+			if(ui.modctrl && ui.modmeta && ui.modshift){
+				try{new Thread(new AutoFlowerRepeater(ui.gui, this.item.getres().name)).start();} catch (Loading ignored){}
+			}
 			item.wdgmsg("iact", c, ui.modflags());
 		}
 		return(true);

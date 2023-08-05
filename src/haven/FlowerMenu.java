@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.automated.AutoFlowerRepeater;
+
 import java.awt.Color;
 import java.sql.*;
 import java.util.*;
@@ -302,6 +304,9 @@ public class FlowerMenu extends Widget {
 	if(option == null) {
 	    wdgmsg("cl", -1);
 	} else {
+		if(AutoFlowerRepeater.option != null){
+			AutoFlowerRepeater.option = option.name;
+		}
 	    wdgmsg("cl", option.num, ui.modflags());
 	}
     }
