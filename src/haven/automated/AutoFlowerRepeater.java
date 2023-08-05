@@ -20,7 +20,7 @@ public class AutoFlowerRepeater implements Runnable{
     public AutoFlowerRepeater(GameUI gui, String name) {
         scheduler.schedule(() -> stop = true, 1500, TimeUnit.MILLISECONDS);
         this.gui = gui;
-        this.ping = GameUI.getPingValue() != null ? GameUI.getPingValue() + 10 : 100;
+        this.ping = GameUI.getPingValue() != null ? GameUI.getPingValue() + 20 : 100;
         option = "";
         this.name = name;
         items = iterateThroughItems(name);
@@ -42,14 +42,15 @@ public class AutoFlowerRepeater implements Runnable{
             if(option != null && !option.equals("")){
                 scheduler.shutdown();
                 int counter = 0;
-                while(!items.isEmpty() && counter <= 4){
+                while(!items.isEmpty() && counter <= 10){
                     counter++;
                     for(GItem item : items){
                         FlowerMenu.setNextSelection(option);
                         item.wdgmsg("iact", Coord.z, 3);
-                        ping = GameUI.getPingValue() != null ? GameUI.getPingValue() + 10 : 100;
+                        sleep(ping);
                     }
                     items = iterateThroughItems(name);
+                    ping = GameUI.getPingValue() != null ? GameUI.getPingValue() + 20 : 100;
                 }
                 stop = true;
             }
