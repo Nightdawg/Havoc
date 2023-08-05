@@ -264,6 +264,7 @@ public class HitBoxes {
     }
 
     public static class CollisionBox implements Serializable {
+        private static final long serialVersionUID = 2554246893705809471L;
         public Coord2d[] coords;
         public boolean hitAble;
 

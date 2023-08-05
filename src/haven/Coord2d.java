@@ -30,6 +30,7 @@ import java.util.Iterator;
 import static java.lang.Math.PI;
 
 public class Coord2d implements Comparable<Coord2d>, java.io.Serializable {
+    private static final long serialVersionUID = 2554246893705809474L;
     public double x, y;
     public static final Coord2d z = new Coord2d(0, 0);
 
