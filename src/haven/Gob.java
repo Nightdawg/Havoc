@@ -88,7 +88,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public static Boolean batsLeaveMeAlone = false; // ND: Check for Bat Cape
 	public static Boolean batsFearMe = false; // ND: Check for Bat Dungeon Experience (Defeated Bat Queen)
 
-	public ArrayList<Gob> occupants = new ArrayList<Gob>();
+	public final ArrayList<Gob> occupants = new ArrayList<Gob>();
 	public Long occupiedGobID = null;
 
 	/**
@@ -674,6 +674,17 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 	}
 	updateState();
+	if (getattr(Moving.class) instanceof Following){
+		Following following = (Following) getattr(Moving.class);
+		occupiedGobID = following.tgt;
+		if (glob.oc.getgob(occupiedGobID) != null){
+			synchronized (glob.oc.getgob(occupiedGobID).occupants) {
+				if (!glob.oc.getgob(occupiedGobID).occupants.contains(this)) {
+					glob.oc.getgob(occupiedGobID).occupants.add(this);
+				}
+			}
+		}
+	}
     }
 
     public void gtick(Render g) {
@@ -897,7 +908,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if(ac == Moving.class && a == null) {
 			if (occupiedGobID != null){
 				if (glob.oc.getgob(occupiedGobID) != null){
-					glob.oc.getgob(occupiedGobID).occupants.remove(this);
+					synchronized (glob.oc.getgob(occupiedGobID).occupants) {
+						glob.oc.getgob(occupiedGobID).occupants.remove(this);
+					}
 					occupiedGobID = null;
 				}
 			}
@@ -906,19 +919,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			if (gobChaseVector != null) {
 				gobChaseVector.remove();
 				gobChaseVector = null;
-			}
-		}
-		if (a instanceof Following) {
-			Following following = (Following) a;
-			occupiedGobID = following.tgt;
-			ArrayList<Gob> passengersArray = ChaseVectorSprite.passengersMap.get(occupiedGobID);
-			if (passengersArray != null) {
-				passengersArray.add(this);
-				ChaseVectorSprite.passengersMap.put(occupiedGobID, passengersArray);
-			} else {
-				ArrayList<Gob> newPassengersArray = new ArrayList<Gob>();
-				newPassengersArray.add(this);
-				ChaseVectorSprite.passengersMap.put(occupiedGobID, newPassengersArray);
 			}
 		}
 		if (a instanceof Homing) {
