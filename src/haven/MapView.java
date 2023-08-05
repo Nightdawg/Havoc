@@ -2309,11 +2309,22 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 				}
 				if (ui.modmeta && gui.vhand == null) {
 					Map<String, ChatUI.MultiChat> chats = gui.chat.getMultiChannels();
-					if (clickb == 1) {
+					if (clickb == 1 && (!ui.modshift || !ui.modctrl)) {
 						chats.get("Area Chat").send("@" + gob.id);
-					} else if (clickb == 3) {
+					} else if (clickb == 3 && (!ui.modshift || !ui.modctrl)) {
 						if (chats.get("Party") != null)
 							chats.get("Party").send("@" + gob.id);
+					}
+					if(ui.modmeta && ui.modshift && ui.modctrl){
+						if (clickb == 1) {
+							if (Gob.listHighlighted.contains(gob.id)) {
+								Gob.listHighlighted.remove(gob.id);
+								gob.delattr(GobStateHighlight.class);
+							} else {
+								Gob.listHighlighted.add(gob.id);
+								gob.setattr(new GobStateHighlight(gob, GobStateHighlight.State.PURPLE));
+							}
+						}
 					}
 					return;
 				} else {

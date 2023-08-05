@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
+	public static Set<Long> listHighlighted = new HashSet<>();
     public Coord2d rc;
     public double a;
     public boolean virtual = false;
@@ -98,6 +99,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void init(boolean throwLoading) {
 		Resource res = getres();
 		if (res != null) {
+			if (listHighlighted.contains(id)) {
+				setattr(new GobStateHighlight(this, GobStateHighlight.State.PURPLE));
+			}
 			initiateSupportOverlays();
 			toggleMineLadderRadius();
 			toggleBeeSkepRadius();
