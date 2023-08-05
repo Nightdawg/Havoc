@@ -1,4 +1,4 @@
-package haven.customUI;
+package haven;
 
 import haven.*;
 
@@ -55,6 +55,38 @@ public class ScrollableWidgetList<T extends Widget> extends Widget {
     public boolean mousewheel(Coord c, int amount) {
         sb.ch(amount);
         return true;
+    }
+
+    @Override
+    public boolean mousedown(Coord c, int button) {
+        int row = c.y / rowHeight + sb.val;
+        if (row >= items.size())
+            return super.mousedown(c, button);
+        if (items.get(row).mousedown(c.sub(UI.scale(15), c.y / rowHeight * rowHeight), button))
+            return true;
+        return super.mousedown(c, button);
+    }
+
+    @Override
+    public boolean mouseup(Coord c, int button) {
+        int row = c.y / rowHeight + sb.val;
+        if (row >= items.size())
+            return super.mouseup(c, button);
+        if (items.get(row).mouseup(c.sub(UI.scale(15), c.y / rowHeight * rowHeight), button))
+            return true;
+        return super.mouseup(c, button);
+    }
+
+    @Override
+    public void draw(GOut g) {
+        sb.max = items.size() - rows;
+        for (int i = 0; i < rows; i++) {
+            if (i + sb.val >= items.size())
+                break;
+            GOut ig = g.reclip(new Coord(UI.scale(15), i * rowHeight), UI.scale(w - UI.scale(15), rowHeight));
+            items.get(i + sb.val).draw(ig);
+        }
+        super.draw(g);
     }
 
     @Override
