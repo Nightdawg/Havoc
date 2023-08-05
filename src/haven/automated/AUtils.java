@@ -121,6 +121,38 @@ public class AUtils {
         return selected;
     }
 
+    public static Map<Gob, Integer> getGobsInSelectedArea(Coord start, Coord end, GameUI gui) {
+        Map<Gob, Integer> gobsInArea = new HashMap<>();
+        synchronized (gui.map.glob.oc) {
+            for (Gob gob : gui.map.glob.oc) {
+                if (gob.rc.x > start.x && gob.rc.x < end.x && gob.rc.y > start.y && gob.rc.y < end.y) {
+                    try {
+                        Resource res = gob.getres();
+                        if (res != null) {
+                            String name = res.name;
+                            if(name.contains("borka/body")){
+                                continue;
+                            }
+                            Gob existingGob = null;
+                            for (Gob keyGob : gobsInArea.keySet()) {
+                                if (keyGob.getres().name.equals(name)) {
+                                    existingGob = keyGob;
+                                    break;
+                                }
+                            }
+                            if (existingGob != null) {
+                                gobsInArea.put(existingGob, gobsInArea.get(existingGob) + 1);
+                            } else {
+                                gobsInArea.put(gob, 1);
+                            }
+                        }
+                    } catch (Loading ignored) {}
+                }
+            }
+        }
+        return gobsInArea;
+    }
+
     public static void rightClickGob(GameUI gui, Gob gob, int mods) {
         gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 3, mods, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
     }
