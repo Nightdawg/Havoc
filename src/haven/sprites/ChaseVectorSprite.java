@@ -16,7 +16,6 @@ public class ChaseVectorSprite extends Sprite implements PView.Render2D {
     public static final Color FRIENDCOLOR = new Color(47, 191, 7, 230);
     public static final Color UNKNOWNCOLOR = new Color(255, 199, 0, 230);
     private final Homing homing;
-    public static HashMap<Long, ArrayList<Gob>> passengersMap = new HashMap<Long, ArrayList<Gob>>();
 
     public ChaseVectorSprite(Gob gob, Homing homing) {
         super(gob, null);
@@ -34,11 +33,6 @@ public class ChaseVectorSprite extends Sprite implements PView.Render2D {
             try {
                 Gob gob = (Gob) owner;
                 UI ui = gob.glob.sess.ui;
-                Long gobID = gob.id;
-                if (passengersMap.keySet().stream().anyMatch(gobID::equals)) {
-                    gob.occupants.addAll(passengersMap.get(gobID));
-                    passengersMap.remove(gobID);
-                }
                 if (ui != null) {
                     MapView mv = ui.gui.map;
                     if (mv != null) {
