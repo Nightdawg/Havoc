@@ -357,6 +357,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 
 		makeLocal("paginae/nightdawg/Bots/OceanShorelineScout");
 		makeLocal("paginae/nightdawg/Bots/AutoTunneler");
+		makeLocal("paginae/nightdawg/Bots/CleanupBot");
+		makeLocal("paginae/nightdawg/Bots/TurnipBot");
+		makeLocal("paginae/nightdawg/Bots/TarKilnEmptierBot");
+		makeLocal("paginae/nightdawg/Bots/FishingBot");
 
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleAnimalDangerRadii");
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleCritterCircleAuras");
@@ -379,6 +383,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/Add9CoalScript");
 		makeLocal("paginae/nightdawg/OtherTools/Add12CoalScript");
 		makeLocal("paginae/nightdawg/OtherTools/GridHeightCalculator");
+		makeLocal("paginae/nightdawg/OtherTools/OreAndStoneCounter");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -613,6 +618,14 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 						gui.tunnelerBotThread = null;
 					}
 				}
+			} else if (ad[2].equals("CleanupBot")) {
+
+			} else if (ad[2].equals("TurnipBot")) {
+
+			} else if (ad[2].equals("TarKilnEmptierBot")) {
+
+			} else if (ad[2].equals("FishingBot")) {
+
 			}
 		} else if (ad[1].equals("CustomClientToggle")) {
 			if (ad[2].equals("AnimalDangerRadii")) {
@@ -671,6 +684,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 				gui.runActionThread(new Thread(new AddCoalToSmelter(gui, 12), "Add12Coal"));
 			} else if (ad[2].equals("GridHeightCalculator")) {
 				AUtils.getGridHeightAvg(gui);
+			} else if (ad[2].equals("OreAndStoneCounter")) {
+
 			}
 		}
 	}
