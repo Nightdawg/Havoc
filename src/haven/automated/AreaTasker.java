@@ -30,8 +30,15 @@ public class AreaTasker extends Window implements Runnable, AreaSelectCallback {
     private Button refreshPetalsButton;
 
     //storage
+    private final List<String> options = new ArrayList<>(Arrays.asList("Drop all", "Inventory", "Containers", "Stockpiles"));
+    private final List<String> containers = new ArrayList<>(Arrays.asList("chest", "cupboard", "cabinet", "box", "crate", "stockpile"));
+    Dropbox<String> storages = null;
+    private Button selectStorageAreaButton = null;
     private Coord storageAreaNW = null;
     private Coord storageAreaSE = null;
+    Map<Gob, Integer> storageContainers = new HashMap<>();
+    private ScrollableWidgetList<Container> containerList;
+
 
     //invobjs
     private ScrollableWidgetList<StorableItems> storableItems;
@@ -71,6 +78,51 @@ public class AreaTasker extends Window implements Runnable, AreaSelectCallback {
             }
         }, UI.scale(185, 310));
         refreshPetalsButton.hide();
+
+        //Mode 3
+        storages = new Dropbox<>(4, options) {
+            {
+                super.change("aa");
+            }
+
+            @Override
+            protected String listitem(int i) {
+                return options.get(i);
+            }
+
+            @Override
+            protected int listitems() {
+                return options.size();
+            }
+
+            @Override
+            protected void drawitem(GOut g, String item, int i) {
+                g.text(item, Coord.z);
+            }
+
+            @Override
+            public void change(String item) {
+                super.change(item);
+                System.out.println(item);
+            }
+        };
+        add(storages, UI.scale(170, 10));
+        storages.hide();
+        containerList = new ScrollableWidgetList<>(300, 10, Container.class);
+        add(containerList, UI.scale(170, 40));
+        containerList.hide();
+        selectStorageAreaButton = new Button(130, "Select Storage Area"){
+            @Override
+            public void click() {
+                areaSelectionType = "storage";
+                gui.map.registerAreaSelect((AreaSelectCallback) this.parent);
+                gui.msg("Select storage area.");
+                gui.map.areaSelect = true;
+            }
+        };
+        add(selectStorageAreaButton, UI.scale(290, 8));
+        selectStorageAreaButton.hide();
+
 
         //Mode 4
         storableItems = new ScrollableWidgetList<>(300, 10, StorableItems.class);
@@ -164,8 +216,13 @@ public class AreaTasker extends Window implements Runnable, AreaSelectCallback {
     public void processMode3(boolean show){
         if(show){
             this.resize(480, 400);
+            storages.show();
+            selectStorageAreaButton.show();
+            containerList.show();
         } else {
-
+            storages.hide();
+            selectStorageAreaButton.hide();
+            containerList.hide();
         }
     }
 
@@ -219,11 +276,26 @@ public class AreaTasker extends Window implements Runnable, AreaSelectCallback {
                     checkBoxes[1].set(true);
                     gui.msg("Working area selected. Choose gobs from area to process.");
                 }
+                areaSelectionType = "";
                 break;
             case "storage":
                 storageAreaNW = northWest;
                 storageAreaSE = southEast;
+                Map<Gob, Integer> temporaryContainers = AUtils.getGobsInSelectedArea(storageAreaNW, storageAreaSE, gui);
+                for(Map.Entry<Gob, Integer> gob : temporaryContainers.entrySet()){
+                    boolean isContainer = false;
+                    for(String container: containers){
+                        if(gob.getKey().getres().name.contains(container)){
+                            isContainer = true;
+                        }
+                    }
+                    if(isContainer){
+                        storageContainers.put(gob.getKey(), gob.getValue());
+                        containerList.addItem(new Container(gob.getKey().getres().basename()));
+                    }
+                }
                 gui.msg("Storage / Stockpile area selected");
+                areaSelectionType = "";
                 break;
             case "other":
                 //TODO Inne
@@ -358,6 +430,29 @@ public class AreaTasker extends Window implements Runnable, AreaSelectCallback {
 
             add(selectedCb, UI.scale(10, 4));
             add(stockpileCb, UI.scale(200, 4));
+        }
+    }
+
+    public static class Container extends Widget{
+        private String name;
+        private CheckBox selectedCb;
+        private boolean selected;
+
+        public Container(String name) {
+            selectedCb = new CheckBox(name) {
+                {
+                    a = false;
+                }
+
+                public void set(boolean val) {
+                    selected = val;
+                    a = val;
+                }
+            };
+            this.name = name;
+            this.selected = false;
+
+            add(selectedCb, UI.scale(10, 4));
         }
     }
 }
