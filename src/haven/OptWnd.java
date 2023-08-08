@@ -1493,6 +1493,10 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 6));
 
+			prev = add(new Button(UI.scale(300), ">>> Auto-Flower Menu <<<", () -> {
+
+			}),prev.pos("bl").adds(0, 10));
+
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(50)));
 			setTooltipsForGameplaySettingsStuff();
 			pack();
