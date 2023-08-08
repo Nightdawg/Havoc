@@ -20,6 +20,10 @@ public class ScrollableWidgetList<T extends Widget> extends Widget {
         add(sb, UI.scale(0, 0));
     }
 
+    public ArrayList<T> getItems() {
+        return items;
+    }
+
     public T getItem(int index) {
         return items.get(index);
     }
