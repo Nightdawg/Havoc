@@ -108,6 +108,8 @@ public class TarKilnCleanerBot extends Window implements Runnable {
             stop = true;
             stop();
             reqdestroy();
+            gui.tarKilnCleanerBot = null;
+            gui.tarKilnCleanerThread = null;
         } else
             super.wdgmsg(sender, msg, args);
     }

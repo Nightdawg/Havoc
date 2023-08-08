@@ -619,13 +619,61 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					}
 				}
 			} else if (ad[2].equals("CleanupBot")) {
-
+				if (gui.cleanupBot == null && gui.cleanupThread == null) {
+					gui.cleanupBot = new CleanupBot(gui);
+					gui.add(gui.cleanupBot, new Coord(gui.sz.x/2 - gui.cleanupBot.sz.x/2, gui.sz.y/2 - gui.cleanupBot.sz.y/2 - 200));
+					gui.cleanupThread = new Thread(gui.cleanupBot, "CleanupBot");
+					gui.cleanupThread.start();
+				} else {
+					if (gui.cleanupBot != null) {
+						gui.cleanupBot.stop();
+						gui.cleanupBot.reqdestroy();
+						gui.cleanupBot = null;
+						gui.cleanupThread = null;
+					}
+				}
 			} else if (ad[2].equals("TurnipBot")) {
-
+				if (gui.turnipBot == null && gui.turnipThread == null) {
+					gui.turnipBot = new TurnipBot(gui);
+					gui.add(gui.turnipBot, new Coord(gui.sz.x/2 - gui.turnipBot.sz.x/2, gui.sz.y/2 - gui.turnipBot.sz.y/2 - 200));
+					gui.turnipThread = new Thread(gui.turnipBot, "TurnipBot");
+					gui.turnipThread.start();
+				} else {
+					if (gui.turnipBot != null) {
+						gui.turnipBot.stop();
+						gui.turnipBot.reqdestroy();
+						gui.turnipBot = null;
+						gui.turnipThread = null;
+					}
+				}
 			} else if (ad[2].equals("TarKilnEmptierBot")) {
-
+				if (gui.tarKilnCleanerBot == null && gui.tarKilnCleanerThread == null) {
+					gui.tarKilnCleanerBot = new TarKilnCleanerBot(gui);
+					gui.add(gui.tarKilnCleanerBot, new Coord(gui.sz.x/2 - gui.tarKilnCleanerBot.sz.x/2, gui.sz.y/2 - gui.tarKilnCleanerBot.sz.y/2 - 200));
+					gui.tarKilnCleanerThread = new Thread(gui.tarKilnCleanerBot, "TarKilnEmptierBot");
+					gui.tarKilnCleanerThread.start();
+				} else {
+					if (gui.tarKilnCleanerBot != null) {
+						gui.tarKilnCleanerBot.stop();
+						gui.tarKilnCleanerBot.reqdestroy();
+						gui.tarKilnCleanerBot = null;
+						gui.tarKilnCleanerThread = null;
+					}
+				}
 			} else if (ad[2].equals("FishingBot")) {
-
+				if (gui.fishingBot == null && gui.fishingThread == null) {
+					gui.fishingBot = new FishingBot(gui);
+					gui.add(gui.fishingBot, new Coord(gui.sz.x/2 - gui.fishingBot.sz.x/2, gui.sz.y/2 - gui.fishingBot.sz.y/2 - 200));
+					gui.fishingThread = new Thread(gui.fishingBot, "FishingBot");
+					gui.fishingThread.start();
+				} else {
+					if (gui.fishingBot != null) {
+						gui.fishingBot.stop();
+						gui.fishingBot.reqdestroy();
+						gui.fishingBot = null;
+						gui.fishingThread = null;
+					}
+				}
 			}
 		} else if (ad[1].equals("CustomClientToggle")) {
 			if (ad[2].equals("AnimalDangerRadii")) {
@@ -685,7 +733,19 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 			} else if (ad[2].equals("GridHeightCalculator")) {
 				AUtils.getGridHeightAvg(gui);
 			} else if (ad[2].equals("OreAndStoneCounter")) {
-
+				if (gui.oreCounter == null && gui.oreCounterThread == null) {
+					gui.oreCounter = new OreCounter(gui);
+					gui.add(gui.oreCounter, new Coord(gui.sz.x/2 - gui.oreCounter.sz.x/2, gui.sz.y/2 - gui.oreCounter.sz.y/2 - 200));
+					gui.oreCounterThread = new Thread(gui.oreCounter, "OreAndStoneCounter");
+					gui.oreCounterThread.start();
+				} else {
+					if (gui.oreCounter != null) {
+						gui.oreCounter.stop();
+						gui.oreCounter.reqdestroy();
+						gui.oreCounter = null;
+						gui.oreCounterThread = null;
+					}
+				}
 			}
 		}
 	}

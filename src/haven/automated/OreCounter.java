@@ -71,7 +71,8 @@ public class OreCounter extends Window implements Runnable {
             stop = true;
             stop();
             reqdestroy();
-            FarmingStatic.turnipDrop = false;
+            gui.oreCounter = null;
+            gui.oreCounterThread = null;
         } else
             super.wdgmsg(sender, msg, args);
     }

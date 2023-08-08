@@ -264,6 +264,8 @@ public class FishingBot extends Window implements Runnable {
             stop = true;
             stop();
             reqdestroy();
+            gui.fishingBot = null;
+            gui.fishingThread = null;
         } else
             super.wdgmsg(sender, msg, args);
     }

@@ -119,7 +119,6 @@ public class CombatDistanceTool extends Window implements Runnable {
             stop = true;
             stop();
             reqdestroy();
-            FarmingStatic.turnipDrop = false;
         } else
             super.wdgmsg(sender, msg, args);
     }

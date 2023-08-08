@@ -289,6 +289,8 @@ public class AreaTasker extends Window implements Runnable, AreaSelectCallback {
                             isContainer = true;
                         }
                     }
+                    storageContainers.clear();
+                    containerList.removeAllItems();
                     if(isContainer){
                         storageContainers.put(gob.getKey(), gob.getValue());
                         containerList.addItem(new Container(gob.getKey().getres().basename()));

@@ -119,6 +119,21 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public CookingRecipes cookbook;
 	public MiningSafetyAssistant miningSafetyAssistantWindow;
 	public Thread miningSafetyAssistantThread;
+	public CleanupBot cleanupBot;
+	public Thread cleanupThread;
+	public TurnipBot turnipBot;
+	public Thread turnipThread;
+
+	public TarKilnCleanerBot tarKilnCleanerBot;
+	public Thread tarKilnCleanerThread;
+
+	public FishingBot fishingBot;
+	public Thread fishingThread;
+
+	public OreCounter oreCounter;
+	public Thread oreCounterThread;
+
+
 
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
@@ -1567,7 +1582,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-
+			AreaTasker oreCounter = new AreaTasker(this);
+			add(oreCounter, new Coord(this.sz.x / 2 - oreCounter.sz.x / 2, this.sz.y / 2 - oreCounter.sz.y / 2 - 200));
+			Thread oreCounterThread = new Thread(oreCounter, "oreCounter");
+			oreCounterThread.start();
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);

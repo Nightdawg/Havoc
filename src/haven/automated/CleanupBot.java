@@ -241,6 +241,8 @@ public class CleanupBot extends Window implements Runnable {
             stop = true;
             stop();
             reqdestroy();
+            gui.cleanupBot = null;
+            gui.cleanupThread = null;
         } else
             super.wdgmsg(sender, msg, args);
     }

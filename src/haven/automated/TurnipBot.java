@@ -534,6 +534,8 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             stop();
             reqdestroy();
             FarmingStatic.turnipDrop = false;
+            gui.turnipBot = null;
+            gui.turnipThread = null;
         } else
             super.wdgmsg(sender, msg, args);
     }
