@@ -38,6 +38,7 @@ import static haven.Composited.MD;
 public class Composite extends Drawable implements EquipTarget {
     public final static float ipollen = 0.2f;
     public final Indir<Resource> base;
+    public final Resource baseres;
     public final Composited comp;
     public int pseq;
     public List<MD> nmod;
@@ -51,7 +52,8 @@ public class Composite extends Drawable implements EquipTarget {
     public Composite(Gob gob, Indir<Resource> base) {
 	super(gob);
 	this.base = base;
-	comp = new Composited(base.get().layer(Skeleton.Res.class).s);
+	this.baseres = base.get();
+	comp = new Composited(baseres.layer(Skeleton.Res.class).s);
 	comp.eqowner = gob;
     }
     
@@ -157,7 +159,7 @@ public class Composite extends Drawable implements EquipTarget {
     }
 
     public Resource getres() {
-	return(base.get());
+	return(baseres);
     }
     
     public Pose getpose() {
@@ -165,6 +167,9 @@ public class Composite extends Drawable implements EquipTarget {
     }
 
     public Supplier<Pipe.Op> eqpoint(String nm, Message dat) {
+	Skeleton.BoneOffset bo = baseres.layer(Skeleton.BoneOffset.class, nm);
+	if(bo != null)
+	    return(bo.from(comp));
 	return(comp.eqpoint(nm, dat));
     }
     
