@@ -8,6 +8,7 @@ import haven.automated.cookbook.importExport.ImportExportHelper;
 
 import java.awt.*;
 import java.sql.*;
+import java.sql.Connection;
 import java.util.List;
 import java.util.*;
 import java.util.regex.Pattern;

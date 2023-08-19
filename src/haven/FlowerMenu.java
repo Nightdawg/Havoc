@@ -30,6 +30,7 @@ import haven.automated.AutoFlowerRepeater;
 
 import java.awt.Color;
 import java.sql.*;
+import java.sql.Connection;
 import java.util.*;
 
 import static java.lang.Math.PI;

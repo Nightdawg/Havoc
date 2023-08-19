@@ -8,6 +8,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+import java.sql.Connection;
 import java.util.List;
 import java.util.*;
 
