@@ -143,8 +143,32 @@ public class Equipory extends Widget implements DTarget {
     protected void added() {
 	if(ava.avagob == -2)
 	    ava.avagob = getparent(GameUI.class).plid;
+	if(parent instanceof Window) {
+		boolean ignoredEquipory = "Mannequin".equals(((Window) parent).caption()) || "Wardrobe".equals(((Window) parent).caption()) || "Equipment".equals(((Window) parent).caption());
+		if(!ignoredEquipory) {
+			Equipory enemyEquipory = this;
+			Button button = new Button(btnw, "Yoink") {
+				@Override
+				public void click() {
+					new Thread(new YoinkGoodStuffFromKnockedEnemy(enemyEquipory, gameui()), "DropItemsFromEnemy").start();
+				}
+			};
+			button.c = new Coord(74, 0);
+			add(button);
+			Button button2 = new Button(btnw, "Drop") {
+				@Override
+				public void click() {
+					new Thread(new DropItemsFromKnockedEnemy(enemyEquipory, gameui()), "DropItemsFromEnemy").start();
+				}
+			};
+
+			button2.c = new Coord(170, 0);
+			add(button2);
+		}
+	}
 	super.added();
     }
+
 
 	public Equipory(long gobid) {
 		super(isz);
@@ -167,24 +191,6 @@ public class Equipory extends Widget implements DTarget {
 		}, bgc);
 		bonuses = add(new AttrBonusesWdg(isz.y), isz.x + UI.scale(14), 0);
 		pack();
-		Equipory enemyEquipory = this;
-		Button button = new Button(btnw, "Yoink") {
-			@Override
-			public void click() {
-				new Thread(new YoinkGoodStuffFromKnockedEnemy(enemyEquipory, gameui()), "DropItemsFromEnemy").start();
-			}
-		};
-		button.c = new Coord(74, 0);
-		add(button);
-		Button button2 = new Button(btnw, "Drop") {
-			@Override
-			public void click() {
-				new Thread(new DropItemsFromKnockedEnemy(enemyEquipory, gameui()), "DropItemsFromEnemy").start();
-			}
-		};
-
-		button2.c = new Coord(170, 0);
-		add(button2);
 	}
 
 	public Equipory(long gobid, boolean player) {
@@ -380,9 +386,9 @@ public class Equipory extends Widget implements DTarget {
 				}
 			}
 		}
-		if (Detection != null)
+		if (Detection != null && player)
 			g.image(Detection, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - Detection.sz().x / 2, bg.sz().y - UI.scale(56)));
-		if (Subtlety != null)
+		if (Subtlety != null && player)
 			g.image(Subtlety, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - Subtlety.sz().x / 2, bg.sz().y - UI.scale(40)));
 		if (ArmorClass != null)
 			g.image(ArmorClass, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - ArmorClass.sz().x / 2, bg.sz().y - UI.scale(20)));
