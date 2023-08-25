@@ -98,6 +98,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public static boolean somethingJustDied = false;
 	public static final ScheduledExecutorService gobDeathExecutor = Executors.newSingleThreadScheduledExecutor();
 	private static Future<?> gobDeathFuture;
+	private boolean malePlayer = false;
+	private boolean femalePlayer = false;
 
 	/**
 	 * This method is run after all gob attributes has been loaded first time
@@ -1413,25 +1415,43 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			qualityInfo.clean();
 		}
 		if(status.updated(StatusType.drawable)) {
-				if (virtual){
+			if (virtual){
 				for(Overlay ol : ols) {
 					if (ol.res.get().name.equals("gfx/fx/death")){
 						setSomethingJustDiedStatus();
 					}
 				}
 			}
+			try {
+				if (getres().name.equals("gfx/borka/body")){
+					for (GAttrib g : attr.values()) {
+						if (g instanceof Drawable) {
+							if (g instanceof Composite) {
+								Composite c = (Composite) g;
+								if (c.comp.cmod.size() > 0) {
+									for (Composited.MD item : c.comp.cmod) {
+										if (item.mod.get().basename().equals("male")) {
+											malePlayer = true;
+										} else if (item.mod.get().basename().equals("female")) {
+											femalePlayer = true;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			} catch (Exception ignored){}
 		}
 	}
 
 	public static void setSomethingJustDiedStatus(){
-		System.out.println("DED");
 		if (gobDeathFuture != null)
 			gobDeathFuture.cancel(true);
 		somethingJustDied = true;
 		gobDeathFuture = gobDeathExecutor.scheduleWithFixedDelay(Gob::resetSomethingJustDiedStatus, 1, 5, TimeUnit.SECONDS);
 	}
 	public static void resetSomethingJustDiedStatus() {
-		System.out.println("RESET DED");
 		somethingJustDied = false;
 		gobDeathFuture.cancel(true);
 	}
@@ -2265,8 +2285,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 						}
 					} else {
 						isDeadPlayer = true;
-						File file = new File("res/sfx/PlayerKilled.wav");
-						if (file.exists() && somethingJustDied) {
+						File file = null;
+						if (malePlayer){
+							file = new File("res/sfx/MalePlayerKilled.wav");
+						} else if (femalePlayer) {
+							file = new File("res/sfx/FemalePlayerKilled.wav");
+						}
+						if (file != null && file.exists() && somethingJustDied) {
 							try {
 								AudioInputStream in = AudioSystem.getAudioInputStream(file);
 								AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
