@@ -40,6 +40,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -91,6 +95,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public final ArrayList<Gob> occupants = new ArrayList<Gob>();
 	public Long occupiedGobID = null;
+	public static boolean somethingJustDied = false;
+	public static final ScheduledExecutorService gobDeathExecutor = Executors.newSingleThreadScheduledExecutor();
+	private static Future<?> gobDeathFuture;
 
 	/**
 	 * This method is run after all gob attributes has been loaded first time
@@ -1405,6 +1412,28 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if(status.updated(StatusType.qualityInfo)) {
 			qualityInfo.clean();
 		}
+		if(status.updated(StatusType.drawable)) {
+				if (virtual){
+				for(Overlay ol : ols) {
+					if (ol.res.get().name.equals("gfx/fx/death")){
+						setSomethingJustDiedStatus();
+					}
+				}
+			}
+		}
+	}
+
+	public static void setSomethingJustDiedStatus(){
+		System.out.println("DED");
+		if (gobDeathFuture != null)
+			gobDeathFuture.cancel(true);
+		somethingJustDied = true;
+		gobDeathFuture = gobDeathExecutor.scheduleWithFixedDelay(Gob::resetSomethingJustDiedStatus, 1, 5, TimeUnit.SECONDS);
+	}
+	public static void resetSomethingJustDiedStatus() {
+		System.out.println("RESET DED");
+		somethingJustDied = false;
+		gobDeathFuture.cancel(true);
 	}
 
 	public static boolean showCollisionBoxes = Utils.getprefb("gobCollisionBoxesDisplayToggle", false);
@@ -2237,7 +2266,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					} else {
 						isDeadPlayer = true;
 						File file = new File("res/sfx/PlayerKilled.wav");
-						if (file.exists()) {
+						if (file.exists() && somethingJustDied) {
 							try {
 								AudioInputStream in = AudioSystem.getAudioInputStream(file);
 								AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
