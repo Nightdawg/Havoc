@@ -931,6 +931,16 @@ public class OptWnd extends Window {
 					+ UI.scale(2));
 		}
 
+		private int addbtnImproved(Widget cont, String nm, String tooltip, Color color, KeyBinding cmd, int y) {
+			Label theLabel = new Label(nm);
+			if (tooltip != null && !tooltip.equals(""))
+				theLabel.tooltip = RichText.render(tooltip, UI.scale(300));
+			theLabel.setcolor(color);
+			return (cont.addhl(new Coord(0, y), cont.sz.x,
+					theLabel, new SetButton(UI.scale(140), cmd))
+					+ UI.scale(2));
+		}
+
 		public BindingPanel(Panel back) {
 			super();
 			Scrollport scroll = add(new Scrollport(UI.scale(new Coord(300, 360))), 0, 0);
@@ -984,21 +994,28 @@ public class OptWnd extends Window {
 				y = addbtn(cont, String.format("Combat action %d", i + 1), Fightsess.kb_acts[i], y);
 			y = addbtn(cont, "Switch targets", Fightsess.kb_relcycle, y);
 			y = cont.adda(new Label("Other Custom features"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
-			y = addbtn(cont, "Drink Button", GameUI.kb_drinkButton, y);
+			y = addbtnImproved(cont, "Drink Button", "", new Color(0, 140, 255, 255), GameUI.kb_drinkButton, y);
 			y = addbtn(cont, "'Attack!' Cursor", GameUI.kb_aggroButton, y);
+
+			y = addbtnImproved(cont, "Pick/Click Nearest Object","When this button is pressed, you will instantly click the nearest Forageable, Critter, or Non-Visitor Gate." +
+					"\n$col[218,163,0]{Range:} $col[185,185,185]{12 tiles (approximately)}", new Color(255, 191, 0,255), GameUI.kb_clickNearestObject, y+6);
+			y = addbtnImproved(cont, "Click Nearest Non-Visitor Gate", "This works the same as the button above, but it has a smaller range (for a slightly better precision) and completely ignores Forageables and Critters." +
+					"\n$col[218,163,0]{Range:} $col[185,185,185]{8 tiles (approximately)}" +
+					"\n$col[185,185,185]{Use this one if you only want a dedicated button for gates, without the other stuff.}", new Color(255, 188, 0,255), GameUI.kb_clickNearestGate, y);
+
 			y = addbtn(cont, "Left Hand (Quick switch)", GameUI.kb_leftQuickSlotButton, y+6);
 			y = addbtn(cont, "Right Hand (Quick switch)", GameUI.kb_rightQuickSlotButton, y);
-			y = addbtn(cont, "Peace Current Target", GameUI.kb_peaceCurrentTarget, y);
-			y = addbtn(cont, "Re-aggro Last Target", GameUI.kb_aggroLastTarget, y);
+
+			y = addbtn(cont, "Peace Current Target", GameUI.kb_peaceCurrentTarget, y+6);
+			y = addbtnImproved(cont, "Re-Aggro Last Target", "", new Color(255, 68, 0,255), GameUI.kb_aggroLastTarget, y);
+
 			y = addbtn(cont, "Toggle Collision Boxes", GameUI.kb_toggleCollisionBoxes, y+6);
 			y = addbtn(cont, "Toggle Object Hiding", GameUI.kb_toggleHidingBoxes, y);
-			y = addbtn(cont, "Click Nearest Non-Visitor Gate", GameUI.kb_clickNearestGate, y);
 
-			y = addbtn(cont, "Mute Non-Friendly", GameUI.kb_toggleMuteNonFriendly, y+6);
-
-			y = addbtn(cont, "Toggle Walk Pathfinder", GameUI.kb_toggleWalkWithPathfinder, y+6);
-
-			y = addbtn(cont, "Button For Testing", GameUI.kb_buttonForTesting, y+6);
+			// ND: Might delete these eventually, commented them for now
+//			y = addbtn(cont, "Mute Non-Friendly", GameUI.kb_toggleMuteNonFriendly, y+26);
+//			y = addbtn(cont, "Toggle Walk Pathfinder", GameUI.kb_toggleWalkWithPathfinder, y);
+//			y = addbtn(cont, "Button For Testing", GameUI.kb_buttonForTesting, y);
 
 
 			prev = adda(new PointBind(UI.scale(200)), scroll.pos("bl").adds(0, 10).x(scroll.sz.x / 2), 0.5, 0.0);

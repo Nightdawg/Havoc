@@ -5,13 +5,14 @@ import haven.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import static haven.OCache.posres;
 
-public class ClickNearestGate implements Runnable {
+public class InteractWithNearestObject implements Runnable {
     private GameUI gui;
 
-    public ClickNearestGate(GameUI gui) {
+    public InteractWithNearestObject(GameUI gui) {
         this.gui = gui;
     }
 
@@ -26,10 +27,25 @@ public class ClickNearestGate implements Runnable {
             "polebiggate"
     ));
 
-    double maxDistance = 8 * 11;
+    public final static Set<String> otherPickableObjects = new HashSet<String>(Arrays.asList( // ND: Pretty much any ground item can be added here
+            "adder",
+            "arrow",
+            "bat",
+            "precioussnowflake",
+            "truffle-black0",
+            "truffle-black1",
+            "truffle-black2",
+            "truffle-black3",
+            "truffle-white0",
+            "truffle-white1",
+            "truffle-white2",
+            "truffle-white3"
+    ));
+
+    double maxDistance = 12 * 11;
     @Override
     public void run() {
-        Gob theGate = null;
+        Gob theObject = null;
         Gob player = gui.map.player();
         if (player == null)
             return; //player is null, possibly taking a road, don't bother trying to do all of the below.
@@ -49,22 +65,23 @@ public class ClickNearestGate implements Runnable {
                     try {
                         if (isGate) {
                             for (Gob.Overlay ol : gob.ols) {
-                                String oname = gui.map.glob.sess.getres(haven.Utils.uint16d(ol.sdt.rbuf, 0)).get().basename();
+                                String oname = gui.map.glob.sess.getres(Utils.uint16d(ol.sdt.rbuf, 0)).get().basename();
                                 if (oname.equals("visflag"))
                                     isGate = false;
                             }
                         }
                     } catch (NullPointerException ignored) {}
-                    if (isGate) {
-                        if (distFromPlayer < maxDistance && (theGate == null || distFromPlayer < theGate.rc.dist(gui.map.player().rc))) {
-                            theGate = gob;
+                    if (isGate || res.name.startsWith("gfx/terobjs/herbs") || otherPickableObjects.contains(res.basename()) || Arrays.stream(Gob.CRITTERAURA_PATHS).anyMatch(res.name::matches)) {
+                        if (distFromPlayer < maxDistance && (theObject == null || distFromPlayer < theObject.rc.dist(gui.map.player().rc))) {
+                            theObject = gob;
+                            if (res.name.startsWith("gfx/terobjs/herbs")) FlowerMenu.setNextSelection("Pick"); // ND: Set the flower menu option to "pick" only for these particular ones.
                         }
                     }
                 }
             }
         }
-        if (theGate == null)
+        if (theObject == null)
             return;
-        gui.map.wdgmsg("click", Coord.z, theGate.rc.floor(posres), 3, 0, 0, (int) theGate.id, theGate.rc.floor(posres), 0, -1);
+        gui.map.wdgmsg("click", Coord.z, theObject.rc.floor(posres), 3, 0, 0, (int) theObject.id, theObject.rc.floor(posres), 0, -1);
     }
 }
