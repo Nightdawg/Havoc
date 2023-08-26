@@ -1767,13 +1767,17 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private void setLeathertubsHighlight(MessageBuf sdt){
 			int peekrbuf = sdt.peekrbuf(0);
 			if (peekrbuf == 0 || peekrbuf == 1 || peekrbuf == 4 || peekrbuf == 5) {
-				setGobStateHighlight(GobStateHighlight.State.GRAY);
+				if (OptWnd.showWorkstationStageGray) setGobStateHighlight(GobStateHighlight.State.GRAY);
+				else delattr(GobStateHighlight.class);
 			} else if (peekrbuf == 10 || peekrbuf == 9 || peekrbuf == 8) {
-				setGobStateHighlight(GobStateHighlight.State.RED);
+				if (OptWnd.showWorkstationStageRed) setGobStateHighlight(GobStateHighlight.State.RED);
+				else delattr(GobStateHighlight.class);
 			} else if (peekrbuf != 6) {
-				setGobStateHighlight(GobStateHighlight.State.GREEN);
+				if (OptWnd.showWorkstationStageGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+				else delattr(GobStateHighlight.class);
 			} else {
-				setGobStateHighlight(GobStateHighlight.State.YELLOW);
+				if (OptWnd.showWorkstationStageYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+				else delattr(GobStateHighlight.class);
 			}
 	}
 
@@ -1798,13 +1802,15 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					} catch (Loading l) {
 					}
 				}
-				GobStateHighlight.State state = GobStateHighlight.State.YELLOW;
+				if (OptWnd.showWorkstationStageYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+				else delattr(GobStateHighlight.class);
 				if (done && !empty) {
-					state = GobStateHighlight.State.RED;
+					if (OptWnd.showWorkstationStageRed) setGobStateHighlight(GobStateHighlight.State.RED);
+					else delattr(GobStateHighlight.class);
 				} else if (empty) {
-					state = GobStateHighlight.State.GREEN;
+					if (OptWnd.showWorkstationStageGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+					else delattr(GobStateHighlight.class);
 				}
-				setGobStateHighlight(state);
 			} else {
 				delattr(GobStateHighlight.class);
 			}
@@ -1815,11 +1821,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (getres() != null && Pattern.matches("gfx/terobjs/cheeserack", getres().name)) {
 			if (OptWnd.showWorkstationStage) {
 				if (ols.size() == 3) {
-					setGobStateHighlight(GobStateHighlight.State.RED);
+					if (OptWnd.showWorkstationStageRed) setGobStateHighlight(GobStateHighlight.State.RED);
+					else delattr(GobStateHighlight.class);
 				} else if (ols.size() == 0) {
-					setGobStateHighlight(GobStateHighlight.State.GREEN);
+					if (OptWnd.showWorkstationStageGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+					else delattr(GobStateHighlight.class);
 				} else {
-					setGobStateHighlight(GobStateHighlight.State.YELLOW);
+					if (OptWnd.showWorkstationStageYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+					else delattr(GobStateHighlight.class);
 				}
 			} else {
 				delattr(GobStateHighlight.class);
@@ -1852,14 +1861,18 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private void setGardenPotHighlight(MessageBuf sdt){
 		int peekrbuf = sdt.peekrbuf(0);
 		if (ols.size() == 2) {
-			setGobStateHighlight(GobStateHighlight.State.RED);
+			if (OptWnd.showWorkstationStageRed) setGobStateHighlight(GobStateHighlight.State.RED);
+			else delattr(GobStateHighlight.class);
 		} else if (ols.size() == 1) {
-			setGobStateHighlight(GobStateHighlight.State.YELLOW);
+			if (OptWnd.showWorkstationStageYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+			else delattr(GobStateHighlight.class);
 		} else if (ols.size() == 0) {
 			if (peekrbuf == 3) {
-				setGobStateHighlight(GobStateHighlight.State.GREEN);
+				if (OptWnd.showWorkstationStageGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+				else delattr(GobStateHighlight.class);
 			} else { // (peekrbuf == 0 || peekrbuf == 1 || peekrbuf == 2)
-				setGobStateHighlight(GobStateHighlight.State.GRAY);
+				if (OptWnd.showWorkstationStageGray) setGobStateHighlight(GobStateHighlight.State.GRAY);
+				else delattr(GobStateHighlight.class);
 			}
 		} else {
 			delattr(GobStateHighlight.class);

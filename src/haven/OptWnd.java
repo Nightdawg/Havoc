@@ -472,6 +472,10 @@ public class OptWnd extends Window {
 	public static CheckBox showContainerFullnessYellowCheckBox;
 	public static CheckBox showContainerFullnessGreenCheckBox;
 	public static CheckBox showWorkstationStageCheckBox;
+	public static CheckBox showWorkstationStageRedCheckBox;
+	public static CheckBox showWorkstationStageYellowCheckBox;
+	public static CheckBox showWorkstationStageGreenCheckBox;
+	public static CheckBox showWorkstationStageGrayCheckBox;
 	public static CheckBox displayGatePassabilityBoxesCheckBox;
 	public static CheckBox highlightCliffsCheckBox;
 	public static CheckBox showMineSupportRadiiCheckBox;
@@ -485,6 +489,10 @@ public class OptWnd extends Window {
 	public static boolean showContainerFullnessYellow = Utils.getprefb("showContainerFullnessYellow", true);
 	public static boolean showContainerFullnessGreen = Utils.getprefb("showContainerFullnessGreen", true);
 	public static boolean showWorkstationStage = Utils.getprefb("showWorkstationStage", true);
+	public static boolean showWorkstationStageRed = Utils.getprefb("showWorkstationStageRed", true);
+	public static boolean showWorkstationStageYellow = Utils.getprefb("showWorkstationStageYellow", true);
+	public static boolean showWorkstationStageGreen = Utils.getprefb("showWorkstationStageGreen", true);
+	public static boolean showWorkstationStageGray = Utils.getprefb("showWorkstationStageGray", true);
 	public static boolean displayGatePassabilityBoxes = Utils.getprefb("displayGatePassabilityBoxes", false);
 	public static boolean highlightCliffs = Utils.getprefb("highlightCliffs", false);
 	public static boolean showMineSupportTiles = Utils.getprefb("showMineSupportTiles", false);
@@ -860,6 +868,52 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(-34, 16));
+		add(new Label("Show:"), rightColumn.pos("bl").adds(0, 6));
+		rightColumn = add(showWorkstationStageRedCheckBox = new CheckBox("Finished"){
+			{a = (Utils.getprefb("showWorkstationStageRed", true));}
+			public void set(boolean val) {
+				Utils.setprefb("showWorkstationStageRed", val);
+				showWorkstationStageRed = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				a = val;
+			}
+		}, rightColumn.pos("bl").adds(34, 6));
+		showWorkstationStageRedCheckBox.lbl = Text.std.render("Finished", new Color(185,0,0,255));
+		add(showWorkstationStageYellowCheckBox = new CheckBox("In progress"){
+			{a = (Utils.getprefb("showWorkstationStageYellow", true));}
+			public void set(boolean val) {
+				Utils.setprefb("showWorkstationStageYellow", val);
+				showWorkstationStageYellow = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				a = val;
+			}
+		}, rightColumn.pos("ur").adds(9, 0));
+		showWorkstationStageYellowCheckBox.lbl = Text.std.render("In progress", new Color(224,213,0,255));
+		rightColumn = add(showWorkstationStageGreenCheckBox = new CheckBox("Prepared"){
+			{a = (Utils.getprefb("showWorkstationStageGreen", true));}
+			public void set(boolean val) {
+				Utils.setprefb("showWorkstationStageGreen", val);
+				showWorkstationStageGreen = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				a = val;
+			}
+		}, rightColumn.pos("bl").adds(0, 6));
+		showWorkstationStageGreenCheckBox.lbl = Text.std.render("Prepared", new Color(0,185,0,255));
+		add(showWorkstationStageGrayCheckBox = new CheckBox("Unprepared"){
+			{a = (Utils.getprefb("showWorkstationStageGray", true));}
+			public void set(boolean val) {
+				Utils.setprefb("showWorkstationStageGray", val);
+				showWorkstationStageGray = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				a = val;
+			}
+		}, rightColumn.pos("ur").adds(6, 0));
+		showWorkstationStageGrayCheckBox.lbl = Text.std.render("Unprepared", new Color(160,160,160,255));
+
 
 		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 30).x(UI.scale(117)));
 		setTooltipsForInterfaceSettingsStuff();
@@ -3030,7 +3084,7 @@ public class OptWnd extends Window {
 		showContainerFullnessCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Container Objects, to indicate their fullness:" +
 				"\n$col[185,0,0]{Red: }$col[255,255,255]{Full}\n$col[224,213,0]{Yellow: }$col[255,255,255]{Contains some}\n$col[0,185,0]{Green: }$col[255,255,255]{Empty}", UI.scale(300));
 		showWorkstationStageCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Workstation Objects (Drying Frame, Tanning Tub, Garden Pot, Cheese Rack), to indicate their progress stage:" +
-				"\n$col[185,0,0]{Red: }$col[255,255,255]{Finished}\n$col[224,213,0]{Yellow: }$col[255,255,255]{In progress}\n$col[0,185,0]{Green: }$col[255,255,255]{Ready for use}\n$col[160,160,160]{Gray: }$col[255,255,255]{Unprepared}", UI.scale(300));
+				"\n$col[185,0,0]{Red: }$col[255,255,255]{Finished}\n$col[224,213,0]{Yellow: }$col[255,255,255]{In progress}\n$col[0,185,0]{Green: }$col[255,255,255]{Prepared (Ready for use)}\n$col[160,160,160]{Gray: }$col[255,255,255]{Unprepared (Missing: Water, Soil, Tanning Liquid, etc.)}", UI.scale(310));
 		displayGatePassabilityBoxesCheckBox.tooltip = RichText.render("Enabling this will cause a collision box to be displayed under gates at all times.\nThe displayed colors depend on the gate type, and your combat status." +
 				"\n=====================" +
 				"\n$col[0,160,0]{Green: }$col[185,185,185]{Normal Gate, Open and Passable, even in combat}" +
