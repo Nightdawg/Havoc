@@ -468,6 +468,9 @@ public class OptWnd extends Window {
 	public static CheckBox alwaysOpenBeltCheckBox;
 	public static CheckBox showQuickSlotsBar;
 	public static CheckBox showContainerFullnessCheckBox;
+	public static CheckBox showContainerFullnessRedCheckBox;
+	public static CheckBox showContainerFullnessYellowCheckBox;
+	public static CheckBox showContainerFullnessGreenCheckBox;
 	public static CheckBox showWorkstationStageCheckBox;
 	public static CheckBox displayGatePassabilityBoxesCheckBox;
 	public static CheckBox highlightCliffsCheckBox;
@@ -478,6 +481,9 @@ public class OptWnd extends Window {
 	public static boolean critterAuraEnabled = Utils.getprefb("critterAuras", false);
 	public static boolean beastDangerRadiiEnabled = Utils.getprefb("beastDangerRadii", true);
 	public static boolean showContainerFullness = Utils.getprefb("showContainerFullness", true);
+	public static boolean showContainerFullnessRed = Utils.getprefb("showContainerFullnessRed", true);
+	public static boolean showContainerFullnessYellow = Utils.getprefb("showContainerFullnessYellow", true);
+	public static boolean showContainerFullnessGreen = Utils.getprefb("showContainerFullnessGreen", true);
 	public static boolean showWorkstationStage = Utils.getprefb("showWorkstationStage", true);
 	public static boolean displayGatePassabilityBoxes = Utils.getprefb("displayGatePassabilityBoxes", false);
 	public static boolean highlightCliffs = Utils.getprefb("highlightCliffs", false);
@@ -734,6 +740,33 @@ public class OptWnd extends Window {
 			}
 		}, leftColumn.pos("bl").adds(0, 6));
 
+		leftColumn = add(displayGatePassabilityBoxesCheckBox = new CheckBox("Display Gate Combat Passability"){
+			{a = (Utils.getprefb("displayGatePassabilityBoxes", false));}
+			public void set(boolean val) {
+				Utils.setprefb("displayGatePassabilityBoxes", val);
+				displayGatePassabilityBoxes = val;
+				if (gameui() != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					gameui().optionInfoMsg("Gate Combat Passability is now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgRed));
+				}
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 16));
+
+		leftColumn = add(highlightCliffsCheckBox = new CheckBox("Highlight Cliffs (Red Overlay)"){
+			{a = (Utils.getprefb("highlightCliffs", false));}
+			public void set(boolean val) {
+				Utils.setprefb("highlightCliffs", val);
+				highlightCliffs = val;
+				if (ui.sess != null)
+					ui.sess.glob.map.invalidateAll();
+				if (gameui() != null) {
+					gameui().optionInfoMsg("Cliff Highlighting is now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
+				}
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 6));
+
 		rightColumn = add(toggleGobCollisionBoxesDisplayCheckBox = new CheckBox("Show Object Collision Boxes"){
 			{a = (Utils.getprefb("gobCollisionBoxesDisplayToggle", false));}
 			public void set(boolean val) {
@@ -783,6 +816,40 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 16));
+		add(new Label("Show:"), rightColumn.pos("bl").adds(0, 6));
+		rightColumn = add(showContainerFullnessRedCheckBox = new CheckBox("Full"){
+			{a = (Utils.getprefb("showContainerFullnessRed", true));}
+			public void set(boolean val) {
+				Utils.setprefb("showContainerFullnessRed", val);
+				showContainerFullnessRed = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
+				a = val;
+			}
+		}, rightColumn.pos("bl").adds(34, 6));
+		showContainerFullnessRedCheckBox.lbl = Text.std.render("Full", new Color(185,0,0,255));
+		add(showContainerFullnessYellowCheckBox = new CheckBox("Some"){
+			{a = (Utils.getprefb("showContainerFullnessYellow", true));}
+			public void set(boolean val) {
+				Utils.setprefb("showContainerFullnessYellow", val);
+				showContainerFullnessYellow = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
+				a = val;
+			}
+		}, rightColumn.pos("ur").adds(6, 0));
+		showContainerFullnessYellowCheckBox.lbl = Text.std.render("Some", new Color(224,213,0,255));
+		add(showContainerFullnessGreenCheckBox = new CheckBox("Empty"){
+			{a = (Utils.getprefb("showContainerFullnessGreen", true));}
+			public void set(boolean val) {
+				Utils.setprefb("showContainerFullnessGreen", val);
+				showContainerFullnessGreen = val;
+				if (gameui() != null)
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
+				a = val;
+			}
+		}, rightColumn.pos("ur").adds(58, 0));
+		showContainerFullnessGreenCheckBox.lbl = Text.std.render("Empty", new Color(0,185,0,255));
 		rightColumn = add(showWorkstationStageCheckBox = new CheckBox("Highlight Workstation Progress"){
 			{a = (Utils.getprefb("showWorkstationStage", true));}
 			public void set(boolean val) {
@@ -792,34 +859,7 @@ public class OptWnd extends Window {
 					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
 				a = val;
 			}
-		}, rightColumn.pos("bl").adds(0, 6));
-
-		rightColumn = add(displayGatePassabilityBoxesCheckBox = new CheckBox("Display Gate Combat Passability"){
-			{a = (Utils.getprefb("displayGatePassabilityBoxes", false));}
-			public void set(boolean val) {
-				Utils.setprefb("displayGatePassabilityBoxes", val);
-				displayGatePassabilityBoxes = val;
-				if (gameui() != null) {
-					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
-					gameui().optionInfoMsg("Gate Combat Passability is now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgRed));
-				}
-				a = val;
-			}
-		}, rightColumn.pos("bl").adds(0, 16));
-
-		rightColumn = add(highlightCliffsCheckBox = new CheckBox("Highlight Cliffs (Red Overlay)"){
-			{a = (Utils.getprefb("highlightCliffs", false));}
-			public void set(boolean val) {
-				Utils.setprefb("highlightCliffs", val);
-				highlightCliffs = val;
-				if (ui.sess != null)
-					ui.sess.glob.map.invalidateAll();
-				if (gameui() != null) {
-					gameui().optionInfoMsg("Cliff Highlighting is now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
-				}
-				a = val;
-			}
-		}, rightColumn.pos("bl").adds(0, 6));
+		}, rightColumn.pos("bl").adds(-34, 16));
 
 		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 30).x(UI.scale(117)));
 		setTooltipsForInterfaceSettingsStuff();
@@ -2958,7 +2998,7 @@ public class OptWnd extends Window {
 		revertCameraAxisCheckBox.visible = bool;
 	}
 	private void setTooltipsForCameraSettingsStuff(){
-		revertCameraAxisCheckBox.tooltip = RichText.render("Enabling this will revert the Vertical and Horizontal axes when dragging the camera to look around.\n$col[185,185,185]{I don't know why Loftar inverts them in the first place...}", UI.scale(280));
+		revertCameraAxisCheckBox.tooltip = RichText.render("Enabling this will revert the Horizontal axis when dragging the camera to look around.\n$col[185,185,185]{I don't know why Loftar inverts it in the first place...}", UI.scale(280));
 		unlockedOrthoCamCheckBox.tooltip = RichText.render("Enabling this allows you to rotate the Ortho camera freely, without locking it to only 4 view angles.", UI.scale(280));
 		freeCamZoomSpeedResetButton.tooltip = RichText.render("Reset to default", UI.scale(300));
 		freeCamHeightResetButton.tooltip = RichText.render("Reset to default", UI.scale(300));
@@ -2972,12 +3012,12 @@ public class OptWnd extends Window {
 		enableAdvancedMouseInfoCheckBox.tooltip = RichText.render("Holding Ctrl+Shift will show the Resource Path of the object or tile you are mousing over. Enabling this option will show additional information.\n$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", UI.scale(300));
 		enableWrongResCheckBox.tooltip = RichText.render("$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", UI.scale(300));
 		enableDragWindowsInWhenResizingCheckBox.tooltip = RichText.render("Enabling this will force ALL Windows to be dragged back inside the Game Window, whenever you resize it.\n$col[218,163,0]{Note:} $col[185,185,185]{By default, windows will remain in the same spot when you resize your Game Window, even if they're outside of it.", UI.scale(300));
-		enableSnapWindowsBackInsideCheckBox.tooltip = RichText.render("Enabling this cause most windows to be fully snapped back into your Game's Window.\nBy default, when you try to drag a window outside of your Game Window, it will only pop 25% of it back in.\n$col[185,185,185]{Large windows like the Cattle Roster or Cook Book will always are not affected by this setting. The 25% rule always applies to them.}", UI.scale(300));
+		enableSnapWindowsBackInsideCheckBox.tooltip = RichText.render("Enabling this cause most windows to be fully snapped back into your Game's Window.\nBy default, when you try to drag a window outside of your Game Window, it will only pop 25% of it back in.\n$col[185,185,185]{Large windows like the Cattle Roster or Cook Book are not affected by this setting. The 25% rule always applies to them.}", UI.scale(300));
 		interfaceScaleLabel.tooltip = RichText.render("$col[218,163,0]{Warning:} This setting is by no means perfect, and it can mess up many things." +
-				"\nLots of things might become messed up when this is set above 1.00x, and some might even completely break." +
-				"\n$col[185,185,185]{Honestly, fuck this setting.}", UI.scale(300));
+				"\nSome windows might just break when this is set above 1.00x." +
+				"\n$col[185,185,185]{Honestly, fuck this setting. Unless you're on a 4K or 8K display, keep this at 1.00x.}", UI.scale(300));
 		interfaceScaleHSlider.tooltip = RichText.render("$col[218,163,0]{Warning:} This setting is by no means perfect, and it can mess up many things." +
-				"\nLots of things might become messed up when this is set above 1.00x, and some might even completely break." +
+				"\nSome windows might just break when this is set above 1.00x." +
 				"\n$col[185,185,185]{Honestly, fuck this setting. Unless you're on a 4K or 8K display, keep this at 1.00x.}", UI.scale(300));
 		granularityPositionLabel.tooltip = RichText.render("Equivalent of the :placegrid console command, this allows you to have more freedom when placing constructions/objects.", UI.scale(300));
 		granularityAngleLabel.tooltip = RichText.render("Equivalent of the :placeangle console command, this allows you to have more freedom when rotating constructions/objects before placement.", UI.scale(300));
@@ -2988,7 +3028,7 @@ public class OptWnd extends Window {
 		toggleBeastDangerRadiiCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		toggleCritterAurasCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		showContainerFullnessCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Container Objects, to indicate their fullness:" +
-				"\n$col[185,0,0]{Red: }$col[255,255,255]{Full}\n$col[224,213,0]{Yellow: }$col[255,255,255]{Contains items}\n$col[0,185,0]{Green: }$col[255,255,255]{Empty}", UI.scale(300));
+				"\n$col[185,0,0]{Red: }$col[255,255,255]{Full}\n$col[224,213,0]{Yellow: }$col[255,255,255]{Contains some}\n$col[0,185,0]{Green: }$col[255,255,255]{Empty}", UI.scale(300));
 		showWorkstationStageCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Workstation Objects (Drying Frame, Tanning Tub, Garden Pot, Cheese Rack), to indicate their progress stage:" +
 				"\n$col[185,0,0]{Red: }$col[255,255,255]{Finished}\n$col[224,213,0]{Yellow: }$col[255,255,255]{In progress}\n$col[0,185,0]{Green: }$col[255,255,255]{Ready for use}\n$col[160,160,160]{Gray: }$col[255,255,255]{Unprepared}", UI.scale(300));
 		displayGatePassabilityBoxesCheckBox.tooltip = RichText.render("Enabling this will cause a collision box to be displayed under gates at all times.\nThe displayed colors depend on the gate type, and your combat status." +

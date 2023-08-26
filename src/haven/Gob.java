@@ -1659,39 +1659,51 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				case "gfx/terobjs/cupboard":
 				case "gfx/terobjs/chest":
 					if (peekrbuf == 30 || peekrbuf == 29) {
-						setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 2 || peekrbuf == 1) {
-						setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						else delattr(GobStateHighlight.class);
 					} else {
-						setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						else delattr(GobStateHighlight.class);
 					}
 					break;
 				case "gfx/terobjs/crate":
 				case "gfx/terobjs/linencrate":
 					if (peekrbuf == 16) {
-						setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 0) {
-						setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						else delattr(GobStateHighlight.class);
 					} else {
-						setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						else delattr(GobStateHighlight.class);
 					}
 					break;
 				case "gfx/terobjs/leatherbasket":
 					if (peekrbuf == 4) {
-						setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 0) {
-						setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						else delattr(GobStateHighlight.class);
 					} else {
-						setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						else delattr(GobStateHighlight.class);
 					}
 					break;
 				case "gfx/terobjs/woodbox":
 					if (peekrbuf == 8) {
-						setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 0) {
-						setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						else delattr(GobStateHighlight.class);
 					} else {
-						setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						else delattr(GobStateHighlight.class);
 					}
 					break;
 				case "gfx/terobjs/largechest":
@@ -1699,21 +1711,27 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				case "gfx/terobjs/stonecasket":
 				case "gfx/terobjs/bonechest":
 					if (peekrbuf == 17 || peekrbuf == 18) {
-						setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 2 || peekrbuf == 1) {
-						setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						else delattr(GobStateHighlight.class);
 					} else {
-						setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						else delattr(GobStateHighlight.class);
 					}
 					break;
 				case "gfx/terobjs/coffer":
 				case "gfx/terobjs/metalcabinet":
 					if (peekrbuf == 65 || peekrbuf == 66) {
-						setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 2 || peekrbuf == 1) {
-						setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						else delattr(GobStateHighlight.class);
 					} else {
-						setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						else delattr(GobStateHighlight.class);
 					}
 					break;
 				default:
