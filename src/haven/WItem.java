@@ -194,6 +194,25 @@ public class WItem extends Widget implements DTarget {
 		for(GItem.InfoOverlay<?> ol : ols)
 		    ol.draw(g);
 	    }
+
+		try {
+			for (ItemInfo info : item.info()) {
+				if (info instanceof ItemInfo.AdHoc) {
+					ItemInfo.AdHoc ah = (ItemInfo.AdHoc) info;
+					if (ah.str.text.equals("Well mined")) {
+						drawwellmined(g);
+					} else if (ah.str.text.equals("Black-truffled")) {
+						drawadhocicon(g, "gfx/invobjs/herbs/truffle-black", 18);
+					} else if (ah.str.text.equals("White-truffled")) {
+						drawadhocicon(g, "gfx/invobjs/herbs/truffle-white", 9);
+					} else if (ah.str.text.equals("Peppered")) {
+						drawadhocicon(g, "gfx/invobjs/pepper", 0);
+					}
+				}
+			}
+		} catch (Exception e) {
+		}
+
 		drawmeter(g, sz);
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
@@ -334,4 +353,16 @@ public class WItem extends Widget implements DTarget {
 	}
 	return(ret);
     }
+
+	private void drawwellmined(GOut g) {
+		g.chcolor(new Color(203, 183, 94));
+		g.fcircle(sz.x-UI.scale(4),sz.y-UI.scale(4), UI.scale(4),10);
+		g.chcolor();
+	}
+
+	private void drawadhocicon(GOut g, String resname, int offset) {
+		Resource res = Resource.remote().load(resname).get();
+		BufferedImage bufferedimage = res.layer(Resource.imgc).img;
+		g.image(bufferedimage, new Coord(UI.scale(offset), sz.y-UI.scale(16)), new Coord(UI.scale(16),UI.scale(16)));
+	}
 }
