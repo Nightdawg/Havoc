@@ -261,6 +261,19 @@ public class Inventory extends Widget implements DTarget {
 		return null;
 	}
 
+	public WItem getItemPrecise(String name) {
+		if (name == null)
+			return null;
+		for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+			if (wdg instanceof WItem) {
+				String wdgname = ((WItem)wdg).item.getname();
+				if (wdgname.equals(name))
+					return (WItem) wdg;
+			}
+		}
+		return null;
+	}
+
 	public int getItemPartialCount(String name) {
 		if (name == null)
 			return 0;

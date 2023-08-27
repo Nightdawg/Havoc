@@ -385,6 +385,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/GridHeightCalculator");
 		makeLocal("paginae/nightdawg/OtherTools/OreAndStoneCounter");
 		makeLocal("paginae/nightdawg/OtherTools/CoracleScript");
+		makeLocal("paginae/nightdawg/OtherTools/CloverScript");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -749,6 +750,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 				}
 			} else if (ad[2].equals("CoracleScript")) {
 				new Thread(new CoracleScript(gui), "CoracleScript").start();
+			} else if (ad[2].equals("CloverScript")) {
+				new Thread(new CloverScript(gui), "CloverScript").start();
 			}
 		}
 	}
