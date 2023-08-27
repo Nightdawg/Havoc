@@ -65,7 +65,7 @@ public class CoracleScript implements Runnable {
                 while (gui.hand.isEmpty() || gui.vhand == null) {
                     timeout += HAND_DELAY;
                     if (timeout >= TIMEOUT) {
-                        gui.error("Timeout trying to pickup coracle");
+                        gui.error("Coracle Script: Timed out trying to pick up coracle");
                         return;
                     }
                     try {
@@ -80,7 +80,7 @@ public class CoracleScript implements Runnable {
                 if (freecoord != null) {
                     gui.maininv.wdgmsg("drop", freecoord);
                 } else {
-                    gui.error("No free space in inventory for coracle :(");
+                    gui.error("Coracle Script: No free space in inventory for coracle.");
                 }
             }
 
@@ -112,7 +112,7 @@ public class CoracleScript implements Runnable {
                     timeout++;
                     // ND: I copied this from Cediner. I wonder if this is less stressful for the CPU compared to just doing something like (System.currentTimeMillis() - start > 4000)
                     if (timeout > 300) {
-                        gui.error("Timed out waiting for water tile to drop coracle on.");
+                        gui.error("Coracle Script: Timed out waiting for water tile to drop coracle on.");
                         return;
                     }
                     try {
