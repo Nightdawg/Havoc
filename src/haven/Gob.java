@@ -58,7 +58,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     public long id;
     public boolean removed = false;
     public final Glob glob;
-    Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
+    public Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
     public final Collection<Overlay> ols = new ArrayList<Overlay>();
 	public Collection<Overlay> tempOls = new ArrayList<Overlay>();
     public final Collection<RenderTree.Slot> slots = new ArrayList<>(1);
@@ -100,6 +100,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private static Future<?> gobDeathFuture;
 	private boolean malePlayer = false;
 	private boolean femalePlayer = false;
+	public Boolean imInCoracle = false;
 
 	/**
 	 * This method is run after all gob attributes has been loaded first time
@@ -172,8 +173,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 		if (this.getres().name.equals("gfx/borka/body") && isMannequin != null && !isMannequin){
 			boolean imOnLand = true;
-			if (poses.contains("rowboat") || poses.contains("coracleidle") || poses.contains("snekkja") || poses.contains("knarr") || poses.contains("dugout")) {
-				imOnLand = false;
+			imInCoracle = false;
+			Iterator<String> iter2 = poses.iterator();
+			while (iter2.hasNext()) {
+				String s = iter2.next();
+				if (s.contains("coracleidle") || s.contains("coraclerowan")) {
+					imOnLand = false;
+					imInCoracle = true;
+					break;
+				}
+				if (s.contains("rowboat") || s.contains("snekkja") || s.contains("knarr") || s.contains("dugout")) {
+					imOnLand = false;
+					break;
+				}
 			}
 			if (poses.contains("spear-ready")) {
 				archeryIndicator(155, imOnLand);
