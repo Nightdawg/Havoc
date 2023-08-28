@@ -147,8 +147,8 @@ public class MenuSearch extends Window {
     }
 
     public void tick(double dt) {
-	if(menu.cur != root)
-	    setroot(menu.cur);
+//	if(menu.cur != root)
+//	    setroot(menu.cur);
 	if(recons)
 	    updlist();
 	super.tick(dt);
