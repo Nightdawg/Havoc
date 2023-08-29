@@ -126,6 +126,8 @@ public class CoracleScript implements Runnable {
                 coracleItem.wdgmsg("drop", new Coord(coracleItem.sz.x / 2, coracleItem.sz.y / 2));
             }
 
+            Gob gobCoracle = null;
+            boolean moutableCoracle = false;
             // ND: try this 3 times, cause sometimes it fails to click the coracle. Idk why, or how, I tried multiple print statements. 3 seems to be enough.
             for (int i = 0; i < 3; i++) {
                 try {
@@ -135,7 +137,6 @@ public class CoracleScript implements Runnable {
                 }
 
                 // find closest coracle
-                Gob gobCoracle = null;
                 synchronized (gui.map.glob.oc) {
                     for (Gob gob : gui.map.glob.oc) {
                         try {
@@ -160,13 +161,17 @@ public class CoracleScript implements Runnable {
                         }
                     }
                     if (peekrbuf != null && peekrbuf == 22) { // ND: peekrbuf 22 means empty coracle, on water
-                        if (gobCoracle.rc.dist(gui.map.player().rc) < 11 * 5) {
+                        if (gobCoracle.rc.dist(gui.map.player().rc) < 11 * 6) {
+                            moutableCoracle = true;
                             FlowerMenu.setNextSelection("Into the blue yonder!");
                             gui.map.wdgmsg("click", Coord.z, gobCoracle.rc.floor(posres), 3, 0, 0, (int) gobCoracle.id, gobCoracle.rc.floor(posres), 0, -1);
                             //System.out.println("I CLICKED: " + i);
                         }
                     }
                 }
+            }
+            if (coracle == null && (gobCoracle == null || !moutableCoracle)){
+                gui.error("Coracle Script: No coracle found in inventory and no mountable coracle found close proximity.");
             }
         }
     }
