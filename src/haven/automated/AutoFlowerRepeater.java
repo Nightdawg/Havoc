@@ -18,7 +18,10 @@ public class AutoFlowerRepeater implements Runnable{
     private List<GItem> items;
 
     public AutoFlowerRepeater(GameUI gui, String name) {
-        scheduler.schedule(() -> stop = true, 1500, TimeUnit.MILLISECONDS);
+        scheduler.schedule(() -> {
+            stop = true;
+
+            }, 2000, TimeUnit.MILLISECONDS);
         this.gui = gui;
         this.ping = GameUI.getPingValue() != null ? GameUI.getPingValue() + 20 : 100;
         option = "";
@@ -57,6 +60,7 @@ public class AutoFlowerRepeater implements Runnable{
             sleep(ping);
         }
         option = null;
+        FlowerMenu.setNextSelection(null);
     }
 
     private void sleep(int duration) {
