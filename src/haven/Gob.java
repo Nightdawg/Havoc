@@ -110,7 +110,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		Resource res = getres();
 		if (res != null) {
 			if (listHighlighted.contains(id)) {
-				setattr(new GobStateHighlight(this, GobStateHighlight.State.PURPLE));
+				setattr(new GobPermanentHighlight(this, GobPermanentHighlight.State.PURPLE));
 			}
 			initiateSupportOverlays();
 			toggleMineLadderRadius();
@@ -2398,5 +2398,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				timer.cancel();
 			}
 		}, 100);
+	}
+
+	public void removePermanentHighlight(){
+		if (Gob.listHighlighted.contains(id)) {
+			Gob.listHighlighted.remove(id);
+			delattr(GobPermanentHighlight.class);
+		}
 	}
 }

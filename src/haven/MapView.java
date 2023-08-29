@@ -27,7 +27,6 @@
 package haven;
 
 import haven.MCache.OverlayInfo;
-import haven.automated.AUtils;
 import haven.automated.MiningSafetyAssistant;
 import haven.automated.helpers.AreaSelectCallback;
 import haven.automated.pathfinder.PFListener;
@@ -2315,15 +2314,13 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 						if (chats.get("Party") != null)
 							chats.get("Party").send("@" + gob.id);
 					}
-					if(ui.modmeta && ui.modshift && ui.modctrl){
-						if (clickb == 1) {
-							if (Gob.listHighlighted.contains(gob.id)) {
-								Gob.listHighlighted.remove(gob.id);
-								gob.delattr(GobStateHighlight.class);
-							} else {
-								Gob.listHighlighted.add(gob.id);
-								gob.setattr(new GobStateHighlight(gob, GobStateHighlight.State.PURPLE));
-							}
+					if(OptWnd.objectPermanentHighlighting && clickb == 2 && (ui.modmeta && !(ui.modshift || ui.modctrl))){
+						if (Gob.listHighlighted.contains(gob.id)) {
+							Gob.listHighlighted.remove(gob.id);
+							gob.delattr(GobPermanentHighlight.class);
+						} else {
+							Gob.listHighlighted.add(gob.id);
+							gob.setattr(new GobPermanentHighlight(gob, GobPermanentHighlight.State.PURPLE));
 						}
 					}
 					return;
@@ -2427,6 +2424,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		}
 	}
 	if(button == 2) {
+		new Click(c, button).run();
 	    if(((Camera)camera).click(c)) {
 		camdrag = ui.grabmouse(this);
 	    }

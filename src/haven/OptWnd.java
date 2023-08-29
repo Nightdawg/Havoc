@@ -39,6 +39,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class OptWnd extends Window {
@@ -459,6 +460,7 @@ public class OptWnd extends Window {
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
 	public static CheckBox requireShiftHoverStacksCheckBox;
+	public static CheckBox objectPermanentHighlightingCheckBox;
 	public static CheckBox toggleGobHealthDisplayCheckBox;
 	public static CheckBox toggleGobGrowthInfoCheckBox;
 	public static CheckBox toggleGobQualityInfoCheckBox;
@@ -502,6 +504,7 @@ public class OptWnd extends Window {
 	public static boolean dragWindowsInWhenResizing = Utils.getprefb("dragWindowsInWhenResizing", false);
 	public static boolean snapWindowsBackInside = Utils.getprefb("snapWindowsBackInside", true);
 	public static boolean requireShiftHoverStacks = Utils.getprefb("requireShiftHoverStacks", false);
+	public static boolean objectPermanentHighlighting = Utils.getprefb("objectPermanentHighlighting", false);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -628,7 +631,7 @@ public class OptWnd extends Window {
 			}
 		}, leftColumn.pos("bl").adds(0, 6));
 
-		leftColumn = add(requireShiftHoverStacksCheckBox = new CheckBox("Show hover-inventories only if holding Shift"){
+		leftColumn = add(requireShiftHoverStacksCheckBox = new CheckBox("Show Hover-Inventories (Stacks, Belt, etc.) only when holding Shift"){
 			{a = (Utils.getprefb("requireShiftHoverStacks", false));}
 			public void set(boolean val) {
 				Utils.setprefb("requireShiftHoverStacks", val);
@@ -636,6 +639,19 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 16));
+		leftColumn = add(objectPermanentHighlightingCheckBox = new CheckBox("Allow Object Permanent Highlighting on Alt + Middle Click (Mouse Scroll Click)"){
+			{a = (Utils.getprefb("objectPermanentHighlighting", false));}
+			public void set(boolean val) {
+				Utils.setprefb("objectPermanentHighlighting", val);
+				objectPermanentHighlighting = val;
+				if (!val) {
+					if (gameui() != null)
+						ui.sess.glob.oc.gobAction(Gob::removePermanentHighlight);
+					Gob.listHighlighted.clear();
+				}
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 6));
 
 		rightColumn = add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
 			{a = (Utils.getprefb("CornerFPSSettingBool", false));}
@@ -3121,6 +3137,9 @@ public class OptWnd extends Window {
 				"\n=====================" +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		highlightCliffsCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
+		objectPermanentHighlightingCheckBox.tooltip = RichText.render("Enabling this setting will allow you to highlight objects by using Alt + Middle Click (Mouse Scroll Click)." +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{Objects remain highlighted until you completely restart your client, even if you switch characters or accounts. " +
+				"\nIf you want to reset the highlighted objects without restarting the client, you can disable and re-enable this setting.}", UI.scale(320));
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){
