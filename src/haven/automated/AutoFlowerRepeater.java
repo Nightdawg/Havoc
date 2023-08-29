@@ -44,18 +44,23 @@ public class AutoFlowerRepeater implements Runnable{
         while(!stop){
             if(option != null && !option.equals("")){
                 scheduler.shutdown();
-                int counter = 0;
-                while(!items.isEmpty() && counter <= 10){
-                    counter++;
-                    for(GItem item : items){
-                        FlowerMenu.setNextSelection(option);
-                        item.wdgmsg("iact", Coord.z, 3);
-                        sleep(ping);
+                if (option.equals("Study")){
+                    gui.error("Auto Flower Script: The \"Study\" option is not allowed for this script.");
+                    stop = true;
+                } else {
+                    int counter = 0;
+                    while(!items.isEmpty() && counter <= 10){
+                        counter++;
+                        for(GItem item : items){
+                            FlowerMenu.setNextSelection(option);
+                            item.wdgmsg("iact", Coord.z, 3);
+                            sleep(ping);
+                        }
+                        items = iterateThroughItems(name);
+                        ping = GameUI.getPingValue() != null ? GameUI.getPingValue() + 20 : 100;
                     }
-                    items = iterateThroughItems(name);
-                    ping = GameUI.getPingValue() != null ? GameUI.getPingValue() + 20 : 100;
+                    stop = true;
                 }
-                stop = true;
             }
             sleep(ping);
         }
