@@ -448,7 +448,7 @@ public class OptWnd extends Window {
 	    {
 		Label dpy = new Label("");
 		addhlp(prev.pos("bl").adds(0, 2), UI.scale(5),
-		       prev = new HSlider(UI.scale(160), 128, Math.round(Audio.fmt.getSampleRate() / 4), Audio.bufsize()) {
+		       prev = new HSlider(UI.scale(160), Math.round(Audio.fmt.getSampleRate() * 0.05f), Math.round(Audio.fmt.getSampleRate() / 4), Audio.bufsize()) {
 			       protected void added() {
 				   dpy();
 			       }
@@ -460,8 +460,9 @@ public class OptWnd extends Window {
 				   dpy();
 			       }
 			   }, dpy);
-		prev.settip("Sets the size of the audio buffer. Smaller sizes are better, " +
-			    "but larger sizes can fix issues with broken sound.", true);
+		prev.settip("Sets the size of the audio buffer. " +
+				"\n$col[185,185,185]{Loftar claims that smaller sizes are better, but anything below 50ms always fucking stutters, so I limited it there." +
+				"\nIncrease this if your audio is still stuttering.}", true);
 	    }
 		add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 30));
 	    pack();
