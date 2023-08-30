@@ -44,7 +44,7 @@ public class Equipory extends Widget implements DTarget {
 	private static final Text.Foundry acf = new Text.Foundry(Text.sans, 12);
 	public boolean updateBottomText = false;
 	public final boolean player;
-	long delayBottomTextUpdate;
+	long delayedUpdateTime;
 	private Tex Detection = null;
 	private Tex Subtlety = null;
 	private Tex ArmorClass = null;
@@ -120,6 +120,7 @@ public class Equipory extends Widget implements DTarget {
 	AttrBonusesWdg bonuses;
 	public WItem[] slots = new WItem[ecoords.length];
 	private static final int btnw = UI.scale(80);
+	boolean checkForLeeches = false;
 
     @RName("epry")
     public static class $_ implements Factory {
@@ -218,8 +219,18 @@ public class Equipory extends Widget implements DTarget {
 		}, bgc);
 		ava.drawv = false;
 		bonuses = add(new AttrBonusesWdg(isz.y), isz.x + UI.scale(14), 0);
+		add(autoDropLeechesCheckBox, isz.x + UI.scale(14), isz.y - UI.scale(24));
 		pack();
 	}
+
+	public static CheckBox autoDropLeechesCheckBox = new CheckBox("Auto-Drop Leeches"){
+		{a = Utils.getprefb("autoDropLeeches", false);}
+		public void set(boolean val) {
+			if (OptWnd.autoDropLeechesCheckBox != null)
+				OptWnd.autoDropLeechesCheckBox.set(val);
+			a = val;
+		}
+	};
 
     public static interface SlotInfo {
 	public int slots();
@@ -236,8 +247,9 @@ public class Equipory extends Widget implements DTarget {
 			}
 			g.sendttupdate = true;
 			wmap.put(g, v);
-			delayBottomTextUpdate = System.currentTimeMillis();
+			delayedUpdateTime = System.currentTimeMillis();
 			updateBottomText = true;
+			checkForLeeches = true;
 			try {
 				if (g.resname().equals("gfx/invobjs/batcape")) {
 					Gob.batsLeaveMeAlone = true;
@@ -272,6 +284,7 @@ public class Equipory extends Widget implements DTarget {
 		}
 		bonuses.update(slots);
 		updateBottomText = true;
+		checkForLeeches = true;
 		try {
 			if (i.resname().equals("gfx/invobjs/batcape")){
 				Gob.batsLeaveMeAlone = false;
@@ -341,7 +354,7 @@ public class Equipory extends Widget implements DTarget {
 		GameUI gui = gameui();
 		if (updateBottomText) {
 			long now = System.currentTimeMillis();
-			if ((now - delayBottomTextUpdate) > 100){ // ND: Hopefully 100ms is enough? I can't reproduce it any more on my PC at least. This is client-sided, so ping should not affect it (SHOULD, BUT GOD KNOWS WITH LOFTAR)
+			if ((now - delayedUpdateTime) > 100){ // ND: Hopefully 100ms is enough? I can't reproduce it any more on my PC at least. This is client-sided, so ping should not affect it (SHOULD, BUT GOD KNOWS WITH LOFTAR)
 				// ND: I genuinely don't know any other workaround to this crap not updating when you add a new item. For some reason this doesn't happen in Ardennes' (old render)
 				//     In Ardennes', it looks like the UI freezes for a second when you try to add the new item sometimes. Maybe these weird hiccups are different in new render? For now, I have no clue.
 				int prc = 0, exp = 0, det, intl = 0, ste = 0, snk, aHard = 0, aSoft = 0;
@@ -392,6 +405,18 @@ public class Equipory extends Widget implements DTarget {
 			g.image(Subtlety, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - Subtlety.sz().x / 2, bg.sz().y - UI.scale(40)));
 		if (ArmorClass != null)
 			g.image(ArmorClass, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - ArmorClass.sz().x / 2, bg.sz().y - UI.scale(20)));
+		if (OptWnd.autoDropLeeches && player && checkForLeeches) {
+			long now = System.currentTimeMillis();
+			if ((now - delayedUpdateTime) > 100){
+				for (SLOTS slot : SLOTS.values()) {
+					WItem equippedItem = slots[slot.idx];
+					if (equippedItem != null && equippedItem.item != null && equippedItem.item.getname() != null && equippedItem.item.getname().contains("Leech")){
+						equippedItem.item.wdgmsg("drop", new Coord(equippedItem.sz.x / 2, equippedItem.sz.y / 2));
+					}
+				}
+				checkForLeeches = false;
+			}
+		}
 	}
 
     public boolean iteminteract(Coord cc, Coord ul) {

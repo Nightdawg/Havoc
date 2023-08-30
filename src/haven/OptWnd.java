@@ -1482,6 +1482,7 @@ public class OptWnd extends Window {
 	private static CheckBox autoFlowerCTRLSHIFTCheckBox;
 	private static CheckBox autoswitchBunnyPlateBootsCheckBox;
 	public static CheckBox saveCutleryCheckBox = null;
+	public static CheckBox autoDropLeechesCheckBox = null;
 	public static CheckBox noCursorItemDroppingCheckBox = null;
 	public static CheckBox noCursorItemDroppingInWaterCheckBox = null;
 	public static CheckBox autoDrinkTeaWhileWorking = null;
@@ -1489,6 +1490,7 @@ public class OptWnd extends Window {
 	public static boolean autoFlowerCTRLSHIFT = Utils.getprefb("autoFlowerCTRLSHIFT", false);
 	public static boolean autoswitchBunnyPlateBoots = Utils.getprefb("autoswitchBunnyPlateBoots", true);
 	public static boolean antiCutleryBreakage = Utils.getprefb("antiCutleryBreakage", true);
+	public static boolean autoDropLeeches = Utils.getprefb("autoDropLeeches", false);
 
 	public class NDGameplaySettingsPanel extends Panel {
 		private final List<String> runSpeeds = Arrays.asList("Crawl", "Walk", "Run", "Sprint");
@@ -1599,6 +1601,22 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 16));
+
+			prev = add(autoDropLeechesCheckBox = new CheckBox("Auto-Drop Leeches"){
+				{a = Utils.getprefb("autoDropLeeches", false);}
+				public void set(boolean val) {
+					Utils.setprefb("autoDropLeeches", val);
+					autoDropLeeches = val;
+					Equipory.autoDropLeechesCheckBox.a = val;
+					if (gameui() != null) {
+						Equipory eq = gameui().getequipory();
+						if (eq != null && eq.player) { // ND: Probably an irrelevant check
+							eq.checkForLeeches = true;
+						}
+					}
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 6));
 
 			prev = add(saveCutleryCheckBox = new CheckBox("Anti Cutlery Breakage (move to inventory before it breaks)"){
 				{a = Utils.getprefb("antiCutleryBreakage", true);}

@@ -27,9 +27,9 @@ public class AttrBonusesWdg extends Widget implements ItemInfo.Owner {
     private CharWnd charWnd = null;
 
     public AttrBonusesWdg(int y) {
-        super(new Coord(UI.scale(150), y));
+        super(new Coord(UI.scale(150), y - UI.scale(30)));
         add(new Label("Equipment bonuses:"), UI.scale(22), 0);
-        bar = adda(new Scrollbar(y - bonusc.y, 0, 0), sz.x, bonusc.y, 1, 0);
+        bar = adda(new Scrollbar(y - bonusc.y - UI.scale(30), 0, 0), sz.x, bonusc.y , 1, 0);
     }
 
     @Override
