@@ -51,8 +51,8 @@ public class Fightsess extends Widget {
     public static final Tex useframe = Resource.loadtex("gfx/hud/combat/lastframe");
     public static final Coord useframeo = (useframe.sz().sub(off)).div(2);
     public static final int actpitch = UI.scale(52);
-	public static final Text.Foundry ipAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 16);
-	public static final Text.Foundry openingAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 12);
+	public static final Text.Foundry ipAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 14);
+	public static final Text.Foundry openingAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 10);
 	public static final Text.Foundry cleaveAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 10);
 	public static HashSet<String> maneuvers =  new HashSet<>(Arrays.asList(
 			"paginae/atk/toarms", "paginae/atk/shield", "paginae/atk/parry",
@@ -560,6 +560,7 @@ public class Fightsess extends Widget {
 	private void drawCombatData(GOut g, Fightview.Relation rels, Coord sc) {
 		int scaledY = sc.y - UI.scale(90);
 		Coord topLeftFrame = new Coord(sc.x - UI.scale(43), scaledY);
+		Coord bgTopLeftFrame = new Coord(sc.x - UI.scale(41), scaledY);
 		boolean openings;
 		boolean cleaveUsed = false;
 		long cleaveDuration = 4300;
@@ -606,7 +607,7 @@ public class Fightsess extends Widget {
 
 		if (showInfoBackground) {
 			g.chcolor(new Color(0, 0, 0, 80));
-			g.frect(topLeftFrame, UI.scale(new Coord(86, 24)));
+			g.frect(bgTopLeftFrame, UI.scale(new Coord(82, 24)));
 		}
 
 		//reset color
@@ -617,8 +618,8 @@ public class Fightsess extends Widget {
 		Color oipcol = rels.oip >= 6 ? new Color(255, 54, 0) : new Color(255, 255, 255);
 
 		//made different x offsets depending on how many digits coins have
-		int ipOffset = rels.ip < 10 ? 20 : rels.ip < 100 ? 24 : 28;
-		int oipOffset = rels.oip < 10 ? 78 : rels.oip < 100 ? 81 : 86;
+		int ipOffset = rels.ip < 10 ? 21 : rels.ip < 100 ? 25 : 29;
+		int oipOffset = rels.oip < 10 ? 77 : rels.oip < 100 ? 80 : 85;
 
 		//add ip / oip text
 		g.aimage(Text.renderstroked(Integer.toString(rels.ip), ipAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(ipOffset), topLeftFrame.y + UI.scale(13)), 1, 0.5);
@@ -629,24 +630,27 @@ public class Fightsess extends Widget {
 				if (buff.res != null && buff.res.get() != null) {
 					String name = buff.res.get().name;
 					if (maneuvers.contains(name)) {
+						g.chcolor(0, 0, 0, 200);
+						g.frect(new Coord(topLeftFrame.x + UI.scale(32), topLeftFrame.y + UI.scale(1)), UI.scale(new Coord(22, 22)));
+						g.chcolor(255, 255, 255, 255);
 						int meterValue = getOpeningValue(buff);
 						Resource.Image img = buff.res.get().flayer(Resource.imgc);
-						Tex maneuverTexture = new TexI(PUtils.uiscale(img.scaled, UI.scale(new Coord(24, 24))));
+						Tex maneuverTexture = new TexI(PUtils.uiscale(img.scaled, UI.scale(new Coord(20, 20))));
 						if (name.equals("paginae/atk/combmed")){
 							if(meterValue > 75){
 								g.chcolor(255, 255-(tickAlert*20), 255-(tickAlert*20), 255);
 							}
 						}
-						g.image(maneuverTexture, new Coord(topLeftFrame.x + UI.scale(31), topLeftFrame.y));
+						g.image(maneuverTexture, new Coord(topLeftFrame.x + UI.scale(33), topLeftFrame.y + UI.scale(2)));
 						if(meterValue > 0){
-							g.chcolor(0, 0, 0, 155);
-							g.frect(new Coord(topLeftFrame.x + UI.scale(31), topLeftFrame.y + UI.scale(24)), UI.scale(new Coord(24, 8)));
+							g.chcolor(0, 0, 0, 200);
+							g.frect(new Coord(topLeftFrame.x + UI.scale(32), topLeftFrame.y + UI.scale(23)), UI.scale(new Coord(22, 6)));
 							if(meterValue < 30){
 								g.chcolor(255, 255, 255, 255);
 							} else {
 								g.chcolor(255, (255 - (255*meterValue)/100), (255 - (255*meterValue)/100), 255);
 							}
-							g.frect(new Coord(topLeftFrame.x + UI.scale(32), topLeftFrame.y + UI.scale(25)), UI.scale(new Coord((22 * meterValue)/100, 6)));
+							g.frect(new Coord(topLeftFrame.x + UI.scale(33), topLeftFrame.y + UI.scale(24)), UI.scale(new Coord((20 * meterValue)/100, 4)));
 						}
 					}
 				}
@@ -660,7 +664,7 @@ public class Fightsess extends Widget {
 		if (openings) {
 			if (showInfoBackground) {
 				g.chcolor(new Color(0, 0, 0, 80));
-				g.frect(new Coord(topLeftFrame.x, topLeftFrame.y + UI.scale(24)), UI.scale(new Coord(86, 29)));
+				g.frect(new Coord(bgTopLeftFrame.x, bgTopLeftFrame.y + UI.scale(24)), UI.scale(new Coord(82, 26)));
 			}
 
 			Map<String, Color> colorMap = new HashMap<>();
@@ -684,17 +688,19 @@ public class Fightsess extends Widget {
 			}
 			openingList.sort((o1, o2) -> Integer.compare(o2.value, o1.value));
 
-			int openingOffsetX = 1;
+			int openingOffsetX = 4;
 			int iterator = 1;
 			for (TemporaryOpening opening : openingList) {
+				g.chcolor(0, 0, 0, 200);
+				g.frect(new Coord(topLeftFrame.x + UI.scale(openingOffsetX) - UI.scale(1), topLeftFrame.y + UI.scale(30) - UI.scale(1)), UI.scale(new Coord(20, 20)));
 				g.chcolor(opening.color);
-				g.frect(new Coord(topLeftFrame.x + UI.scale(openingOffsetX), topLeftFrame.y + UI.scale(32)), UI.scale(new Coord(20, 20)));
+				g.frect(new Coord(topLeftFrame.x + UI.scale(openingOffsetX), topLeftFrame.y + UI.scale(30)), UI.scale(new Coord(18, 18)));
 				g.chcolor(255, 255, 255, 255);
 
-				int valueOffset = opening.value < 10 ? 15 : opening.value< 100 ? 19 : 22;
-				g.aimage(Text.renderstroked(String.valueOf(opening.value), openingAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(openingOffsetX) + UI.scale(valueOffset) - UI.scale(1), topLeftFrame.y + UI.scale(43)), 1, 0.5);
-				if (iterator == 2) openingOffsetX += 22;
-				else openingOffsetX += 21;
+				int valueOffset = opening.value < 10 ? 15 : opening.value< 100 ? 18 : 20;
+				g.aimage(Text.renderstroked(String.valueOf(opening.value), openingAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(openingOffsetX) + UI.scale(valueOffset) - UI.scale(1), topLeftFrame.y + UI.scale(39)), 1, 0.5);
+				if (iterator == 2) openingOffsetX += 20;
+				else openingOffsetX += 20;
 				iterator += 1;
 			}
 		}
@@ -704,12 +710,12 @@ public class Fightsess extends Widget {
 			long timer = ((cleaveDuration - (System.currentTimeMillis() - rels.lastActCleave)));
 			if (showInfoBackground) {
 				g.chcolor(new Color(0, 0, 0, 80));
-				g.frect(new Coord(topLeftFrame.x, topLeftFrame.y - UI.scale(12)), UI.scale(new Coord(86, 12)));
+				g.frect(new Coord(bgTopLeftFrame.x, bgTopLeftFrame.y - UI.scale(13)), UI.scale(new Coord(82, 13)));
 			}
 			g.chcolor(new Color(0, 0, 0, 255));
-			g.frect(new Coord(topLeftFrame.x + UI.scale(1), topLeftFrame.y - UI.scale(12)), UI.scale(new Coord((int) ((82 * timer)/cleaveDuration)+1, 14)));
+			g.frect(new Coord(topLeftFrame.x + UI.scale(3), topLeftFrame.y - UI.scale(12)), UI.scale(new Coord((int) ((80 * timer)/cleaveDuration)+1, 13)));
 			g.chcolor(new Color(213, 0, 0, 255));
-			g.frect(new Coord(topLeftFrame.x + UI.scale(2), topLeftFrame.y - UI.scale(11)), UI.scale(new Coord((int) ((82 * timer)/cleaveDuration), 12)));
+			g.frect(new Coord(topLeftFrame.x + UI.scale(4), topLeftFrame.y - UI.scale(11)), UI.scale(new Coord((int) ((80 * timer)/cleaveDuration), 11)));
 			g.chcolor(new Color(255, 255, 255, 255));
 			g.aimage(Text.renderstroked(getCooldownTime(timer), cleaveAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(52), topLeftFrame.y - UI.scale(6)), 1, 0.5);
 		}
@@ -719,12 +725,12 @@ public class Fightsess extends Widget {
 			long timer = ((rels.lastDefenceDuration - (System.currentTimeMillis() - rels.lastActDefence)));
 			if (showInfoBackground) {
 				g.chcolor(new Color(0, 0, 0, 80));
-				g.frect(new Coord(topLeftFrame.x, topLeftFrame.y - UI.scale(12)), UI.scale(new Coord(86, 12)));
+				g.frect(new Coord(bgTopLeftFrame.x, bgTopLeftFrame.y - UI.scale(13)), UI.scale(new Coord(82, 13)));
 			}
 			g.chcolor(new Color(0, 0, 0, 255));
-			g.frect(new Coord(topLeftFrame.x + UI.scale(1), topLeftFrame.y - UI.scale(12)), UI.scale(new Coord((int) ((82 * timer)/rels.lastDefenceDuration)+1, 14)));
+			g.frect(new Coord(topLeftFrame.x + UI.scale(3), topLeftFrame.y - UI.scale(12)), UI.scale(new Coord((int) ((79 * timer)/rels.lastDefenceDuration)+1, 13)));
 			g.chcolor(new Color(227, 136, 0, 255));
-			g.frect(new Coord(topLeftFrame.x + UI.scale(2), topLeftFrame.y - UI.scale(11)), UI.scale(new Coord((int) ((82 * timer)/rels.lastDefenceDuration), 12)));
+			g.frect(new Coord(topLeftFrame.x + UI.scale(4), topLeftFrame.y - UI.scale(11)), UI.scale(new Coord((int) ((79 * timer)/rels.lastDefenceDuration), 11)));
 			g.chcolor(new Color(255, 255, 255, 255));
 			g.aimage(Text.renderstroked(getCooldownTime(timer), cleaveAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(52), topLeftFrame.y - UI.scale(6)), 1, 0.5);
 		}
