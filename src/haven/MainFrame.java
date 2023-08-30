@@ -451,6 +451,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
     }
     
     public static void main(final String[] args) {
+		Thread.setDefaultUncaughtExceptionHandler(new CrashLogger());
 	/* Set up the error handler as early as humanly possible. */
 	ThreadGroup g = new ThreadGroup("Haven main group");
 	String ed;
