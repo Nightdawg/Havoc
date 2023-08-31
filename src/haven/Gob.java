@@ -101,6 +101,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private boolean malePlayer = false;
 	private boolean femalePlayer = false;
 	public Boolean imInCoracle = false;
+	public Boolean imDrinking = false;
 
 	/**
 	 * This method is run after all gob attributes has been loaded first time
@@ -212,6 +213,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				archeryVector = null;
 				removeOl(archeryRadius);
 				archeryRadius = null;
+			}
+			if (poses.contains("drinkan")) {
+				imDrinking = true;
+			} else {
+				imDrinking = false;
 			}
 			if  (!isDeadPlayer){
 				checkIfPlayerIsDead(poses);

@@ -1078,8 +1078,54 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	if(!chat.visible()) {
 	    chat.drawsmall(g, new Coord(blpw + UI.scale(10), by), UI.scale(100));
 	}
+	// ND: Draw Combat UI stamina bar even when out of combat when drinking, or, if setting is enabled, always
+	if (!Fightsess.altui || !(fv != null && fv.current != null)) {
+		Gob myself = map.player();
+		if (OptWnd.alwaysShowStaminaBar || (myself != null && myself.imDrinking)) {
+			IMeter.Meter stam = getmeter("stam", 0);
+			double x1 = this.sz.x / 2.0;
+			double y1 = this.sz.y - ((this.sz.y / 500.0) * Fightsess.combaty0HeightInt);
+			int x0 = (int)x1;
+			int y0 = (int)y1;
+			if (stam != null) {
+				Coord msz = UI.scale(new Coord(150, 20));
+				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(70));
+				drawStamMeterBar(g, stam, sc, msz);
+			}
+		}
+	}
+
     }
-    
+
+	private static final Color blu1 = new Color(3, 3, 80, 141);
+	private static final Color blu2 = new Color(32, 32, 184, 90);
+	private static final Color blu3 = new Color(14, 14, 213, 70);
+	private static final Color barframe = new Color(255, 255, 255, 111);
+	private void drawStamMeterBar(GOut g, IMeter.Meter m, Coord sc, Coord msz) {
+		int w = msz.x;
+		int w1 = (int) Math.ceil(w * m.a);
+		int w2 = (int) (w * Math.max(m.a-0.25,0));
+		int w3 = (int) (w * Math.max(m.a-0.50,0));
+
+		g.chcolor(blu1);
+		g.frect(sc, new Coord(w1, msz.y));
+		g.chcolor(blu2);
+		g.frect(new Coord(sc.x+(w*25)/100, sc.y), new Coord(w2, msz.y));
+		g.chcolor(blu3);
+		g.frect(new Coord(sc.x+(w*50)/100, sc.y), new Coord(w3, msz.y));
+		g.chcolor(barframe);
+		g.line(new Coord(sc.x+w1, sc.y), new Coord(sc.x+w1, sc.y+msz.y), 1);
+		g.rect(sc, new Coord(msz.x, msz.y));
+		g.chcolor(Color.WHITE);
+		String staminaBarText = Utils.fmt1DecPlace((int)(m.a*100));
+		Gob myself = map.player();
+		if (myself != null && myself.imDrinking) {
+			g.chcolor(new Color(0, 222, 0));
+			staminaBarText = staminaBarText + " (Drinking)";
+		}
+		g.aimage(Text.renderstroked(staminaBarText, Text.num12boldFnd).tex(), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5);
+	}
+
     private String iconconfname() {
 	StringBuilder buf = new StringBuilder();
 	buf.append("data/mm-icons");

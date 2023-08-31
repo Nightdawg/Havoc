@@ -770,7 +770,13 @@ public class Fightsess extends Widget {
 		g.line(new Coord(sc.x+w1, sc.y), new Coord(sc.x+w1, sc.y+msz.y), 1);
 		g.rect(sc, new Coord(msz.x, msz.y));
 		g.chcolor(Color.WHITE);
-		g.aimage(Text.renderstroked(Utils.fmt1DecPlace((int)(m.a*100)), Text.num12boldFnd).tex(), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5);
+		String staminaBarText = Utils.fmt1DecPlace((int)(m.a*100));
+		Gob myself = gameui().map.player();
+		if (myself != null && myself.imDrinking) {
+			g.chcolor(new Color(0, 222, 0));
+			staminaBarText = staminaBarText + " (Drinking)";
+		}
+		g.aimage(Text.renderstroked(staminaBarText, Text.num12boldFnd).tex(), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5);
 	}
 	public static String fmt1DecPlace(double value) {
 		double rvalue = (double) Math.round(value * 10) / 10;
