@@ -1027,7 +1027,8 @@ public class OptWnd extends Window {
 			y = cont.adda(new Label("Combat actions"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
 			for (int i = 0; i < Fightsess.kb_acts.length; i++)
 				y = addbtn(cont, String.format("Combat action %d", i + 1), Fightsess.kb_acts[i], y);
-			y = addbtn(cont, "Switch targets", Fightsess.kb_relcycle, y);
+			y = addbtnImproved(cont, "Cycle through targets", "This only cycles through the targets you are currently engaged in combat with.", Color.WHITE, Fightsess.kb_relcycle, y);
+			y = addbtnImproved(cont, "Switch to nearest target", "This only switches to the nearest target you are currently engaged in combat with.", Color.WHITE, Fightsess.kb_nearestTarget, y);
 			y = addbtnImproved(cont, "Aggro Nearest Player/Animal", "Selects the nearest Player or Animal to attack, based on your situation:" +
 					"\n\n$col[218,163,0]{Case 1:} $col[185,185,185]{If you are in combat with Players, it will only attack other not-already-aggroed players.}" +
 					"\n$col[218,163,0]{Case 2:} $col[185,185,185]{If you are in combat with Animals, it will try to attack the closest not-already-aggroed player or animal. Once this happens, you're back to Case 1.}" +
