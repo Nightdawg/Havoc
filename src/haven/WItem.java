@@ -226,7 +226,7 @@ public class WItem extends Widget implements DTarget {
 	private void drawnum(GOut g, Coord sz) {
 		Tex tex;
 		if(item.num >= 0) {
-			tex = quantityFoundry.renderstroked(Integer.toString(item.num), quantityColor, Color.BLACK).tex();
+			tex = quantityFoundry.renderstroked2(Integer.toString(item.num), quantityColor, Color.BLACK).tex();
 		} else {
 			tex = chainattr(heurnum);
 		}
@@ -320,7 +320,7 @@ public class WItem extends Widget implements DTarget {
 	public final AttrCache<Tex> heurnum = new AttrCache<Tex>(this::info, AttrCache.cache(info -> {
 		String num = ItemInfo.getCount(info);
 		if(num == null) return null;
-		return quantityFoundry.renderstroked(num, quantityColor, Color.BLACK).tex();
+		return quantityFoundry.renderstroked2(num, quantityColor, Color.BLACK).tex();
 	}));
 
     public boolean mousedown(Coord c, int btn) {
