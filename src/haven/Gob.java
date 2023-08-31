@@ -2295,7 +2295,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			@Override
 			public void run(){
 				boolean imDead = true;
-				for (GAttrib g : hearthling.attr.values()) {
+				Iterator<Map.Entry<Class<? extends GAttrib>, GAttrib>> attr_Iterator = hearthling.attr.entrySet().iterator();
+				while (attr_Iterator.hasNext()) {
+					Map.Entry<Class<? extends GAttrib>, GAttrib> entry = attr_Iterator.next();
+					GAttrib g = entry.getValue();
 					if (g instanceof Drawable) {
 						if (g instanceof Composite) {
 							Composite c = (Composite) g;
