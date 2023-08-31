@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 public abstract class ItemInfo {
 	public static final Resource armor_hard = Resource.local().loadwait("gfx/hud/chr/custom/ahard");
 	public static final Resource armor_soft = Resource.local().loadwait("gfx/hud/chr/custom/asoft");
+	static final Pattern count_pattern = Pattern.compile("(?:^|[\\s])([0-9]*\\.?[0-9]+\\s*%?)");
     public final Owner owner;
 
     public interface Owner extends OwnerContext {
@@ -525,6 +526,38 @@ public abstract class ItemInfo {
     public static List<ItemInfo> buildinfo(Owner owner, Object[] rawinfo) {
 	return(buildinfo(owner, new Raw(rawinfo)));
     }
+
+	public static String getCount(List<ItemInfo> infos) {
+		String res = null;
+		for (ItemInfo info : infos) {
+			if(info instanceof Contents) {
+				Contents cnt = (Contents) info;
+				res = getCount(cnt.sub);
+			} else if(info instanceof AdHoc) {
+				AdHoc ah = (AdHoc) info;
+				try {
+					Matcher m = count_pattern.matcher(ah.str.text);
+					if(m.find()) {
+						res = m.group(1);
+					}
+				} catch (Exception ignored) {
+				}
+			} else if(info instanceof Name) {
+				Name name = (Name) info;
+				try {
+					Matcher m = count_pattern.matcher(name.original);
+					if(m.find()) {
+						res = m.group(1);
+					}
+				} catch (Exception ignored) {
+				}
+			}
+			if(res != null) {
+				return res.trim();
+			}
+		}
+		return null;
+	}
     
     private static String dump(Object arg) {
 	if(arg instanceof Object[]) {

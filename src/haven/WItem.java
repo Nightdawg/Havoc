@@ -26,9 +26,10 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
 
 import haven.ItemInfo.AttrCache;
 import haven.automated.AutoFlowerRepeater;
@@ -41,6 +42,9 @@ public class WItem extends Widget implements DTarget {
     public final GItem item;
     private Resource cspr = null;
     private Message csdt = Message.nil;
+	public static final Text.Foundry quantityFoundry = new Text.Foundry(Text.dfont, 9);
+	private static final Color quantityColor = new Color(255, 255, 255, 255);
+	public static final Coord TEXT_PADD_BOT = new Coord(2, -3);
 
     public WItem(GItem item) {
 	super(sqsz);
@@ -212,12 +216,35 @@ public class WItem extends Widget implements DTarget {
 			}
 		} catch (Exception e) {
 		}
-
+		drawnum(g, sz);
 		drawmeter(g, sz);
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
 	}
     }
+
+	private void drawnum(GOut g, Coord sz) {
+		Tex tex;
+		if(item.num >= 0) {
+			tex = quantityFoundry.renderstroked(Integer.toString(item.num), quantityColor, Color.BLACK).tex();
+		} else {
+			tex = chainattr(heurnum);
+		}
+
+		if(tex != null) {
+			g.aimage(tex, TEXT_PADD_BOT.add(sz), 1, 1);
+		}
+	}
+	@SafeVarargs //Ender: actually, method just assumes you'll feed it correctly typed var args
+	private static Tex chainattr(AttrCache<Tex> ...attrs){
+		for(AttrCache<Tex> attr : attrs){
+			Tex tex = attr.get();
+			if(tex != null){
+				return tex;
+			}
+		}
+		return null;
+	}
 	private void drawmeter(GOut g, Coord sz) {
 		double meter = meter();
 		if(meter > 0) {
@@ -290,6 +317,11 @@ public class WItem extends Widget implements DTarget {
 	}
 
 	public final AttrCache<Pair<String, String>> study = new AttrCache<Pair<String, String>>(this::info, AttrCache.map1(Curiosity.class, curio -> curio::remainingTip));
+	public final AttrCache<Tex> heurnum = new AttrCache<Tex>(this::info, AttrCache.cache(info -> {
+		String num = ItemInfo.getCount(info);
+		if(num == null) return null;
+		return quantityFoundry.renderstroked(num, quantityColor, Color.BLACK).tex();
+	}));
 
     public boolean mousedown(Coord c, int btn) {
 	boolean inv = parent instanceof Inventory;
