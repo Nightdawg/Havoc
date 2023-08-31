@@ -1733,7 +1733,7 @@ public class OptWnd extends Window {
 			prev.tooltip = RichText.render("I don't even know why I'm allowing you to disable this and use Loftar's default UI.\nLike, why would you ever?", UI.scale(300));
 			prev = add(new Label("Top panel height (Improved UI):"), prev.pos("bl").adds(-16, 10));
 			Fightsess.combaty0HeightInt = Utils.getprefi("combatTopPanelHeight", 400);
-			prev = add(combatUITopPanelHeightSlider = new HSlider(UI.scale(200), 1, 500, Fightsess.combaty0HeightInt) {
+			prev = add(combatUITopPanelHeightSlider = new HSlider(UI.scale(200), 36, 480, Fightsess.combaty0HeightInt) {
 				protected void attach(UI ui) {
 					super.attach(ui);
 					val = Fightsess.combaty0HeightInt;
@@ -1750,7 +1750,7 @@ public class OptWnd extends Window {
 			}), prev.pos("bl").adds(210, -20));
 			prev = add(new Label("Bottom panel height (Improved UI):"), prev.pos("bl").adds(0, 10));
 			Fightsess.combatbottomHeightInt = Utils.getprefi("combatBottomPanelHeight", 100);
-			prev = add(combatUIBottomPanelHeightSlider = new HSlider(UI.scale(200), 1, 500, Fightsess.combatbottomHeightInt) {
+			prev = add(combatUIBottomPanelHeightSlider = new HSlider(UI.scale(200), 10, 480, Fightsess.combatbottomHeightInt) {
 				protected void attach(UI ui) {
 					super.attach(ui);
 					val = Fightsess.combatbottomHeightInt;
