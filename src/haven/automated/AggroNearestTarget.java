@@ -107,7 +107,7 @@ public class AggroNearestTarget implements Runnable {
                 continue;
             }
             //if gob is an enemy player and not alreayd aggroed
-            if (closestEnemy == null || gob.rc.dist(player.rc) < closestEnemy.rc.dist(player.rc) && !gob.knocked) {
+            if ((closestEnemy == null || gob.rc.dist(player.rc) < closestEnemy.rc.dist(player.rc)) && gob.knocked != null && !gob.knocked) {
                 closestEnemy = gob;
             }
         }
