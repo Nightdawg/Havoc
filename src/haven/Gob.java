@@ -1918,7 +1918,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			}
 		}
 		KinInfo kininfo = getattr(KinInfo.class);
-		if (kininfo == null || (kininfo.unknown && !kininfo.isVillager()) || kininfo.group == 2 /*red*/)
+		if (kininfo == null || !kininfo.isVillager() || kininfo.group == 2 /*red*/)
 			return false;
 
 		return true;

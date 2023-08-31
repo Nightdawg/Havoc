@@ -1896,26 +1896,31 @@ public class Resource implements Serializable {
     }
 
 	public static boolean showResourceConsolePrints = Utils.getprefb("showResourceConsolePrints", false);
-	private static final List<String> ignoreCustomIconResVersionList =
+	private static final List<String> ignoreCustomIconResVersionList = // ND: Used to prevent the console from printing stuff like: "Wrong res version (1 != 65535) customMapIcons/dugout(v65535)"
 			Arrays.asList(
-					"customMapIcons/metalplow",
-					"customMapIcons/wellspring",
-					"customMapIcons/opiumdragon",
-					"customMapIcons/stalagoomba",
-					"customMapIcons/dryad",
-					"customMapIcons/wreckingball",
-					"customMapIcons/mandrakespirited",
-					"customMapIcons/wagon",
-					"customMapIcons/pclaim",
-					"customMapIcons/catapult",
-					"customMapIcons/mirkwoodlog",
-					"customMapIcons/coracle",
-					"customMapIcons/burrow",
-					"customMapIcons/vclaim",
-					"customMapIcons/snekkja",
-					"customMapIcons/treant",
 					"customMapIcons/bram",
-					"customMapIcons/knarr"
+					"customMapIcons/burrow",
+					"customMapIcons/catapult",
+					"customMapIcons/coracle",
+					"customMapIcons/dryad",
+					"customMapIcons/dugout",
+					"customMapIcons/knarr",
+					"customMapIcons/mandrakespirited",
+					"customMapIcons/metalplow",
+					"customMapIcons/midgeswarm",
+					"customMapIcons/mineladder",
+					"customMapIcons/mirkwoodlog",
+					"customMapIcons/opiumdragon",
+					"customMapIcons/pclaim",
+					"customMapIcons/skis",
+					"customMapIcons/snekkja",
+					"customMapIcons/stalagoomba",
+					"customMapIcons/treant",
+					"customMapIcons/vclaim",
+					"customMapIcons/wagon",
+					"customMapIcons/wellspring",
+					"customMapIcons/woodenplow",
+					"customMapIcons/wreckingball"
 			);
     private static final byte[] RESOURCE_SIG = "Haven Resource 1".getBytes(Utils.ascii);
     private void load(InputStream st) throws IOException {

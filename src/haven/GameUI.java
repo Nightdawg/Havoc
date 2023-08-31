@@ -1503,7 +1503,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public static final KeyBinding kb_switchchr = KeyBinding.get("logout-cs", KeyMatch.nil);
 
 	public static KeyBinding kb_drinkButton  = KeyBinding.get("DrinkButtonKB",  KeyMatch.forcode(KeyEvent.VK_BACK_QUOTE, 0));
-	public static KeyBinding kb_aggroButton  = KeyBinding.get("AggroButtonKB",  KeyMatch.nil);
+	public static KeyBinding kb_aggroNearestTargetButton = KeyBinding.get("AggroNearestTargetButtonKB",  KeyMatch.forcode(KeyEvent.VK_SPACE, KeyMatch.S));
 	public static KeyBinding kb_rightQuickSlotButton  = KeyBinding.get("rightQuickSlotButtonKB",  KeyMatch.forchar('X', KeyMatch.M));
 	public static KeyBinding kb_leftQuickSlotButton  = KeyBinding.get("leftQuickSlotButtonKB",  KeyMatch.forchar('Z', KeyMatch.M));
 
@@ -1566,8 +1566,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if(kb_toggleHidingBoxes.key().match(ev)) {
 			OptWnd.toggleGobHidingCheckBox.set(!Gob.hideObjects);
 			return(true);
-		} else if(kb_aggroButton.key().match(ev)) {
-			wdgmsg("act", "aggro");
+		} else if(kb_aggroNearestTargetButton.key().match(ev)) {
+			this.runActionThread(new Thread(new AggroNearestTarget(this, this.lastopponent), "AggroNearestTarget"));
 			return(true);
 		} else if (kb_aggroLastTarget.key().match(ev)) {
 			this.runActionThread(new Thread(new AttackOpponent(this, this.lastopponent), "Reaggro"));

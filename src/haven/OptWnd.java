@@ -39,7 +39,6 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 public class OptWnd extends Window {
@@ -1029,9 +1028,16 @@ public class OptWnd extends Window {
 			for (int i = 0; i < Fightsess.kb_acts.length; i++)
 				y = addbtn(cont, String.format("Combat action %d", i + 1), Fightsess.kb_acts[i], y);
 			y = addbtn(cont, "Switch targets", Fightsess.kb_relcycle, y);
+			y = addbtnImproved(cont, "Aggro Nearest Player/Animal", "Selects the nearest Player or Animal to attack, based on your situation:" +
+					"\n\n$col[218,163,0]{Case 1:} $col[185,185,185]{If you are in combat with Players, it will only attack other not-already-aggroed players.}" +
+					"\n$col[218,163,0]{Case 2:} $col[185,185,185]{If you are in combat with Animals, it will try to attack the closest not-already-aggroed player or animal. Once this happens, you're back to Case 1.}" +
+					"\n$col[218,163,0]{Case 3:} $col[185,185,185]{If you are not in combat, it will attack your last target or just the nearest Player or Animal.}" +
+					"\n\n$col[218,163,0]{Note:} $col[185,185,185]{Party members will never be attacked by this button. Village or Realm members will not be attacked unless you have them marked as $col[185,0,0]{Red} in your Kin List.}", new Color(255, 0, 0,255), GameUI.kb_aggroNearestTargetButton, y+6);
+			y = addbtnImproved(cont, "Re-Aggro Last Target", "", new Color(255, 68, 0,255), GameUI.kb_aggroLastTarget, y);
+			y = addbtnImproved(cont, "Peace Current Target", "", new Color(0, 255, 34,255), GameUI.kb_peaceCurrentTarget, y);
+
 			y = cont.adda(new Label("Other Custom features"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
 			y = addbtnImproved(cont, "Drink Button", "", new Color(0, 140, 255, 255), GameUI.kb_drinkButton, y);
-			y = addbtn(cont, "'Attack!' Cursor", GameUI.kb_aggroButton, y);
 
 			y = addbtnImproved(cont, "Pick/Click Nearest Object","When this button is pressed, you will instantly click the nearest Forageable, Critter, or Non-Visitor Gate." +
 					"\n$col[218,163,0]{Range:} $col[185,185,185]{12 tiles (approximately)}", new Color(255, 191, 0,255), GameUI.kb_clickNearestObject, y+6);
@@ -1041,9 +1047,6 @@ public class OptWnd extends Window {
 
 			y = addbtn(cont, "Left Hand (Quick switch)", GameUI.kb_leftQuickSlotButton, y+6);
 			y = addbtn(cont, "Right Hand (Quick switch)", GameUI.kb_rightQuickSlotButton, y);
-
-			y = addbtn(cont, "Peace Current Target", GameUI.kb_peaceCurrentTarget, y+6);
-			y = addbtnImproved(cont, "Re-Aggro Last Target", "", new Color(255, 68, 0,255), GameUI.kb_aggroLastTarget, y);
 
 			y = addbtn(cont, "Toggle Collision Boxes", GameUI.kb_toggleCollisionBoxes, y+6);
 			y = addbtn(cont, "Toggle Object Hiding", GameUI.kb_toggleHidingBoxes, y);
