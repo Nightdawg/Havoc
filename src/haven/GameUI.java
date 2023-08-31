@@ -1078,15 +1078,24 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	if(!chat.visible()) {
 	    chat.drawsmall(g, new Coord(blpw + UI.scale(10), by), UI.scale(100));
 	}
-	// ND: Draw Combat UI stamina bar even when out of combat when drinking, or, if setting is enabled, always
+
 	if (!Fightsess.altui || !(fv != null && fv.current != null)) {
 		Gob myself = map.player();
+		double x1 = this.sz.x / 2.0;
+		double y1 = this.sz.y - ((this.sz.y / 500.0) * Fightsess.combaty0HeightInt);
+		int x0 = (int)x1;
+		int y0 = (int)y1;
+		if (OptWnd.alwaysShowHealthBar){
+			IMeter.Meter hp = getmeter("hp", 0);
+			if (hp != null) {
+				Coord msz = UI.scale(new Coord(150, 20));
+				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(40));
+				drawHealthMeterBar(g, hp, sc, msz);
+			}
+		}
+		// ND: Draw Combat UI stamina bar even when out of combat when drinking, or, if setting is enabled, always
 		if (OptWnd.alwaysShowStaminaBar || (myself != null && myself.imDrinking)) {
 			IMeter.Meter stam = getmeter("stam", 0);
-			double x1 = this.sz.x / 2.0;
-			double y1 = this.sz.y - ((this.sz.y / 500.0) * Fightsess.combaty0HeightInt);
-			int x0 = (int)x1;
-			int y0 = (int)y1;
 			if (stam != null) {
 				Coord msz = UI.scale(new Coord(150, 20));
 				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(70));
@@ -1096,6 +1105,23 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	}
 
     }
+	private static final Color red = new Color(168, 0, 0, 255);
+	private static final Color yellow = new Color(182, 165, 0, 255);
+	private void drawHealthMeterBar(GOut g, IMeter.Meter m, Coord sc, Coord msz) {
+		int w = msz.x;
+		int w1 = (int) Math.ceil(w * m.a);
+		int w2 = (int) Math.ceil(w * (IMeter.characterSoftHealthPercent/100));
+		g.chcolor(yellow);
+		g.frect(sc, new Coord(w1, msz.y));
+		g.chcolor(red);
+		g.frect(sc, new Coord(w2, msz.y));
+		g.chcolor(barframe);
+		g.line(new Coord(sc.x+w1, sc.y), new Coord(sc.x+w1, sc.y+msz.y), 1);
+		g.rect(sc, new Coord(msz.x, msz.y));
+
+		g.chcolor(Color.WHITE);
+		g.aimage(Text.renderstroked((IMeter.characterCurrentHealth+" ("+(Utils.fmt1DecPlace((int)(m.a*100)))+"% HHP)"), Text.num12boldFnd).tex(), new Coord(sc.x+msz.x/2, sc.y+msz.y/2), 0.5, 0.5);
+	}
 
 	private static final Color blu1 = new Color(3, 3, 80, 141);
 	private static final Color blu2 = new Color(32, 32, 184, 90);

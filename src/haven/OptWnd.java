@@ -479,6 +479,7 @@ public class OptWnd extends Window {
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
 	public static CheckBox alwaysShowStaminaBarCheckBox;
+	public static CheckBox alwaysShowHealthBarCheckBox;
 	public static CheckBox requireShiftHoverStacksCheckBox;
 	public static CheckBox objectPermanentHighlightingCheckBox;
 	public static CheckBox toggleGobHealthDisplayCheckBox;
@@ -525,6 +526,7 @@ public class OptWnd extends Window {
 	public static boolean snapWindowsBackInside = Utils.getprefb("snapWindowsBackInside", true);
 	public static boolean requireShiftHoverStacks = Utils.getprefb("requireShiftHoverStacks", false);
 	public static boolean alwaysShowStaminaBar = Utils.getprefb("alwaysShowStaminaBar", false);
+	public static boolean alwaysShowHealthBar = Utils.getprefb("alwaysShowHealthBar", false);
 	public static boolean objectPermanentHighlighting = Utils.getprefb("objectPermanentHighlighting", false);
     public class InterfacePanel extends Panel {
 
@@ -651,6 +653,15 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 6));
+
+		leftColumn = add(alwaysShowHealthBarCheckBox = new CheckBox("Always show Combat UI Health Bar"){
+			{a = (Utils.getprefb("alwaysShowHealthBar", false));}
+			public void set(boolean val) {
+				Utils.setprefb("alwaysShowHealthBar", val);
+				alwaysShowHealthBar = val;
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 16));
 		leftColumn = add(alwaysShowStaminaBarCheckBox = new CheckBox("Always show Combat UI Stamina Bar"){
 			{a = (Utils.getprefb("alwaysShowStaminaBar", false));}
 			public void set(boolean val) {
@@ -3195,6 +3206,7 @@ public class OptWnd extends Window {
 				"\nIf you want to reset the highlighted objects without restarting the client, you can disable and re-enable this setting.}", UI.scale(320));
 		alwaysShowStaminaBarCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{The Stamina Bar will still appear out of combat, when you are drinking, regardless of this option being enabled or not.}" +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{The position of the Stamina Bar depends on the position of the Combat UI Top Panel (Combat Settings).}", UI.scale(320));
+		alwaysShowHealthBarCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{The position of the Health Bar depends on the position of the Combat UI Top Panel (Combat Settings).}", UI.scale(320));
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){
