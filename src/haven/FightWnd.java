@@ -69,8 +69,8 @@ public class FightWnd extends Widget {
 	public final Indir<Resource> res;
 	private final int id;
 	public int a, u;
-	private Text rnm, ru2, ra;
-	private Tex ri;
+	private Text rnm, ra;
+	private Tex ri, ru2;
 	private String name;
 
 	public Action(Indir<Resource> res, int id, int a, int u) {this.res = res; this.id = id; this.a = a; this.u = u;}
@@ -166,7 +166,7 @@ public class FightWnd extends Widget {
 	int u = 0;
 	for(Action act : ALL)
 	    u += act.u;
-	count2 = Text.num12boldFnd.render(String.format("= %d/%d", u, maxact), (u > maxact) ? Color.RED : Color.WHITE).tex();
+	count2 = PUtils.strokeTex(Text.num12boldFnd.render(String.format("= %d/%d", u, maxact), (u > maxact) ? Color.RED : Color.WHITE));
     }
 
     public static class ImageInfoBox extends Widget {
@@ -458,7 +458,7 @@ public class FightWnd extends Widget {
 		}
 
 		public void draw(GOut g) {
-			int pcy = invsq.sz().y + UI.scale(4);
+			int pcy = invsq.sz().y;
 
 			int[] reo;
 			if (anim) {
@@ -484,9 +484,9 @@ public class FightWnd extends Widget {
 						g.image(act.res.get().layer(Resource.imgc).tex(), ic);
 
 						if (act.ru2 == null)
-							act.ru2 = Text.num12boldFnd.render(String.format("%d/%d", act.u, act.a));
+							act.ru2 = PUtils.strokeTex(Text.num12boldFnd.render(String.format("%d/%d", act.u, act.a)));
 
-						g.image(act.ru2.tex(), c.add(invsq.sz().x / 2 - act.ru2.sz().x / 2, pcy));
+						g.image(act.ru2, c.add(invsq.sz().x / 2 - act.ru2.sz().x / 2, pcy));
 						g.chcolor();
 
 						g.image(sub[subp == i ? 1 : 0], c.add(subOffX, subOffY));

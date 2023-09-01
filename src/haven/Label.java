@@ -52,14 +52,14 @@ public class Label extends Widget {
     public Label(String text, int w, Text.Foundry f) {
 	super(Coord.z);
 	this.f = f;
-	this.text = f.renderwrap(texts = text, this.col, w);
+	this.text = Text.create(texts, PUtils.strokeImg(f.renderwrap(texts = text, this.col, w)));
 	sz = this.text.sz();
     }
 
     public Label(String text, Text.Foundry f) {
 	super(Coord.z);
 	this.f = f;
-	this.text = f.render(texts = text, this.col);
+	this.text = Text.create(texts, PUtils.strokeImg(f.render(texts = text, this.col)));
 	sz = this.text.sz();
     }
 
@@ -77,20 +77,20 @@ public class Label extends Widget {
 
 	public void settext(String text) {
 	this.text.dispose();
-	this.text = f.render(texts = text, col);
+	this.text = Text.create(texts, PUtils.strokeImg(f.render(texts = text, col)));
 	sz = this.text.sz();
     }
 	
     public void setcolor(Color color) {
 	col = color;
 	this.text.dispose();
-	this.text = f.render(texts, col);
+	this.text = Text.create(texts, PUtils.strokeImg(f.render(texts, col)));
 	sz = this.text.sz();
     }
 
 	public void setstroked(Color stroke) {
 		this.stroke = stroke;
-		this.text = f.renderstroked(texts, col, stroke);
+		this.text = Text.create(texts, PUtils.strokeImg(f.renderstroked(texts, col, stroke)));
 		sz = this.text.sz();
 	}
 

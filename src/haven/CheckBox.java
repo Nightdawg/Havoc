@@ -45,7 +45,7 @@ public class CheckBox extends ACheckBox {
     }
 
     public CheckBox(String lbl, boolean lg) {
-	this.lbl = (lbl.length() > 0) ? Text.std.render(lbl, java.awt.Color.WHITE) : null;
+	this.lbl = (lbl.length() > 0) ? Text.create(lbl, PUtils.strokeImg(Text.std.render(lbl, java.awt.Color.WHITE))) : null;
 	if(lg) {
 	    box = lbox; mark = lmark;
 	    loff = UI.scale(0, 6);

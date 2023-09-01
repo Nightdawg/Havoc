@@ -145,6 +145,7 @@ public abstract class SListWidget<I, W extends Widget> extends Widget {
 	}
 
 	private Text.Line text = null;
+	private Tex textTex = null;
 	protected void drawtext(GOut g) {
 	    int tx = sz.y + UI.scale(5);
 	    try {
@@ -156,7 +157,10 @@ public abstract class SListWidget<I, W extends Widget> extends Widget {
 			this.text = foundry().render(text.substring(0, len) + "...");
 		    }
 		}
-		g.image(this.text.tex(), Coord.of(tx, (sz.y - this.text.sz().y) / 2));
+		if (this.textTex == null) {
+			textTex = PUtils.strokeTex(this.text);
+		}
+		g.image(this.textTex, Coord.of(tx, (sz.y - this.textTex.sz().y) / 2));
 	    } catch(Loading l) {
 		Tex missing = foundry().render("...").tex();
 		g.image(missing, Coord.of(sz.y + UI.scale(5), (sz.y - missing.sz().y) / 2));

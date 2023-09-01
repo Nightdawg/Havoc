@@ -140,7 +140,7 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 
 	public Text rname() {
 	    if((rname == null) || !rname.text.equals(name))
-		rname = Text.render(name);
+		rname = Text.create(name, PUtils.strokeImg(Text.render(name)));
 	    return(rname);
 	}
 

@@ -330,6 +330,26 @@ public class PUtils {
 	}
     }
 
+	public static BufferedImage strokeImg(BufferedImage img, int grad, int brad, Color color) {
+		return (rasterimg(blurmask2(img.getRaster(), grad, brad, color)));
+	}
+
+	public static BufferedImage strokeImg(Text text, Color color) {
+		return (strokeImg(text.img, 1, 1, color));
+	}
+
+	public static BufferedImage strokeImg(Text text) {
+		return (strokeImg(text.img, 1, 1, Color.BLACK));
+	}
+
+	public static BufferedImage strokeImg(BufferedImage img) {
+		return (strokeImg(img, 1, 1, Color.BLACK));
+	}
+
+	public static TexI strokeTex(Text text) {
+		return (new TexI(strokeImg(text)));
+	}
+
     public static void dumpband(Raster img, int band) {
 	int w = img.getWidth(), h = img.getHeight();
 	for(int y = 0; y < h; y++) {

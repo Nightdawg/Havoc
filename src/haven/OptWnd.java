@@ -891,7 +891,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(34, 6));
-		showContainerFullnessRedCheckBox.lbl = Text.std.render("Full", new Color(185,0,0,255));
+		showContainerFullnessRedCheckBox.lbl = Text.create("Full", PUtils.strokeImg(Text.std.render("Full", new Color(185,0,0,255))));
 		add(showContainerFullnessYellowCheckBox = new CheckBox("Some"){
 			{a = (Utils.getprefb("showContainerFullnessYellow", true));}
 			public void set(boolean val) {
@@ -902,7 +902,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("ur").adds(6, 0));
-		showContainerFullnessYellowCheckBox.lbl = Text.std.render("Some", new Color(224,213,0,255));
+		showContainerFullnessYellowCheckBox.lbl = Text.create("Some", PUtils.strokeImg(Text.std.render("Some", new Color(224,213,0,255))));
 		add(showContainerFullnessGreenCheckBox = new CheckBox("Empty"){
 			{a = (Utils.getprefb("showContainerFullnessGreen", true));}
 			public void set(boolean val) {
@@ -913,7 +913,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("ur").adds(58, 0));
-		showContainerFullnessGreenCheckBox.lbl = Text.std.render("Empty", new Color(0,185,0,255));
+		showContainerFullnessGreenCheckBox.lbl = Text.create("Empty", PUtils.strokeImg(Text.std.render("Empty", new Color(0,185,0,255))));
 		rightColumn = add(showWorkstationStageCheckBox = new CheckBox("Highlight Workstation Progress"){
 			{a = (Utils.getprefb("showWorkstationStage", true));}
 			public void set(boolean val) {
@@ -935,7 +935,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(34, 6));
-		showWorkstationStageRedCheckBox.lbl = Text.std.render("Finished", new Color(185,0,0,255));
+		showWorkstationStageRedCheckBox.lbl = Text.create("Finished", PUtils.strokeImg(Text.std.render("Finished", new Color(185,0,0,255))));
 		add(showWorkstationStageYellowCheckBox = new CheckBox("In progress"){
 			{a = (Utils.getprefb("showWorkstationStageYellow", true));}
 			public void set(boolean val) {
@@ -946,7 +946,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("ur").adds(9, 0));
-		showWorkstationStageYellowCheckBox.lbl = Text.std.render("In progress", new Color(224,213,0,255));
+		showWorkstationStageYellowCheckBox.lbl = Text.create("In progress", PUtils.strokeImg(Text.std.render("In progress", new Color(224,213,0,255))));
 		rightColumn = add(showWorkstationStageGreenCheckBox = new CheckBox("Prepared"){
 			{a = (Utils.getprefb("showWorkstationStageGreen", true));}
 			public void set(boolean val) {
@@ -957,7 +957,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 6));
-		showWorkstationStageGreenCheckBox.lbl = Text.std.render("Prepared", new Color(0,185,0,255));
+		showWorkstationStageGreenCheckBox.lbl = Text.create("Prepared", PUtils.strokeImg(Text.std.render("Prepared", new Color(0,185,0,255))));
 		add(showWorkstationStageGrayCheckBox = new CheckBox("Unprepared"){
 			{a = (Utils.getprefb("showWorkstationStageGray", true));}
 			public void set(boolean val) {
@@ -968,7 +968,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("ur").adds(6, 0));
-		showWorkstationStageGrayCheckBox.lbl = Text.std.render("Unprepared", new Color(160,160,160,255));
+		showWorkstationStageGrayCheckBox.lbl = Text.create("Unprepared", PUtils.strokeImg(Text.std.render("Unprepared", new Color(160,160,160,255))));
 
 
 		add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 30).x(UI.scale(117)));
@@ -1837,7 +1837,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(56, -13));
-			woundsCheckBox.lbl = Text.std.render("Wounds", new Color(255, 232, 0, 255));
+			woundsCheckBox.lbl = Text.create("Wounds", PUtils.strokeImg(Text.std.render("Wounds", new Color(255, 232, 0, 255))));
 			CheckBox armorCheckBox;
 			prev = add(armorCheckBox = new CheckBox("Armor"){
 				{a = Utils.getprefb("GobDamageInfoArmorToggled", true);}
@@ -1847,7 +1847,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(62, -14));
-			armorCheckBox.lbl = Text.std.render("Armor", new Color(50, 255, 92, 255));
+			woundsCheckBox.lbl = Text.create("Armor", PUtils.strokeImg(Text.std.render("Armor", new Color(50, 255, 92, 255))));
 			add(damageInfoClearButton = new Button(UI.scale(70), "Clear", false).action(() -> {
 				GobDamageInfo.clearAllDamage(gameui());
 				if (gameui() != null) {
@@ -2347,7 +2347,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6).x(0));
-			greenPlayerAlarmEnabledCheckbox.lbl = Text.std.render("Green:", BuddyWnd.gc[1]);
+			greenPlayerAlarmEnabledCheckbox.lbl = Text.create("Green:", PUtils.strokeImg(Text.std.render("Green:", BuddyWnd.gc[1])));
 			prev = add(greenPlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("greenPlayerAlarmFilename", "ND_FlyingTheFriendlySkies")){
 				protected void changed() {
 					Utils.setpref("greenPlayerAlarmFilename", this.buf.line());
@@ -2395,7 +2395,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6).x(0));
-			redPlayerAlarmEnabledCheckbox.lbl = Text.std.render("Red:", BuddyWnd.gc[2]);
+			redPlayerAlarmEnabledCheckbox.lbl = Text.create("Red:", PUtils.strokeImg(Text.std.render("Red:", BuddyWnd.gc[2])));
 			prev = add(redPlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("redPlayerAlarmFilename", "ND_EnemySighted")){
 				protected void changed() {
 					Utils.setpref("redPlayerAlarmFilename", this.buf.line());
@@ -2443,7 +2443,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6).x(0));
-			bluePlayerAlarmEnabledCheckbox.lbl = Text.std.render("Blue:", BuddyWnd.gc[3]);
+			bluePlayerAlarmEnabledCheckbox.lbl = Text.create("Blue:", PUtils.strokeImg(Text.std.render("Blue:", BuddyWnd.gc[3])));
 			prev = add(bluePlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("bluePlayerAlarmFilename", "ND_YeahLetsHustle")){
 				protected void changed() {
 					Utils.setpref("bluePlayerAlarmFilename", this.buf.line());
@@ -2491,7 +2491,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6).x(0));
-			tealPlayerAlarmEnabledCheckbox.lbl = Text.std.render("Teal:", BuddyWnd.gc[4]);
+			tealPlayerAlarmEnabledCheckbox.lbl = Text.create("Teal:", PUtils.strokeImg(Text.std.render("Teal:", BuddyWnd.gc[4])));
 			prev = add(tealPlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("tealPlayerAlarmFilename", "ND_YeahLetsHustle")){
 				protected void changed() {
 					Utils.setpref("tealPlayerAlarmFilename", this.buf.line());
@@ -2539,7 +2539,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6).x(0));
-			yellowPlayerAlarmEnabledCheckbox.lbl = Text.std.render("Yellow:", BuddyWnd.gc[5]);
+			yellowPlayerAlarmEnabledCheckbox.lbl = Text.create("Yellow:", PUtils.strokeImg(Text.std.render("Yellow:", BuddyWnd.gc[5])));
 			prev = add(yellowPlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("yellowPlayerAlarmFilename", "")){
 				protected void changed() {
 					Utils.setpref("yellowPlayerAlarmFilename", this.buf.line());
@@ -2587,7 +2587,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6).x(0));
-			purplePlayerAlarmEnabledCheckbox.lbl = Text.std.render("Purple:", BuddyWnd.gc[6]);
+			purplePlayerAlarmEnabledCheckbox.lbl = Text.create("Purple:", PUtils.strokeImg(Text.std.render("Purple:", BuddyWnd.gc[6])));
 			prev = add(purplePlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("purplePlayerAlarmFilename", "")){
 				protected void changed() {
 					Utils.setpref("purplePlayerAlarmFilename", this.buf.line());
@@ -2635,7 +2635,7 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 6).x(0));
-			orangePlayerAlarmEnabledCheckbox.lbl = Text.std.render("Orange:", BuddyWnd.gc[7]);
+			orangePlayerAlarmEnabledCheckbox.lbl = Text.create("Orange:", PUtils.strokeImg(Text.std.render("Orange:", BuddyWnd.gc[7])));
 			prev = add(orangePlayerAlarmFilename = new TextEntry(UI.scale(140), Utils.getpref("orangePlayerAlarmFilename", "")){
 				protected void changed() {
 					Utils.setpref("orangePlayerAlarmFilename", this.buf.line());

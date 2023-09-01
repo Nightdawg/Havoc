@@ -31,6 +31,8 @@ import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class Text implements Disposable {
     public static final Font serif = new Font("Serif", Font.PLAIN, 10);
@@ -286,6 +288,33 @@ public class Text implements Disposable {
 	}
     }
 
+	public static class UTex<T> implements Indir<Tex> {
+		public final Supplier<T> value;
+		public final Function<T, Tex> conv;
+		private Tex cur = null;
+		private T cv = null;
+
+		public UTex(Supplier<T> value, Function<T, Tex> conv) {
+			this.value = value;
+			this.conv = conv;
+		}
+
+		protected String text(T value) {
+			return (String.valueOf(value));
+		}
+
+		protected Tex render(T text) {
+			return (conv.apply(text));
+		}
+
+		public Tex get() {
+			T value = this.value.get();
+			if (!Utils.eq(value, cv))
+				cur = render(cv = value);
+			return (cur);
+		}
+	}
+
     protected Text(String text, BufferedImage img) {
 	this.text = text;
 	this.img = img;
@@ -367,4 +396,8 @@ public class Text implements Disposable {
 	    }
 	}
     }
+
+	public static Text create(String text, BufferedImage img) {
+		return (new Text(text, img));
+	}
 }
