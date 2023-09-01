@@ -440,6 +440,10 @@ public class CharWnd extends Window {
 	private double lvlt = 0.0;
 	private Tex ct;
 	private int cbv = -1, ccv = -1;
+	private Tex buffedTex = null;
+	private Tex debuffedTex = null;
+	private Tex baseTex = null;
+	private boolean requiresUpdate = true;
 
 	private Attr(Glob glob, String attr, Color bg) {
 	    super(new Coord(attrw, attrf.height() + UI.scale(2)));
@@ -465,6 +469,7 @@ public class CharWnd extends Window {
 		    tooltip = null;
 		}
 		ct = PUtils.strokeTex(attrf.render(Integer.toString(ccv), c));
+		requiresUpdate = true;
 	    }
 	    if((lvlt > 0.0) && ((lvlt -= dt) < 0))
 		lvlt = 0.0;
@@ -485,15 +490,18 @@ public class CharWnd extends Window {
 		cbv = attr.base;
 		ccv = attr.comp;
 		if (ccv > cbv) {
-			Tex buffed = PUtils.strokeTex(attrf.render(Integer.toString(ccv), buff));
-			g.aimage(buffed, cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
+			if (requiresUpdate)
+				buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), buff));
+			g.aimage(buffedTex, cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
 		} else if (ccv < cbv) {
-			Tex debuffed = PUtils.strokeTex(attrf.render(Integer.toString(ccv), debuff));
-			g.aimage(debuffed, cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
+			if (requiresUpdate)
+				debuffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), debuff));
+			g.aimage(debuffedTex, cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
 		}
-
-		Tex base = PUtils.strokeTex(attrf.render(Integer.toString(cbv), Color.WHITE));
-		g.aimage(base, cn.add(sz.x - UI.scale(50), 1), 1, 0.5);
+		if (requiresUpdate)
+			baseTex = PUtils.strokeTex(attrf.render(Integer.toString(cbv), Color.WHITE));
+		g.aimage(baseTex, cn.add(sz.x - UI.scale(50), 1), 1, 0.5);
+		requiresUpdate = false;
 	}
 
 	public void lvlup() {
@@ -512,6 +520,11 @@ public class CharWnd extends Window {
 	public long cost;
 	private Tex ct;
 	private int cbv, ccv;
+	private Tex baseTex = null;
+	private Tex buffedTex = null;
+	private Tex buffedTex2 = null;
+	private Tex debuffedTex = null;
+	private boolean requiresUpdate = true;
 
 	private SAttr(Glob glob, String attr, Color bg) {
 	    super(new Coord(attrw, attrf.height() + UI.scale(2)));
@@ -530,9 +543,9 @@ public class CharWnd extends Window {
 	}
 
 		public void tick(double dt) {
-			if ((attr.base != cbv) ||
-					(attr.comp != ccv)) {
+			if ((attr.base != cbv) || (attr.comp != ccv)) {
 				cbv = attr.base;
+				requiresUpdate = true;
 			}
 			if (attr.comp != ccv) {
 				ccv = attr.comp;
@@ -555,6 +568,7 @@ public class CharWnd extends Window {
 					c = tbuff;
 				ct = PUtils.strokeTex(attrf.render(Integer.toString(tcv), c));
 				cbv = tcv;
+				requiresUpdate = true;
 			}
 			updcost();
 		}
@@ -567,37 +581,38 @@ public class CharWnd extends Window {
 	    Coord cn = new Coord(0, sz.y / 2);
 	    g.aimage(img, cn.add(5, 0), 0, 0.5);
 	    g.aimage(rnm, cn.add(img.sz().x + margin2, 1), 0, 0.5);
-		//g.aimage(ct.tex(), cn.add(sz.x - UI.scale(40), 1), 1, 0.5);
 		cbv = attr.base;
 		ccv = attr.comp;
-//                ccv + " " + tbv + " " + cbv    260 205 200
 		if (ccv > cbv) {
-			Tex buffed;
 			if (tbv > cbv) {
-//                        buffed = attrf.render(Integer.toString(tbv + (ccv - cbv)), tbuff);
-				buffed = PUtils.strokeTex(attrf.render(Integer.toString(ccv + (tbv - cbv)), tbuff));
+				if (requiresUpdate)
+					buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv + (tbv - cbv)), tbuff));
 			} else {
-				buffed = PUtils.strokeTex(attrf.render(Integer.toString(ccv), buff));
+				if (requiresUpdate)
+					buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), buff));
 			}
-			g.aimage(buffed, cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
+			g.aimage(buffedTex, cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
 		} else if (ccv < cbv) {
 			if (tbv > cbv) {
-//                        Text buffed = attrf.render(Integer.toString(tbv + (cbv - ccv)), tbuff);
-				Tex buffed = PUtils.strokeTex(attrf.render(Integer.toString(ccv + (tbv - cbv)), tbuff));
-				g.aimage(buffed, cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
+				if (requiresUpdate)
+					buffedTex2 = PUtils.strokeTex(attrf.render(Integer.toString(ccv + (tbv - cbv)), tbuff));
+				g.aimage(buffedTex2, cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
 			} else {
-				Tex debuffed = PUtils.strokeTex(attrf.render(Integer.toString(ccv), debuff));
-				g.aimage(debuffed, cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
+				if (requiresUpdate)
+					debuffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), debuff));
+				g.aimage(debuffedTex, cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
 			}
 		}
 
-		Tex base;
 		if (tbv > cbv) {
-			base = PUtils.strokeTex(attrf.render(Integer.toString(tbv), tbuff));
+			if (requiresUpdate)
+				baseTex = PUtils.strokeTex(attrf.render(Integer.toString(tbv), tbuff));
 		} else {
-			base = PUtils.strokeTex(attrf.render(Integer.toString(cbv), Color.WHITE));
+			if (requiresUpdate)
+				baseTex = PUtils.strokeTex(attrf.render(Integer.toString(cbv), Color.WHITE));
 		}
-		g.aimage(base, cn.add(sz.x - UI.scale(75), 1), 1, 0.5);
+		g.aimage(baseTex, cn.add(sz.x - UI.scale(75), 1), 1, 0.5);
+		requiresUpdate = false;
 	}
 
 	private void updcost() {
