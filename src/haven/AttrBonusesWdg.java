@@ -62,7 +62,7 @@ public class AttrBonusesWdg extends Widget implements ItemInfo.Owner {
     private void render() {
         try {
             if (info != null && !info.isEmpty()) {
-                tip = new TexI( ItemInfo.longtip(info));
+                tip = new TexI(PUtils.strokeImg(ItemInfo.longtip(info)));
             } else {
                 tip = null;
             }
