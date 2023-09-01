@@ -44,7 +44,7 @@ public class WItem extends Widget implements DTarget {
     private Message csdt = Message.nil;
 	public static final Text.Foundry quantityFoundry = new Text.Foundry(Text.dfont, 9);
 	private static final Color quantityColor = new Color(255, 255, 255, 255);
-	public static final Coord TEXT_PADD_BOT = new Coord(2, -3);
+	public static final Coord TEXT_PADD_BOT = new Coord(1, 2);
 
     public WItem(GItem item) {
 	super(sqsz);
