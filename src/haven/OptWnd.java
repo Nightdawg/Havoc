@@ -1836,7 +1836,7 @@ public class OptWnd extends Window {
 					GobDamageInfo.toggleGobDamageInfoWounds = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(56, -13));
+			}, prev.pos("bl").adds(56, -17));
 			woundsCheckBox.lbl = Text.create("Wounds", PUtils.strokeImg(Text.std.render("Wounds", new Color(255, 232, 0, 255))));
 			CheckBox armorCheckBox;
 			prev = add(armorCheckBox = new CheckBox("Armor"){
@@ -1846,8 +1846,8 @@ public class OptWnd extends Window {
 					GobDamageInfo.toggleGobDamageInfoArmor = val;
 					a = val;
 				}
-			}, prev.pos("bl").adds(62, -14));
-			woundsCheckBox.lbl = Text.create("Armor", PUtils.strokeImg(Text.std.render("Armor", new Color(50, 255, 92, 255))));
+			}, prev.pos("bl").adds(62, -18));
+			armorCheckBox.lbl = Text.create("Armor", PUtils.strokeImg(Text.std.render("Armor", new Color(50, 255, 92, 255))));
 			add(damageInfoClearButton = new Button(UI.scale(70), "Clear", false).action(() -> {
 				GobDamageInfo.clearAllDamage(gameui());
 				if (gameui() != null) {
@@ -2258,7 +2258,7 @@ public class OptWnd extends Window {
 					Utils.setpref("whitePlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(45, -2).x(UI.scale(139)));
+			}, prev.pos("ur").adds(45, -2).x(UI.scale(143)));
 			prev = add(whitePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("whitePlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -2305,7 +2305,7 @@ public class OptWnd extends Window {
 					Utils.setpref("whiteVillageOrRealmPlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(0, -2).x(UI.scale(139)));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(whiteVillageOrRealmPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("whiteVillageOrRealmPlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
