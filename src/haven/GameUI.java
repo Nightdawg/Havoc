@@ -1582,6 +1582,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxesKB",  KeyMatch.forchar('B', KeyMatch.S));
 	public static KeyBinding kb_toggleHidingBoxes  = KeyBinding.get("toggleHidingBoxesKB",  KeyMatch.forchar('H', KeyMatch.C));
 	public static KeyBinding kb_clickNearestObject  = KeyBinding.get("clickNearestObjectKB",  KeyMatch.forchar('Q', 0));
+	public static KeyBinding kb_nightVision  = KeyBinding.get("nightVisionKB",  KeyMatch.forchar('N', KeyMatch.S));
+
 	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("clickNearestGateKB",  KeyMatch.nil);
 	public static KeyBinding kb_aggroLastTarget = KeyBinding.get("aggroLastTarget",  KeyMatch.forchar('T', KeyMatch.S));
 	public static KeyBinding kb_peaceCurrentTarget  = KeyBinding.get("peaceCurrentTargetKB",  KeyMatch.forchar('P', KeyMatch.M));
@@ -1621,7 +1623,17 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if(kb_clickNearestObject.key().match(ev)) {
 			this.runActionThread(new Thread(new InteractWithNearestObject(this), "InteractWithNearestObject"));
 			return(true);
-		} else if(kb_clickNearestGate.key().match(ev)) {
+		} else if(kb_nightVision.key().match(ev)) {
+			if (OptWnd.nightVisionSlider.max - OptWnd.nightVisionSlider.val >= OptWnd.nightVisionSlider.val - OptWnd.nightVisionSlider.min) {
+				OptWnd.nightVisionSlider.val = OptWnd.nightVisionSlider.max;
+				OptWnd.nightVisionSlider.changed();
+			} else {
+				OptWnd.nightVisionSlider.val = OptWnd.nightVisionSlider.min;
+				OptWnd.nightVisionSlider.changed();
+			}
+			return(true);
+		}
+		else if(kb_clickNearestGate.key().match(ev)) {
 			this.runActionThread(new Thread(new ClickNearestGate(this), "ClickNearestGate"));
 			return(true);
 		} else if(kb_rightQuickSlotButton.key().match(ev)) {
