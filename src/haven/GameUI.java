@@ -133,6 +133,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public OreCounter oreCounter;
 	public Thread oreCounterThread;
 	public Thread coracleScriptThread;
+	public Thread cloverScriptThread;
 
 
 
