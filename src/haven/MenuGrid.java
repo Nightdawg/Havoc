@@ -749,7 +749,15 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					}
 				}
 			} else if (ad[2].equals("CoracleScript")) {
-				new Thread(new CoracleScript(gui), "CoracleScript").start();
+				if (gui.coracleScriptThread == null) {
+					gui.coracleScriptThread = new Thread(new CoracleScript(gui), "CoracleScript");
+					gui.coracleScriptThread.start();
+				} else {
+					gui.coracleScriptThread.interrupt();
+					gui.coracleScriptThread = null;
+					gui.coracleScriptThread = new Thread(new CoracleScript(gui), "CoracleScript");
+					gui.coracleScriptThread.start();
+				}
 			} else if (ad[2].equals("CloverScript")) {
 				new Thread(new CloverScript(gui), "CloverScript").start();
 			}
