@@ -70,7 +70,7 @@ public class TunnelerBot extends Window implements Runnable {
         add(westDirection, new Coord(15, 35));
 
         miningDirectionLabel = new Label("N");
-        add(miningDirectionLabel, new Coord(54, 40));
+        add(miningDirectionLabel, new Coord(52, 38));
         miningDirectionLabel.tooltip = RichText.render("Choose mining direction N-E-S-W (on map)", UI.scale(300));
 
         mineToTheLeftCheckbox = new CheckBox("Left") {

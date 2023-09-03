@@ -44,7 +44,7 @@ public class CleanupBot extends Window implements Runnable {
                 a = val;
             }
         };
-        add(bushcheckBox, new Coord(10, 20));
+        add(bushcheckBox, new Coord(10, 10));
         treecheckBox = new CheckBox("Trees") {
             {
                 a = chopTrees;
@@ -55,7 +55,7 @@ public class CleanupBot extends Window implements Runnable {
                 a = val;
             }
         };
-        add(treecheckBox, new Coord(10, 40));
+        add(treecheckBox, new Coord(10, 30));
         rockcheckBox = new CheckBox("Rocks") {
             {
                 a = chipRocks;
@@ -66,7 +66,7 @@ public class CleanupBot extends Window implements Runnable {
                 a = val;
             }
         };
-        add(rockcheckBox, new Coord(10, 60));
+        add(rockcheckBox, new Coord(10, 50));
         stumpcheckBox = new CheckBox("Stumps") {
             {
                 a = destroyStumps;
@@ -77,7 +77,7 @@ public class CleanupBot extends Window implements Runnable {
                 a = val;
             }
         };
-        add(stumpcheckBox, new Coord(10, 80));
+        add(stumpcheckBox, new Coord(10, 70));
 
         soilcheckBox = new CheckBox("Soil") {
             {
@@ -90,7 +90,7 @@ public class CleanupBot extends Window implements Runnable {
             }
         };
 
-        add(soilcheckBox, new Coord(90, 20));
+        add(soilcheckBox, new Coord(90, 10));
 
         activeButton = new Button(50, "Start") {
             @Override

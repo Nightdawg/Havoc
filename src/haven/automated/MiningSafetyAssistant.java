@@ -50,7 +50,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 a = val;
             }
         };
-        prev = add(preventUnsafeMiningCb, new Coord(10, 20));
+        prev = add(preventUnsafeMiningCb, new Coord(10, 10));
         preventUnsafeMiningCb.tooltip = RichText.render("This option will prevent selecting mining area even \npartially outside (visible) mining supports range. \n(Cannot select area outside view range)", UI.scale(300));
 
         stopUnsafeMiningCb = new CheckBox("Stop unsafe mining.") {
@@ -111,7 +111,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
         stopMiningLooseRockCb.tooltip = RichText.render("If currently mined tile is withing ~9 tiles from any \nloose rock mining will stop.", UI.scale(300));
 
 
-        add(new Label("Movement"), UI.scale(154, 15));
+        add(new Label("Movement"), UI.scale(154, 10));
         add(new Button(20, "↖") {
             @Override
             public void click() {
