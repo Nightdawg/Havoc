@@ -32,17 +32,19 @@ public class OreCounter extends Window implements Runnable {
             Map<String, Integer> rocks = new TreeMap<>();
             for (int x = -44; x < 44; x++) {
                 for (int y = -44; y < 44; y++) {
-                    int t = gui.ui.sess.glob.map.gettile(gui.map.player().rc.floor().div(11).add(x, y));
-                    Resource res =  gui.ui.sess.glob.map.tilesetr(t);
-                    if(res.name.contains("gfx/tiles/rocks/")){
-                        String name = res.basename();
-                        if(TileStatic.ORE_NAMES.get(name) != null){
-                            name = TileStatic.ORE_NAMES.get(name);
-                            ores.put(name, ores.getOrDefault(name, 1) + 1);
-                        } else {
-                            rocks.put(name, rocks.getOrDefault(name, 1) + 1);
+                    try {
+                        int t = gui.ui.sess.glob.map.gettile(gui.map.player().rc.floor().div(11).add(x, y));
+                        Resource res =  gui.ui.sess.glob.map.tilesetr(t);
+                        if(res.name.contains("gfx/tiles/rocks/")){
+                            String name = res.basename();
+                            if(TileStatic.ORE_NAMES.get(name) != null){
+                                name = TileStatic.ORE_NAMES.get(name);
+                                ores.put(name, ores.getOrDefault(name, 1) + 1);
+                            } else {
+                                rocks.put(name, rocks.getOrDefault(name, 1) + 1);
+                            }
                         }
-                    }
+                    } catch (Loading ignored){}
                 }
             }
             oreList.removeAll();
