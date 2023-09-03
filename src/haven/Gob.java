@@ -295,6 +295,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 						}
 					}
 				}
+			} else {
+				itsLoftar = false;
 			}
 		}
 	}
