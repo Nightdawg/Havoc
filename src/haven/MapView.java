@@ -3079,6 +3079,22 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 
 	@Override
 	public void wdgmsg(String msg, Object... args) {
+		GameUI gui = gameui();
+		if (gui != null && gui.refillWaterContainersThread != null && gui.refillWaterContainersThread.isAlive()){
+			if (msg.equals("drop")){
+				gui.refillWaterContainersThread.interrupt();
+				gui.refillWaterContainersThread = null;
+				gui.ui.msg("Water Refill was Aborted (One container was also dropped).");
+			} else if (msg.equals("click")){
+				if (args.length == 4) {
+					if (args[2].toString().equals("1")) {
+						gui.refillWaterContainersThread.interrupt();
+						gui.refillWaterContainersThread = null;
+						gui.ui.msg("Water Refill was Aborted.");
+					}
+				}
+			}
+		}
 		boolean safe = true;
 		if(MiningSafetyAssistant.preventMiningOutsideSupport){
 			Resource curs = ui.root.getcurs(Coord.z);

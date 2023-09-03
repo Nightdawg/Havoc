@@ -29,6 +29,7 @@ public class RefillWaterContainers implements Runnable {
                         gui.maininv.wdgmsg("drop", item.getValue());
                         Thread.sleep(10);
                     } catch (InterruptedException ignored) {
+                        return;
                     }
                 }
                 Map<WItem, Coord> beltItems = getBeltContainers();
@@ -42,14 +43,14 @@ public class RefillWaterContainers implements Runnable {
                         gui.maininv.wdgmsg("drop", item.getValue());
                         Thread.sleep(10);
                     } catch (InterruptedException ignored) {
+                        return;
                     }
                 }
             } while (getInventoryContainers().size() != 0 && getBeltContainers().size() != 0);
-            gui.ui.msg("Water Refilled");
+            gui.ui.msg("Water Refilled!");
         } catch (Exception e) {
-            gui.ui.msg("Error in Refill Water Containers Script.");
+            gui.ui.error("Refill Water Containers Script: An Unknown Error has occured.");
         }
-
     }
 
 
@@ -69,11 +70,11 @@ public class RefillWaterContainers implements Runnable {
                             if (entry.getValue().c.equals(calculatedCoord)) {
                                 String resName = entry.getKey().res.get().name;
                                 ItemInfo.Contents.Content content = getContent(entry.getKey());
-                                if(content != null){
-                                    System.out.println(resName + " - " + content.count + " - " + content.name + " _ " + content.unit);
-                                } else {
-                                    System.out.println(resName);
-                                }
+//                                if(content != null){
+//                                    System.out.println(resName + " - " + content.count + " - " + content.name + " _ " + content.unit);
+//                                } else {
+//                                    System.out.println(resName);
+//                                }
                                 if (resName.equals("gfx/invobjs/small/waterskin") && shouldAddToContainers(content, 3.0F)) {
                                     containers.put(entry.getValue(), indexCoord);
                                 } else if (resName.equals("gfx/invobjs/waterflask") && shouldAddToContainers(content, 2.0F)) {

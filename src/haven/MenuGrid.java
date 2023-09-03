@@ -386,6 +386,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/OreAndStoneCounter");
 		makeLocal("paginae/nightdawg/OtherTools/CoracleScript");
 		makeLocal("paginae/nightdawg/OtherTools/CloverScript");
+		makeLocal("paginae/nightdawg/OtherTools/RefillWaterContainers");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -767,6 +768,16 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.cloverScriptThread = null;
 					gui.cloverScriptThread = new Thread(new CloverScript(gui), "CloverScript");
 					gui.cloverScriptThread.start();
+				}
+			} else if (ad[2].equals("RefillWaterContainers")) {
+				if (gui.refillWaterContainersThread == null) {
+					gui.refillWaterContainersThread = new Thread(new RefillWaterContainers(gui), "RefillWaterContainers");
+					gui.refillWaterContainersThread.start();
+				} else {
+					gui.refillWaterContainersThread.interrupt();
+					gui.refillWaterContainersThread = null;
+					gui.refillWaterContainersThread = new Thread(new RefillWaterContainers(gui), "RefillWaterContainers");
+					gui.refillWaterContainersThread.start();
 				}
 			}
 		}
