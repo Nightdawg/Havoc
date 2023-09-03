@@ -102,6 +102,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private boolean femalePlayer = false;
 	public Boolean imInCoracle = false;
 	public Boolean imDrinking = false;
+	private Boolean itsLoftar = null;
 
 	/**
 	 * This method is run after all gob attributes has been loaded first time
@@ -239,6 +240,59 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					long plgobid = glob.sess.ui.gui.map.plgob;
 					if (plgobid != -1 && plgobid != id) {
 						setattr(new KinInfo(this, "Unknown", 0, 0));
+					}
+				}
+			}
+		}
+	}
+
+	public void checkIfItsLoftar() {
+		if (getres() != null) {
+			if (getres().name.equals("gfx/borka/body")) {
+				for (GAttrib g : attr.values()) {
+					if (g instanceof Drawable) {
+						if (g instanceof Composite) {
+							Composite c = (Composite) g;
+							boolean ismale = false;
+							if (c.comp.cmod.size() > 0) {
+								for (Composited.MD item : c.comp.cmod) {
+									if (item.mod.get().basename().equals("male")){
+										ismale = true;
+										break;
+									}
+								}
+								if (!ismale) {
+									itsLoftar = false;
+									return;
+								}
+							}
+							if (ismale) {
+								boolean isgandalfhat = false;
+								boolean isravens = false;
+								if (c.comp.cequ.size() > 0) {
+									for (Composited.ED item : c.comp.cequ) {
+										if (item.res.res.get().basename().equals("gandalfhat")){
+											isgandalfhat = true;
+										} else if (item.res.res.get().basename().equals("ravens")){
+											isravens = true;
+										}
+										if (isgandalfhat && isravens){
+											break;
+										}
+									}
+									if (isgandalfhat && isravens){
+										itsLoftar = true;
+										setattr(new KinInfo(this, "Big Daddy Loftar", 0, 0));
+										return;
+									} else {
+										itsLoftar = false;
+										return;
+									}
+								}
+							} else {
+								return;
+							}
+						}
 					}
 				}
 			}
@@ -696,12 +750,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	updstate();
 	if(virtual && ols.isEmpty() && (getattr(Drawable.class) == null))
 	    glob.oc.remove(this);
-	if(!playerAlarmPlayed && isMe == null) {
-		isMe();
-		if(isMe != null) {
+	if (itsLoftar == null)
+		checkIfItsLoftar();
+	if(!playerAlarmPlayed) {
+		if (isMe == null)
+			isMe();
+		if(isMe != null && itsLoftar != null) {
 			initPlayerName();
-			playPlayerAlarm();
-			playerAlarmPlayed = true;
+			if (!itsLoftar){
+				playPlayerAlarm();
+				playerAlarmPlayed = true;
+			} else {
+				playLoftarAlarm();
+				playerAlarmPlayed = true;
+			}
 		}
 	}
 	updateState();
@@ -1973,6 +2035,30 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 							playPlayerColorAlarm(OptWnd.purplePlayerAlarmEnabled, OptWnd.purplePlayerAlarmFilename.buf.line(), OptWnd.purplePlayerAlarmVolumeSlider.val);
 						} else if (kininfo.group == 7) {
 							playPlayerColorAlarm(OptWnd.orangePlayerAlarmEnabled, OptWnd.orangePlayerAlarmFilename.buf.line(), OptWnd.orangePlayerAlarmVolumeSlider.val);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public void playLoftarAlarm() {
+		if (getres() != null) {
+			if (isMannequin != null && isMannequin == false){
+				if (getres().name.equals("gfx/borka/body")) {
+					KinInfo kininfo = getattr(KinInfo.class);
+					if (kininfo.name.equals("Big Daddy Loftar")){
+						try {
+							File file = new File("res/sfx/loftarAlarm.wav");
+							if (file.exists()) {
+								AudioInputStream in = AudioSystem.getAudioInputStream(file);
+								AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+								AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+								Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+								((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, 1));
+								alarmPlayed.add(id);
+							}
+						} catch (Exception ignored) {
 						}
 					}
 				}
