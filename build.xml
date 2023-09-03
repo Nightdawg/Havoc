@@ -169,6 +169,8 @@
       <fileset dir="Alarms" includes="**"/>
     </copy>
     <copy file="etc/ansgar-config.properties" tofile="bin/haven-config.properties" />
+    <copy file="version.txt" todir="bin"/>
+    <copy file="RUN.bat" todir="bin"/>
     <chmod file="bin/hafen.jar" perm="a+x" />
   </target>
 
