@@ -5,12 +5,48 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CrashLogger implements Thread.UncaughtExceptionHandler {
     private static final int CRASH_EXIT_CODE = 1337;
 
+    private static final Set<String> EXCLUDED_THREADS = new HashSet<>(
+            Arrays.asList(
+                    "Add12Coal",
+                    "Add9Coal",
+                    "AggroNearestTarget",
+                    "AutoTunneler",
+                    "CheckpointManager",
+                    "ClickNearestGate",
+                    "CleanupBot",
+                    "CloverScript",
+                    "CoracleScript",
+                    "DropItemsFromEnemy",
+                    "EquipFromBelt",
+                    "FishingBot",
+                    "InteractWithNearestObject",
+                    "miningSafetyAssistantThread",
+                    "OceanShorelineScout",
+                    "OreAndStoneCounter",
+                    "Pathfinder",
+                    "RecipeCollectorThread",
+                    "RefillWaterContainers",
+                    "Reaggro",
+                    "TarKilnEmptierBot",
+                    "TurnipBot"
+            )
+    );
+
     @Override
     public void uncaughtException(Thread t, Throwable e) {
+        if (EXCLUDED_THREADS.contains(t.getName())) {
+            e.printStackTrace();
+            logCrash(e);
+            return;
+        }
+
         logCrash(e);
 
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "A critical error occurred:\n" + e.toString(),
