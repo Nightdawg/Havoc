@@ -235,14 +235,14 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 	if((isz == null) && Utils.getprefb("wndmax", false))
 	    setExtendedState(getExtendedState() | MAXIMIZED_BOTH);
 
-	this.getToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK); // ND: Do this crap to prevent F10 from defocusing the game window
+	this.getToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK); // ND: Do this crap to prevent F10 or ALT from defocusing the game window when released
     }
 
 	@Override
-	public void eventDispatched(AWTEvent event) { // ND: Do this crap to prevent F10 from defocusing the game window
+	public void eventDispatched(AWTEvent event) { // ND: Do this crap to prevent F10 or ALT from defocusing the game window when released
 		if(event instanceof KeyEvent){
 			KeyEvent key = (KeyEvent)event;
-			if (key.getKeyCode() == KeyEvent.VK_F10 && key.getID() == KeyEvent.KEY_RELEASED){
+			if ((key.getKeyCode() == KeyEvent.VK_F10 || key.getKeyCode() == KeyEvent.VK_ALT)&& key.getID() == KeyEvent.KEY_RELEASED){
 				// Fuck you
 				key.consume();
 			}
