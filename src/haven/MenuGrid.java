@@ -387,6 +387,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/CoracleScript");
 		makeLocal("paginae/nightdawg/OtherTools/CloverScript");
 		makeLocal("paginae/nightdawg/OtherTools/RefillWaterContainers");
+		makeLocal("paginae/nightdawg/OtherTools/HarvestNearestDreamcatcher");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -778,6 +779,16 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.refillWaterContainersThread = null;
 					gui.refillWaterContainersThread = new Thread(new RefillWaterContainers(gui), "RefillWaterContainers");
 					gui.refillWaterContainersThread.start();
+				}
+			} else if (ad[2].equals("HarvestNearestDreamcatcher")) {
+				if (gui.harvestNearestDreamcatcherThread == null) {
+					gui.harvestNearestDreamcatcherThread = new Thread(new HarvestNearestDreamcatcher(gui), "HarvestNearestDreamcatcher");
+					gui.harvestNearestDreamcatcherThread.start();
+				} else {
+					gui.harvestNearestDreamcatcherThread.interrupt();
+					gui.harvestNearestDreamcatcherThread = null;
+					gui.harvestNearestDreamcatcherThread = new Thread(new HarvestNearestDreamcatcher(gui), "HarvestNearestDreamcatcher");
+					gui.harvestNearestDreamcatcherThread.start();
 				}
 			}
 		}

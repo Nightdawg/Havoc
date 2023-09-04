@@ -26,6 +26,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
                     "DropItemsFromEnemy",
                     "EquipFromBelt",
                     "FishingBot",
+                    "HarvestNearestDreamcatcher",
                     "InteractWithNearestObject",
                     "miningSafetyAssistantThread",
                     "OceanShorelineScout",
