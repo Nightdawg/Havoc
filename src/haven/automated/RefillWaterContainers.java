@@ -23,11 +23,11 @@ public class RefillWaterContainers implements Runnable {
                 for (Map.Entry<WItem, Coord> item : inventoryItems.entrySet()) {
                     try {
                         item.getKey().item.wdgmsg("take", Coord.z);
-                        Thread.sleep(10);
+                        Thread.sleep(5);
                         gui.map.wdgmsg("itemact", Coord.z, gui.map.player().rc.floor(posres), 0);
-                        Thread.sleep(50);
+                        Thread.sleep(30);
                         gui.maininv.wdgmsg("drop", item.getValue());
-                        Thread.sleep(10);
+                        Thread.sleep(5);
                     } catch (InterruptedException ignored) {
                         return;
                     }
@@ -36,12 +36,12 @@ public class RefillWaterContainers implements Runnable {
                 for (Map.Entry<WItem, Coord> item : beltItems.entrySet()) {
                     try {
                         item.getKey().item.wdgmsg("take", Coord.z);
-                        Thread.sleep(10);
+                        Thread.sleep(5);
                         gui.map.wdgmsg("itemact", Coord.z, gui.map.player().rc.floor(posres), 0);
-                        Thread.sleep(50);
+                        Thread.sleep(30);
                         belt.wdgmsg("drop", item.getValue());
                         gui.maininv.wdgmsg("drop", item.getValue());
-                        Thread.sleep(10);
+                        Thread.sleep(5);
                     } catch (InterruptedException ignored) {
                         return;
                     }
@@ -49,7 +49,7 @@ public class RefillWaterContainers implements Runnable {
             } while (getInventoryContainers().size() != 0 && getBeltContainers().size() != 0);
             gui.ui.msg("Water Refilled!");
         } catch (Exception e) {
-            gui.ui.error("Refill Water Containers Script: An Unknown Error has occured.");
+//            gui.ui.error("Refill Water Containers Script: An Unknown Error has occured.");
         }
     }
 
