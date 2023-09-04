@@ -696,9 +696,9 @@ public class GobIcon extends GAttrib {
 						save.run();
 				}
 			}, UI.scale(5));
-			left.last(new Button(UI.scale(170), "Remove Ender's Icons", false).action(() -> {
-				gameui().saveiconconf();
-			}).settip("Use this button to remove Ender's custom icons from your account.", true), UI.scale(10));
+//			left.last(new Button(UI.scale(170), "Remove Ender's Icons", false).action(() -> {
+//				gameui().saveiconconf();
+//			}).settip("Use this button to remove Ender's custom icons from your account.", true), UI.scale(10));
 			cont.pack();
 			left.pack();
 			root.pack();
