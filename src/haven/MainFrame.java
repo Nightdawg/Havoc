@@ -36,7 +36,7 @@ import java.sql.*;
 import java.util.*;
 import java.lang.reflect.*;
 
-public class MainFrame extends java.awt.Frame implements Console.Directory {
+public class MainFrame extends java.awt.Frame implements Console.Directory, AWTEventListener {
     public static final Config.Variable<Boolean> initfullscreen = Config.Variable.propb("haven.fullscreen", false);
     public static final Config.Variable<String> renderer = Config.Variable.prop("haven.renderer", "jogl");
     public static final Config.Variable<Boolean> status = Config.Variable.propb("haven.status", false);
@@ -234,7 +234,20 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	    });
 	if((isz == null) && Utils.getprefb("wndmax", false))
 	    setExtendedState(getExtendedState() | MAXIMIZED_BOTH);
+
+	this.getToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK); // ND: Do this crap to prevent F10 from defocusing the game window
     }
+
+	@Override
+	public void eventDispatched(AWTEvent event) { // ND: Do this crap to prevent F10 from defocusing the game window
+		if(event instanceof KeyEvent){
+			KeyEvent key = (KeyEvent)event;
+			if (key.getKeyCode() == KeyEvent.VK_F10 && key.getID() == KeyEvent.KEY_RELEASED){
+				// Fuck you
+				key.consume();
+			}
+		}
+	}
 	
     private void savewndstate() {
 	if(!fullscreen) {
@@ -484,4 +497,6 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	    throw(new RuntimeException(e));
 	}
     }
+
+
 }
