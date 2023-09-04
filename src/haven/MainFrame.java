@@ -318,9 +318,9 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 		fun = new Bootstrap();
 	    String t = fun.title();
 	    if(t == null)
-		setTitle("Haven & Hearth");
+		setTitle("Havoc");
 	    else
-		setTitle("Haven & Hearth \u2013 " + t);
+		setTitle("Havoc \u2013 " + t);
 	    fun = fun.run(p.newui(fun));
 	}
     }
