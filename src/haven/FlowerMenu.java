@@ -237,6 +237,15 @@ public class FlowerMenu extends Widget {
 			opt.c = new Coord(UI.scale(3), UI.scale(3) + y);
 			y += opt.sz.y;
 		}
+		// ND: Prevent flower menu from going outside the screen
+		if (ui.gui != null) {
+			if (this.c.x + maxWidth > ui.gui.sz.x){
+				this.c.x = ui.gui.sz.x - maxWidth;
+			}
+			if (this.c.y + y > ui.gui.sz.y){
+				this.c.y = ui.gui.sz.y - y;
+			}
+		}
 	}
 
     public FlowerMenu(String... options) {
@@ -253,6 +262,7 @@ public class FlowerMenu extends Widget {
     protected void added() {
 	if(c.equals(-1, -1))
 	    c = parent.ui.lcc;
+//		c = new Coord(parent.ui.lcc.x+100, parent.ui.lcc.y-100);
 	mg = ui.grabmouse(this);
 	kg = ui.grabkeys(this);
 	organize(opts);
