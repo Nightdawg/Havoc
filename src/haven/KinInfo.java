@@ -132,9 +132,15 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
 	    if(show != null) {
 		Tex t = rendered();
 		if(t != null) {
-		    g.chcolor(show);
-		    g.aimage(t, sc, 0.5, 1.0);
-		    g.chcolor();
+			if (gob != null && gob.glob != null && gob.glob.map != null && gob.glob.map.sess != null && gob.glob.map.sess.ui != null
+					&& gob.glob.map.sess.ui.gui != null && gob.glob.map.sess.ui.gui.map != null) { // ND: Probably overkill. I have no clue if anything can break here, but just to be safe I guess?
+				final Double angle = gob.glob.map.sess.ui.gui.map.screenangle(gob.rc, true);
+				if (angle.equals(Double.NaN)) {
+					g.chcolor(show);
+					g.aimage(t, sc, 0.5, 1.0);
+					g.chcolor();
+				}
+			}
 		}
 	    }
 	} else {
