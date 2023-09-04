@@ -44,11 +44,11 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
     public void uncaughtException(Thread t, Throwable e) {
         if (EXCLUDED_THREADS.contains(t.getName())) {
             e.printStackTrace();
-            logCrash(e);
+            logCrash(t, e);
             return;
         }
 
-        logCrash(e);
+        logCrash(t, e);
 
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "A critical error occurred:\n" + e.toString(),
                 "Application Crash", JOptionPane.ERROR_MESSAGE));
@@ -60,7 +60,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         System.exit(CRASH_EXIT_CODE);
     }
 
-    private void logCrash(Throwable throwable) {
+    private void logCrash(Thread t, Throwable throwable) {
         File logDir = new File("Logs");
         if (!logDir.exists()) {
             logDir.mkdir();
@@ -71,9 +71,11 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         File logFile = new File(logDir, logFilename);
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(logFile))) {
+            writer.println("Crash in thread: " + t.getName()); // This line will add thread information to the log
             throwable.printStackTrace(writer);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
+
 }
