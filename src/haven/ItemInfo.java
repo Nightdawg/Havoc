@@ -196,7 +196,7 @@ public abstract class ItemInfo {
 	}
 
 	public BufferedImage tipimg() {
-	    return(str.img);
+	    return(PUtils.strokeImg(str.img));
 	}
 
 	public int order() {return(0);}
