@@ -18,8 +18,6 @@ public class RefillWaterContainers implements Runnable {
     public void run() {
         try {
             do {
-                System.out.println("getInventoryContainers().size() = " + getInventoryContainers().size());
-                System.out.println("getBeltContainers().size() = " + getBeltContainers().size());
                 Inventory belt = returnBelt();
                 Map<WItem, Coord> inventoryItems = getInventoryContainers();
                 for (Map.Entry<WItem, Coord> item : inventoryItems.entrySet()) {
