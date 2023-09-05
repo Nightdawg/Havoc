@@ -1,6 +1,7 @@
 package haven.automated;
 
 import haven.*;
+import haven.resutil.WaterTile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,33 +19,52 @@ public class RefillWaterContainers implements Runnable {
     public void run() {
         try {
             do {
-                Inventory belt = returnBelt();
-                Map<WItem, Coord> inventoryItems = getInventoryContainers();
-                for (Map.Entry<WItem, Coord> item : inventoryItems.entrySet()) {
-                    try {
-                        item.getKey().item.wdgmsg("take", Coord.z);
-                        Thread.sleep(5);
-                        gui.map.wdgmsg("itemact", Coord.z, gui.map.player().rc.floor(posres), 0);
-                        Thread.sleep(30);
-                        gui.maininv.wdgmsg("drop", item.getValue());
-                        Thread.sleep(5);
-                    } catch (InterruptedException ignored) {
+                MCache mcache = gui.ui.sess.glob.map;
+                int t = mcache.gettile(gui.map.player().rc.floor(MCache.tilesz));
+                Tiler tl = mcache.tiler(t);
+                if (tl instanceof WaterTile) {
+                    Resource res = mcache.tilesetr(t);
+                    if (res != null) {
+                        if (res.name.equals("gfx/tiles/water") || res.name.equals("gfx/tiles/deep")) {
+                            Inventory belt = returnBelt();
+                            Map<WItem, Coord> inventoryItems = getInventoryContainers();
+                            for (Map.Entry<WItem, Coord> item : inventoryItems.entrySet()) {
+                                try {
+                                    item.getKey().item.wdgmsg("take", Coord.z);
+                                    Thread.sleep(5);
+                                    gui.map.wdgmsg("itemact", Coord.z, gui.map.player().rc.floor(posres), 0);
+                                    Thread.sleep(30);
+                                    gui.maininv.wdgmsg("drop", item.getValue());
+                                    Thread.sleep(5);
+                                } catch (InterruptedException ignored) {
+                                    return;
+                                }
+                            }
+                            Map<WItem, Coord> beltItems = getBeltContainers();
+                            for (Map.Entry<WItem, Coord> item : beltItems.entrySet()) {
+                                try {
+                                    item.getKey().item.wdgmsg("take", Coord.z);
+                                    Thread.sleep(5);
+                                    gui.map.wdgmsg("itemact", Coord.z, gui.map.player().rc.floor(posres), 0);
+                                    Thread.sleep(30);
+                                    belt.wdgmsg("drop", item.getValue());
+                                    gui.maininv.wdgmsg("drop", item.getValue());
+                                    Thread.sleep(5);
+                                } catch (InterruptedException ignored) {
+                                    return;
+                                }
+                            }
+                        } else if (res.name.equals("gfx/tiles/owater") || res.name.equals("gfx/tiles/odeep") || res.name.equals("gfx/tiles/odeeper")){
+                            gui.ui.error("Refill Water Script: This is salt water, you can't drink this!");
+                            return;
+                        }
+                    } else {
+                        gui.ui.error("Refill Water Script: Error checking tile, try again!");
                         return;
                     }
-                }
-                Map<WItem, Coord> beltItems = getBeltContainers();
-                for (Map.Entry<WItem, Coord> item : beltItems.entrySet()) {
-                    try {
-                        item.getKey().item.wdgmsg("take", Coord.z);
-                        Thread.sleep(5);
-                        gui.map.wdgmsg("itemact", Coord.z, gui.map.player().rc.floor(posres), 0);
-                        Thread.sleep(30);
-                        belt.wdgmsg("drop", item.getValue());
-                        gui.maininv.wdgmsg("drop", item.getValue());
-                        Thread.sleep(5);
-                    } catch (InterruptedException ignored) {
-                        return;
-                    }
+                } else {
+                    gui.ui.error("Refill Water Script: You must be on a water tile, in order to refill your containers!");
+                    return;
                 }
             } while (getInventoryContainers().size() != 0 || getBeltContainers().size() != 0);
             gui.ui.msg("Water Refilled!");
