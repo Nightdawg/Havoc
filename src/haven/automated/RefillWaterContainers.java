@@ -18,6 +18,8 @@ public class RefillWaterContainers implements Runnable {
     public void run() {
         try {
             do {
+                System.out.println("getInventoryContainers().size() = " + getInventoryContainers().size());
+                System.out.println("getBeltContainers().size() = " + getBeltContainers().size());
                 Inventory belt = returnBelt();
                 Map<WItem, Coord> inventoryItems = getInventoryContainers();
                 for (Map.Entry<WItem, Coord> item : inventoryItems.entrySet()) {
@@ -46,7 +48,7 @@ public class RefillWaterContainers implements Runnable {
                         return;
                     }
                 }
-            } while (getInventoryContainers().size() != 0 && getBeltContainers().size() != 0);
+            } while (getInventoryContainers().size() != 0 || getBeltContainers().size() != 0);
             gui.ui.msg("Water Refilled!");
         } catch (Exception e) {
 //            gui.ui.error("Refill Water Containers Script: An Unknown Error has occured.");
