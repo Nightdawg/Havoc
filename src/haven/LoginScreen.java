@@ -341,20 +341,18 @@ public class LoginScreen extends Widget {
 		if(sender == optbtn) {
 			if(opts == null) {
 				opts = ui.root.adda(new OptWnd(false) { //ND: adding "ui.root." makes the options menu window not hide behind the black bars when moved over.
-					public void hide() {
-						/* XXX */
-						reqdestroy();
-						opts = null;
-					}
+//					public void hide() {
+//						/* XXX */
+//						opts.show(!opts.visible());
+//					}
 				}, 0.5, 0.5);
 			} else {
-				opts.reqdestroy();
-				opts = null;
+				opts.show(!opts.visible());
 			}
 			return;
 		} else if(sender == opts) {
-			opts.reqdestroy();
-			opts = null;
+			// ND: Pretty sure this part never happens, ever
+			opts.show(!opts.visible());
 		}
 		super.wdgmsg(sender, msg, args);
 	}
