@@ -47,6 +47,7 @@ public class OptWnd extends Window {
     public Panel current;
 	public static int cameraLmaoMessage = 1; // ND: Message for "cam" console command, idk where to put this lmao
 	AlarmWindow alarmWindow;
+	AutoFlowerWindow autoFlowerWindow;
 	public static final Color msgGreen = new Color(8, 211, 0);
 	public static final Color msgGray = new Color(145, 145, 145);
 	public static final Color msgRed = new Color(197, 0, 0);
@@ -1700,8 +1701,14 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 12));
 
-			prev = add(new Button(UI.scale(310), ">>> Auto-Flower Menu <<<", () -> {
-
+			prev = add(new Button(UI.scale(310), ">>> Auto-Select Manager (Flower Menus) <<<", () -> {
+				if(autoFlowerWindow == null) {
+					autoFlowerWindow = this.parent.parent.add(new AutoFlowerWindow());
+					autoFlowerWindow.show();
+				} else {
+					autoFlowerWindow.show(!autoFlowerWindow.visible);
+					autoFlowerWindow.refresh();
+				}
 			}),prev.pos("bl").adds(0, 10).x(0));
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 16).x(UI.scale(55)));

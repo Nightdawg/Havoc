@@ -1,5 +1,6 @@
 package haven;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
@@ -10,9 +11,9 @@ public class AutoFlowerWindow extends Window {
     private PetalList petalList;
 
     public AutoFlowerWindow() {
-        super(UI.scale(300, 350), "AutoFlowerMenu Manager");
+        super(UI.scale(300, 350), "Auto-Select Manager (Flower Menus)");
 
-        add(new CheckBox("Enable AutoSelection") {
+        add(new CheckBox("Enable Automated Selection") {
             {
                 a = Utils.getprefb("autoFlowerMenuSelect", false);
             }
@@ -21,21 +22,24 @@ public class AutoFlowerWindow extends Window {
                 GameUI.autoFlowerSelect = val;
                 Utils.setprefb("autoFlowerMenuSelect", val);
             }
-        }, UI.scale(20, 10));
+        }, UI.scale(10, 10));
 
-        add(new Button(UI.scale(100), "Refresh"){
+        add(new Button(UI.scale(100), "Refresh List"){
             @Override
             public void click() {
                 refresh();
             }
-        }, UI.scale(150, 0));
+        }, UI.scale(210, 2));
 
-        petalList = new PetalList(825, 10);
+        add(new Label("Auto-Select Options:", new Text.Foundry(Text.sans, 12)), UI.scale(106, 40));
+
+        petalList = new PetalList(UI.scale(294), 12);
+        add(petalList, UI.scale(25, 60));
         refresh();
-        add(petalList, UI.scale(25, 35));
-        for(Map.Entry<String, Boolean> petal: FlowerMenu.autoChoose.entrySet()){
-            petalList.addItem(new PetalItem(petal.getKey(), petal.getValue()));
-        }
+        add(new Label("New items are added to this list as you discover them.", new Text.Foundry(Text.sans, 12)), UI.scale(10, 335));
+        add(new Label("Don't forget to Refresh the list if you don't see a new item!"), UI.scale(20, 355));
+        this.c = new Coord (200, 100);
+        pack();
     }
 
     public void refresh() {
@@ -49,7 +53,7 @@ public class AutoFlowerWindow extends Window {
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
         if((sender == this) && (Objects.equals(msg, "close"))) {
-            reqdestroy();
+            hide();
         } else {
             super.wdgmsg(sender, msg, args);
         }
@@ -59,7 +63,7 @@ public class AutoFlowerWindow extends Window {
 
         ArrayList<PetalItem> items = new ArrayList<>();
         Scrollbar sb;
-        int rowHeight = UI.scale(30);
+        int rowHeight = UI.scale(22);
         int rows, w;
 
         public PetalList(int w, int rows) {
@@ -134,7 +138,7 @@ public class AutoFlowerWindow extends Window {
 
         public PetalItem(String name, boolean value) {
             this.name = name;
-            add(new CheckBox("Autopick " + name) {
+            add(new CheckBox(name) {
                 {
                     a = value;
                 }
