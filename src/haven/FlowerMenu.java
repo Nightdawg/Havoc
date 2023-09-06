@@ -364,6 +364,9 @@ public class FlowerMenu extends Widget {
 				if (autoChoose.get(option) == null) {
 					autoChoose.put(option, false);
 					checkAndInsertFlowerMenuOption(option);
+					if (OptWnd.autoFlowerWindow != null) {
+						OptWnd.autoFlowerWindow.refresh();
+					}
 				}
 			}
 		} catch (Exception ignored) {

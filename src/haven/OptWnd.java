@@ -47,7 +47,7 @@ public class OptWnd extends Window {
     public Panel current;
 	public static int cameraLmaoMessage = 1; // ND: Message for "cam" console command, idk where to put this lmao
 	AlarmWindow alarmWindow;
-	AutoFlowerWindow autoFlowerWindow;
+	public static AutoFlowerWindow autoFlowerWindow;
 	public static final Color msgGreen = new Color(8, 211, 0);
 	public static final Color msgGray = new Color(145, 145, 145);
 	public static final Color msgRed = new Color(197, 0, 0);

@@ -24,20 +24,20 @@ public class AutoFlowerWindow extends Window {
             }
         }, UI.scale(10, 10));
 
-        add(new Button(UI.scale(100), "Refresh List"){
-            @Override
-            public void click() {
-                refresh();
-            }
-        }, UI.scale(210, 2));
+//        add(new Button(UI.scale(100), "Refresh List"){
+//            @Override
+//            public void click() {
+//                refresh();
+//            }
+//        }, UI.scale(210, 2));
 
         add(new Label("Auto-Select Options:", new Text.Foundry(Text.sans, 12)), UI.scale(106, 40));
 
-        petalList = new PetalList(UI.scale(294), 12);
+        petalList = new PetalList(UI.scale(296), 12);
         add(petalList, UI.scale(25, 60));
         refresh();
         add(new Label("New items are added to this list as you discover them.", new Text.Foundry(Text.sans, 12)), UI.scale(10, 335));
-        add(new Label("Don't forget to Refresh the list if you don't see a new item!"), UI.scale(20, 355));
+        add(new Label("The list is automatically refreshed when a new item is added."), UI.scale(12, 355));
         this.c = new Coord (200, 100);
         pack();
     }
