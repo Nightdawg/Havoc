@@ -869,8 +869,9 @@ public class Utils {
 		try {
 		    return(task.run());
 		} catch(RuntimeException | IOException exc) {
-		    if(last == null)
-			new Warning(exc, "weird I/O error occurred on " + String.valueOf(task)).issue();
+			// ND: Commented below 2 lines cause I don't need to see the map file reading error message/stack trace
+//		    if(last == null)
+//			new Warning(exc, "weird I/O error occurred on " + String.valueOf(task)).issue();
 		    if(last != null)
 			exc.addSuppressed(last);
 		    last = exc;
