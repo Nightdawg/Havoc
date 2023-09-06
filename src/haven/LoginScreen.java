@@ -344,6 +344,7 @@ public class LoginScreen extends Widget {
 					public void hide() {
 						/* XXX */
 						reqdestroy();
+						opts = null;
 					}
 				}, 0.5, 0.5);
 			} else {
