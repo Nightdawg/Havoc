@@ -695,7 +695,7 @@ public class OptWnd extends Window {
 		}, leftColumn.pos("bl").adds(0, 2));
 
 		rightColumn = add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
-			{a = (Utils.getprefb("CornerFPSSettingBool", false));}
+			{a = (Utils.getprefb("CornerFPSSettingBool", true));}
 			public void set(boolean val) {
 				GLPanel.Loop.enableCornerFPSSetting = val;
 				Utils.setprefb("CornerFPSSettingBool", val);
@@ -1040,7 +1040,6 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Snap South", MapView.kb_camSnapSouth, y);
 			y = addbtn(cont, "Snap East", MapView.kb_camSnapEast, y);
 			y = addbtn(cont, "Snap West", MapView.kb_camSnapWest, y);
-			y = addbtn(cont, "Reset", MapView.kb_camreset, y);
 			y = cont.adda(new Label("Walking speed"), cont.sz.x / 2, y + UI.scale(10), 0.5, 0.0).pos("bl").adds(0, 5).y;
 			y = addbtn(cont, "Increase speed", Speedget.kb_speedup, y);
 			y = addbtn(cont, "Decrease speed", Speedget.kb_speeddn, y);
@@ -2691,7 +2690,7 @@ public class OptWnd extends Window {
 			prev = add(new Label("Enabled Sounds & Alerts:"), prev.pos("bl").add(0, 10).x(0));
 			prev = add(new Label("Sound File"), prev.pos("ur").add(69, 0));
 			prev = add(new Label("Volume"), prev.pos("ur").add(84, 0));
-			prev = add(combatStartSoundEnabledCheckbox = new CheckBox("Combat Start Alert:"){
+			prev = add(combatStartSoundEnabledCheckbox = new CheckBox("Combat Started Alert:"){
 				{a = Utils.getprefb("combatStartSoundEnabled", false);}
 				public void set(boolean val) {
 					Utils.setprefb("combatStartSoundEnabled", val);

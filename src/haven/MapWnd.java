@@ -68,10 +68,10 @@ public class MapWnd extends Window implements Console.Directory {
     private boolean domark = false;
     private int olalpha = 80;
     private final Collection<Runnable> deferred = new LinkedList<>();
-	private Coord bigmapc = Utils.getprefc("bigmapc", new Coord(200,200));
+	private Coord bigmapc = Utils.getprefc("bigmapc", new Coord(0,0));
 	private Coord smallmapc = Utils.getprefc("smallmapc", new Coord(0,100));
-	private Coord bigmapsz = Utils.getprefc("bigmapsz", new Coord(540,330));
-	private Coord smallmapsz = Utils.getprefc("smallmapsz", new Coord(230,230));
+	private Coord bigmapsz = Utils.getprefc("bigmapsz", new Coord(980,550));
+	private Coord smallmapsz = Utils.getprefc("smallmapsz", new Coord(300,300));
 	public boolean compact = true;
 
     private final static Predicate<Marker> pmarkers = (m -> m instanceof PMarker);
@@ -82,10 +82,10 @@ public class MapWnd extends Window implements Console.Directory {
     public static final KeyBinding kb_home = KeyBinding.get("mapwnd/home", KeyMatch.forcode(KeyEvent.VK_HOME, 0));
     public static final KeyBinding kb_mark = KeyBinding.get("mapwnd/mark", KeyMatch.nil);
     public static final KeyBinding kb_hmark = KeyBinding.get("mapwnd/hmark", KeyMatch.nil);
-    public static final KeyBinding kb_compact = KeyBinding.get("mapwnd/compact", KeyMatch.forchar('A', KeyMatch.M));
-    public static final KeyBinding kb_prov = KeyBinding.get("mapwnd/prov", KeyMatch.nil);
-	public static final KeyBinding kb_claim = KeyBinding.get("mapwnd/pclaim", KeyMatch.nil);
-	public static final KeyBinding kb_vil = KeyBinding.get("mapwnd/vclaim", KeyMatch.nil);
+    public static final KeyBinding kb_compact = KeyBinding.get("mapwnd/compact", KeyMatch.forchar('W', KeyMatch.M));
+    public static final KeyBinding kb_prov = KeyBinding.get("mapwnd/prov", KeyMatch.forcode(KeyEvent.VK_F11, KeyMatch.M));
+	public static final KeyBinding kb_claim = KeyBinding.get("mapwnd/pclaim", KeyMatch.forcode(KeyEvent.VK_F9, KeyMatch.M));
+	public static final KeyBinding kb_vil = KeyBinding.get("mapwnd/vclaim", KeyMatch.forcode(KeyEvent.VK_F10, KeyMatch.M));
     public MapWnd(MapFile file, MapView mv, Coord sz, String title) {
 	super(sz, title, true);
 	this.file = file;

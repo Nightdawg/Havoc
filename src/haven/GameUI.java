@@ -854,7 +854,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		     * existing mapfile with a new one is better. */
 		    throw(new RuntimeException("failed to load mapfile", e));
 		}
-		mapfile = new MapWnd(file, map, Utils.getprefc("smallmapsz", new Coord(230,230)), "Map");
+		mapfile = new MapWnd(file, map, Utils.getprefc("smallmapsz", new Coord(300,300)), "Map");
 		mapfile.show(true);
 		add(mapfile, Utils.getprefc("smallmapc", new Coord(0, 100)));
 	    }
@@ -1550,10 +1550,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	}
     }
 
-    public static final KeyBinding kb_map = KeyBinding.get("map", KeyMatch.forchar('A', KeyMatch.C));
-    public static final KeyBinding kb_claim = KeyBinding.get("ol-claim", KeyMatch.nil);
-    public static final KeyBinding kb_vil = KeyBinding.get("ol-vil", KeyMatch.nil);
-    public static final KeyBinding kb_rlm = KeyBinding.get("ol-rlm", KeyMatch.nil);
+    public static final KeyBinding kb_map = KeyBinding.get("map", KeyMatch.forchar('W', KeyMatch.C));
+    public static final KeyBinding kb_claim = KeyBinding.get("ol-claim", KeyMatch.forcode(KeyEvent.VK_F9, KeyMatch.C));
+    public static final KeyBinding kb_vil = KeyBinding.get("ol-vil", KeyMatch.forcode(KeyEvent.VK_F10, KeyMatch.C));
+    public static final KeyBinding kb_rlm = KeyBinding.get("ol-rlm", KeyMatch.forcode(KeyEvent.VK_F11, KeyMatch.C));
     public static final KeyBinding kb_ico = KeyBinding.get("map-icons", KeyMatch.forchar('I', KeyMatch.C));
     private static final Tex mapmenubg = Resource.loadtex("gfx/hud/lbtn-bg");
     public class MapMenu extends Widget {
@@ -1573,7 +1573,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 
     public static final KeyBinding kb_shoot = KeyBinding.get("screenshot", KeyMatch.nil);
-    public static final KeyBinding kb_chat = KeyBinding.get("chat-focus", KeyMatch.forchar('C', KeyMatch.C));
+    public static final KeyBinding kb_chat = KeyBinding.get("chat-focus", KeyMatch.nil);
     public static final KeyBinding kb_hide = KeyBinding.get("ui-toggle", KeyMatch.nil);
     public static final KeyBinding kb_logout = KeyBinding.get("logout", KeyMatch.nil);
     public static final KeyBinding kb_switchchr = KeyBinding.get("logout-cs", KeyMatch.nil);
@@ -1586,7 +1586,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxesKB",  KeyMatch.forchar('B', KeyMatch.S));
 	public static KeyBinding kb_toggleHidingBoxes  = KeyBinding.get("toggleHidingBoxesKB",  KeyMatch.forchar('H', KeyMatch.C));
 	public static KeyBinding kb_clickNearestObject  = KeyBinding.get("clickNearestObjectKB",  KeyMatch.forchar('Q', 0));
-	public static KeyBinding kb_nightVision  = KeyBinding.get("nightVisionKB",  KeyMatch.forchar('N', KeyMatch.S));
+	public static KeyBinding kb_nightVision  = KeyBinding.get("nightVisionKB",  KeyMatch.forchar('N', KeyMatch.C));
 
 	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("clickNearestGateKB",  KeyMatch.nil);
 	public static KeyBinding kb_aggroLastTarget = KeyBinding.get("aggroLastTarget",  KeyMatch.forchar('T', KeyMatch.S));

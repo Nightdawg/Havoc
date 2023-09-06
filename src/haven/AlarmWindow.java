@@ -102,7 +102,7 @@ public class AlarmWindow extends Window {
 					future.cancel(true);
 				boolean alreadyExists = false;
 				for (int i = 0; i < al.items.size(); i++)
-					if (al.items.get(i).gobResname.buf.line().equals(addGobResname.buf.line()))
+					if (al.items.get(i).gobResname.text.text.equals(addGobResname.buf.line()))
 						alreadyExists = true;
 				if (!alreadyExists) {
 					al.addItem(new AlarmItem(addGobResname.buf.line(), enabled.a, alarmName.buf.line(), addAlarmFilename.buf.line(), addVolume.val, knocked.a));
@@ -263,7 +263,8 @@ public class AlarmWindow extends Window {
 
 	public static class AlarmItem extends Widget {
 
-		private TextEntry gobResname, alarmName, alarmFilename;
+		private Label gobResname;
+		private TextEntry alarmName, alarmFilename;
 		private HSlider volume;
 		private CheckBox enabled, knocked;
 
@@ -287,19 +288,20 @@ public class AlarmWindow extends Window {
 				}
 			};
 			prev = add(this.alarmName, prev.pos("ul").adds(30,-2));
-			this.gobResname = new TextEntry(UI.scale(200), gobResname){
-				@Override
-				protected void changed() {
-					AlarmManager.load(al);
-					AlarmManager.save();
-					super.changed();
-				}
-
-				@Override
-				public boolean keydown(KeyEvent e) {
-					return false;
-				}
-			};
+//			this.gobResname = new TextEntry(UI.scale(200), gobResname){
+//				@Override
+//				protected void changed() {
+//					AlarmManager.load(al);
+//					AlarmManager.save();
+//					super.changed();
+//				}
+//
+//				@Override
+//				public boolean keydown(KeyEvent e) {
+//					return false;
+//				}
+//			};
+			this.gobResname = new Label(gobResname, UI.scale(200));
 			prev = add(this.gobResname, prev.pos("ul").adds(138,0));
 			this.alarmFilename = new TextEntry(UI.scale(100), alarmFilename.replace(".wav", "")){
 				@Override
@@ -385,7 +387,7 @@ public class AlarmWindow extends Window {
 		}
 
 		public String getGobResname() {
-			return gobResname.buf.line();
+			return gobResname.text.text;
 		}
 
 		public String getAlarmFilename() {

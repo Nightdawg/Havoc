@@ -400,7 +400,6 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     public static KeyBinding kb_camright = KeyBinding.get("cam-right", KeyMatch.nil);
     public static KeyBinding kb_camin    = KeyBinding.get("cam-in",    KeyMatch.nil);
     public static KeyBinding kb_camout   = KeyBinding.get("cam-out",   KeyMatch.nil);
-    public static KeyBinding kb_camreset = KeyBinding.get("cam-reset", KeyMatch.nil);
 	public static KeyBinding kb_camSnapNorth = KeyBinding.get("cam-SnapNorth", KeyMatch.forcode(KeyEvent.VK_UP, 0));
 	public static KeyBinding kb_camSnapSouth = KeyBinding.get("cam-SnapSouth", KeyMatch.forcode(KeyEvent.VK_DOWN, 0));
 	public static KeyBinding kb_camSnapEast = KeyBinding.get("cam-SnapEast", KeyMatch.forcode(KeyEvent.VK_RIGHT, 0));
@@ -503,10 +502,6 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		return(true);
 	    } else if(kb_camout.key().match(ev)) {
 		chfield(tfield + 50);
-		return(true);
-	    } else if(kb_camreset.key().match(ev)) {
-		tangl = angl + (float)Utils.cangle(-(float)Math.PI * 0.25f - angl);
-		chfield((float)(100 * Math.sqrt(2)));
 		return(true);
 	    }
 	    return(false);

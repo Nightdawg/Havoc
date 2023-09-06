@@ -291,7 +291,7 @@ public interface GLPanel extends UIPanel, UI.Context {
 	}
 
 	private StreamOut streamout = null;
-	public static boolean enableCornerFPSSetting = Utils.getprefb("CornerFPSSettingBool", false); // ND: Variable used for the interface menu to show the framerate
+	public static boolean enableCornerFPSSetting = Utils.getprefb("CornerFPSSettingBool", true); // ND: Variable used for the interface menu to show the framerate
 
 	private void display(UI ui, GLRender buf) {
 	    Pipe wnd = p.basestate();
