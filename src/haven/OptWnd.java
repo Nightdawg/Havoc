@@ -2895,7 +2895,7 @@ public class OptWnd extends Window {
 					Utils.setpref("lowEnergySoundFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(16, -2));
+			}, prev.pos("ur").adds(17, -2));
 			prev = add(lowEnergySoundVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("lowEnergySoundVolume", 35)){
 				@Override
 				public void changed() {
