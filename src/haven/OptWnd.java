@@ -2255,7 +2255,7 @@ public class OptWnd extends Window {
 			add(new Label("(The file extension must be .wav)", new Text.Foundry(Text.sans, 12)), UI.scale(0, 16));
 			prev = add(new Label("Enabled Player Alarms:"), UI.scale(0, 40));
 			prev = add(new Label("Sound File"), prev.pos("ur").add(70, 0));
-			prev = add(new Label("Volume"), prev.pos("ur").add(84, 0));
+			prev = add(new Label("Volume"), prev.pos("ur").add(78, 0));
 			prev = add(whitePlayerAlarmEnabledCheckbox = new CheckBox("White OR Unknown:"){
 				{a = Utils.getprefb("whitePlayerAlarmEnabled", true);}
 				public void set(boolean val) {
@@ -2269,7 +2269,7 @@ public class OptWnd extends Window {
 					Utils.setpref("whitePlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(45, -2).x(UI.scale(143)));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(whitePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("whitePlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -2364,7 +2364,7 @@ public class OptWnd extends Window {
 					Utils.setpref("greenPlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(88, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(greenPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("greenPlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -2412,7 +2412,7 @@ public class OptWnd extends Window {
 					Utils.setpref("redPlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(98, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(redPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("redPlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -2460,7 +2460,7 @@ public class OptWnd extends Window {
 					Utils.setpref("bluePlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(95, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(bluePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("bluePlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -2508,7 +2508,7 @@ public class OptWnd extends Window {
 					Utils.setpref("tealPlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(95, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(tealPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("tealPlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -2556,7 +2556,7 @@ public class OptWnd extends Window {
 					Utils.setpref("yellowPlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(85, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(yellowPlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("yellowPlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -2604,7 +2604,7 @@ public class OptWnd extends Window {
 					Utils.setpref("purplePlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(86, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(purplePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("purplePlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -2652,7 +2652,7 @@ public class OptWnd extends Window {
 					Utils.setpref("orangePlayerAlarmFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(82, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(orangePlayerAlarmVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("orangePlayerAlarmVolume", 50)){
 				@Override
 				public void changed() {
@@ -2689,7 +2689,7 @@ public class OptWnd extends Window {
 
 			prev = add(new Label("Enabled Sounds & Alerts:"), prev.pos("bl").add(0, 10).x(0));
 			prev = add(new Label("Sound File"), prev.pos("ur").add(69, 0));
-			prev = add(new Label("Volume"), prev.pos("ur").add(84, 0));
+			prev = add(new Label("Volume"), prev.pos("ur").add(78, 0));
 			prev = add(combatStartSoundEnabledCheckbox = new CheckBox("Combat Started Alert:"){
 				{a = Utils.getprefb("combatStartSoundEnabled", false);}
 				public void set(boolean val) {
@@ -2703,7 +2703,7 @@ public class OptWnd extends Window {
 					Utils.setpref("combatStartSoundFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(30, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(combatStartSoundVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("combatStartSoundVolume", 50)){
 				@Override
 				public void changed() {
@@ -2751,7 +2751,7 @@ public class OptWnd extends Window {
 					Utils.setpref("cleaveSoundFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(19, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(cleaveSoundVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("cleaveSoundVolume", 75)){
 				@Override
 				public void changed() {
@@ -2799,7 +2799,7 @@ public class OptWnd extends Window {
 					Utils.setpref("opkSoundFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(6, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(opkSoundVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("opkSoundVolume", 75)){
 				@Override
 				public void changed() {
@@ -2847,7 +2847,7 @@ public class OptWnd extends Window {
 					Utils.setpref("ponyPowerSoundFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(6, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(ponyPowerSoundVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("ponyPowerSoundVolume", 35)){
 				@Override
 				public void changed() {
@@ -2894,7 +2894,7 @@ public class OptWnd extends Window {
 					Utils.setpref("lowEnergySoundFilename", this.buf.line());
 					super.changed();
 				}
-			}, prev.pos("ur").adds(17, -2));
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(143)));
 			prev = add(lowEnergySoundVolumeSlider = new HSlider(UI.scale(100), 0, 100, Utils.getprefi("lowEnergySoundVolume", 35)){
 				@Override
 				public void changed() {
