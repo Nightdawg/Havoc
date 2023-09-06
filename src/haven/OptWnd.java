@@ -3123,7 +3123,7 @@ public class OptWnd extends Window {
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Combat Settings", -1, combatsettings, "Combat Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Hiding Settings", -1, hidingsettings, "Hiding Settings"), 0, y2).pos("bl").adds(0, 5).y;
-		y2 = advancedSettings.add(new PButton(UI.scale(200), "Drop Settings", -1, dropsettings, "Drop Settings"), 0, y2).pos("bl").adds(0, 5).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Mining Auto-Drop Settings", -1, dropsettings, "Mining Auto-Drop Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Alarms & Sounds Settings", -1, alarmsettings, "Alarms & Sounds Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Back", 27, main, "Options            "), 0, y2).pos("bl").adds(0, 5).y;
