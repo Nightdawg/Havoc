@@ -124,7 +124,7 @@ public class Fightview extends Widget {
 
 		public void tick() {
 			final Gob g = ui.sess.glob.oc.getgob(gobid);
-			if (OptWnd.aggroedEnemiesCirclesCheckBox.a && g != null && g.getres().name.equals("gfx/borka/body") && g.findol(AggroCircleSprite.id) == null) {
+			if (OptWnd.aggroedEnemiesCirclesCheckBox.a && g != null && /*g.getres().name.equals("gfx/borka/body") &&*/ g.findol(AggroCircleSprite.id) == null) {
 				g.daddol(AggroCircleSprite.id, new AggroCircleSprite(g));
 			} else if (!OptWnd.aggroedEnemiesCirclesCheckBox.a && g != null) {
 				final Gob.Overlay ol = g.findol(AggroCircleSprite.id);
