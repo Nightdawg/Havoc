@@ -124,7 +124,7 @@ public class Speedget extends Widget {
     public static final KeyBinding kb_speedup = KeyBinding.get("speed-up", KeyMatch.nil);
     public static final KeyBinding kb_speeddn = KeyBinding.get("speed-down", KeyMatch.nil);
     public static final KeyBinding[] kb_speeds = {
-	KeyBinding.get("speed-set/0", KeyMatch.forchar('Q', KeyMatch.S)),
+	KeyBinding.get("speed-set/0", KeyMatch.nil),
 	KeyBinding.get("speed-set/1", KeyMatch.forchar('W', KeyMatch.S)),
 	KeyBinding.get("speed-set/2", KeyMatch.forchar('E', KeyMatch.S)),
 	KeyBinding.get("speed-set/3", KeyMatch.forchar('R', KeyMatch.S)),

@@ -71,7 +71,7 @@ public class InteractWithNearestObject implements Runnable {
                             }
                         }
                     } catch (NullPointerException ignored) {}
-                    if (isGate || res.name.startsWith("gfx/terobjs/herbs") || otherPickableObjects.contains(res.basename()) || Arrays.stream(Gob.CRITTERAURA_PATHS).anyMatch(res.name::matches)) {
+                    if (isGate || res.name.startsWith("gfx/terobjs/herbs") || otherPickableObjects.contains(res.basename()) || Arrays.stream(Gob.CRITTERAURA_PATHS).anyMatch(res.name::matches) || res.name.matches(".*(rabbit|bunny)$")) {
                         if (distFromPlayer < maxDistance && (theObject == null || distFromPlayer < theObject.rc.dist(gui.map.player().rc))) {
                             theObject = gob;
                             if (res.name.startsWith("gfx/terobjs/herbs")) FlowerMenu.setNextSelection("Pick"); // ND: Set the flower menu option to "pick" only for these particular ones.
