@@ -144,7 +144,7 @@ public class Charlist extends Widget {
 				synchronized(sess) {
 					sess.close();
 				}
-				super.click();
+//				super.click();
 			}
 		}, UI.scale(20, 560));
     }
