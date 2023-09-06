@@ -1596,7 +1596,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			} else if (OptWnd.hideWallsSetting && (res.name.startsWith("gfx/terobjs/arch/palisade") || res.name.startsWith("gfx/terobjs/arch/brickwall")) && !res.name.endsWith("gate")) {
 				doHide = hideObjects;
 				doShowHidingBox = true;
-			} else if (OptWnd.hideHousesSetting && Arrays.stream(HIDINGHOUSES).anyMatch(res.name::contains)) {
+			} else if (OptWnd.hideHousesSetting && Arrays.asList(HIDINGHOUSES).contains(res.name)) {
 				doHide = hideObjects;
 				doShowHidingBox = true;
 			} else if (OptWnd.hideCropsSetting && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
