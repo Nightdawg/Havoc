@@ -978,9 +978,9 @@ public class OptWnd extends Window {
 	}
     }
 
-    private static final Text kbtt = RichText.render("$col[255,255,0]{Escape}: Cancel input\n" +
-						     "$col[255,255,0]{Backspace}: Revert to default\n" +
-						     "$col[255,255,0]{Delete}: Disable keybinding", 0);
+    private static final Text kbtt = RichText.render("$col[255,200,0]{Escape}: Cancel input\n" +
+						     "$col[255,200,0]{Backspace}: Revert to default\n" +
+						     "$col[255,200,0]{Delete}: Disable keybinding", 0);
     public class BindingPanel extends Panel {
 		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
 			return (cont.addhl(new Coord(0, y), cont.sz.x,

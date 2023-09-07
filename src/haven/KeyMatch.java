@@ -27,6 +27,7 @@
 package haven;
 
 import java.awt.event.*;
+
 import static java.awt.event.KeyEvent.VK_UNDEFINED;
 
 public class KeyMatch {
@@ -38,15 +39,24 @@ public class KeyMatch {
     public String keyname;
     public int modmask, modmatch;
 
+
     public KeyMatch(char chr, boolean casematch, int code, boolean extmatch, String keyname, int modmask, int modmatch) {
 	this.chr = casematch ? chr : Character.toUpperCase(chr);
 	this.casematch = casematch;
 	this.code = code;
 	this.extmatch = extmatch;
-	this.keyname = keyname;
+	this.keyname = setProperKeyNames(keyname);
 	this.modmask = modmask & MODS;
 	this.modmatch = modmatch & MODS;
     }
+
+	private String setProperKeyNames(String keyname){
+		if (Config.properKeyNames.keySet().stream().anyMatch(keyname::matches)){
+			return Config.properKeyNames.get(keyname);
+		} else {
+			return keyname;
+		}
+	}
 
     public static int mods(KeyEvent ev) {return(UI.modflags(ev));}
 
@@ -89,11 +99,11 @@ public class KeyMatch {
     public String name() {
 	StringBuilder buf = new StringBuilder();
 	if((modmatch & S) != 0)
-	    buf.append("Shift+");
+	    buf.append("s+");
 	if((modmatch & C) != 0)
-	    buf.append("Ctrl+");
+	    buf.append("c+");
 	if((modmatch & M) != 0)
-	    buf.append("Alt+");
+	    buf.append("a+");
 	buf.append(keyname);
 	return(buf.toString());
     }

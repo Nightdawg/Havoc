@@ -501,16 +501,7 @@ public class Fightsess extends Widget {
 					}
 					if (showKeybindCombatSetting) {
 					String keybindString = kb_acts[i].key().name();
-						if (keybindString.contains("Shift")) {
-							keybindString = keybindString.replace("Shift", "s");
-						}
-						if (keybindString.contains("Ctrl")) {
-							keybindString = keybindString.replace("Ctrl", "c");
-						}
-						if (keybindString.contains("Alt")) {
-							keybindString = keybindString.replace("Alt", "a");
-						}
-						g.aimage(new TexI(Utils.outline2(keybindsFoundry.render(keybindString).img, Color.BLACK, true)), ca.add((int)(img.sz().x/2), img.sz().y + UI.scale(8)), 0.5, 0.5);
+					g.aimage(new TexI(Utils.outline2(keybindsFoundry.render(keybindString).img, Color.BLACK, true)), ca.add((int)(img.sz().x/2), img.sz().y + UI.scale(8)), 0.5, 0.5);
 					}
 					//
 					if(i == use) {

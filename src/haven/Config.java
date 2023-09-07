@@ -486,6 +486,21 @@ public class Config {
 		});
 	}
 
+	public static final LinkedHashMap<String, String> properKeyNames = new LinkedHashMap<String, String>(){{
+		put("None", " ");
+		put("Back Quote", "`");
+		put("Equals", "=");
+		put("Minus", "-");
+		put("Open Bracket", "[");
+		put("Close Bracket", "]");
+		put("Back Slash", "\\");
+		put("Semicolon", ";");
+		put("Quote", "'");
+		put("Period", ".");
+		put("Comma", ",");
+		put("Slash", "/");
+	}};
+
     public static void cmdline(String[] args) {
 	PosixArgs opt = PosixArgs.getopt(args, "hdPGfU:r:A:u:C:p:");
 	if(opt == null) {

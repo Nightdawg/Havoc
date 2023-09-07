@@ -2117,18 +2117,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 					}
 				} catch(Loading e) {}
 				String keybindString = beltkeys[i].key().name();
-				if (keybindString.contains("Shift")) {
-					keybindString = keybindString.replace("Shift", "s");
-				}
-				if (keybindString.contains("Ctrl")) {
-					keybindString = keybindString.replace("Ctrl", "c");
-				}
-				if (keybindString.contains("Alt")) {
-					keybindString = keybindString.replace("Alt", "a");
-				}
-				if (keybindString.contains("None")) {
-					keybindString = keybindString.replace("None", "");
-				}
 				g.aimage(new TexI(Utils.outline2(actBarKeybindsFoundry.render(keybindString).img, Color.BLACK, true)), c.add(invsq.sz().sub(UI.scale(2), 0)), 1, 1);
 			}
 			super.draw(g);
