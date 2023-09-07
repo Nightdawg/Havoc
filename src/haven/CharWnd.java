@@ -51,7 +51,7 @@ public class CharWnd extends Window {
     public static final Color tbuff = new Color(128, 128, 255);
     public static final Color every = new Color(255, 255, 255, 16), other = new Color(255, 255, 255, 32);
     public static final int width = UI.scale(305);
-    public static final int height = UI.scale(260);
+    public static final int height = UI.scale(338);
     public static final int margin1 = UI.scale(5);
     public static final int margin2 = 2 * margin1;
     public static final int margin3 = 2 * margin2;
@@ -2036,10 +2036,10 @@ public class CharWnd extends Window {
 
 	    prev = skills.add(new Img(catf.render("Entries").tex()), width, 0);
 	    Tabs lists = new Tabs(prev.pos("bl").adds(5, 0), new Coord(attrw + wbox.bisz().x, 0), skills);
-	    int gh = UI.scale(241);
+	    int gh = UI.scale(319);
 	    Tabs.Tab sktab = lists.add();
 	    {
-		Frame f = sktab.add(new Frame(new Coord(lists.sz.x, UI.scale(192)), false), 0, 0);
+		Frame f = sktab.add(new Frame(new Coord(lists.sz.x, UI.scale(270)), false), 0, 0);
 		int y = f.sz.y + margin1;
 		skg = f.addin(new SkillGrid(Coord.z) {
                         public void change(Skill sk) {
@@ -2113,7 +2113,7 @@ public class CharWnd extends Window {
 
 	    wounds = tabs.add();
 	    prev = wounds.add(settip(new Img(catf.render("Health & Wounds").tex()), "gfx/hud/chr/tips/wounds"), 0, 0);
-	    this.wounds = wounds.add(new WoundList(attrw, 12), prev.pos("bl").x(width + margin1).add(wbox.btloff()));
+	    this.wounds = wounds.add(new WoundList(attrw, 13), prev.pos("bl").x(width + margin1).add(wbox.btloff()));
 	    Frame.around(wounds, Collections.singletonList(this.wounds));
 	    woundbox = wounds.add(new Widget(new Coord(attrw, this.wounds.sz.y)) {
 		    public void draw(GOut g) {
