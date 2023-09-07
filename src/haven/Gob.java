@@ -1704,6 +1704,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"gfx/terobjs/crate",
 			"gfx/terobjs/largechest",
 			"gfx/terobjs/coffer",
+			"gfx/terobjs/exquisitechest",
 			//"gfx/terobjs/wbasket", // ND: This one only has open/closed peekrbufs, no other fullness indicators lmao
 			"gfx/terobjs/birchbasket",
 			"gfx/terobjs/metalcabinet",
@@ -1740,6 +1741,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			switch (resName) {
 				case "gfx/terobjs/cupboard":
 				case "gfx/terobjs/chest":
+				case "gfx/terobjs/exquisitechest":
 					if (peekrbuf == 30 || peekrbuf == 29) {
 						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
 						else delattr(GobStateHighlight.class);
