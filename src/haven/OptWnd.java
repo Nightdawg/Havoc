@@ -483,6 +483,9 @@ public class OptWnd extends Window {
 	public static CheckBox alwaysShowHealthBarCheckBox;
 	public static CheckBox requireShiftHoverStacksCheckBox;
 	public static CheckBox objectPermanentHighlightingCheckBox;
+	public static CheckBox showStudyWindowHistoryCheckBox;
+	public static CheckBox lockStudyWindowCheckBox;
+	public static CheckBox playSoundOnFinishedCurioCheckBox;
 	public static CheckBox toggleGobHealthDisplayCheckBox;
 	public static CheckBox toggleGobGrowthInfoCheckBox;
 	public static CheckBox toggleGobQualityInfoCheckBox;
@@ -530,6 +533,9 @@ public class OptWnd extends Window {
 	public static boolean alwaysShowHealthBar = Utils.getprefb("alwaysShowHealthBar", false);
 	public static boolean objectPermanentHighlighting = Utils.getprefb("objectPermanentHighlighting", false);
 	public static boolean expWindowLocationIsTop = Utils.getprefb("expWindowLocationIsTop", true);
+	public static boolean showStudyWindowHistory = Utils.getprefb("showStudyWindowHistory", false);
+	public static boolean lockStudyWindow = Utils.getprefb("lockStudyWindow", false);
+	public static boolean playSoundOnFinishedCurio = Utils.getprefb("playSoundOnFinishedCurio", false);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -694,6 +700,35 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 2));
+		leftColumn = add(showStudyWindowHistoryCheckBox = new CheckBox("Show Study Report History"){
+			{a = (Utils.getprefb("showStudyWindowHistory", false));}
+			public void set(boolean val) {
+				CharWnd.showStudyWindowHistoryCheckBox.a = val;
+				Utils.setprefb("showStudyWindowHistory", val);
+				showStudyWindowHistory = val;
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 12));
+		leftColumn = add(lockStudyWindowCheckBox = new CheckBox("Lock Study Report"){
+			{a = (Utils.getprefb("lockStudyWindow", false));}
+			public void set(boolean val) {
+				CharWnd.lockStudyWindowCheckBox.a = val;
+				Utils.setprefb("lockStudyWindow", val);
+				lockStudyWindow = val;
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 2));
+		leftColumn = add(playSoundOnFinishedCurioCheckBox = new CheckBox("Sound Alert for Finished Curiosities"){
+			{a = (Utils.getprefb("playSoundOnFinishedCurio", false));}
+			public void set(boolean val) {
+				CharWnd.playSoundOnFinishedCurioCheckBox.a = val;
+				Utils.setprefb("playSoundOnFinishedCurio", val);
+				playSoundOnFinishedCurio = val;
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 2));
+
+		//playSoundOnFinishedCurioCheckBox
 
 		rightColumn = add(enableCornerFPSCheckBox = new CheckBox("Show Framerate"){
 			{a = (Utils.getprefb("CornerFPSSettingBool", true));}
@@ -1548,6 +1583,7 @@ public class OptWnd extends Window {
 	private static CheckBox autoFlowerCTRLSHIFTCheckBox;
 	private static CheckBox autoswitchBunnyPlateBootsCheckBox;
 	public static CheckBox saveCutleryCheckBox = null;
+	public static CheckBox autoStudyCheckBox;
 	public static CheckBox autoDropLeechesCheckBox = null;
 	public static CheckBox noCursorItemDroppingCheckBox = null;
 	public static CheckBox noCursorItemDroppingInWaterCheckBox = null;
@@ -1557,6 +1593,7 @@ public class OptWnd extends Window {
 	public static boolean autoswitchBunnyPlateBoots = Utils.getprefb("autoswitchBunnyPlateBoots", true);
 	public static boolean antiCutleryBreakage = Utils.getprefb("antiCutleryBreakage", true);
 	public static boolean autoDropLeeches = Utils.getprefb("autoDropLeeches", false);
+	public static boolean autoStudy = Utils.getprefb("autoStudy", false);
 
 	public class NDGameplaySettingsPanel extends Panel {
 		private final List<String> runSpeeds = Arrays.asList("Crawl", "Walk", "Run", "Sprint");
@@ -1691,6 +1728,16 @@ public class OptWnd extends Window {
 					Utils.setprefb("antiCutleryBreakage", val);
 					antiCutleryBreakage = val;
 					TableInfo.saveCutleryCheckBox.a = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 2));
+
+			prev = add(autoStudyCheckBox = new CheckBox("Auto-Study from Inventory"){
+				{a = Utils.getprefb("autoStudy", false);}
+				public void set(boolean val) {
+					CharWnd.autoStudyCheckBox.a = val;
+					Utils.setprefb("autoStudy", val);
+					autoStudy = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 2));
@@ -3255,6 +3302,9 @@ public class OptWnd extends Window {
 		alwaysShowStaminaBarCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{The Stamina Bar will still appear out of combat, when you are drinking, regardless of this option being enabled or not.}" +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{The position of the Stamina Bar depends on the position of the Combat UI Top Panel (Combat Settings).}", UI.scale(320));
 		alwaysShowHealthBarCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{The position of the Health Bar depends on the position of the Combat UI Top Panel (Combat Settings).}", UI.scale(320));
+		showStudyWindowHistoryCheckBox.tooltip = RichText.render("If this is enabled, the Study Report will show what curiosity was formerly placed in each slot. The history is saved separately for every Account and Character." +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{It does not work for Gems. Don't ask me why.}", UI.scale(300));
+		lockStudyWindowCheckBox.tooltip = RichText.render("Enabling this will prevent moving or dropping items from the Study Report", UI.scale(300));
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){
@@ -3296,6 +3346,11 @@ public class OptWnd extends Window {
 		noCursorItemDroppingInWaterCheckBox.tooltip = RichText.render("$col[218,163,0]{Warning:} If the previous option is Enabled, it will overwrite this one. You will still not be able to drop items in water.\n$col[185,185,185]{You can still drop the item on your cursor if you hold Ctrl.}\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}" +
 				"\n$col[200,0,0]{WARNING: If you're holding something on your cursor, you're NOT ABLE to enter Deep Water to Swim. The game prevents you from doing it.}", UI.scale(300));
 		autoDrinkTeaWhileWorking.tooltip = RichText.render("When your goes reaches below 70%, automatically drink Tea or Water (depending on your current Energy).", UI.scale(300));
+		autoStudyCheckBox.tooltip = RichText.render("If this is enabled, curiosities will be automatically replaced in the Study Report once they finish being studied." +
+				"\nIt picks items from your Inventory and currently open Cupboards (only Cupboards, no other containers)." +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{Once a curiosity is studied, this will only look for a replacement that has the same name. It does not actually try picking new items that are not currently being studied.}", UI.scale(300));
+
+
 	}
 
 	private void setTooltipsForGraphicsSettingsStuff(){

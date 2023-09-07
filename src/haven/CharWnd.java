@@ -2002,7 +2002,7 @@ public class CharWnd extends Window {
 	    prev = sattr.add(settip(new Img(catf.render("Study Report").tex()), "gfx/hud/chr/tips/study"), width, 0);
 	    studyc = prev.pos("bl").adds(5, 0);
 	    Widget bframe = sattr.adda(new Frame(new Coord(attrw, UI.scale(105)), true), prev.pos("bl").adds(5, 0).x, lframe.pos("br").y, 0.0, 1.0);
-	    int rx = bframe.pos("iur").subs(10, 0).x;
+		int rx = bframe.pos("iur").subs(10, 0).x;
 	    prev = sattr.add(new Label("Experience points:"), bframe.pos("iul").adds(10, 5));
 	    sattr.adda(enclabel(), new Coord(rx, prev.pos("ul").y), 1.0, 0.0);
 	    prev = sattr.add(new Label("Learning points:"), prev.pos("bl").adds(0, 2));
@@ -2277,7 +2277,18 @@ public class CharWnd extends Window {
 	if(place == "study") {
 	    sattr.add(child, studyc.add(wbox.btloff()));
 	    Widget f = Frame.around(sattr, Collections.singletonList(child));
-	    Widget inf = sattr.add(new StudyInfo(new Coord(attrw - child.sz.x - wbox.bisz().x - margin1, child.sz.y), child), child.pos("ur").add(wbox.bisz().x + margin1, 0));
+		Widget prevStudyCheckbox;
+		prevStudyCheckbox = sattr.add(showStudyWindowHistoryCheckBox, child.pos("bl").adds(0, 11));
+		prevStudyCheckbox.tooltip = RichText.render("If this is enabled, the Study Report will show what curiosity was formerly placed in each slot. The history is saved separately for every Account and Character." +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{It does not work for Gems. Don't ask me why.}", UI.scale(300));
+		prevStudyCheckbox = sattr.add(lockStudyWindowCheckBox, prevStudyCheckbox.pos("bl").adds(0, 2));
+		prevStudyCheckbox.tooltip = RichText.render("Enabling this will prevent moving or dropping items from the Study Report", UI.scale(300));
+		prevStudyCheckbox = sattr.add(autoStudyCheckBox, prevStudyCheckbox.pos("bl").adds(0, 2));
+		prevStudyCheckbox.tooltip = RichText.render("If this is enabled, curiosities will be automatically replaced in the Study Report once they finish being studied." +
+				"\nIt picks items from your Inventory and currently open Cupboards (only Cupboards, no other containers)." +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{Once a curiosity is studied, this will only look for a replacement that has the same name. It does not actually try picking new items that are not currently being studied.}", UI.scale(300));
+	    prevStudyCheckbox = sattr.add(playSoundOnFinishedCurioCheckBox, prevStudyCheckbox.pos("bl").adds(0, 2));
+		Widget inf = sattr.add(new StudyInfo(new Coord(attrw - child.sz.x - wbox.bisz().x - margin1, child.sz.y), child), child.pos("ur").add(wbox.bisz().x + margin1, 0));
 	    Frame.around(sattr, Collections.singletonList(inf));
 	} else if(place == "fmg") {
 	    fgt.add(child, 0, 0);
@@ -2456,4 +2467,38 @@ public class CharWnd extends Window {
 	    super.uimsg(nm, args);
 	}
     }
+
+	public static CheckBox showStudyWindowHistoryCheckBox = new CheckBox("Show Study Report History"){
+		{a = Utils.getprefb("showStudyWindowHistory", false);}
+		public void set(boolean val) {
+			if (OptWnd.showStudyWindowHistoryCheckBox != null)
+				OptWnd.showStudyWindowHistoryCheckBox.set(val);
+			a = val;
+		}
+	};
+	public static CheckBox lockStudyWindowCheckBox = new CheckBox("Lock Study Report"){
+		{a = Utils.getprefb("lockStudyWindow", false);}
+		public void set(boolean val) {
+			if (OptWnd.lockStudyWindowCheckBox != null)
+				OptWnd.lockStudyWindowCheckBox.set(val);
+			a = val;
+		}
+	};
+	public static CheckBox playSoundOnFinishedCurioCheckBox = new CheckBox("Sound Alert for Finished Curiosities"){
+		{a = Utils.getprefb("playSoundOnFinishedCurio", false);}
+		public void set(boolean val) {
+			if (OptWnd.playSoundOnFinishedCurioCheckBox != null)
+				OptWnd.playSoundOnFinishedCurioCheckBox.set(val);
+			a = val;
+		}
+	};
+	public static CheckBox autoStudyCheckBox = new CheckBox("Auto-Study from Inventory"){
+		{a = Utils.getprefb("autoStudy", false);}
+		public void set(boolean val) {
+			if (OptWnd.autoStudyCheckBox != null)
+				OptWnd.autoStudyCheckBox.set(val);
+			a = val;
+		}
+	};
+
 }

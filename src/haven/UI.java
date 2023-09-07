@@ -240,6 +240,9 @@ public class UI {
     }
 	
     public void newwidget(int id, String type, int parent, Object[] pargs, Object... cargs) throws InterruptedException {
+	if(type.equals("inv") && pargs[0].toString().equals("study")) {
+		type = "inv-study";
+	}
 
 	if (id > lastid) {
 		lastid = id;
