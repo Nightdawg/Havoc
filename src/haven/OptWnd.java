@@ -529,6 +529,7 @@ public class OptWnd extends Window {
 	public static boolean alwaysShowStaminaBar = Utils.getprefb("alwaysShowStaminaBar", false);
 	public static boolean alwaysShowHealthBar = Utils.getprefb("alwaysShowHealthBar", false);
 	public static boolean objectPermanentHighlighting = Utils.getprefb("objectPermanentHighlighting", false);
+	public static boolean expWindowLocationIsTop = Utils.getprefb("expWindowLocationIsTop", true);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -720,6 +721,40 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, rightColumn.pos("bl").adds(0, 2));
+
+		Label expWindowLabel;
+		rightColumn = add(expWindowLabel = new Label("New Experience Event Window Location:"), rightColumn.pos("bl").adds(0, 9));{
+			boolean[] done = {false};
+			RadioGroup expWindowGrp = new RadioGroup(this) {
+				public void changed(int btn, String lbl) {
+					if(!done[0])
+						return;
+					try {
+						if(btn==0) {
+							Utils.setprefb("expWindowLocationIsTop", true);
+							expWindowLocationIsTop = true;
+						}
+						if(btn==1) {
+							Utils.setprefb("expWindowLocationIsTop", false);
+							expWindowLocationIsTop = false;
+						}
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+			};
+			rightColumn = expWindowGrp.add("Top", rightColumn.pos("bl").adds(36, 3));
+			rightColumn = expWindowGrp.add("Bottom", rightColumn.pos("ur").adds(32, 0));
+
+			if (Utils.getprefb("expWindowLocationIsTop", true)){
+				expWindowGrp.check(0);
+			} else {
+				expWindowGrp.check(1);
+			}
+			done[0] = true;
+		}
+		expWindowLabel.tooltip = RichText.render("This option sets where the Experience Event Notification Window will appear." +
+				"\n$col[185,185,185]{Both the \"Top\" and \"Bottom\" locations are out of the way, unlike Loftar's default position.}", UI.scale(320));
 
 		prev = add(new Label("Advanced Display Settings"), leftColumn.pos("bl").adds(0, 18).x(UI.scale(150)));
 

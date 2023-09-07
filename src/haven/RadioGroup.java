@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.awt.*;
 import java.util.*;
 
 public class RadioGroup {
@@ -34,6 +35,7 @@ public class RadioGroup {
     private HashMap<String, RadioButton> map;
     private HashMap<RadioButton, String> rmap;
     private RadioButton checked;
+	private Color checkboxSelectedColor = new Color(255, 200, 0, 255);
 
     public RadioGroup(Widget parent) {
 	this.parent = parent;
@@ -57,7 +59,7 @@ public class RadioGroup {
 	public void changed(boolean val) {
 	    a = val;
 	    super.changed(val);
-	    lbl = Text.create(lbl.text, PUtils.strokeImg(Text.std.render(lbl.text, a ? java.awt.Color.YELLOW : java.awt.Color.WHITE)));
+	    lbl = Text.create(lbl.text, PUtils.strokeImg(Text.std.render(lbl.text, a ? checkboxSelectedColor : java.awt.Color.WHITE)));
 	}
     }
 
