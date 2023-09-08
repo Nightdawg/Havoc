@@ -59,10 +59,17 @@ public class AggroNearestTarget implements Runnable {
     private void attackNearestNonAttackedAnimal(HashSet<Long> fightgobs, HashMap<Long, Gob> allAttackableMap, Gob player) {
         //If we are fighting animals, try to attack second closest animal
         Gob closestEnemy = null;
-        for (Gob gob : allAttackableMap.values()) {
+        OUTER_LOOP: for (Gob gob : allAttackableMap.values()) {
             //if friend, skip it... skip it
             if (isPlayer(gob) && gob.isFriend())
                 continue;
+            if (gob.getres().name.equals("gfx/kritter/horse/horse") && gob.occupants.size() > 0){ // ND: Wild horse special case. Tamed horses are never attacked anyway
+                for (Gob occupant : gob.occupants) {
+                    if (occupant.isFriend() || occupant.isMe()){
+                        continue OUTER_LOOP;
+                    }
+                }
+            }
             if (!fightgobs.contains(gob.id)) {
                 if (closestEnemy == null || gob.rc.dist(player.rc) < closestEnemy.rc.dist(player.rc)) {
                     closestEnemy = gob;
@@ -102,9 +109,16 @@ public class AggroNearestTarget implements Runnable {
         //If theres no last attacked gob:
         // try and find the closest animal or player to attack
         Gob closestEnemy = null;
-        for (Gob gob : allAttackableMap.values()) {
+        OUTER_LOOP: for (Gob gob : allAttackableMap.values()) {
             if (isPlayer(gob) && gob.isFriend()) {
                 continue;
+            }
+            if (gob.getres().name.equals("gfx/kritter/horse/horse") && gob.occupants.size() > 0){ // ND: Wild horse special case. Tamed horses are never attacked anyway
+                for (Gob occupant : gob.occupants) {
+                    if (occupant.isFriend() || occupant.isMe()){
+                        continue OUTER_LOOP;
+                    }
+                }
             }
             //if gob is an enemy player and not alreayd aggroed
             if ((closestEnemy == null || gob.rc.dist(player.rc) < closestEnemy.rc.dist(player.rc))
