@@ -234,7 +234,7 @@ public class CoracleScript implements Runnable {
                 }
             }
             if (coracle == null && (gobCoracle == null || !moutableCoracle)){
-                gui.error("Coracle Script: No Coracle found in Inventory and no mountable Coracle found close proximity.");
+                gui.error("Coracle Script: No Coracle found in Inventory and no mountable Coracle found in close proximity.");
             }
         }
     }
