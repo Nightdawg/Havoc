@@ -405,6 +405,10 @@ public class Equipory extends Widget implements DTarget {
 			g.image(Subtlety, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - Subtlety.sz().x / 2, bg.sz().y - UI.scale(40)));
 		if (ArmorClass != null)
 			g.image(ArmorClass, new Coord(( invsq.sz().x + bg.sz().x / 2 ) - ArmorClass.sz().x / 2, bg.sz().y - UI.scale(20)));
+	}
+
+	public void tick(double dt) {
+		super.tick(dt);
 		if (OptWnd.autoDropLeeches && player && checkForLeeches) {
 			long now = System.currentTimeMillis();
 			if ((now - delayedUpdateTime) > 100){
