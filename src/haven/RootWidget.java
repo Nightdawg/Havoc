@@ -64,7 +64,8 @@ public class RootWidget extends ConsoleHost implements UI.MessageWidget {
 	    } else if(key == ':') {
 		entercmd();
 	    } else if(key != 0) {
-		wdgmsg("gk", (int)key);
+		if (ev.getKeyCode() != KeyEvent.VK_ESCAPE) // ND: Do this to prevent "ESC" from stopping movement when you have no widget focused and the menu grid is on the main page
+			wdgmsg("gk", (int)key);
 	    }
 	}
 	return(true);
