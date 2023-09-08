@@ -37,14 +37,14 @@ public class FloatAnim extends Sprite implements PView.Render2D {
 	Coord3f fsc = Homo3D.obj2view(new Coord3f(0, 0, zo), state, Area.sized(Coord.z, g.sz()));
 	Coord3f sczu = Homo3D.obj2view(new Coord3f(0, 0, zo + 1), state, Area.sized(Coord.z, g.sz()));
 	Coord sc = fsc.round2();
-	float scale = (sczu.y - fsc.y) / normsz;
+	float scale = (sczu.y - fsc.y) / UI.scale(normsz);
 	if(f < anim.f.length) {
 	    for(int i = 0; i < anim.f[f].length; i++) {
 		Resource.Image img = anim.f[f][i];
 		Coord ul = new Coord(Math.round((-cc.x + img.o.x) * scale),
 				     Math.round((-cc.y + img.o.y) * scale));
 		Tex tex = img.tex();
-		g.image(tex, sc.add(ul), tex.sz().mul(scale));
+		g.image(tex, sc.add(UI.scale(ul)), tex.sz().mul(scale));
 	    }
 	}
     }
