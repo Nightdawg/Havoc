@@ -40,6 +40,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
     public static final Config.Variable<Boolean> initfullscreen = Config.Variable.propb("haven.fullscreen", false);
     public static final Config.Variable<String> renderer = Config.Variable.prop("haven.renderer", "jogl");
     public static final Config.Variable<Boolean> status = Config.Variable.propb("haven.status", false);
+	public static String username = "blank";
     final UIPanel p;
     private final ThreadGroup g;
     private Thread mt;
@@ -317,6 +318,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 	    if(fun == null)
 		fun = new Bootstrap();
 	    String t = fun.title();
+		username = fun.title();
 	    if(t == null)
 		setTitle("Havoc");
 	    else
