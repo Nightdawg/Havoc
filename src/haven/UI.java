@@ -462,6 +462,13 @@ public class UI {
 
     public void keydown(KeyEvent ev) {
 	setmods(ev);
+		if (ev.getKeyCode() == KeyEvent.VK_ESCAPE && gui != null) {
+			if (gui.autoFlowerRepeaterScriptThread != null) {
+				gui.autoFlowerRepeaterScriptThread.interrupt();
+				gui.autoFlowerRepeaterScriptThread = null;
+				msg("Auto Flower Repeater has been manually stopped.");
+			}
+		}
 	for(Grab g : c(keygrab)) {
 	    if(g.wdg.keydown(ev))
 		return;

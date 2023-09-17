@@ -1557,14 +1557,14 @@ public class OptWnd extends Window {
 				}, prev.pos("bl").adds(130, -16));
 
 			prev = add(new Label("Altered gameplay behavior:"), prev.pos("bl").adds(0, 14).x(0));
-			prev = add(instantFlowerMenuCTRLCheckBox = new CheckBox("Instantly select 1st flower menu option when holding Ctrl"){
+			prev = add(instantFlowerMenuCTRLCheckBox = new CheckBox("Instantly select 1st Flower-Menu Option when holding Ctrl"){
 				{a = Utils.getprefb("instantFlowerMenuCTRL", true);}
 				public void set(boolean val) {
 					Utils.setprefb("instantFlowerMenuCTRL", val);
 					a = val;
 				}
 			}, prev.pos("bl").adds(12, 6));
-			prev = add(autoFlowerCTRLSHIFTCheckBox = new CheckBox("Run Auto Flower Script when holding Ctrl+Shift"){
+			prev = add(autoFlowerCTRLSHIFTCheckBox = new CheckBox("Run Auto Flower-Menu Repeater when holding Ctrl+Shift"){
 				{a = Utils.getprefb("autoFlowerCTRLSHIFT", false);}
 				public void set(boolean val) {
 					Utils.setprefb("autoFlowerCTRLSHIFT", val);
@@ -3104,11 +3104,12 @@ public class OptWnd extends Window {
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", UI.scale(300));
 		instantFlowerMenuCTRLCheckBox.tooltip = RichText.render("Enabling this will make holding Ctrl before right clicking an item or object to instantly select the first available option from the flower menu.", UI.scale(300));
-		autoFlowerCTRLSHIFTCheckBox.tooltip = RichText.render("Enabling this will trigger the Auto Flower Script to run when you Right Click an item while holding Ctrl + Shift." +
-				"\n$col[185,185,185]{You have} $col[218,163,0]{2 seconds} $col[185,185,185]{to select a Flower Menu option, after which the script will automatically click the selected option for ALL items that have the same name in your inventory.}" +
+		autoFlowerCTRLSHIFTCheckBox.tooltip = RichText.render("Enabling this will trigger the Auto Flower Repeater Script to run when you Right Click an item while holding Ctrl + Shift." +
+				"\n\n$col[185,185,185]{You have} $col[218,163,0]{2 seconds} $col[185,185,185]{to select a Flower Menu option, after which the script will automatically click the selected option for ALL items that have the same name in your inventory.}" +
 				"\n$col[200,0,0]{If you don't select an option within} $col[218,163,0]{2 seconds}$col[200,0,0]{, the script won't run.}" +
-				"\n$col[218,163,0]{Example:} You have 10 Oak Blocks in your inventory. You hold CTRL+Shift and right click one of the Oak Blocks and select \"Split\" in the flower menu. The script starts running and it splits all 10 Oak Blocks." +
-				"\n$col[218,163,0]{Note:} $col[185,185,185]{This script only runs on items that have the same name inside your inventory. It does not take into consideration items inside other containers, or items of the same \"type\" (for example, if you run the script on Oak Blocks, it won't also run on Spruce Blocks).} ", UI.scale(310));
+				"\n\nYou can stop the script before it finishes by pressing ESC." +
+				"\n\n$col[218,163,0]{Example:} You have 10 Oak Blocks in your inventory. You hold Ctrl + Shift and right click one of the Oak Blocks and select \"Split\" in the flower menu. The script starts running and it splits all 10 Oak Blocks." +
+				"\n\n$col[218,163,0]{Note:} $col[185,185,185]{This script only runs on items that have the same name inside your inventory. It does not take into consideration items inside other containers, or items of the same \"type\" (for example, if you run the script on Oak Blocks, it won't also run on Spruce Blocks).} ", UI.scale(310));
 		autoswitchBunnyPlateBootsCheckBox.tooltip = RichText.render("Enabling this will cause your currently equipped Plate Boots to automatically swap with a pair of bunny slippers from your inventory, whenever you right click to chase a rabbit, and vice versa if you click on anything else or just left click to walk.\n$col[185,185,185]{I don't see any reason for which you'd ever want to disable this setting, but alas, I made it an option.}", UI.scale(300));
 		saveCutleryCheckBox.tooltip = RichText.render("Enabling this will cause any cutlery that has 1 wear left to be instantly transferred from the table into your inventory.\n$col[185,185,185]{A warning message will be shown, to let you know that the item has been transferred.}", UI.scale(300));
 		noCursorItemDroppingCheckBox.tooltip = RichText.render("$col[185,185,185]{You can still drop the item on your cursor if you hold Ctrl.}\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}" +

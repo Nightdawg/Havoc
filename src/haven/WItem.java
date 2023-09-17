@@ -33,6 +33,7 @@ import java.util.List;
 
 import haven.ItemInfo.AttrCache;
 import haven.automated.AutoFlowerRepeater;
+import haven.automated.HarvestNearestDreamcatcher;
 import haven.resutil.Curiosity;
 
 import static haven.Inventory.sqsz;
@@ -359,7 +360,17 @@ public class WItem extends Widget implements DTarget {
 			ui.rcvr.rcvmsg(ui.lastid+1, "cl", option, 0);
 		} else {
 			if(ui.modctrl && ui.modshift && OptWnd.autoFlowerCTRLSHIFTCheckBox.a){
-				try{new Thread(new AutoFlowerRepeater(ui.gui, this.item.getres().name)).start();} catch (Loading ignored){}
+				try {
+					if (ui.gui.autoFlowerRepeaterScriptThread == null) {
+						ui.gui.autoFlowerRepeaterScriptThread = new Thread(new AutoFlowerRepeater(ui.gui, this.item.getres().name), "AutoFlowerRepeater");
+						ui.gui.autoFlowerRepeaterScriptThread.start();
+					} else {
+						ui.gui.autoFlowerRepeaterScriptThread.interrupt();
+						ui.gui.autoFlowerRepeaterScriptThread = null;
+						ui.gui.autoFlowerRepeaterScriptThread = new Thread(new AutoFlowerRepeater(ui.gui, this.item.getres().name), "AutoFlowerRepeater");
+						ui.gui.autoFlowerRepeaterScriptThread.start();
+					}
+				} catch (Loading ignored){}
 			}
 			item.wdgmsg("iact", c, ui.modflags());
 		}

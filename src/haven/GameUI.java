@@ -133,7 +133,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public Thread cloverScriptThread;
 	public Thread refillWaterContainersThread;
 	public Thread harvestNearestDreamcatcherThread;
-
+	public Thread autoFlowerRepeaterScriptThread;
 
 
 

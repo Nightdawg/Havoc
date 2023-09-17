@@ -54,7 +54,12 @@ public class AutoFlowerRepeater implements Runnable{
                         for(GItem item : items){
                             FlowerMenu.setNextSelection(option);
                             item.wdgmsg("iact", Coord.z, 3);
-                            sleep(ping);
+                            try {
+                                Thread.sleep(ping);
+                            } catch (InterruptedException ignored) {
+                                FlowerMenu.setNextSelection(null);
+                                return;
+                            }
                         }
                         items = iterateThroughItems(name);
                         ping = GameUI.getPingValue() != null ? GameUI.getPingValue() + 20 : 100;
@@ -62,15 +67,15 @@ public class AutoFlowerRepeater implements Runnable{
                     stop = true;
                 }
             }
-            sleep(ping);
+            try {
+                Thread.sleep(ping);
+            } catch (InterruptedException ignored) {
+                FlowerMenu.setNextSelection(null);
+                return;
+            }
+
         }
         option = null;
         FlowerMenu.setNextSelection(null);
-    }
-
-    private void sleep(int duration) {
-        try {
-            Thread.sleep(duration);
-        } catch (InterruptedException ignored) {}
     }
 }
