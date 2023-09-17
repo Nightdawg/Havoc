@@ -1990,6 +1990,7 @@ public class OptWnd extends Window {
 					a = val;
 					if (ui != null && ui.gui != null) {
 						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+						ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
 						ui.gui.map.updatePlobDrawable();
 					}
 				}
