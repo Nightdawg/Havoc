@@ -431,22 +431,22 @@ public class Window extends Widget implements DTarget {
     }
 
 	public void preventDraggingOutside() {
-		if (gameui() != null && !(this instanceof MapWnd)) {
-			if (this.csz().x > 800 || this.csz().y > 500 || !OptWnd.snapWindowsBackInside) {
+		if (ui != null && ui.gui != null && !(this instanceof MapWnd)) {
+			if (this.csz().x > 800 || this.csz().y > 500 || !OptWnd.enableSnapWindowsBackInsideCheckBox.a) {
 				if (this.c.x < - UI.scale(14) - (int)(this.csz().x/1.333))
 					this.c.x = - UI.scale(14) - (int)(this.csz().x/1.333);
 				if (this.c.y < - UI.scale(14) - (int)(this.csz().y/1.333))
 					this.c.y = - UI.scale(14) - (int)(this.csz().y/1.333);
 				if (this.large) {
-					if (this.c.x > (gameui().sz.x - (int)(this.csz().x*0.25) - UI.scale(68)))
-						this.c.x = gameui().sz.x - (int)(this.csz().x*0.25) - UI.scale(68);
-					if (this.c.y > (gameui().sz.y - (int)(this.csz().y*0.25) - UI.scale(62)))
-						this.c.y = gameui().sz.y - (int)(this.csz().y*0.25) - UI.scale(62);
+					if (this.c.x > (ui.gui.sz.x - (int)(this.csz().x*0.25) - UI.scale(68)))
+						this.c.x = ui.gui.sz.x - (int)(this.csz().x*0.25) - UI.scale(68);
+					if (this.c.y > (ui.gui.sz.y - (int)(this.csz().y*0.25) - UI.scale(62)))
+						this.c.y = ui.gui.sz.y - (int)(this.csz().y*0.25) - UI.scale(62);
 				} else {
-					if (this.c.x > (gameui().sz.x - (int)(this.csz().x*0.25) - UI.scale(40)))
-						this.c.x = gameui().sz.x - (int)(this.csz().x*0.25) - UI.scale(40);
-					if (this.c.y > (gameui().sz.y - (int)(this.csz().y*0.25) - UI.scale(52)))
-						this.c.y = gameui().sz.y - (int)(this.csz().y*0.25) - UI.scale(52);
+					if (this.c.x > (ui.gui.sz.x - (int)(this.csz().x*0.25) - UI.scale(40)))
+						this.c.x = ui.gui.sz.x - (int)(this.csz().x*0.25) - UI.scale(40);
+					if (this.c.y > (ui.gui.sz.y - (int)(this.csz().y*0.25) - UI.scale(52)))
+						this.c.y = ui.gui.sz.y - (int)(this.csz().y*0.25) - UI.scale(52);
 				}
 			} else {
 				if (this.c.x < -UI.scale(14))
@@ -454,15 +454,15 @@ public class Window extends Widget implements DTarget {
 				if (this.c.y < -UI.scale(14))
 					this.c.y = -UI.scale(14);
 				if (this.large) {
-					if (this.c.x > (gameui().sz.x - this.csz().x - UI.scale(68)))
-						this.c.x = gameui().sz.x - this.csz().x - UI.scale(68);
-					if (this.c.y > (gameui().sz.y - this.csz().y - UI.scale(62)))
-						this.c.y = gameui().sz.y - this.csz().y - UI.scale(62);
+					if (this.c.x > (ui.gui.sz.x - this.csz().x - UI.scale(68)))
+						this.c.x = ui.gui.sz.x - this.csz().x - UI.scale(68);
+					if (this.c.y > (ui.gui.sz.y - this.csz().y - UI.scale(62)))
+						this.c.y = ui.gui.sz.y - this.csz().y - UI.scale(62);
 				} else {
-					if (this.c.x > (gameui().sz.x - this.csz().x - UI.scale(40)))
-						this.c.x = gameui().sz.x - this.csz().x - UI.scale(40);
-					if (this.c.y > (gameui().sz.y - this.csz().y - UI.scale(52)))
-						this.c.y = gameui().sz.y - this.csz().y - UI.scale(52);
+					if (this.c.x > (ui.gui.sz.x - this.csz().x - UI.scale(40)))
+						this.c.x = ui.gui.sz.x - this.csz().x - UI.scale(40);
+					if (this.c.y > (ui.gui.sz.y - this.csz().y - UI.scale(52)))
+						this.c.y = ui.gui.sz.y - this.csz().y - UI.scale(52);
 				}
 			}
 		}

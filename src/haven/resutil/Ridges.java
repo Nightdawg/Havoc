@@ -200,7 +200,7 @@ public class Ridges implements MapMesh.ConsHooks {
 	float lo, hi; {
 	    Coord gc = tc.add(m.ul);
 	    float z1 = (float)m.map.getfz(gc.add(tccs[e])), z2 = (float)m.map.getfz(gc.add(tccs[(e + 1) % 4]));
-		if (OptWnd.flatWorldSetting) {
+		if (OptWnd.flatWorldCheckBox.a) {
 			lo = 0;
 			hi = (float) (10f*Math.sqrt((Math.max(z1, z2)-Math.min(z1, z2))/10f));
 		} else {
@@ -363,7 +363,7 @@ public class Ridges implements MapMesh.ConsHooks {
 	    tcy[i] = clip(-(gv[i].y - pc.y) / tilesz.y, 0, 1);
 	}
 	mkfaces(gv, srfi);
-	if (OptWnd.highlightCliffs){
+	if (OptWnd.highlightCliffsCheckBox.a){
 		gnd[ms.ts.o(tc)] = new RMPart(tc, tc.add(m.ul), gv, tcx, tcy, srfi);
 	} else {
 		gnd[ms.ts.o(tc)] = new MPart(tc, tc.add(m.ul), gv, tcx, tcy, srfi);
@@ -396,7 +396,7 @@ public class Ridges implements MapMesh.ConsHooks {
 	    tcy[i] = clip(-(gv[i].y - pc.y) / tilesz.y, 0, 1);
 	}
 	mkfaces(gv, srfi);
-	if (OptWnd.highlightCliffs){
+	if (OptWnd.highlightCliffsCheckBox.a){
 		gnd[ms.ts.o(tc)] = new RMPart(tc, tc.add(m.ul), gv, tcx, tcy, srfi);
 	} else {
 		gnd[ms.ts.o(tc)] = new MPart(tc, tc.add(m.ul), gv, tcx, tcy, srfi);
@@ -429,7 +429,7 @@ public class Ridges implements MapMesh.ConsHooks {
 	    tcy[i] = clip(-(gv[i].y - pc.y) / tilesz.y, 0, 1);
 	}
 	mkfaces(gv, d1rfi);
-	if (OptWnd.highlightCliffs){
+	if (OptWnd.highlightCliffsCheckBox.a){
 		gnd[ms.ts.o(tc)] = new RMPart(tc, tc.add(m.ul), gv, tcx, tcy, d1rfi);
 	} else {
 		gnd[ms.ts.o(tc)] = new MPart(tc, tc.add(m.ul), gv, tcx, tcy, d1rfi);
@@ -560,7 +560,7 @@ public class Ridges implements MapMesh.ConsHooks {
 	    for(int i = 0; i < n; i++) {
 		col[i] = new Coord3f(tcx + ((rnd.nextFloat() - 0.5f) * 5.0f),
 				     tcy + ((rnd.nextFloat() - 0.5f) * 5.0f),
-				OptWnd.flatWorldSetting ? 10 :zs[i]);
+				OptWnd.flatWorldCheckBox.a ? 10 :zs[i]);
 	    }
 	}
 

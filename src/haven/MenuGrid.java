@@ -574,7 +574,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 			}
 			if (ad.length > 0 && (ad[0].equals("craft") || ad[0].equals("bp"))) {
 				if((ad[0].equals("craft")))
-					gameui().makewnd.setLastAction(r.pag);
+					ui.gui.makewnd.setLastAction(r.pag);
 			}
 		}
 	    r.pag.newp = 0;
@@ -585,7 +585,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
     }
 
 	public void use(String[] ad) {
-		GameUI gui = gameui();
+		GameUI gui = ui.gui;
 		if (gui == null)
 			return;
 		if (ad[1].equals("switchToCombatDeck")) {
@@ -715,7 +715,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 			if (ad[2].equals("MiningSafetyAssistant")) {
 				if (gui.miningSafetyAssistantWindow == null && gui.miningSafetyAssistantThread == null) {
 					gui.miningSafetyAssistantWindow = new MiningSafetyAssistant(gui);
-					gui.miningSafetyAssistantWindow = gui.add(gui.miningSafetyAssistantWindow, new Coord(gui.sz.x/2 - gameui().miningSafetyAssistantWindow.sz.x/2, gui.sz.y/2 - gui.miningSafetyAssistantWindow.sz.y/2 - 200));
+					gui.miningSafetyAssistantWindow = gui.add(gui.miningSafetyAssistantWindow, new Coord(gui.sz.x/2 - ui.gui.miningSafetyAssistantWindow.sz.x/2, gui.sz.y/2 - gui.miningSafetyAssistantWindow.sz.y/2 - 200));
 					gui.miningSafetyAssistantThread = new Thread(gui.miningSafetyAssistantWindow, "miningSafetyAssistantThread");
 					gui.miningSafetyAssistantThread.start();
 				} else if (gui.miningSafetyAssistantWindow != null) {
@@ -796,26 +796,22 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 
 	public static boolean toggleStuff = true;
 	public boolean toggleStupidStuff = true;
-	public static boolean toggleTrackingOnLogin = Utils.getprefb("toggleTrackingOnLogin", false);
-	public static boolean toggleSwimmingOnLogin = Utils.getprefb("toggleSwimmingOnLogin", false);
-	public static boolean toggleCriminalActsOnLogin = Utils.getprefb("toggleCriminalActsOnLogin", false);
-	public static boolean toggleSiegeEnginesOnLogin = Utils.getprefb("toggleSiegeEnginesOnLogin", false);
     public void tick(double dt) {
 	if(recons)
 	    updlayout();
 		if (toggleStuff) {
 			GameUI gui = getparent(GameUI.class);
 			if (gui != null) {
-				if (toggleTrackingOnLogin && !GameUI.trackon){
+				if (OptWnd.toggleTrackingOnLoginCheckBox.a && !GameUI.trackon){
 					wdgmsg("act", "tracking");
 				}
-				if (toggleSwimmingOnLogin && !GameUI.swimon){
+				if (OptWnd.toggleSwimmingOnLoginCheckBox.a && !GameUI.swimon){
 					wdgmsg("act", "swim");
 				}
-				if (toggleCriminalActsOnLogin && !GameUI.crimeon){
+				if (OptWnd.toggleCriminalActsOnLoginCheckBox.a && !GameUI.crimeon){
 					wdgmsg("act", "crime");
 				}
-				if (toggleSiegeEnginesOnLogin){
+				if (OptWnd.toggleSiegeEnginesOnLoginCheckBox.a){
 					wdgmsg("act", "siegeptr");
 				}
 				toggleStuff = false;

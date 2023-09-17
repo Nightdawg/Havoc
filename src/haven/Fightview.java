@@ -59,7 +59,6 @@ public class Fightview extends Widget {
     public double lastuse = 0;
     public Mainrel curdisp;
     private List<Relation> nonmain = Collections.emptyList();
-	public static boolean autoPeaceSetting = false;
 
     public class Relation {
         public final long gobid;
@@ -351,7 +350,7 @@ public class Fightview extends Widget {
 	}
 	current = rel;
 		if (current != null) {
-			gameui().lastopponent = current.gobid;
+			ui.gui.lastopponent = current.gobid;
 		}
 	layout();
 	updrel();
@@ -365,7 +364,7 @@ public class Fightview extends Widget {
 	    if(inf != null)
 		inf.tick(dt);
 		try { // ND: "curdisp.give.state != 1" can throw nullpointer for a frame or something, but the functionality still works using try/catch block
-			if (autoPeaceSetting && !rel.autopeaced && curdisp.give.state != 1) {
+			if (OptWnd.toggleAutoPeaceCheckbox.a && !rel.autopeaced && curdisp.give.state != 1) {
 				synchronized (ui.sess.glob) {
 					Gob curgob = ui.sess.glob.oc.getgob(rel.gobid);
 					if (curgob != null && !curgob.getres().name.contains("gfx/borka")) {
@@ -465,11 +464,11 @@ public class Fightview extends Widget {
 				Resource res = lastact.get();
 				Resource.Tooltip tt = res.layer(Resource.tooltip);
 				if (tt == null) { // ND: Took this code from Matias. I wonder what tooltip it's referring to. Maybe some combat moves had some missing stuff in the past?
-					gameui().syslog.append("Combat: WARNING! tooltip is missing for " + res.name + ". Notify Jorb/Loftar about this.", new Color(234, 105, 105));
+					ui.gui.syslog.append("Combat: WARNING! tooltip is missing for " + res.name + ". Notify Jorb/Loftar about this.", new Color(234, 105, 105));
 					return;
 				}
 
-				if(OptWnd.cleaveSoundEnabled && res.basename().endsWith("cleave")) {
+				if(OptWnd.cleaveSoundEnabledCheckbox.a && res.basename().endsWith("cleave")) {
 					try {
 						File file = new File("Alarms/" + OptWnd.cleaveSoundFilename.buf.line() + ".wav");
 						if(!file.exists()) {
@@ -483,7 +482,7 @@ public class Fightview extends Widget {
 					} catch(Exception e) {
 						e.printStackTrace();
 					}
-				} else if (OptWnd.opkSoundEnabled &&res.basename().endsWith("oppknock")) {
+				} else if (OptWnd.opkSoundEnabledCheckbox.a &&res.basename().endsWith("oppknock")) {
 					try {
 						File file = new File("Alarms/" + OptWnd.opkSoundFilename.buf.line() + ".wav");
 						if(!file.exists()) {

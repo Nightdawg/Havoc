@@ -879,7 +879,7 @@ public class MCache implements MapSource {
     }
 
     public double getcz(double px, double py) {
-		if (OptWnd.flatWorldSetting) {
+		if (OptWnd.flatWorldCheckBox.a) {
 			return 0;
 		}
 	double tw = tilesz.x, th = tilesz.y;
@@ -891,7 +891,7 @@ public class MCache implements MapSource {
     }
 
     public double getcz(Coord2d pc) {
-	if (OptWnd.flatWorldSetting) {
+	if (OptWnd.flatWorldCheckBox.a) {
 		return 0;
 	}
 	return(getcz(pc.x, pc.y));
@@ -923,7 +923,7 @@ public class MCache implements MapSource {
     }
 
     public double getz(SurfaceID id, Coord2d pc) {
-	if (OptWnd.flatWorldSetting){
+	if (OptWnd.flatWorldCheckBox.a){
 		return 0;
 	}
 	Coord tc = pc.floor(tilesz);

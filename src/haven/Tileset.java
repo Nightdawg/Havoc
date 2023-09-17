@@ -200,7 +200,7 @@ public class Tileset extends Resource.Layer {
 
 	    public int gettile(Coord tc) {return(grid.gettile(tc.add(toff)));}
 	    public double getfz(Coord tc) {
-			if (OptWnd.flatWorldSetting) {
+			if (OptWnd.flatWorldCheckBox.a) {
 				return 0;
 			}
 			return(grid.getfz(tc.add(toff)));
@@ -285,7 +285,7 @@ public class Tileset extends Resource.Layer {
 
 	public void flavor(Buffer buf, Terrain trn, Random seed) {
 	    Resource res = this.res.get();
-		if (!OptWnd.disableFlavourObjects) {
+		if (!OptWnd.disableFlavourObjectsCheckBox.a) {
 			if (res != null && res.name.startsWith("gfx/tiles/")){
 				DRandom trnd = new DRandom(new DRandom(seed).randl(res.name.hashCode(), trn.tile));
 				Random ornd = new Random();

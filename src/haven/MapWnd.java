@@ -819,34 +819,34 @@ public class MapWnd extends Window implements Console.Directory {
 		if (compact) {
 			bigmapc = this.c;
 			bigmapsz = this.csz();
-			if (bigmapsz.x > (int) (0.98*gameui().sz.x)) bigmapsz.x = (int) (0.98*gameui().sz.x);
-			if (bigmapsz.y > (int) (0.965*gameui().sz.y)) bigmapsz.y = (int) (0.965*gameui().sz.y);
+			if (bigmapsz.x > (int) (0.98*ui.gui.sz.x)) bigmapsz.x = (int) (0.98*ui.gui.sz.x);
+			if (bigmapsz.y > (int) (0.965*ui.gui.sz.y)) bigmapsz.y = (int) (0.965*ui.gui.sz.y);
 
 			if (bigmapc.x < - UI.scale(14))
 				bigmapc.x = - UI.scale(14);
 			if (bigmapc.y < - UI.scale(14))
 				bigmapc.y = - UI.scale(14);
-			if (bigmapc.x > (gameui().sz.x - bigmapsz.x - UI.scale(68)))
-				bigmapc.x = gameui().sz.x - bigmapsz.x - UI.scale(68);
-			if (bigmapc.y > (gameui().sz.y - bigmapsz.y - UI.scale(62)))
-				bigmapc.y = gameui().sz.y - bigmapsz.y - UI.scale(62);
+			if (bigmapc.x > (ui.gui.sz.x - bigmapsz.x - UI.scale(68)))
+				bigmapc.x = ui.gui.sz.x - bigmapsz.x - UI.scale(68);
+			if (bigmapc.y > (ui.gui.sz.y - bigmapsz.y - UI.scale(62)))
+				bigmapc.y = ui.gui.sz.y - bigmapsz.y - UI.scale(62);
 
 			Utils.setprefc("bigmapc", bigmapc);
 			Utils.setprefc("bigmapsz", bigmapsz);
 		} else {
 			smallmapc = this.c;
 			smallmapsz = this.csz();
-			if (smallmapsz.x > gameui().sz.x) smallmapsz.x = gameui().sz.x;
-			if (smallmapsz.y > gameui().sz.y) smallmapsz.y = gameui().sz.y;
+			if (smallmapsz.x > ui.gui.sz.x) smallmapsz.x = ui.gui.sz.x;
+			if (smallmapsz.y > ui.gui.sz.y) smallmapsz.y = ui.gui.sz.y;
 
 			if (smallmapc.x < 0)
 				smallmapc.x = 0;
 			if (smallmapc.y < 0)
 				smallmapc.y = 0;
-			if (smallmapc.x > (gameui().sz.x - smallmapsz.x))
-				smallmapc.x = gameui().sz.x - smallmapsz.x;
-			if (smallmapc.y > (gameui().sz.y - smallmapsz.y))
-				smallmapc.y = gameui().sz.y - smallmapsz.y;
+			if (smallmapc.x > (ui.gui.sz.x - smallmapsz.x))
+				smallmapc.x = ui.gui.sz.x - smallmapsz.x;
+			if (smallmapc.y > (ui.gui.sz.y - smallmapsz.y))
+				smallmapc.y = ui.gui.sz.y - smallmapsz.y;
 
 			Utils.setprefc("smallmapc", smallmapc);
 			Utils.setprefc("smallmapsz", smallmapsz);

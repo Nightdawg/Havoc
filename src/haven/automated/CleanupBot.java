@@ -99,7 +99,7 @@ public class CleanupBot extends Window implements Runnable {
                 if (active) {
                     this.change("Stop");
                 } else {
-                    gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
+                    ui.gui.map.wdgmsg("click", Coord.z, ui.gui.map.player().rc.floor(posres), 1, 0);
                     this.change("Start");
                 }
             }
@@ -120,7 +120,7 @@ public class CleanupBot extends Window implements Runnable {
                         } catch (InterruptedException e) {
                         }
                     }
-                    else if (gameui().getmeter("nrj", 0).a < 0.25) {
+                    else if (ui.gui.getmeter("nrj", 0).a < 0.25) {
                         gui.error("Need food");
                         stop();
                     }
@@ -202,7 +202,7 @@ public class CleanupBot extends Window implements Runnable {
     }
 
     private void dropStones() {
-        for (WItem wItem : gameui().maininv.getAllItems()) {
+        for (WItem wItem : ui.gui.maininv.getAllItems()) {
             GItem gitem = wItem.item;
             if (Config.mineablesStone.contains(gitem.resource().basename())) {
                 gitem.wdgmsg("drop", new Coord(wItem.item.sz.x / 2, wItem.item.sz.y / 2));
@@ -248,9 +248,9 @@ public class CleanupBot extends Window implements Runnable {
     }
 
     public void stop() {
-        gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
-        if (gameui().map.pfthread != null) {
-            gameui().map.pfthread.interrupt();
+        ui.gui.map.wdgmsg("click", Coord.z, ui.gui.map.player().rc.floor(posres), 1, 0);
+        if (ui.gui.map.pfthread != null) {
+            ui.gui.map.pfthread.interrupt();
         }
         this.destroy();
     }

@@ -18,7 +18,7 @@ public class CraftWindow extends Window {
 				for (Map.Entry<MenuGrid.Pagina, Button> entry : tabs.entrySet()) {
 					MenuGrid.Pagina pagina = entry.getKey();
 					if (entry.getValue().equals(button) && pagina != lastAction) {
-						gameui().wdgmsg("act", (Object[])pagina.act().ad);
+						ui.gui.wdgmsg("act", (Object[])pagina.act().ad);
 						lastAction = null;
 						break;
 					}

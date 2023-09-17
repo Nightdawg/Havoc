@@ -464,7 +464,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
     }
 
     private void dropTurnips() {
-        for (WItem wItem : gameui().maininv.getAllItems()) {
+        for (WItem wItem : ui.gui.maininv.getAllItems()) {
             GItem gitem = wItem.item;
             if (gitem.getname().equals("Turnip") || gitem.getname().equals("Turnip, stack of")) {
                 gitem.wdgmsg("drop", new Coord(wItem.item.sz.x / 2, wItem.item.sz.y / 2));

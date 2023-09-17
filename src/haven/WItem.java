@@ -349,7 +349,7 @@ public class WItem extends Widget implements DTarget {
 				wdgmsg("transfer-identical", item, true);
 				return true;
 			}
-		} else if (ui.modctrl && OptWnd.instantFlowerMenuCTRL && !ui.modshift && !ui.modmeta) {
+		} else if (ui.modctrl && OptWnd.instantFlowerMenuCTRLCheckBox.a && !ui.modshift && !ui.modmeta) {
 			String itemname = item.getname();
 			int option = 0;
 			if (itemname.toLowerCase().contains("lettuce")) {
@@ -358,7 +358,7 @@ public class WItem extends Widget implements DTarget {
 			item.wdgmsg("iact", c, ui.modflags());
 			ui.rcvr.rcvmsg(ui.lastid+1, "cl", option, 0);
 		} else {
-			if(ui.modctrl && ui.modshift && OptWnd.autoFlowerCTRLSHIFT){
+			if(ui.modctrl && ui.modshift && OptWnd.autoFlowerCTRLSHIFTCheckBox.a){
 				try{new Thread(new AutoFlowerRepeater(ui.gui, this.item.getres().name)).start();} catch (Loading ignored){}
 			}
 			item.wdgmsg("iact", c, ui.modflags());
@@ -379,7 +379,7 @@ public class WItem extends Widget implements DTarget {
 
     public boolean mousehover(Coord c, boolean on) {
 	boolean ret = super.mousehover(c, on);
-	if(on && (item.contents != null && (!OptWnd.requireShiftHoverStacks || ui.modshift))) {
+	if(on && (item.contents != null && (!OptWnd.requireShiftHoverStacksCheckBox.a || ui.modshift))) {
 	    item.hovering(this);
 	    return(true);
 	}

@@ -147,8 +147,8 @@ public class AlarmWindow extends Window {
 					al.addItem(ai);
 				}
 				defaultsReloadedText.settext("Default Alarms Restored!");
-				if (gameui() != null)
-					gameui().msg("Default alarms restored!");
+				if (ui != null && ui.gui != null)
+					ui.gui.msg("Default alarms restored!");
 				AlarmManager.load(al);
 				AlarmManager.save();
 				future2 = executor.scheduleWithFixedDelay(this::resetText, 3, 5, TimeUnit.SECONDS);
@@ -342,8 +342,8 @@ public class AlarmWindow extends Window {
 						return true;
 					File file = new File("Alarms/" + getAlarmFilename());
 					if(!file.exists() || file.isDirectory()) {
-						if (gameui() != null)
-							gameui().msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
+						if (ui != null && ui.gui != null)
+							ui.gui.msg("Error while playing an alarm, file " + file.getAbsolutePath() + " does not exist!");
 						return super.mousedown(c, button);
 					}
 					try {

@@ -113,7 +113,7 @@ public class MapMesh implements RenderTree.Node, Disposable {
 	public MapSurface() {
 	    for(int y = vs.ul.y; y < vs.br.y; y++) {
 		for(int x = vs.ul.x; x < vs.br.x; x++) {
-		    surf[vs.o(x, y)] = new Vertex(x * (float)tilesz.x, y * -(float)tilesz.y, OptWnd.flatWorldSetting ? 0 : (float)map.getfz(ul.add(x, y)));
+		    surf[vs.o(x, y)] = new Vertex(x * (float)tilesz.x, y * -(float)tilesz.y, OptWnd.flatWorldCheckBox.a ? 0 : (float)map.getfz(ul.add(x, y)));
 		}
 	    }
 	    for(int y = ts.ul.y; y < ts.br.y; y++) {
@@ -309,7 +309,7 @@ public class MapMesh implements RenderTree.Node, Disposable {
 		Coord gc = c.add(ul);
 		long ns = rnd.nextLong();
 		mc.tiler(mc.gettile(gc)).lay(m, rnd, c, gc);
-			if (!OptWnd.noTileTransitions) {
+			if (!OptWnd.tileTransitionsCheckBox.a) {
 				dotrans(m, rnd, c, gc);
 			}
 		rnd.setSeed(ns);

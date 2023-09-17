@@ -48,7 +48,7 @@ public class OceanScoutBot extends Window implements Runnable {
                 if (active){
                     this.change("Stop");
                 } else {
-                    gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
+                    ui.gui.map.wdgmsg("click", Coord.z, ui.gui.map.player().rc.floor(posres), 1, 0);
                     this.change("Start");
                 }
             }
@@ -65,9 +65,9 @@ public class OceanScoutBot extends Window implements Runnable {
                 }
                 if (successLocs > 20) {
                     Coord2d groundTile = findRandomGroundTile();
-                    Coord2d groundVector = groundTile.sub(gameui().map.player().rc);
+                    Coord2d groundVector = groundTile.sub(ui.gui.map.player().rc);
                     groundVector = groundVector.div(groundVector.abs()).mul(44);
-                    gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.add(groundVector).floor(posres), 1, 0);
+                    ui.gui.map.wdgmsg("click", Coord.z, ui.gui.map.player().rc.add(groundVector).floor(posres), 1, 0);
                     Thread.sleep(300);
                 }
 
@@ -75,19 +75,19 @@ public class OceanScoutBot extends Window implements Runnable {
                 Coord loc = getNextLoc();
                 if (loc != null) {
                     ang -= clockwiseDirection * Math.PI / 2;
-                    gameui().map.wdgmsg("click", Coord.z, new Coord2d(loc.x, loc.y).floor(posres), 1, 0);
+                    ui.gui.map.wdgmsg("click", Coord.z, new Coord2d(loc.x, loc.y).floor(posres), 1, 0);
                 } else {
-                    Coord2d pcCoord = gameui().map.player().rc;
-                    Coord2d dangerMob = isVeryDangerZone(gameui().map.player().rc.floor());
+                    Coord2d pcCoord = ui.gui.map.player().rc;
+                    Coord2d dangerMob = isVeryDangerZone(ui.gui.map.player().rc.floor());
                     if (dangerMob != null) {
                         Coord2d addCoord = pcCoord.sub(dangerMob);
                         Coord2d clickCoord = pcCoord.add(addCoord.div(addCoord.abs()).mul(11 * 2));
-                        gameui().map.wdgmsg("click", Coord.z, clickCoord.floor(posres), 1, 0);
+                        ui.gui.map.wdgmsg("click", Coord.z, clickCoord.floor(posres), 1, 0);
                     } else {
                         Coord2d gocoord = findRandomWaterTile();
-                        Coord2d groundVector = gocoord.sub(gameui().map.player().rc);
+                        Coord2d groundVector = gocoord.sub(ui.gui.map.player().rc);
                         groundVector = groundVector.div(groundVector.abs()).mul(44);
-                        gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.add(groundVector).floor(posres), 1, 0);
+                        ui.gui.map.wdgmsg("click", Coord.z, ui.gui.map.player().rc.add(groundVector).floor(posres), 1, 0);
                     }
                     Thread.sleep(300);
                 }
@@ -246,7 +246,7 @@ public class OceanScoutBot extends Window implements Runnable {
     }
 
     public void stop() {
-        gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
+        ui.gui.map.wdgmsg("click", Coord.z, ui.gui.map.player().rc.floor(posres), 1, 0);
         if (gui.map.pfthread != null) {
             gui.map.pfthread.interrupt();
         }

@@ -238,7 +238,7 @@ public class FlowerMenu extends Widget {
 			y += opt.sz.y;
 		}
 		// ND: Prevent flower menu from going outside the screen
-		if (ui.gui != null) {
+		if (ui != null && ui.gui != null) {
 			if (this.c.x + maxWidth > ui.gui.sz.x){
 				this.c.x = ui.gui.sz.x - maxWidth;
 			}

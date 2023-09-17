@@ -893,7 +893,7 @@ public class FightWnd extends Widget {
 					}
 
 				};
-				gameui().add(renwnd, new Coord(gameui().sz.x / 2 - 200, gameui().sz.y / 2 - 200));
+				ui.gui.add(renwnd, new Coord(ui.gui.sz.x / 2 - 200, ui.gui.sz.y / 2 - 200));
 				renwnd.show();
 			}
 		}, p.pos("ur").adds(6, 0));
@@ -905,14 +905,14 @@ public class FightWnd extends Widget {
 		try {
 			if (!saves[index].text.equals("Unused save")) {
 				schoolsDropdown.change(new Pair(saves[index], index));
-				gameui().msg("Switched to deck No." + (index+1) + ": " + saves[index].text, Color.orange);
+				ui.gui.msg("Switched to deck No." + (index+1) + ": " + saves[index].text, Color.orange);
 				ui.sfx(RootWidget.msgsfx);
 			} else {
-				gameui().msg("This is not a saved deck, not switching.", Color.red);
+				ui.gui.msg("This is not a saved deck, not switching.", Color.red);
 				ui.sfx(RootWidget.errsfx);
 			}
 		} catch (Exception e) {
-			gameui().msg("Exception switching combat decks, exception ignored to avoid crash.", Color.white);
+			ui.gui.msg("Exception switching combat decks, exception ignored to avoid crash.", Color.white);
 			ui.sfx(RootWidget.errsfx);
 		}
 	}

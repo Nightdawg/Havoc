@@ -23,7 +23,7 @@ public class GaussianPlant implements Sprite.Factory {
     public Sprite create(Sprite.Owner owner, Resource res, Message sdt) {
 	ArrayList<FastMesh.MeshRes> var = new ArrayList<FastMesh.MeshRes>(res.layers(FastMesh.MeshRes.class));
 		CSprite spr = new CSprite(owner, res);
-	if (OptWnd.simplifiedForageables){
+	if (OptWnd.simpleForageablesCheckBox.a){
 		FastMesh.MeshRes mesh = var.get(0);
 		spr.addpart(0, 0, mesh.mat.get(), mesh.m);
 	} else {

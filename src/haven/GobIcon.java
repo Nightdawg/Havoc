@@ -416,23 +416,23 @@ public class GobIcon extends GAttrib {
 					switch(iconTooltipName){
 						case("Player"):
 							icon.conf.show = true;
-							gameui().error("You're NOT disabling the player map icon. I don't care what you have to say.");
+							ui.gui.error("You're NOT disabling the player map icon. I don't care what you have to say.");
 							break;
 						case("Cave Passage"):
 							icon.conf.show = true;
-							gameui().error("Let's keep Caves visible, yeah?");
+							ui.gui.error("Let's keep Caves visible, yeah?");
 							break;
 						case("Swirling Vortex"):
 							icon.conf.show = true;
-							gameui().error("Vortexes can be dangerous. You don't want to miss them, right?");
+							ui.gui.error("Vortexes can be dangerous. You don't want to miss them, right?");
 							break;
 						case("Boost Speed"):
 							icon.conf.show = true;
-							gameui().error("You need to see Speed Boosts at all times. Keep them enabled.");
+							ui.gui.error("You need to see Speed Boosts at all times. Keep them enabled.");
 							break;
 						case("Burrow"):
 							icon.conf.show = true;
-							gameui().error("Let's keep Burrows visible, yeah?");
+							ui.gui.error("Let's keep Burrows visible, yeah?");
 							break;
 						default:
 							icon.conf.show = val;
@@ -532,23 +532,23 @@ public class GobIcon extends GAttrib {
 						switch(iconTooltipName){
 							case("Player"):
 								conf.show = true;
-								gameui().error("You're NOT disabling the player map icon. I don't care what you have to say.");
+								ui.gui.error("You're NOT disabling the player map icon. I don't care what you have to say.");
 								break;
 							case("Cave Passage"):
 								conf.show = true;
-								gameui().error("Let's keep Caves visible, yeah?");
+								ui.gui.error("Let's keep Caves visible, yeah?");
 								break;
 							case("Swirling Vortex"):
 								conf.show = true;
-								gameui().error("Vortexes can be dangerous. You don't want to miss them, right?");
+								ui.gui.error("Vortexes can be dangerous. You don't want to miss them, right?");
 								break;
 							case("Boost Speed"):
 								conf.show = true;
-								gameui().error("You need to see Speed Boosts at all times. Keep them enabled.");
+								ui.gui.error("You need to see Speed Boosts at all times. Keep them enabled.");
 								break;
 							case("Burrow"):
 								conf.show = true;
-								gameui().error("Let's keep Burrows visible, yeah?");
+								ui.gui.error("Let's keep Burrows visible, yeah?");
 								break;
 							default:
 								conf.show = val;

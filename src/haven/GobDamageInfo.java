@@ -16,9 +16,6 @@ public class GobDamageInfo extends GobInfo {
     private static final Color SHP_C = Utils.col16(SHP);
     private static final Color HHP_C = Utils.col16(HHP);
     private static final Color ARM_C = Utils.col16(ARM);
-    public static boolean toggleGobDamageInfo = Utils.getprefb("GobDamageInfoToggled", true);
-    public static boolean toggleGobDamageInfoWounds = Utils.getprefb("GobDamageInfoWoundsToggled", true);
-    public static boolean toggleGobDamageInfoArmor = Utils.getprefb("GobDamageInfoArmorToggled", true);
     public static void setDamageBackgroundColor(boolean enableBackground){
         if (enableBackground) BG = new Color(0, 0, 0, 80);
         else BG = new Color(0, 0, 0, 0);
@@ -47,7 +44,7 @@ public class GobDamageInfo extends GobInfo {
 
     @Override
     protected boolean enabled() {
-        return toggleGobDamageInfo;
+        return OptWnd.toggleGobDamageInfoCheckBox.a;
     }
 
     @Override
@@ -58,12 +55,12 @@ public class GobDamageInfo extends GobInfo {
         if (damage.shp >= 0) { // ND: Show 0 hp damage in case the user disables armor damage. If they deal only armor damage, the image will be null, and client will crash
             hhp = Text.std.renderstroked(String.format("%d", damage.shp), SHP_C, Color.BLACK).img;
         }
-        if (toggleGobDamageInfoWounds) {
+        if (OptWnd.toggleGobDamageWoundInfoCheckBox.a) {
             if (damage.hhp > 0) {
                 shp = Text.std.renderstroked(String.format("%d", damage.hhp), HHP_C, Color.BLACK).img;
             }
         }
-        if (toggleGobDamageInfoArmor) {
+        if (OptWnd.toggleGobDamageArmorInfoCheckBox.a) {
             if (damage.armor > 0) {
                 arm = Text.std.renderstroked(String.format("%d", damage.armor), ARM_C, Color.BLACK).img;
             }

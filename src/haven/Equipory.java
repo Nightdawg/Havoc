@@ -151,7 +151,7 @@ public class Equipory extends Widget implements DTarget {
 			Button button = new Button(btnw, "Yoink") {
 				@Override
 				public void click() {
-					new Thread(new YoinkGoodStuffFromKnockedEnemy(enemyEquipory, gameui()), "DropItemsFromEnemy").start();
+					new Thread(new YoinkGoodStuffFromKnockedEnemy(enemyEquipory, ui.gui), "DropItemsFromEnemy").start();
 				}
 			};
 			button.c = new Coord(74, 0);
@@ -159,7 +159,7 @@ public class Equipory extends Widget implements DTarget {
 			Button button2 = new Button(btnw, "Drop") {
 				@Override
 				public void click() {
-					new Thread(new DropItemsFromKnockedEnemy(enemyEquipory, gameui()), "DropItemsFromEnemy").start();
+					new Thread(new DropItemsFromKnockedEnemy(enemyEquipory, ui.gui), "DropItemsFromEnemy").start();
 				}
 			};
 
@@ -351,7 +351,7 @@ public class Equipory extends Widget implements DTarget {
 	public void draw(GOut g) {
 		drawslots(g);
 		super.draw(g);
-		GameUI gui = gameui();
+		GameUI gui = ui.gui;
 		if (updateBottomText) {
 			long now = System.currentTimeMillis();
 			if ((now - delayedUpdateTime) > 100){ // ND: Hopefully 100ms is enough? I can't reproduce it any more on my PC at least. This is client-sided, so ping should not affect it (SHOULD, BUT GOD KNOWS WITH LOFTAR)
@@ -409,7 +409,7 @@ public class Equipory extends Widget implements DTarget {
 
 	public void tick(double dt) {
 		super.tick(dt);
-		if (OptWnd.autoDropLeeches && player && checkForLeeches) {
+		if (OptWnd.autoDropLeechesCheckBox.a && player && checkForLeeches) {
 			long now = System.currentTimeMillis();
 			if ((now - delayedUpdateTime) > 100){
 				for (SLOTS slot : SLOTS.values()) {

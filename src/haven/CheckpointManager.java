@@ -240,10 +240,10 @@ public class CheckpointManager extends Window implements Runnable {
                     double xInitialOffset = Double.parseDouble(initialData[2]);
                     double yInitialOffset = Double.parseDouble(initialData[3]);
                     String[] arrayOfCheckpoints = rs.getString("route").split(";");
-                    Coord playerCoord = gameui().map.player().rc.floor(tilesz);
+                    Coord playerCoord = ui.gui.map.player().rc.floor(tilesz);
                     MCache.Grid grid = ui.sess.glob.map.getgrid(playerCoord.div(cmaps));
-                    MapFile.GridInfo info = gameui().mapfile.file.gridinfo.get(grid.id);
-                    MapFile.Segment segment = gameui().mapfile.file.segments.get(info.seg);
+                    MapFile.GridInfo info = ui.gui.mapfile.file.gridinfo.get(grid.id);
+                    MapFile.Segment segment = ui.gui.mapfile.file.segments.get(info.seg);
                     if (segment.id == segmentId) {
                         Coord gridCoords = null;
                         Coord curGridCoords = null;
@@ -324,9 +324,9 @@ public class CheckpointManager extends Window implements Runnable {
                     String yOffset = initialPoint[3];
 
                     try {
-                        Coord playerCoord = gameui().map.player().rc.floor(tilesz);
+                        Coord playerCoord = ui.gui.map.player().rc.floor(tilesz);
                         MCache.Grid obg = ui.sess.glob.map.getgrid(playerCoord.div(cmaps));
-                        MapFile.GridInfo info = gameui().mapfile.file.gridinfo.get(obg.id);
+                        MapFile.GridInfo info = ui.gui.mapfile.file.gridinfo.get(obg.id);
 
                         String newInitialPoint = info.seg + ";" + obg.id + ";" + xOffset + ";" + yOffset;
 
@@ -390,7 +390,7 @@ public class CheckpointManager extends Window implements Runnable {
         try {
             Coord initialCoord = coords.get(0).floor(tilesz);
             MCache.Grid obg = ui.sess.glob.map.getgrid(initialCoord.div(cmaps));
-            MapFile.GridInfo info = gameui().mapfile.file.gridinfo.get(obg.id);
+            MapFile.GridInfo info = ui.gui.mapfile.file.gridinfo.get(obg.id);
             double xValue = Math.floor((coords.get(0).x - (obg.gc.x * 1100)) * 100) / 100;
             double yValue = Math.floor((coords.get(0).y - (obg.gc.y * 1100)) * 100) / 100;
             String stringInitialCoord = info.seg + ";" + obg.id + ";" + xValue + ";" + yValue;
@@ -870,7 +870,7 @@ public class CheckpointManager extends Window implements Runnable {
                     if (button != 1) {
                         return true;
                     }
-                    gameui().map.checkpointManager.checkpointList.setCurrentIndex(gameui().map.checkpointManager.checkpointList.items.indexOf(this.parent));
+                    ui.gui.map.checkpointManager.checkpointList.setCurrentIndex(ui.gui.map.checkpointManager.checkpointList.items.indexOf(this.parent));
                     return super.mousedown(c, button);
                 }
 
@@ -889,12 +889,12 @@ public class CheckpointManager extends Window implements Runnable {
                         return true;
                     }
                     try {
-                        Coord playerCoord = gameui().map.player().rc.floor(tilesz);
+                        Coord playerCoord = ui.gui.map.player().rc.floor(tilesz);
                         Coord actualCoord = coord.floor(tilesz);
                         MCache.Grid obg = ui.sess.glob.map.getgrid(playerCoord.div(cmaps));
-                        MapFile.GridInfo info = gameui().mapfile.file.gridinfo.get(obg.id);
+                        MapFile.GridInfo info = ui.gui.mapfile.file.gridinfo.get(obg.id);
                         Coord sc = actualCoord.add(info.sc.sub(obg.gc).mul(cmaps));
-                        gameui().mapfile.view.center(new MiniMap.SpecLocator(info.seg, sc));
+                        ui.gui.mapfile.view.center(new MiniMap.SpecLocator(info.seg, sc));
                     } catch (Exception ignored) {
                     }
                     return super.mousedown(c, button);
@@ -1068,7 +1068,7 @@ public class CheckpointManager extends Window implements Runnable {
                     if (button != 1) {
                         return true;
                     }
-                    gameui().map.checkpointManager.launchRouteCheckpoints(Route.this.id);
+                    ui.gui.map.checkpointManager.launchRouteCheckpoints(Route.this.id);
                     return super.mousedown(c, button);
                 }
 
@@ -1086,7 +1086,7 @@ public class CheckpointManager extends Window implements Runnable {
                     if (button != 1) {
                         return true;
                     }
-                    gameui().map.checkpointManager.fixSelectedRoute(Route.this.id);
+                    ui.gui.map.checkpointManager.fixSelectedRoute(Route.this.id);
                     return super.mousedown(c, button);
                 }
                 @Override
@@ -1103,7 +1103,7 @@ public class CheckpointManager extends Window implements Runnable {
                     if (button != 1) {
                         return super.mousedown(c, button);
                     }
-                    gameui().map.checkpointManager.deleteSelectedRoute(Route.this.id);
+                    ui.gui.map.checkpointManager.deleteSelectedRoute(Route.this.id);
                     wdgmsg(this.parent, "delete");
                     return super.mousedown(c, button);
                 }

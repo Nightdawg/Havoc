@@ -27,7 +27,7 @@ public class GrowingPlant implements Sprite.Factory {
 	if(var.size() < 1)
 	    throw(new Sprite.ResourceException("No variants for grow stage " + st, res));
 	CSprite spr = new CSprite(owner, res);
-	if (OptWnd.simplifiedCrops){
+	if (OptWnd.simpleCropsCheckBox.a){
 		FastMesh.MeshRes mesh = var.get(0);
 		spr.addpart(0, 0, mesh.mat.get(), mesh.m);
 	} else {

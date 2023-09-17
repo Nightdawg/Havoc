@@ -11,7 +11,6 @@ import java.util.Arrays;
 /* >tt: Quality */
 @haven.FromResource(name = "ui/tt/q/quality", version = 25)
 public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
-    public static boolean show = Utils.getprefb("qtoggle", true);
     public static final BufferedImage qualityWorkaround = Resource.remote().loadwait("ui/tt/q/quality").layer(Resource.imgc, 0).scaled();
     public Quality(Owner owner, double q) {
 	//super(owner, Resource.classres(Quality.class).layer(Resource.imgc, 0).scaled(), "Quality", q);
@@ -65,7 +64,7 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
     }
 
     public void drawoverlay(GOut g, Tex ol) {
-	if(show)
+	if(OptWnd.toggleQualityDisplayCheckBox.a)
 	    g.aimage(ol, new Coord(g.sz().x, 0), 1, 0);
     }
 }

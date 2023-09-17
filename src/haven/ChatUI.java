@@ -75,7 +75,7 @@ public class ChatUI extends Widget {
 
 	public Map<String, ChatUI.MultiChat> getMultiChannels() {
 		Map<String, ChatUI.MultiChat> channels = new HashMap<>();
-		for (Widget w = gameui().chat.lchild; w != null; w = w.prev) {
+		for (Widget w = ui.gui.chat.lchild; w != null; w = w.prev) {
 			if (w instanceof ChatUI.MultiChat) {
 				ChatUI.MultiChat chat = ((ChatUI.MultiChat) w);
 				channels.put(chat.name, chat);
@@ -983,7 +983,7 @@ public class ChatUI extends Widget {
 				Matcher matcher = highlight.matcher(msg);
 				if(matcher.matches()){
 					try {
-						Gob gob = gameui().map.glob.oc.getgob(Long.parseLong(matcher.group(1)));
+						Gob gob = ui.gui.map.glob.oc.getgob(Long.parseLong(matcher.group(1)));
 						if (gob != null) {
 							if (name.equals("Party")) {
 								gob.highlight(new Color(243, 0, 0, 255));
@@ -1004,7 +1004,7 @@ public class ChatUI extends Widget {
 					try {
 						synchronized (ui.sess.glob.party.memb) {
 							Party.Member pm = ui.sess.glob.party.memb.get(from);
-							Gob player = gameui().map.player();
+							Gob player = ui.gui.map.player();
 							if (player != null && pm != null) {
 								Coord2d playerc = player.rc;
 								Coord2d partyc = pm.getc();
@@ -1012,7 +1012,7 @@ public class ChatUI extends Widget {
 									Coord2d playertopartym = partyc.sub(playerc);
 									Coord2d partyoffset = new Coord2d(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
 									Coord2d pingc = playerc.add(playertopartym).add(partyoffset);
-									gameui().mapfile.view.addSprite(new PingSprite(pingc, pm.col));
+									ui.gui.mapfile.view.addSprite(new PingSprite(pingc, pm.col));
 									try {
 										AudioInputStream in = AudioSystem.getAudioInputStream(mapPingFile);
 										AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);

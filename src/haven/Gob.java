@@ -1538,12 +1538,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		gobDeathFuture.cancel(true);
 	}
 
-	public static boolean showCollisionBoxes = Utils.getprefb("gobCollisionBoxesDisplayToggle", false);
-	public static boolean hideObjects = Utils.getprefb("gobHideObjectsToggle", false);
-
 	private void updateCollisionBox() {
 		if(updateseq == 0) {return;}
-		if(showCollisionBoxes) {
+		if(OptWnd.toggleGobCollisionBoxesDisplayCheckBox.a) {
 			if(collisionBox != null) {
 				if(!collisionBox.show(true)) {
 					collisionBox.fx.updateState();
@@ -1581,29 +1578,29 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		boolean isGate = false;
 		Resource res = Gob.this.getres();
 		if (res != null) {
-			if (OptWnd.hideTreesSetting && res.name.startsWith("gfx/terobjs/trees") && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk")) {
-				doHide = hideObjects;
+			if (OptWnd.hideTreesCheckbox.a && res.name.startsWith("gfx/terobjs/trees") && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk")) {
+				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = true;
-			} else if (OptWnd.hideBushesSetting && res.name.startsWith("gfx/terobjs/bushes")) {
-				doHide = hideObjects;
+			} else if (OptWnd.hideBushesCheckbox.a && res.name.startsWith("gfx/terobjs/bushes")) {
+				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = true;
-			} else if (OptWnd.hideBouldersSetting && res.name.startsWith("gfx/terobjs/bumlings")) {
-				doHide = hideObjects;
+			} else if (OptWnd.hideBouldersCheckbox.a && res.name.startsWith("gfx/terobjs/bumlings")) {
+				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = true;
-			} else if (OptWnd.hideTreeLogsSetting && res.name.startsWith("gfx/terobjs/trees") && (res.name.endsWith("log") || res.name.endsWith("oldtrunk"))) {
-				doHide = hideObjects;
+			} else if (OptWnd.hideTreeLogsCheckbox.a && res.name.startsWith("gfx/terobjs/trees") && (res.name.endsWith("log") || res.name.endsWith("oldtrunk"))) {
+				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = true;
-			} else if (OptWnd.hideWallsSetting && (res.name.startsWith("gfx/terobjs/arch/palisade") || res.name.startsWith("gfx/terobjs/arch/brickwall")) && !res.name.endsWith("gate")) {
-				doHide = hideObjects;
+			} else if (OptWnd.hideWallsCheckbox.a && (res.name.startsWith("gfx/terobjs/arch/palisade") || res.name.startsWith("gfx/terobjs/arch/brickwall")) && !res.name.endsWith("gate")) {
+				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = true;
-			} else if (OptWnd.hideHousesSetting && Arrays.asList(HIDINGHOUSES).contains(res.name)) {
-				doHide = hideObjects;
+			} else if (OptWnd.hideHousesCheckbox.a && Arrays.asList(HIDINGHOUSES).contains(res.name)) {
+				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = true;
-			} else if (OptWnd.hideCropsSetting && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
-				doHide = hideObjects;
+			} else if (OptWnd.hideCropsCheckbox.a && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
+				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = true;
-			} else if (OptWnd.hideStockpilesSetting && res.name.startsWith("gfx/terobjs/stockpile")) {
-				doHide = hideObjects;
+			} else if (OptWnd.hideStockpilesCheckbox.a && res.name.startsWith("gfx/terobjs/stockpile")) {
+				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = true;
 			} else if (res.name.startsWith("gfx/terobjs/arch") && res.name.endsWith("gate")) {//gates
 				isGate = true;
@@ -1621,7 +1618,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					glob.loader.defer(() -> RUtils.multiadd(tmpSlots, d), null);
 				}
 			}
-			if ((hideObjects && doShowHidingBox) || (isGate && OptWnd.displayGatePassabilityBoxes)) {
+			if ((OptWnd.toggleGobHidingCheckBox.a && doShowHidingBox) || (isGate && OptWnd.displayGatePassabilityBoxesCheckBox.a)) {
 				if (hidingBox != null) {
 					if (!hidingBox.show(true)) {
 						hidingBox.fx.updateState();
@@ -1737,56 +1734,56 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 	private void setContainerHighlight(String resName, MessageBuf sdt){
 		int peekrbuf = sdt.peekrbuf(0);
-		if (OptWnd.showContainerFullness) {
+		if (OptWnd.showContainerFullnessCheckBox.a) {
 			switch (resName) {
 				case "gfx/terobjs/cupboard":
 				case "gfx/terobjs/chest":
 				case "gfx/terobjs/exquisitechest":
 					if (peekrbuf == 30 || peekrbuf == 29) {
-						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 2 || peekrbuf == 1) {
-						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 						else delattr(GobStateHighlight.class);
 					} else {
-						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellowCheckBox.a) setGobStateHighlight(GobStateHighlight.State.YELLOW);
 						else delattr(GobStateHighlight.class);
 					}
 					break;
 				case "gfx/terobjs/crate":
 				case "gfx/terobjs/linencrate":
 					if (peekrbuf == 16) {
-						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 0) {
-						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 						else delattr(GobStateHighlight.class);
 					} else {
-						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellowCheckBox.a) setGobStateHighlight(GobStateHighlight.State.YELLOW);
 						else delattr(GobStateHighlight.class);
 					}
 					break;
 				case "gfx/terobjs/leatherbasket":
 					if (peekrbuf == 4) {
-						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 0) {
-						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 						else delattr(GobStateHighlight.class);
 					} else {
-						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellowCheckBox.a) setGobStateHighlight(GobStateHighlight.State.YELLOW);
 						else delattr(GobStateHighlight.class);
 					}
 					break;
 				case "gfx/terobjs/woodbox":
 					if (peekrbuf == 8) {
-						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 0) {
-						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 						else delattr(GobStateHighlight.class);
 					} else {
-						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellowCheckBox.a) setGobStateHighlight(GobStateHighlight.State.YELLOW);
 						else delattr(GobStateHighlight.class);
 					}
 					break;
@@ -1795,26 +1792,26 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				case "gfx/terobjs/stonecasket":
 				case "gfx/terobjs/bonechest":
 					if (peekrbuf == 17 || peekrbuf == 18) {
-						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 2 || peekrbuf == 1) {
-						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 						else delattr(GobStateHighlight.class);
 					} else {
-						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellowCheckBox.a) setGobStateHighlight(GobStateHighlight.State.YELLOW);
 						else delattr(GobStateHighlight.class);
 					}
 					break;
 				case "gfx/terobjs/coffer":
 				case "gfx/terobjs/metalcabinet":
 					if (peekrbuf == 65 || peekrbuf == 66) {
-						if (OptWnd.showContainerFullnessRed) setGobStateHighlight(GobStateHighlight.State.RED);
+						if (OptWnd.showContainerFullnessRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 						else delattr(GobStateHighlight.class);
 					} else if (peekrbuf == 2 || peekrbuf == 1) {
-						if (OptWnd.showContainerFullnessGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+						if (OptWnd.showContainerFullnessGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 						else delattr(GobStateHighlight.class);
 					} else {
-						if (OptWnd.showContainerFullnessYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+						if (OptWnd.showContainerFullnessYellowCheckBox.a) setGobStateHighlight(GobStateHighlight.State.YELLOW);
 						else delattr(GobStateHighlight.class);
 					}
 					break;
@@ -1828,7 +1825,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateLeathertubsHighlight(MessageBuf sdt) {
 		if (getres() != null && Pattern.matches("gfx/terobjs/ttub", getres().name)) {
-			if (OptWnd.showWorkstationStage){
+			if (OptWnd.showWorkstationStageCheckBox.a){
 				setLeathertubsHighlight(sdt);
 			} else {
 				delattr(GobStateHighlight.class);
@@ -1840,7 +1837,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			Drawable dr = getattr(Drawable.class);
 			ResDrawable d = (dr instanceof ResDrawable) ? (ResDrawable) dr : null;
 			if (d != null) {
-				if (OptWnd.showWorkstationStage) {
+				if (OptWnd.showWorkstationStageCheckBox.a) {
 					setLeathertubsHighlight(d.sdt);
 				} else {
 					delattr(GobStateHighlight.class);
@@ -1851,23 +1848,23 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private void setLeathertubsHighlight(MessageBuf sdt){
 			int peekrbuf = sdt.peekrbuf(0);
 			if (peekrbuf == 0 || peekrbuf == 1 || peekrbuf == 4 || peekrbuf == 5) {
-				if (OptWnd.showWorkstationStageGray) setGobStateHighlight(GobStateHighlight.State.GRAY);
+				if (OptWnd.showWorkstationStageGrayCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GRAY);
 				else delattr(GobStateHighlight.class);
 			} else if (peekrbuf == 10 || peekrbuf == 9 || peekrbuf == 8) {
-				if (OptWnd.showWorkstationStageRed) setGobStateHighlight(GobStateHighlight.State.RED);
+				if (OptWnd.showWorkstationStageRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 				else delattr(GobStateHighlight.class);
 			} else if (peekrbuf != 6) {
-				if (OptWnd.showWorkstationStageGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+				if (OptWnd.showWorkstationStageGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 				else delattr(GobStateHighlight.class);
 			} else {
-				if (OptWnd.showWorkstationStageYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+				if (OptWnd.showWorkstationStageYellowCheckBox.a) setGobStateHighlight(GobStateHighlight.State.YELLOW);
 				else delattr(GobStateHighlight.class);
 			}
 	}
 
 	private void updateDryingFramesHighlight() {
 		if (getres() != null && Pattern.matches("gfx/terobjs/dframe", getres().name)) {
-			if (OptWnd.showWorkstationStage){
+			if (OptWnd.showWorkstationStageCheckBox.a){
 				boolean done = true;
 				boolean empty = true;
 				for (Overlay ol : ols) {
@@ -1886,13 +1883,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					} catch (Loading l) {
 					}
 				}
-				if (OptWnd.showWorkstationStageYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+				if (OptWnd.showWorkstationStageYellowCheckBox.a) setGobStateHighlight(GobStateHighlight.State.YELLOW);
 				else delattr(GobStateHighlight.class);
 				if (done && !empty) {
-					if (OptWnd.showWorkstationStageRed) setGobStateHighlight(GobStateHighlight.State.RED);
+					if (OptWnd.showWorkstationStageRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 					else delattr(GobStateHighlight.class);
 				} else if (empty) {
-					if (OptWnd.showWorkstationStageGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+					if (OptWnd.showWorkstationStageGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 					else delattr(GobStateHighlight.class);
 				}
 			} else {
@@ -1903,15 +1900,15 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateCheeseRacksHighlight() {
 		if (getres() != null && Pattern.matches("gfx/terobjs/cheeserack", getres().name)) {
-			if (OptWnd.showWorkstationStage) {
+			if (OptWnd.showWorkstationStageCheckBox.a) {
 				if (ols.size() == 3) {
-					if (OptWnd.showWorkstationStageRed) setGobStateHighlight(GobStateHighlight.State.RED);
+					if (OptWnd.showWorkstationStageRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 					else delattr(GobStateHighlight.class);
 				} else if (ols.size() == 0) {
-					if (OptWnd.showWorkstationStageGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+					if (OptWnd.showWorkstationStageGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 					else delattr(GobStateHighlight.class);
 				} else {
-					if (OptWnd.showWorkstationStageYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+					if (OptWnd.showWorkstationStageYellowCheckBox.a) setGobStateHighlight(GobStateHighlight.State.YELLOW);
 					else delattr(GobStateHighlight.class);
 				}
 			} else {
@@ -1922,7 +1919,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void updateGardenPotHighlight(MessageBuf sdt) {
 		if (getres() != null && Pattern.matches("gfx/terobjs/gardenpot", getres().name)){
-			if (OptWnd.showWorkstationStage) {
+			if (OptWnd.showWorkstationStageCheckBox.a) {
 				setGardenPotHighlight(sdt);
 			} else {
 				delattr(GobStateHighlight.class);
@@ -1934,7 +1931,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			Drawable dr = getattr(Drawable.class);
 			ResDrawable d = (dr instanceof ResDrawable) ? (ResDrawable) dr : null;
 			if (d != null) {
-				if (OptWnd.showWorkstationStage) {
+				if (OptWnd.showWorkstationStageCheckBox.a) {
 					setGardenPotHighlight(d.sdt);
 				} else {
 					delattr(GobStateHighlight.class);
@@ -1945,17 +1942,17 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private void setGardenPotHighlight(MessageBuf sdt){
 		int peekrbuf = sdt.peekrbuf(0);
 		if (ols.size() == 2) {
-			if (OptWnd.showWorkstationStageRed) setGobStateHighlight(GobStateHighlight.State.RED);
+			if (OptWnd.showWorkstationStageRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 			else delattr(GobStateHighlight.class);
 		} else if (ols.size() == 1) {
-			if (OptWnd.showWorkstationStageYellow) setGobStateHighlight(GobStateHighlight.State.YELLOW);
+			if (OptWnd.showWorkstationStageYellowCheckBox.a) setGobStateHighlight(GobStateHighlight.State.YELLOW);
 			else delattr(GobStateHighlight.class);
 		} else if (ols.size() == 0) {
 			if (peekrbuf == 3) {
-				if (OptWnd.showWorkstationStageGreen) setGobStateHighlight(GobStateHighlight.State.GREEN);
+				if (OptWnd.showWorkstationStageGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 				else delattr(GobStateHighlight.class);
 			} else { // (peekrbuf == 0 || peekrbuf == 1 || peekrbuf == 2)
-				if (OptWnd.showWorkstationStageGray) setGobStateHighlight(GobStateHighlight.State.GRAY);
+				if (OptWnd.showWorkstationStageGrayCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GRAY);
 				else delattr(GobStateHighlight.class);
 			}
 		} else {
@@ -2022,23 +2019,23 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					KinInfo kininfo = getattr(KinInfo.class);
 					if (!isMe() && !alarmPlayed.contains(id)) {
 						if (kininfo == null || (kininfo.unknown && !kininfo.isVillager()) || (kininfo.group == 0 && !kininfo.isVillager())) {
-							playPlayerColorAlarm(OptWnd.whitePlayerAlarmEnabled, OptWnd.whitePlayerAlarmFilename.buf.line(), OptWnd.whitePlayerAlarmVolumeSlider.val);
+							playPlayerColorAlarm(OptWnd.whitePlayerAlarmEnabledCheckbox.a, OptWnd.whitePlayerAlarmFilename.buf.line(), OptWnd.whitePlayerAlarmVolumeSlider.val);
 						} else if ((kininfo.unknown && kininfo.isVillager()) || (kininfo.group == 0 && kininfo.isVillager())) {
-							playPlayerColorAlarm(OptWnd.whiteVillageOrRealmPlayerAlarmEnabled, OptWnd.whiteVillageOrRealmPlayerAlarmFilename.buf.line(), OptWnd.whiteVillageOrRealmPlayerAlarmVolumeSlider.val);
+							playPlayerColorAlarm(OptWnd.whiteVillageOrRealmPlayerAlarmEnabledCheckbox.a, OptWnd.whiteVillageOrRealmPlayerAlarmFilename.buf.line(), OptWnd.whiteVillageOrRealmPlayerAlarmVolumeSlider.val);
 						} else if (kininfo.group == 1) {
-							playPlayerColorAlarm(OptWnd.greenPlayerAlarmEnabled, OptWnd.greenPlayerAlarmFilename.buf.line(), OptWnd.greenPlayerAlarmVolumeSlider.val);
+							playPlayerColorAlarm(OptWnd.greenPlayerAlarmEnabledCheckbox.a, OptWnd.greenPlayerAlarmFilename.buf.line(), OptWnd.greenPlayerAlarmVolumeSlider.val);
 						} else if (kininfo.group == 2) {
-							playPlayerColorAlarm(OptWnd.redPlayerAlarmEnabled, OptWnd.redPlayerAlarmFilename.buf.line(), OptWnd.redPlayerAlarmVolumeSlider.val);
+							playPlayerColorAlarm(OptWnd.redPlayerAlarmEnabledCheckbox.a, OptWnd.redPlayerAlarmFilename.buf.line(), OptWnd.redPlayerAlarmVolumeSlider.val);
 						} else if (kininfo.group == 3) {
-							playPlayerColorAlarm(OptWnd.bluePlayerAlarmEnabled, OptWnd.bluePlayerAlarmFilename.buf.line(), OptWnd.bluePlayerAlarmVolumeSlider.val);
+							playPlayerColorAlarm(OptWnd.bluePlayerAlarmEnabledCheckbox.a, OptWnd.bluePlayerAlarmFilename.buf.line(), OptWnd.bluePlayerAlarmVolumeSlider.val);
 						} else if (kininfo.group == 4) {
-							playPlayerColorAlarm(OptWnd.tealPlayerAlarmEnabled, OptWnd.tealPlayerAlarmFilename.buf.line(), OptWnd.tealPlayerAlarmVolumeSlider.val);
+							playPlayerColorAlarm(OptWnd.tealPlayerAlarmEnabledCheckbox.a, OptWnd.tealPlayerAlarmFilename.buf.line(), OptWnd.tealPlayerAlarmVolumeSlider.val);
 						} else if (kininfo.group == 5) {
-							playPlayerColorAlarm(OptWnd.yellowPlayerAlarmEnabled, OptWnd.yellowPlayerAlarmFilename.buf.line(), OptWnd.yellowPlayerAlarmVolumeSlider.val);
+							playPlayerColorAlarm(OptWnd.yellowPlayerAlarmEnabledCheckbox.a, OptWnd.yellowPlayerAlarmFilename.buf.line(), OptWnd.yellowPlayerAlarmVolumeSlider.val);
 						} else if (kininfo.group == 6) {
-							playPlayerColorAlarm(OptWnd.purplePlayerAlarmEnabled, OptWnd.purplePlayerAlarmFilename.buf.line(), OptWnd.purplePlayerAlarmVolumeSlider.val);
+							playPlayerColorAlarm(OptWnd.purplePlayerAlarmEnabledCheckbox.a, OptWnd.purplePlayerAlarmFilename.buf.line(), OptWnd.purplePlayerAlarmVolumeSlider.val);
 						} else if (kininfo.group == 7) {
-							playPlayerColorAlarm(OptWnd.orangePlayerAlarmEnabled, OptWnd.orangePlayerAlarmFilename.buf.line(), OptWnd.orangePlayerAlarmVolumeSlider.val);
+							playPlayerColorAlarm(OptWnd.orangePlayerAlarmEnabledCheckbox.a, OptWnd.orangePlayerAlarmFilename.buf.line(), OptWnd.orangePlayerAlarmVolumeSlider.val);
 						}
 					}
 				}
@@ -2111,7 +2108,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (getres() != null) {
 			String resourceName = getres().name;
 			if (resourceName.equals("gfx/terobjs/beehive")){
-				setRadiusOl(150F, AuraCircleSprite.yellow, OptWnd.showBeeSkepsRadii);
+				setRadiusOl(150F, AuraCircleSprite.yellow, OptWnd.showBeeSkepsRadiiCheckBox.a);
 			}
 		}
 	}
@@ -2120,7 +2117,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (getres() != null) {
 			String resourceName = getres().name;
 			if (resourceName.equals("gfx/terobjs/trough")){
-				setRadiusOl(200F, AuraCircleSprite.orange, OptWnd.showFoodTroughsRadii);
+				setRadiusOl(200F, AuraCircleSprite.orange, OptWnd.showFoodTroughsRadiiCheckBox.a);
 			}
 		}
 	}
@@ -2206,7 +2203,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	private void initiateSupportOverlays(){
-		if (getres() != null && OptWnd.showMineSupportTiles) {
+		if (getres() != null && OptWnd.showMineSupportSafeTilesCheckBox.a) {
 			String resourceName = getres().name;
 			if (resourceName.equals("gfx/terobjs/ladder") || resourceName.equals("gfx/terobjs/minesupport") ){
 				setMiningOl(true, (float) a, 1);
@@ -2221,11 +2218,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private void updateSupportOverlays(){
 		if (getres() != null){
 			if (getres().name.equals("gfx/terobjs/ladder") || getres().name.equals("gfx/terobjs/minesupport") ){
-				setMiningOl(OptWnd.showMineSupportTiles, (float) a, 1);
+				setMiningOl(OptWnd.showMineSupportSafeTilesCheckBox.a, (float) a, 1);
 			} else if (getres().name.equals("gfx/terobjs/column")){
-				setMiningOl(OptWnd.showMineSupportTiles, (float) a, 2);
+				setMiningOl(OptWnd.showMineSupportSafeTilesCheckBox.a, (float) a, 2);
 			} else if (getres().name.equals("gfx/terobjs/minebeam")){
-				setMiningOl(OptWnd.showMineSupportTiles, (float) a, 3);
+				setMiningOl(OptWnd.showMineSupportSafeTilesCheckBox.a, (float) a, 3);
 			}
 		}
 	}
@@ -2240,10 +2237,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 							if (batsFearMe || batsLeaveMeAlone) {
 								setDangerRadii(false);
 							} else {
-								setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+								setDangerRadii(OptWnd.toggleBeastDangerRadiiCheckBox.a);
 							}
 						} else {
-							setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+							setDangerRadii(OptWnd.toggleBeastDangerRadiiCheckBox.a);
 						}
 					}
 				} else if (knocked != null && knocked == true) {
@@ -2257,10 +2254,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 							if (batsFearMe || batsLeaveMeAlone) {
 								setDangerRadii(false);
 							} else {
-								setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+								setDangerRadii(OptWnd.toggleBeastDangerRadiiCheckBox.a);
 							}
 						} else {
-							setDangerRadii(OptWnd.beastDangerRadiiEnabled);
+							setDangerRadii(OptWnd.toggleBeastDangerRadiiCheckBox.a);
 						}
 					}
 				}
@@ -2273,9 +2270,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			String resourceName = getres().name;
 				if (knocked != null && knocked == false) {
 					if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::matches)) {
-						setCritterAura(OptWnd.critterAuraEnabled, false);
+						setCritterAura(OptWnd.toggleCritterAurasCheckBox.a, false);
 					} else if (resourceName.matches(".*(rabbit|bunny)$")) {
-						setCritterAura(OptWnd.critterAuraEnabled, true);
+						setCritterAura(OptWnd.toggleCritterAurasCheckBox.a, true);
 					}
 				} else if (knocked != null && knocked == true) {
 				if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::matches)) {
@@ -2286,9 +2283,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			}
 				else if (!isComposite) { //ND: This also works for critters that can't have a knocked status, like insects.
 					if (Arrays.stream(CRITTERAURA_PATHS).anyMatch(resourceName::matches)) {
-						setCritterAura(OptWnd.critterAuraEnabled, false);
+						setCritterAura(OptWnd.toggleCritterAurasCheckBox.a, false);
 					} else if (resourceName.matches(".*(rabbit|bunny)$")) {
-						setCritterAura(OptWnd.critterAuraEnabled, true);
+						setCritterAura(OptWnd.toggleCritterAurasCheckBox.a, true);
 					}
 				}
 		}
@@ -2368,7 +2365,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	private void archeryIndicator(int range, boolean imOnLand) {
-		if (OptWnd.flatWorldSetting && imOnLand){
+		if (OptWnd.flatWorldCheckBox.a && imOnLand){
 			if (this.archeryVector == null) {
 				archeryVector = new Overlay(this, new ArcheryVectorSprite(this, range));
 				synchronized (ols) {

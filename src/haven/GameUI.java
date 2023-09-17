@@ -94,9 +94,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean swimon = false;
 	public static boolean crimeon = false;
 	public static boolean trackon = false;
-	public static boolean preventDropAnywhere = Utils.getprefb("noCursorItemDropping", false);
-	public static boolean preventWaterDrop = Utils.getprefb("noCursorItemDroppingInWater", false);
-	public static boolean autoDrinkTeaOrWater = Utils.getprefb("autoDrinkTeaOrWater", false);
 	public static boolean autoFlowerSelect = Utils.getprefb("autoFlowerMenuSelect", false);
 
 	public static boolean muteNonFriendly = false;
@@ -1083,13 +1080,13 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    chat.drawsmall(g, new Coord(blpw + UI.scale(10), by), UI.scale(100));
 	}
 
-	if (!Fightsess.altui || !(fv != null && fv.current != null)) {
+	if (!OptWnd.useProperCombatUICheckBox.a || !(fv != null && fv.current != null)) {
 		Gob myself = map.player();
 		double x1 = this.sz.x / 2.0;
-		double y1 = this.sz.y - ((this.sz.y / 500.0) * Fightsess.combaty0HeightInt);
+		double y1 = this.sz.y - ((this.sz.y / 500.0) * OptWnd.combatUITopPanelHeightSlider.val);
 		int x0 = (int)x1;
 		int y0 = (int)y1;
-		if (OptWnd.alwaysShowHealthBar){
+		if (OptWnd.alwaysShowHealthBarCheckBox.a){
 			IMeter.Meter hp = getmeter("hp", 0);
 			if (hp != null) {
 				Coord msz = UI.scale(new Coord(150, 20));
@@ -1098,7 +1095,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			}
 		}
 		// ND: Draw Combat UI stamina bar even when out of combat when drinking, or, if setting is enabled, always
-		if (OptWnd.alwaysShowStaminaBar || (myself != null && myself.imDrinking)) {
+		if (OptWnd.alwaysShowStaminaBarCheckBox.a || (myself != null && myself.imDrinking)) {
 			IMeter.Meter stam = getmeter("stam", 0);
 			if (stam != null) {
 				Coord msz = UI.scale(new Coord(150, 20));
@@ -1338,7 +1335,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	} else if(msg == "prog") {
 	    if(args.length > 0) {
 		double p = ((Number)args[0]).doubleValue() / 100.0;
-		if(autoDrinkTeaOrWater && getmeter("stam", 0) != null && getmeter("stam", 0).a < 0.75){
+		if(OptWnd.autoDrinkTeaWhileWorkingCheckBox.a && getmeter("stam", 0) != null && getmeter("stam", 0).a < 0.75){
 			if(p == 0 && System.currentTimeMillis() > lastAutoDrinkTime + 1000 || System.currentTimeMillis() > lastAutoDrinkTime + 3500){
 				lastAutoDrinkTime = System.currentTimeMillis();
 				drink(0.99);
@@ -1649,10 +1646,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			quickslots.simulateclick(QuickSlotsWdg.lc);
 			return(true);
 		} else if(kb_toggleCollisionBoxes.key().match(ev)) {
-			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(!Gob.showCollisionBoxes);
+			OptWnd.toggleGobCollisionBoxesDisplayCheckBox.set(!OptWnd.toggleGobCollisionBoxesDisplayCheckBox.a);
 			return(true);
 		} else if(kb_toggleHidingBoxes.key().match(ev)) {
-			OptWnd.toggleGobHidingCheckBox.set(!Gob.hideObjects);
+			OptWnd.toggleGobHidingCheckBox.set(!OptWnd.toggleGobHidingCheckBox.a);
 			return(true);
 		} else if(kb_aggroNearestTargetButton.key().match(ev)) {
 			this.runActionThread(new Thread(new AggroNearestTarget(this, this.lastopponent), "AggroNearestTarget"));
@@ -1725,7 +1722,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    prog.move(sz.sub(prog.sz).mul(0.5, 0.35));
 	actionBar1.c = new Coord(blpw + UI.scale(10), sz.y - actionBar1.sz.y - UI.scale(5));
 	actionBar2.c = new Coord(blpw + UI.scale(10), sz.y - actionBar1.sz.y - actionBar2.sz.y - UI.scale(5));
-	if (OptWnd.dragWindowsInWhenResizing) {
+	if (OptWnd.enableDragWindowsInWhenResizingCheckBox.a) {
 		for (Window wnd : getAllWindows()) {
 			wnd.preventDraggingOutside();
 		}
@@ -1783,11 +1780,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 
     private double lastmsgsfx = 0;
-
-	public static boolean togglePartyPermissionsOnLogin = Utils.getprefb("togglePartyPermissionsOnLogin", false);
 	private boolean partyPermsOnLoginToggled = false;
-
-	public static boolean toggleItemStackingOnLogin = Utils.getprefb("toggleItemStackingOnLogin", false);
 	private boolean itemStackingOnLoginToggled = false;
     public void msg(String msg) {
 		boolean noMsgTho = false;
@@ -1801,7 +1794,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			togglebuff(msg, Bufflist.partyperm);
 			if (!partyPermsOnLoginToggled){
 				noMsgTho = true;
-				if((togglePartyPermissionsOnLogin && msg.endsWith("off.")) || (!togglePartyPermissionsOnLogin && msg.endsWith("on."))){
+				if((OptWnd.togglePartyPermissionsOnLoginCheckBox.a && msg.endsWith("off.")) || (!OptWnd.togglePartyPermissionsOnLoginCheckBox.a && msg.endsWith("on."))){
 					wdgmsg("act", "permshare");
 				} else {
 					partyPermsOnLoginToggled = true;
@@ -1811,7 +1804,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			togglebuff(msg, Bufflist.itemstacking);
 			if (!itemStackingOnLoginToggled){
 				noMsgTho = true;
-				if((toggleItemStackingOnLogin && msg.endsWith("off.")) || (!toggleItemStackingOnLogin && msg.endsWith("on."))){
+				if((OptWnd.toggleItemStackingOnLoginCheckBox.a && msg.endsWith("off.")) || (!OptWnd.toggleItemStackingOnLoginCheckBox.a && msg.endsWith("on."))){
 					wdgmsg("act", "itemcomb");
 				} else {
 					itemStackingOnLoginToggled = true;
@@ -2076,7 +2069,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 
 		private void saveLocally() {
-			String chrid = gameui().chrid;
+			String chrid = ui.gui.chrid;
 			if (chrid != "") {
 				String[] resnames = new String[144];
 				for (int i = (curbelt * 12); i < (curbelt * 12)+12; i++) {
@@ -2138,7 +2131,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		public boolean drop(Coord c, Coord ul) {
 			int slot = beltslot(c);
 			if(slot != -1) {
-				GameUI gui = gameui();
+				GameUI gui = ui.gui;
 				WItem item = gui.vhand;
 				if (item != null && item.item != null) {
 					belt[slot] = gui.new BeltSlot(slot, item.item.res, Message.nil, 0);
@@ -2199,9 +2192,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 					GameUI.this.wdgmsg("belt", slot, 1, ui.modflags());
 				} else {
 					if (res.name.startsWith("paginae/nightdawg"))
-						gameui().menu.use(act.ad);
+						ui.gui.menu.use(act.ad);
 					else
-						gameui().act(act.ad);
+						ui.gui.act(act.ad);
 				}
 			} catch (Exception e) {
 			}

@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class GobQualityInfo extends GobInfo {
-	public static boolean showGobQualityInfo = Utils.getprefb("showGobQualityInfo", true);
     private static final Color Q_COL = new Color(235, 252, 255, 255);
     private static final Color BG = new Color(0, 0, 0, 0);
     public static Pattern GOB_Q = Pattern.compile("Quality: (\\d+)");
@@ -34,7 +33,7 @@ public class GobQualityInfo extends GobInfo {
     
     @Override
 	protected boolean enabled() {
-		return showGobQualityInfo;
+		return OptWnd.toggleGobQualityInfoCheckBox.a;
 	}
 
     @Override

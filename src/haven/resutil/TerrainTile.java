@@ -66,7 +66,7 @@ public class TerrainTile extends Tiler implements Tiler.MCons, Tiler.CTrans {
 		float[][] buf1 = new float[var.length + 1][vs.l];
 		float[][] lwc = new float[var.length + 1][vs.l];
 
-		if (!OptWnd.noTileSmoothing) {
+		if (!OptWnd.tileSmoothingCheckBox.a) {
 			for (int i = 0; i < var.length + 1; i++) {
 				for (int y = vs.ul.y; y < vs.br.y; y++) {
 					for (int x = vs.ul.x; x < vs.br.x; x++) {
@@ -150,7 +150,7 @@ public class TerrainTile extends Tiler implements Tiler.MCons, Tiler.CTrans {
 	}
 
 	private void setbase(float[][] bv) {
-		if (OptWnd.noTileSmoothing){
+		if (OptWnd.tileSmoothingCheckBox.a){
 			for (int y = vs.ul.y; y < vs.br.y - 1; y++) {
 				for (int x = vs.ul.x; x < vs.br.x - 1; x++) {
 					bv[0][vs.o(x, y)] = 1;

@@ -53,7 +53,7 @@ public class CaveTile extends Tiler {
 
 	public Vertex[] fortile(Coord tc) {
 	    if(wv[cs.o(tc)] == null) {
-			if (OptWnd.flatCaveWalls) {
+			if (OptWnd.flatCaveWallsCheckBox.a) {
 				Vertex[] buf = wv[cs.o(tc)] = new Vertex[4];
 				buf[0] = ms.fortile(tc);
 				buf[1] = ms.new Vertex(buf[0].x, buf[0].y, buf[0].z + 5f);
@@ -93,7 +93,7 @@ public class CaveTile extends Tiler {
 		    ground = ts.tfac().create(id, ts);
 		}
 	    }
-		if (OptWnd.flatCaveWalls)
+		if (OptWnd.flatCaveWallsCheckBox.a)
 			return (new CaveTile(id, wtex, ground));
 	    return(new CaveTile(id, set, wtex, ground));
 	}
@@ -165,7 +165,7 @@ public class CaveTile extends Tiler {
 	}
 		if (ground != null) {
 			Tex tex = tiles.get(wtex);
-			if (tex == null && OptWnd.flatCaveWalls) {
+			if (tex == null && OptWnd.flatCaveWallsCheckBox.a) {
 				for (Pipe.Op gs : wtex.statesForTiles) {
 					if (gs instanceof TexRender.TexDraw) {
 						if (gs.toString().contains("gfx/tiles/mountain-tex"))
@@ -175,7 +175,7 @@ public class CaveTile extends Tiler {
 					}
 				}
 			}
-			if (tex != null && OptWnd.flatCaveWalls) {
+			if (tex != null && OptWnd.flatCaveWallsCheckBox.a) {
 				if (ground instanceof GroundTile) {
 					MapMesh.MapSurface s = m.data(m.gnd);
 					GroundTile grn = ((GroundTile) ground);

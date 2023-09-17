@@ -93,7 +93,7 @@ public class Fightsess extends Widget {
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
 	    int nact = (Integer)args[0];
-		if(OptWnd.combatStartSoundEnabled) {
+		if(OptWnd.combatStartSoundEnabledCheckbox.a) {
 			try {
 				File file = new File("Alarms/" + OptWnd.combatStartSoundFilename.buf.line() + ".wav");
 				if(file.exists()) {
@@ -229,7 +229,7 @@ public class Fightsess extends Widget {
 	};
 
     private static Coord actc(int i) {
-	int rl = singleRowCombatMovesSetting ? 10 : 5;
+	int rl = OptWnd.singleRowCombatMovesCheckBox.a ? 10 : 5;
 	return(new Coord((actpitch * (i % rl)) - (((rl - 1) * actpitch) / 2), UI.scale(125) + ((i / rl) * actpitch)));
     }
 
@@ -239,30 +239,20 @@ public class Fightsess extends Widget {
     private Indir<Resource> lastact1 = null, lastact2 = null;
     private Text lastacttip1 = null, lastacttip2 = null;
     private Effect curtgtfx;
-
-	public static Boolean altui = true;
-	public static Boolean showInfoBackground = Utils.getprefb("CombatInfoBackgroundToggled", false);
-	public static Boolean drawFloatingCombatData = true;
-	public static Boolean drawFloatingCombatDataOnCur = true;
-	public static int combaty0HeightInt = 400;
-	public static int combatbottomHeightInt = 100;
-
 	public static boolean markCombatTargetSetting = true;
-	public static boolean showKeybindCombatSetting = true;
-	public static boolean singleRowCombatMovesSetting = true;
 	public void draw(GOut g) {
 		updatepos();
-		GameUI gui = gameui();
+		GameUI gui = ui.gui;
 		tickAlert++;
 		if(tickAlert > 20){
 			tickAlert = 0;
 		}
-		if (Fightsess.drawFloatingCombatData) {
+		if (OptWnd.drawFloatingCombatDataOnOthersCheckBox.a) {
 			try {
 				for (Map.Entry<Fightview.Relation, Coord> entry : relations.entrySet()) {
 					Fightview.Relation otherRelation = entry.getKey();
 					Coord sc = entry.getValue();
-					if (sc == null || (fv.current == otherRelation && !Fightsess.drawFloatingCombatDataOnCur)) {
+					if (sc == null || (fv.current == otherRelation && !OptWnd.drawFloatingCombatDataOnCurrentTargetCheckBox.a)) {
 						continue;
 					}
 					drawCombatData(g, otherRelation, sc);
@@ -274,15 +264,15 @@ public class Fightsess extends Widget {
 
 
 		double x1 = gui.sz.x / 2.0;
-		double y1 = gui.sz.y - ((gui.sz.y / 500.0) * combaty0HeightInt);
+		double y1 = gui.sz.y - ((gui.sz.y / 500.0) * OptWnd.combatUITopPanelHeightSlider.val);
 		int x0 = (int)x1; // I have to do it like this, otherwise it's not consistent when resizing the window
 		int y0 = (int)y1; // I have to do it like this, otherwise it's not consistent when resizing the window
 
-		double bottom1 = gui.sz.y - ((gui.sz.y / 500.0) * combatbottomHeightInt);
+		double bottom1 = gui.sz.y - ((gui.sz.y / 500.0) * OptWnd.combatUIBottomPanelHeightSlider.val);
 		int bottom = (int)bottom1;// I have to do it like this, otherwise it's not consistent when resizing the window
 		double now = Utils.rtime();
 
-		if (altui) { // ND: I had to copy this entire crap from Buff.java, cause of how g.reclip adds the buffs
+		if (OptWnd.useProperCombatUICheckBox.a) { // ND: I had to copy this entire crap from Buff.java, cause of how g.reclip adds the buffs
 			ArrayList<Buff> myOpenings = new ArrayList<>(fv.buffs.children(Buff.class));
 			myOpenings.sort((o2, o1) -> Integer.compare(getOpeningValue(o1), getOpeningValue(o2)));
 			Buff maneuver = null;
@@ -339,11 +329,11 @@ public class Fightsess extends Widget {
 			}
 		} else {
 			for(Buff buff : fv.buffs.children(Buff.class))
-				buff.draw(g.reclip(altui ? new Coord(x0 - buff.c.x - Buff.cframe.sz().x - UI.scale(80), y0 - UI.scale(20)) : pcc.add(- buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
+				buff.draw(g.reclip(OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 - buff.c.x - Buff.cframe.sz().x - UI.scale(80), y0 - UI.scale(20)) : pcc.add(- buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
 		}
 
 		if(fv.current != null) {
-			if (altui) { // ND: I had to copy this entire crap from Buff.java, cause of how g.reclip adds the buffs
+			if (OptWnd.useProperCombatUICheckBox.a) { // ND: I had to copy this entire crap from Buff.java, cause of how g.reclip adds the buffs
 				ArrayList<Buff> enemyOpenings = new ArrayList<>(fv.current.buffs.children(Buff.class));
 				enemyOpenings.sort((o1, o2) -> Integer.compare(getOpeningValue(o2), getOpeningValue(o1)));
 				Buff maneuver = null;
@@ -408,28 +398,28 @@ public class Fightsess extends Widget {
 				}
 			} else {
 				for(Buff buff : fv.current.buffs.children(Buff.class))
-					buff.draw(g.reclip(altui ? new Coord(x0 + buff.c.x + UI.scale(80), y0 - UI.scale(20)) : pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
+					buff.draw(g.reclip(OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 + buff.c.x + UI.scale(80), y0 - UI.scale(20)) : pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
 			}
 
-			g.aimage(ip.get().tex(), altui ? new Coord(x0 - UI.scale(40), y0 - UI.scale(30)) : pcc.add(-UI.scale(75), 0), 1, 0.5);
-			g.aimage(oip.get().tex(), altui ? new Coord(x0 + UI.scale(40), y0 - UI.scale(30)) : pcc.add(UI.scale(75), 0), 0, 0.5);
+			g.aimage(ip.get().tex(), OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 - UI.scale(40), y0 - UI.scale(30)) : pcc.add(-UI.scale(75), 0), 1, 0.5);
+			g.aimage(oip.get().tex(), OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 + UI.scale(40), y0 - UI.scale(30)) : pcc.add(UI.scale(75), 0), 0, 0.5);
 
-			if (markCombatTargetSetting) {
+			if (OptWnd.markCurrentCombatTargetCheckBox.a) {
 				curtgtfx = fxon(fv.current.gobid, tgtfx, curtgtfx);
 			}
 		}
 
 		{
-			Coord cdc = altui ? new Coord(x0, y0) : pcc.add(cmc);
+			Coord cdc = OptWnd.useProperCombatUICheckBox.a ? new Coord(x0, y0) : pcc.add(cmc);
 			Coord cdc2 = new Coord(x0, y0 - UI.scale(40));
 			if(now < fv.atkct) {
 				double a = (now - fv.atkcs) / (fv.atkct - fv.atkcs);
 				g.chcolor(225, 0, 0, 220);
-				g.fellipse(cdc, UI.scale(altui ? new Coord(24, 24) : new Coord(22, 22)), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)), Math.PI / 2);
+				g.fellipse(cdc, UI.scale(OptWnd.useProperCombatUICheckBox.a ? new Coord(24, 24) : new Coord(22, 22)), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)), Math.PI / 2);
 				g.chcolor();
 				g.aimage(Text.renderstroked(fmt1DecPlace(fv.atkct - now)).tex(), cdc, 0.5, 0.5);
 			}
-			if (altui) {
+			if (OptWnd.useProperCombatUICheckBox.a) {
 				if (fv.cooldownUpdated){
 					fv.cooldownUpdated = false;
 					currentCooldown = fv.atkct - now;
@@ -437,7 +427,7 @@ public class Fightsess extends Widget {
 				}
 				g.aimage(Text.renderstroked(fmt2DecPlaces(currentCooldown)).tex(), cdc2, 0.5, 0.5);
 			}
-			g.image(cdframe, altui ? new Coord(x0, y0).sub(cdframe.sz().div(2)) : cdc.sub(cdframe.sz().div(2)));
+			g.image(cdframe, OptWnd.useProperCombatUICheckBox.a ? new Coord(x0, y0).sub(cdframe.sz().div(2)) : cdc.sub(cdframe.sz().div(2)));
 		}
 		try {
 			Indir<Resource> lastact = fv.lastact;
@@ -448,7 +438,7 @@ public class Fightsess extends Widget {
 			double lastuse = fv.lastuse;
 			if(lastact != null) {
 				Tex ut = lastact.get().layer(Resource.imgc).tex();
-				Coord useul = altui ? new Coord(x0 - UI.scale(69), y0 - UI.scale(80)) : pcc.add(usec1).sub(ut.sz().div(2));
+				Coord useul = OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 - UI.scale(69), y0 - UI.scale(80)) : pcc.add(usec1).sub(ut.sz().div(2));
 				g.image(ut, useul);
 				g.image(useframe, useul.sub(useframeo));
 				double a = now - lastuse;
@@ -471,7 +461,7 @@ public class Fightsess extends Widget {
 				double lastuse = fv.current.lastuse;
 				if(lastact != null) {
 					Tex ut = lastact.get().layer(Resource.imgc).tex();
-					Coord useul = altui ? new Coord(x0 + UI.scale(69) - ut.sz().x, y0 - UI.scale(80)) : pcc.add(usec2).sub(ut.sz().div(2));
+					Coord useul = OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 + UI.scale(69) - ut.sz().x, y0 - UI.scale(80)) : pcc.add(usec2).sub(ut.sz().div(2));
 					g.image(ut, useul);
 					g.image(useframe, useul.sub(useframeo));
 					double a = now - lastuse;
@@ -486,7 +476,7 @@ public class Fightsess extends Widget {
 			}
 		}
 		for(int i = 0; i < actions.length; i++) {
-			Coord ca = altui ? new Coord(x0 - 18, bottom - UI.scale(150)).add(actc(i)) : pcc.add(actc(i));
+			Coord ca = OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 - 18, bottom - UI.scale(150)).add(actc(i)) : pcc.add(actc(i));
 			Action act = actions[i];
 			try {
 				if(act != null) {
@@ -499,7 +489,7 @@ public class Fightsess extends Widget {
 						g.prect(ca.add(hsz), hsz.inv(), hsz, (1.0 - a) * Math.PI * 2);
 						g.chcolor();
 					}
-					if (showKeybindCombatSetting) {
+					if (OptWnd.showCombatHotkeysUICheckBox.a) {
 					String keybindString = kb_acts[i].key().name();
 					g.aimage(new TexI(Utils.outline2(keybindsFoundry.render(keybindString).img, Color.BLACK, true)), ca.add((int)(img.sz().x/2), img.sz().y + UI.scale(8)), 0.5, 0.5);
 					}
@@ -516,7 +506,7 @@ public class Fightsess extends Widget {
 		}
 		IMeter.Meter stam = gui.getmeter("stam", 0);
 		IMeter.Meter hp = gui.getmeter("hp", 0);
-		if (altui) {
+		if (OptWnd.useProperCombatUICheckBox.a) {
 			if (stam != null) {
 				Coord msz = UI.scale(new Coord(150, 20));
 				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(70));
@@ -596,7 +586,7 @@ public class Fightsess extends Widget {
 			openings = rels.buffs.children(Buff.class).size() > 1;
 		}
 
-		if (showInfoBackground) {
+		if (OptWnd.combatInfoBackgroundToggledCheckBox.a) {
 			g.chcolor(new Color(0, 0, 0, 80));
 			g.frect(bgTopLeftFrame, UI.scale(new Coord(82, 24)));
 		}
@@ -653,7 +643,7 @@ public class Fightsess extends Widget {
 
 		//openings only if has any
 		if (openings) {
-			if (showInfoBackground) {
+			if (OptWnd.combatInfoBackgroundToggledCheckBox.a) {
 				g.chcolor(new Color(0, 0, 0, 80));
 				g.frect(new Coord(bgTopLeftFrame.x, bgTopLeftFrame.y + UI.scale(24)), UI.scale(new Coord(82, 26)));
 			}
@@ -699,7 +689,7 @@ public class Fightsess extends Widget {
 		//add cleave cooldown indicator
 		if (cleaveUsed) {
 			long timer = ((cleaveDuration - (System.currentTimeMillis() - rels.lastActCleave)));
-			if (showInfoBackground) {
+			if (OptWnd.combatInfoBackgroundToggledCheckBox.a) {
 				g.chcolor(new Color(0, 0, 0, 80));
 				g.frect(new Coord(bgTopLeftFrame.x, bgTopLeftFrame.y - UI.scale(13)), UI.scale(new Coord(82, 13)));
 			}
@@ -714,7 +704,7 @@ public class Fightsess extends Widget {
 		//add defense cooldown indicator, just like cleave
 		if (defenseUsed) {
 			long timer = ((rels.lastDefenceDuration - (System.currentTimeMillis() - rels.lastActDefence)));
-			if (showInfoBackground) {
+			if (OptWnd.combatInfoBackgroundToggledCheckBox.a) {
 				g.chcolor(new Color(0, 0, 0, 80));
 				g.frect(new Coord(bgTopLeftFrame.x, bgTopLeftFrame.y - UI.scale(13)), UI.scale(new Coord(82, 13)));
 			}
@@ -762,7 +752,7 @@ public class Fightsess extends Widget {
 		g.rect(sc, new Coord(msz.x, msz.y));
 		g.chcolor(Color.WHITE);
 		String staminaBarText = Utils.fmt1DecPlace((int)(m.a*100));
-		Gob myself = gameui().map.player();
+		Gob myself = ui.gui.map.player();
 		if (myself != null && myself.imDrinking) {
 			g.chcolor(new Color(0, 222, 0));
 			staminaBarText = staminaBarText + " (Drinking)";
@@ -783,16 +773,16 @@ public class Fightsess extends Widget {
     private Text acttip = null;
     public static final String[] keytips = {"1", "2", "3", "4", "5", "Shift+1", "Shift+2", "Shift+3", "Shift+4", "Shift+5"};
 	public Object tooltip(Coord c, Widget prev) {
-		GameUI gui = gameui();
+		GameUI gui = ui.gui;
 		double x1 = gui.sz.x / 2.0;
-		double y1 = gui.sz.y - ((gui.sz.y / 500.0) * combaty0HeightInt);
+		double y1 = gui.sz.y - ((gui.sz.y / 500.0) * OptWnd.combatUITopPanelHeightSlider.val);
 		int x0 = (int)x1; // I have to do it like this, otherwise it's not consistent when resizing the window
 		int y0 = (int)y1; // I have to do it like this, otherwise it's not consistent when resizing the window
 
-		double bottom1 = gui.sz.y - ((gui.sz.y / 500.0) * combatbottomHeightInt);
+		double bottom1 = gui.sz.y - ((gui.sz.y / 500.0) * OptWnd.combatUIBottomPanelHeightSlider.val);
 		int bottom = (int)bottom1;// I have to do it like this, otherwise it's not consistent when resizing the window
 		for(Buff buff : fv.buffs.children(Buff.class)) {
-			Coord dc = altui ? new Coord(x0 - buff.c.x - Buff.cframe.sz().x - UI.scale(80), y0 - UI.scale(20)) : pcc.add(-buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y);
+			Coord dc = OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 - buff.c.x - Buff.cframe.sz().x - UI.scale(80), y0 - UI.scale(20)) : pcc.add(-buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y);
 			if(c.isect(dc, buff.sz)) {
 				Object ret = buff.tooltip(c.sub(dc), prevtt);
 				if(ret != null) {
@@ -803,7 +793,7 @@ public class Fightsess extends Widget {
 		}
 		if(fv.current != null) {
 			for(Buff buff : fv.current.buffs.children(Buff.class)) {
-				Coord dc = altui ? new Coord(x0 + buff.c.x + UI.scale(80), y0 - UI.scale(20)) : pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y);
+				Coord dc = OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 + buff.c.x + UI.scale(80), y0 - UI.scale(20)) : pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y);
 
 				if(c.isect(dc, buff.sz)) {
 					Object ret = buff.tooltip(c.sub(dc), prevtt);
@@ -816,7 +806,7 @@ public class Fightsess extends Widget {
 		}
 		final int rl = 5;
 		for(int i = 0; i < actions.length; i++) {
-			Coord ca = altui ? new Coord(x0 - 18, bottom - UI.scale(150)).add(actc(i)).add(16, 16) : pcc.add(actc(i));
+			Coord ca = OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 - 18, bottom - UI.scale(150)).add(actc(i)).add(16, 16) : pcc.add(actc(i));
 			Indir<Resource> act = (actions[i] == null) ? null : actions[i].res;
 			try {
 				if(act != null) {
@@ -835,7 +825,7 @@ public class Fightsess extends Widget {
 			Indir<Resource> lastact = this.lastact1;
 			if(lastact != null) {
 				Coord usesz = lastact.get().layer(Resource.imgc).sz;
-				Coord lac = altui ? new Coord(x0 - UI.scale(69), y0 - UI.scale(80)).add(usesz.div(2)) : pcc.add(usec1);
+				Coord lac = OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 - UI.scale(69), y0 - UI.scale(80)).add(usesz.div(2)) : pcc.add(usec1);
 				if(c.isect(lac.sub(usesz.div(2)), usesz)) {
 					if(lastacttip1 == null)
 						lastacttip1 = Text.render(lastact.get().layer(Resource.tooltip).t);
@@ -847,7 +837,7 @@ public class Fightsess extends Widget {
 			Indir<Resource> lastact = this.lastact2;
 			if(lastact != null) {
 				Coord usesz = lastact.get().layer(Resource.imgc).sz;
-				Coord lac = altui ? new Coord(x0 + UI.scale(69) - usesz.x, y0 - UI.scale(80)).add(usesz.div(2)) : pcc.add(usec2);
+				Coord lac = OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 + UI.scale(69) - usesz.x, y0 - UI.scale(80)).add(usesz.div(2)) : pcc.add(usec2);
 				if(c.isect(lac.sub(usesz.div(2)), usesz)) {
 					if(lastacttip2 == null)
 						lastacttip2 = Text.render(lastact.get().layer(Resource.tooltip).t);

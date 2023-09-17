@@ -104,14 +104,14 @@ public class CookingRecipes extends Window {
         add(new Button(UI.scale(50), "Export") {
             @Override
             public void click() {
-                ImportExportHelper.exportRecipes(gameui());
+                ImportExportHelper.exportRecipes(ui.gui);
             }
         }, UI.scale(1015, 658));
 
         add(new Button(UI.scale(50), "Import") {
             @Override
             public void click() {
-                ImportExportHelper.importRecipes(gameui());
+                ImportExportHelper.importRecipes(ui.gui);
             }
         }, UI.scale(950, 658));
 

@@ -327,7 +327,7 @@ public class Makewindow extends Widget {
 				 pag -> pag.button().name(), pag ->pag.button().img(),
 				 pag -> {
 					pag.button().use(new MenuGrid.Interaction(1, ui.modflags()));
-				 	gameui().makewnd.setLastAction(pag);
+					 ui.gui.makewnd.setLastAction(pag);
 				})
 			.addat(this, cc.add(UI.scale(5, 5))).tick(dt);
 		}
@@ -355,7 +355,7 @@ public class Makewindow extends Widget {
 		    g.image(t, new Coord(x, qmy));
 		    x += t.sz().x + UI.scale(1);
 
-			Glob.CAttr attr = gameui().chrwdg.findattr(qm.get().basename());
+			Glob.CAttr attr = ui.gui.chrwdg.findattr(qm.get().basename());
 			if(attr != null) {
 				count++;
 				product = product * attr.comp;
@@ -407,7 +407,7 @@ public class Makewindow extends Widget {
 	private Tex buildQTex(Indir<Resource> res) {
 		BufferedImage result = PUtils.convolve(res.get().layer(Resource.imgc).img, qmodsz, CharWnd.iconfilter);
 		try {
-			Glob.CAttr attr = gameui().chrwdg.findattr(res.get().basename());
+			Glob.CAttr attr = ui.gui.chrwdg.findattr(res.get().basename());
 			if(attr != null) {
 				result = ItemInfo.catimgsh(1, result, attr.compline().img);
 			}

@@ -25,10 +25,10 @@ public class StudyInventory extends Inventory {
 
     @Override
     public void draw(GOut g) {
-        if (OptWnd.showStudyWindowHistory) {
+        if (OptWnd.showStudyWindowHistoryCheckBox.a) {
             if (histtex == null) {
                 histtex = new Tex[16];
-                String chrid = gameui().chrid;
+                String chrid = ui.gui.chrid;
                 if (chrid != "") {
                     String[] hist = Utils.getprefsa("studyhist_" + chrid, null);
                     if (hist != null) {
@@ -73,8 +73,8 @@ public class StudyInventory extends Inventory {
     public void addchild(Widget child, Object... args) {
         super.addchild(child, args);
 
-        if (OptWnd.showStudyWindowHistory) {
-            String chrid = gameui().chrid;
+        if (OptWnd.showStudyWindowHistoryCheckBox.a) {
+            String chrid = ui.gui.chrid;
             if (chrid != "") {
                 String[] hist = Utils.getprefsa("studyhist_" + chrid, new String[16]);
                 if (histtex == null) {
@@ -142,9 +142,9 @@ public class StudyInventory extends Inventory {
             if (ci != null && ((WItem) w).itemmeter.get() > 0.99) {
                 Resource.Tooltip tt = item.resource().layer(Resource.Tooltip.class);
                 if (tt != null)
-                    gameui().syslog.append("Gained" + ci.exp + " LP (" + tt.t + ")", Color.LIGHT_GRAY);
+                    ui.gui.syslog.append("Gained" + ci.exp + " LP (" + tt.t + ")", Color.LIGHT_GRAY);
 
-                if (OptWnd.playSoundOnFinishedCurio){
+                if (OptWnd.playSoundOnFinishedCurioCheckBox.a){
                     double now = System.currentTimeMillis();
                     if ((now - lastCurioAlertPlayed) > 200){ // ND: Hopefully this will prevent ear rape if multiple curios finish at the same time, lol.
                         try {
@@ -162,9 +162,9 @@ public class StudyInventory extends Inventory {
                     }
                 }
 
-                if (OptWnd.autoStudy) {
-                    Window invwnd = gameui().getwnd("Inventory");
-                    Window cupboard = gameui().getwnd("Cupboard");
+                if (OptWnd.autoStudyCheckBox.a) {
+                    Window invwnd = ui.gui.getwnd("Inventory");
+                    Window cupboard = ui.gui.getwnd("Cupboard");
                     Resource res = item.resource();
                     if (res != null) {
                         if (!replacecurio(invwnd, res, ((WItem) w).c) && cupboard != null)
@@ -179,14 +179,14 @@ public class StudyInventory extends Inventory {
 
     @Override
     public boolean mousedown(Coord c, int button) {
-        return OptWnd.lockStudyWindow ? false : super.mousedown(c, button);
+        return OptWnd.lockStudyWindowCheckBox.a ? false : super.mousedown(c, button);
     }
 
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
-        if (OptWnd.lockStudyWindow && msg.equals("invxf")) {
+        if (OptWnd.lockStudyWindowCheckBox.a && msg.equals("invxf")) {
             return;
-        } else if (OptWnd.lockStudyWindow && msg.equals("drop")) {
+        } else if (OptWnd.lockStudyWindowCheckBox.a && msg.equals("drop")) {
             Coord c = (Coord) args[0];
             for (WItem itm : wmap.values()) {
                 for (int x = itm.c.x; x < itm.c.x + itm.sz.x; x += Inventory.sqsz.x) {

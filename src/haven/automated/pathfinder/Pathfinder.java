@@ -78,7 +78,7 @@ public class Pathfinder implements Runnable {
         long start = System.nanoTime();
         synchronized (oc) {
             for (Gob gob : oc) {
-                if (gob.isplayer(this.mv.gameui())) {
+                if (gob.isplayer(this.mv.ui.gui)) {
                     continue;
                 }
                 if (this.gob != null && this.gob.id == gob.id) {
@@ -183,7 +183,7 @@ public class Pathfinder implements Runnable {
             //System.out.println("moving to mc: " + mc);
 
             if (action != null && !it.hasNext())
-                mv.gameui().act(action);
+                mv.ui.gui.act(action);
 
             if (gob != null && !it.hasNext())
                 mv.wdgmsg("click", Coord.z, mc, clickb, modflags, 0, (int) gob.id, gob.rc.floor(posres), 0, meshid);

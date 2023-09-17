@@ -611,7 +611,7 @@ public class TunnelerBot extends Window implements Runnable {
     }
 
     public void stop() {
-        gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
+        ui.gui.map.wdgmsg("click", Coord.z, ui.gui.map.player().rc.floor(posres), 1, 0);
         if (gui.map.pfthread != null) {
             gui.map.pfthread.interrupt();
         }

@@ -62,7 +62,7 @@ public class TarKilnCleanerBot extends Window implements Runnable {
                         if (closest == null) {
                             active = false;
                             activeBox.set(false);
-                            gameui().error("No full tar kilns nearby.");
+                            ui.gui.error("No full tar kilns nearby.");
                             continue;
                         }
 
@@ -94,7 +94,7 @@ public class TarKilnCleanerBot extends Window implements Runnable {
     }
 
     private void dropCoal() {
-        for (WItem wItem : gameui().maininv.getAllItems()) {
+        for (WItem wItem : ui.gui.maininv.getAllItems()) {
             GItem gitem = wItem.item;
             if (gitem.getname().contains("Coal")) {
                 gitem.wdgmsg("drop", new Coord(wItem.item.sz.x / 2, wItem.item.sz.y / 2));
@@ -115,9 +115,9 @@ public class TarKilnCleanerBot extends Window implements Runnable {
     }
 
     public void stop() {
-        gameui().map.wdgmsg("click", Coord.z, gameui().map.player().rc.floor(posres), 1, 0);
-        if (gameui().map.pfthread != null) {
-            gameui().map.pfthread.interrupt();
+        ui.gui.map.wdgmsg("click", Coord.z, ui.gui.map.player().rc.floor(posres), 1, 0);
+        if (ui.gui.map.pfthread != null) {
+            ui.gui.map.pfthread.interrupt();
         }
         this.destroy();
     }

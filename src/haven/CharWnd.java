@@ -2471,32 +2471,28 @@ public class CharWnd extends Window {
 	public static CheckBox showStudyWindowHistoryCheckBox = new CheckBox("Show Study Report History"){
 		{a = Utils.getprefb("showStudyWindowHistory", false);}
 		public void set(boolean val) {
-			if (OptWnd.showStudyWindowHistoryCheckBox != null)
-				OptWnd.showStudyWindowHistoryCheckBox.set(val);
+			OptWnd.showStudyWindowHistoryCheckBox.set(val);
 			a = val;
 		}
 	};
 	public static CheckBox lockStudyWindowCheckBox = new CheckBox("Lock Study Report"){
 		{a = Utils.getprefb("lockStudyWindow", false);}
 		public void set(boolean val) {
-			if (OptWnd.lockStudyWindowCheckBox != null)
-				OptWnd.lockStudyWindowCheckBox.set(val);
+			OptWnd.lockStudyWindowCheckBox.set(val);
 			a = val;
 		}
 	};
 	public static CheckBox playSoundOnFinishedCurioCheckBox = new CheckBox("Sound Alert for Finished Curiosities"){
 		{a = Utils.getprefb("playSoundOnFinishedCurio", false);}
 		public void set(boolean val) {
-			if (OptWnd.playSoundOnFinishedCurioCheckBox != null)
-				OptWnd.playSoundOnFinishedCurioCheckBox.set(val);
+			OptWnd.playSoundOnFinishedCurioCheckBox.set(val);
 			a = val;
 		}
 	};
 	public static CheckBox autoStudyCheckBox = new CheckBox("Auto-Study from Inventory"){
 		{a = Utils.getprefb("autoStudy", false);}
 		public void set(boolean val) {
-			if (OptWnd.autoStudyCheckBox != null)
-				OptWnd.autoStudyCheckBox.set(val);
+			OptWnd.autoStudyCheckBox.set(val);
 			a = val;
 		}
 	};

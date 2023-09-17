@@ -121,26 +121,26 @@ public class Pointer extends Widget {
 
     public void draw(GOut g) {
 		this.lc = null;
-		if(tc == null || gameui() == null || gameui().map == null)
+		if(tc == null || ui.gui == null || ui.gui.map == null)
 			return;
 		Gob gob = (gobid < 0) ? null : ui.sess.glob.oc.getgob(gobid);
 		Coord3f sl;
 		Coord2d gobrc;
 		if(gob != null) {
 			try {
-				sl = gameui().map.screenxf(gob.getc());
+				sl = ui.gui.map.screenxf(gob.getc());
 				gobrc = gob.rc;
 			} catch(Loading l) {
 				return;
 			}
 		} else {
-			sl = gameui().map.screenxf(tc);
+			sl = ui.gui.map.screenxf(tc);
 			gobrc = tc;
 		}
 		if (sl != null) {
-			final Double angle = gameui().map.screenangle(gobrc, true);
+			final Double angle = ui.gui.map.screenangle(gobrc, true);
 			if(!angle.equals(Double.NaN)) {
-				drawarrow(g, gameui().map.screenangle(gobrc, true));
+				drawarrow(g, ui.gui.map.screenangle(gobrc, true));
 			} else {
 				drawarrow(g, new Coord(sl));
 			}
@@ -185,10 +185,10 @@ public class Pointer extends Widget {
     }
 
     public Object tooltip(Coord c, Widget prev) {
-		if((lc != null) && (lc.dist(c) < 20) && this.gameui().map.player() != null) {
+		if((lc != null) && (lc.dist(c) < 20) && this.ui.gui.map.player() != null) {
 			if (tooltip instanceof Widget.KeyboundTip) {
 				try {
-					Gob me = this.gameui().map.player();
+					Gob me = this.ui.gui.map.player();
 					int cdist = (int) (Math.ceil(me.rc.dist(tc) / 11.0));
 					if (cdist != dist) {
 						dist = cdist;

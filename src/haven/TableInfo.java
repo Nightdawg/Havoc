@@ -5,8 +5,7 @@ public class TableInfo extends Widget {
     public static CheckBox saveCutleryCheckBox = new CheckBox("Anti Cutlery Breakage"){
         {a = Utils.getprefb("antiCutleryBreakage", true);}
         public void set(boolean val) {
-            if (OptWnd.saveCutleryCheckBox != null)
-                OptWnd.saveCutleryCheckBox.set(val);
+            OptWnd.saveCutleryCheckBox.set(val);
             a = val;
         }
     };

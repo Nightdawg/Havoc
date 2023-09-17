@@ -14,7 +14,7 @@ public class QuickSlotsWdg extends Widget implements DTarget {
 
     @Override
     public void draw(GOut g) {
-        Equipory e = gameui().getequipory();
+        Equipory e = ui.gui.getequipory();
         if (e != null) {
             g.image(sbg, Coord.z);
             WItem left = e.slots[6];
@@ -43,7 +43,7 @@ public class QuickSlotsWdg extends Widget implements DTarget {
 
     @Override
     public boolean drop(Coord cc, Coord ul) {
-        Equipory e = gameui().getequipory();
+        Equipory e = ui.gui.getequipory();
         if (e != null) {
             e.wdgmsg("drop", cc.x <= 47 ? 6 : 7);
             return true;
@@ -53,7 +53,7 @@ public class QuickSlotsWdg extends Widget implements DTarget {
 
     @Override
     public boolean iteminteract(Coord cc, Coord ul) {
-        Equipory e = gameui().getequipory();
+        Equipory e = ui.gui.getequipory();
         if (e != null) {
             WItem w = e.slots[cc.x <= 47 ? 6 : 7];
             if (w != null) {
@@ -78,7 +78,7 @@ public class QuickSlotsWdg extends Widget implements DTarget {
             dc = c;
             return true;
         }
-        Equipory e = gameui().getequipory();
+        Equipory e = ui.gui.getequipory();
         if (e != null) {
             WItem w = e.slots[c.x <= 47 ? 6 : 7];
             if (w != null) {
@@ -98,7 +98,7 @@ public class QuickSlotsWdg extends Widget implements DTarget {
     }
 
     public void simulateclick(Coord c) {
-        Equipory e = gameui().getequipory();
+        Equipory e = ui.gui.getequipory();
         if (e != null) {
             WItem w = e.slots[c.x <= 47 ? 6 : 7];
             if (w != null)
@@ -132,9 +132,9 @@ public class QuickSlotsWdg extends Widget implements DTarget {
             this.c.x = 0;
         if (this.c.y < 0)
             this.c.y = 0;
-        if (this.c.x > (gameui().sz.x - this.sz.x))
-            this.c.x = gameui().sz.x - this.sz.x;
-        if (this.c.y > (gameui().sz.y - this.sz.y))
-            this.c.y = gameui().sz.y - this.sz.y;
+        if (this.c.x > (ui.gui.sz.x - this.sz.x))
+            this.c.x = ui.gui.sz.x - this.sz.x;
+        if (this.c.y > (ui.gui.sz.y - this.sz.y))
+            this.c.y = ui.gui.sz.y - this.sz.y;
     }
 }

@@ -288,8 +288,8 @@ public class UI {
 								for (ItemInfo ii : item.item.info()) {
 									if (ii instanceof Wear) {
 										Wear wear = (Wear) ii;
-										if (OptWnd.antiCutleryBreakage && wear.d == wear.m - 1&& item.item.getres() != null && (!recentlyTakenCutlery.containsKey(item.item.getres().name) || System.currentTimeMillis() - recentlyTakenCutlery.get(item.item.getres().name) > 500 )) { // About to break
-											gameui().error("The " + item.item.getname() + " is almost broken! Anti cutlery breakage system moved it to your inventory. Polish it or replace it.");
+										if (OptWnd.saveCutleryCheckBox.a && wear.d == wear.m - 1&& item.item.getres() != null && (!recentlyTakenCutlery.containsKey(item.item.getres().name) || System.currentTimeMillis() - recentlyTakenCutlery.get(item.item.getres().name) > 500 )) { // About to break
+											ui.gui.error("The " + item.item.getname() + " is almost broken! Anti cutlery breakage system moved it to your inventory. Polish it or replace it.");
 											item.item.wdgmsg("transfer", Coord.z);
 											recentlyTakenCutlery.put(item.item.getres().name, System.currentTimeMillis());
 										}

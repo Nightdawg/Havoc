@@ -41,7 +41,7 @@ public class LoginScreen extends Widget {
     public final String hostname;
     private Text error, progress;
     private Button optbtn;
-    private OptWnd opts;
+    private OptWnd opts = new OptWnd(false);
 	AccountList accounts;
 
     private String getpref(String name, String def) {
@@ -339,16 +339,10 @@ public class LoginScreen extends Widget {
 			return;
 		}
 		if(sender == optbtn) {
-			if(opts == null) {
-				opts = ui.root.adda(new OptWnd(false) { //ND: adding "ui.root." makes the options menu window not hide behind the black bars when moved over.
-//					public void hide() {
-//						/* XXX */
-//						opts.show(!opts.visible());
-//					}
-				}, 0.5, 0.5);
-			} else {
+			if (!opts.attached)
+				ui.root.adda(opts, 0.5, 0.5);
+			else
 				opts.show(!opts.visible());
-			}
 			return;
 		} else if(sender == opts) {
 			// ND: Pretty sure this part never happens, ever

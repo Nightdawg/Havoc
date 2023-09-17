@@ -157,7 +157,7 @@ public void draw(GOut g) {
 				try {
 					Resource res = bg.get();
 					if (res != null && res.name.equals("gfx/hud/meter/häst")) {
-						if (OptWnd.ponyPowerSoundEnabled && meters.get(0).a <= 0.10) {
+						if (OptWnd.ponyPowerSoundEnabledCheckbox.a && meters.get(0).a <= 0.10) {
 						try {
 							File file = new File("Alarms/" + OptWnd.ponyPowerSoundFilename.buf.line() + ".wav");
 							if (file.exists()) {
@@ -179,7 +179,7 @@ public void draw(GOut g) {
 				try {
 					Resource res = bg.get();
 					if (res != null && res.name.equals("gfx/hud/meter/nrj")) {
-						if (OptWnd.lowEnergySoundEnabled && meters.get(0).a < 0.25 && meters.get(0).a > 0.20) {
+						if (OptWnd.lowEnergySoundEnabledCheckbox.a && meters.get(0).a < 0.25 && meters.get(0).a > 0.20) {
 							try {
 								File file = new File("Alarms/" + OptWnd.lowEnergySoundFilename.buf.line() + ".wav");
 								if (file.exists()) {
@@ -201,7 +201,7 @@ public void draw(GOut g) {
 				try {
 					Resource res = bg.get();
 					if (res != null && res.name.equals("gfx/hud/meter/nrj")) {
-						if (OptWnd.lowEnergySoundEnabled && meters.get(0).a <= 0.20) {
+						if (OptWnd.lowEnergySoundEnabledCheckbox.a && meters.get(0).a <= 0.20) {
 							try {
 								File file = new File("Alarms/" + OptWnd.lowEnergySoundFilename.buf.line() + ".wav");
 								if (file.exists()) {

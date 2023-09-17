@@ -28,11 +28,11 @@ public class PartyCircles {
                 Gob gob = m.getgob();
                 if (gob == null)
                     continue;
-                if (OptWnd.partyMembersCircles && m == party.leader)
+                if (OptWnd.partyMembersCirclesCheckBox.a && m == party.leader)
                     highlight(gob, LEADER_OL_COLOR);
-                else if (OptWnd.partyMembersCircles && m.gobid == playerId && m != party.leader)
+                else if (OptWnd.partyMembersCirclesCheckBox.a && m.gobid == playerId && m != party.leader)
                     highlight(gob, MYSELF_OL_COLOR);
-                else if (OptWnd.partyMembersCircles && m != party.leader)
+                else if (OptWnd.partyMembersCirclesCheckBox.a && m != party.leader)
                     highlight(gob, MEMBER_OL_COLOR);
                 else
                     unhighlight(gob);

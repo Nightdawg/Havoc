@@ -149,7 +149,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
             @Override
             public void click() {
                 if (gui.map.player().getv() == 0) {
-                    Coord2d center = gameui().map.player().rc.div(11).floord().mul(11).add(5.5, 5.5);
+                    Coord2d center = ui.gui.map.player().rc.div(11).floord().mul(11).add(5.5, 5.5);
                     gui.map.wdgmsg("click", Coord.z, center.floor(posres), 1, 0);
                 }
             }

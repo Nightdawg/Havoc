@@ -907,7 +907,7 @@ public class MiniMap extends Widget {
     public void mvclick(MapView mv, Coord mc, Location loc, Gob gob, int button) {
 	if(mc == null) mc = ui.mc;
 	if((sessloc != null) && (sessloc.seg == loc.seg)) {
-		GameUI gui = gameui();
+		GameUI gui = ui.gui;
 		if (gob == null) {
 			if(ui.modmeta){
 				if(button == 1){
@@ -924,7 +924,7 @@ public class MiniMap extends Widget {
 					}
 				}
 			}
-			if (OptWnd.autoswitchBunnyPlateBoots) {
+			if (OptWnd.autoswitchBunnyPlateBootsCheckBox.a) {
 				try {
 					if (gui.getequipory() != null && gui.getequipory().slots != null) {
 						WItem eqboots = gui.getequipory().slots[Equipory.SLOTS.BOOTS.idx];
@@ -945,7 +945,7 @@ public class MiniMap extends Widget {
 			}
 			mv.wdgmsg("click", mc, loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres), button, ui.modflags());
 		} else {
-			if (OptWnd.autoswitchBunnyPlateBoots) {
+			if (OptWnd.autoswitchBunnyPlateBootsCheckBox.a) {
 				try {
 					WItem eqboots = gui.getequipory().slots[Equipory.SLOTS.BOOTS.idx];
 					List<WItem> invboots;
@@ -972,10 +972,10 @@ public class MiniMap extends Widget {
 			}
 		}
 			Object[] args = {mc, loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres), button, ui.modflags(), 0, (int) gob.id, gob.rc.floor(posres), 0, -1};
-			if (button == 3 && OptWnd.instantFlowerMenuCTRL) {
+			if (button == 3 && OptWnd.instantFlowerMenuCTRLCheckBox.a) {
 				mv.wdgmsg("click", args);
 				if (ui.modctrl) {
-					gameui().ui.rcvr.rcvmsg(gameui().ui.lastid+1, "cl", 0, gameui().ui.modflags());
+					ui.gui.ui.rcvr.rcvmsg(ui.gui.ui.lastid+1, "cl", 0, ui.gui.ui.modflags());
 				}
 				return;
 			}
@@ -1000,7 +1000,7 @@ public class MiniMap extends Widget {
 			Resource res = null;
 			String newbiome = biome;
 			if(loc == null) {
-				Gob player = gameui().map.player();
+				Gob player = ui.gui.map.player();
 				MCache mCache = ui.sess.glob.map;
 				if (player != null) { // ND: Do this to avoid Nullpointer crash when switching maps? (Like going from character creation zone to valhalla or the real world)
 					int tile = mCache.gettile(player.rc.div(tilesz).floor());
@@ -1052,7 +1052,7 @@ public class MiniMap extends Widget {
 	public static final Color VIEW_BORDER_COLOR = new Color(0, 0, 0, 128);
 	void drawview(GOut g) {
 		Coord2d sgridsz = new Coord2d(MCache.sgridsz);
-		Gob player = gameui().map.player();
+		Gob player = ui.gui.map.player();
 		if(player != null) {
 			Coord rc = p2c(player.rc.floor(sgridsz).sub(4, 4).mul(sgridsz));
 			Coord viewsz = VIEW_SZ.div(zoomlevel);
@@ -1109,7 +1109,7 @@ public class MiniMap extends Widget {
 	}
 
 	private void drawmovequeue(GOut g) {
-		MapView mv = gameui().map;
+		MapView mv = ui.gui.map;
 		if (mv == null){
 			return;
 		}

@@ -39,7 +39,7 @@ public class Widget {
     public Widget next, prev, child, lchild, parent;
     public int childseq;
     public boolean focustab = false, focusctl = false, hasfocus = false, visible = true;
-    private boolean attached = false;
+    public boolean attached = false;
     private boolean canfocus = false, autofocus = false;
     public boolean canactivate = false, cancancel = false;
     public Widget focused;
@@ -1523,14 +1523,15 @@ public class Widget {
 	public abstract void ntick(double a);
     }
 
-	//ND: This function gets the gameui. I got it from matias. I don't understand this static/non-static bullshit. Maybe one day I will.
-	public GameUI gameui() {
-		Widget parent = this.parent;
-		while (parent != null) {
-			if (parent instanceof GameUI)
-				return (GameUI) parent;
-			parent = parent.parent;
-		}
-		return null;
-	}
+	// ND: REPLACED BY ui.gui
+	// ND: This function gets the gameui. I got it from matias.
+//	public GameUI gameui() {
+//		Widget parent = this.parent;
+//		while (parent != null) {
+//			if (parent instanceof GameUI)
+//				return (GameUI) parent;
+//			parent = parent.parent;
+//		}
+//		return null;
+//	}
 }

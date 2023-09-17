@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class GobGrowthInfo extends GobInfo {
-	public static boolean showGobGrowthInfo = Utils.getprefb("showGobGrowthInfo", false);
     private static final int TREE_START = 10;
     private static final int BUSH_START = 30;
     private static final double TREE_MULT = 100.0 / (100.0 - TREE_START);
@@ -22,7 +21,7 @@ public class GobGrowthInfo extends GobInfo {
 
     @Override
 	protected boolean enabled() {
-		return showGobGrowthInfo;
+		return OptWnd.toggleGobGrowthInfoCheckBox.a;
 	}
 
     @Override
@@ -46,7 +45,7 @@ public class GobGrowthInfo extends GobInfo {
     private BufferedImage growth() {
 	Text.Line line = null;
 	Resource res = gob.getres();
-	if(isSpriteKind(gob, "GrowingPlant", "TrellisPlant") && !(Gob.hideObjects && OptWnd.hideCropsSetting)) {
+	if(isSpriteKind(gob, "GrowingPlant", "TrellisPlant") && !(OptWnd.toggleGobHidingCheckBox.a && OptWnd.hideCropsCheckbox.a)) {
 	    int maxStage = 0;
 	    for (FastMesh.MeshRes layer : gob.getres().layers(FastMesh.MeshRes.class)) {
 		if(layer.id / 10 > maxStage) {
@@ -67,10 +66,10 @@ public class GobGrowthInfo extends GobInfo {
 		data.skip(1);
 		int growth = data.eom() ? -1 : data.uint8();
 		if(growth < 100 && growth >= 0) {
-			if(res.name.contains("gfx/terobjs/trees") && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk") && !(Gob.hideObjects && OptWnd.hideTreesSetting)) {
+			if(res.name.contains("gfx/terobjs/trees") && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk") && !(OptWnd.toggleGobHidingCheckBox.a && OptWnd.hideTreesCheckbox.a)) {
 			growth = (int) (TREE_MULT * (growth - TREE_START));
 			isHidden = false;
-		    } else if(res.name.startsWith("gfx/terobjs/bushes") && !(Gob.hideObjects && OptWnd.hideBushesSetting)) {
+		    } else if(res.name.startsWith("gfx/terobjs/bushes") && !(OptWnd.toggleGobHidingCheckBox.a && OptWnd.hideBushesCheckbox.a)) {
 			growth = (int) (BUSH_MULT * (growth - BUSH_START));
 			isHidden = false;
 		    }

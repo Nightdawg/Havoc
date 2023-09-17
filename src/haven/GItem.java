@@ -534,7 +534,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	}
 
 	public void wdgmsg(Widget sender, String msg, Object... args) {
-		if(msg.equals("take") && this.parent != null && this.parent instanceof StudyInventory && OptWnd.lockStudyWindow) {
+		if(msg.equals("take") && this.parent != null && this.parent instanceof StudyInventory && OptWnd.lockStudyWindowCheckBox.a) {
 			return;
 		}
 		if((sender == this) && (msg == "close")) {
@@ -632,12 +632,12 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 			this.wdgmsg("drop", Coord.z);
 		}
 		if (curs != null && curs.name.equals("gfx/hud/curs/mine")) {
-			if (OptWnd.dropMinedItemsSetting && (
-					(OptWnd.dropStoneSetting && Config.mineablesStone.contains(name)) ||
-					(OptWnd.dropOreSetting && Config.mineablesOre.contains(name)) ||
-					(OptWnd.dropPreciousOreSetting && Config.mineablesOrePrecious.contains(name)) ||
-					(OptWnd.dropMinedCuriosSetting && Config.mineablesCurios.contains(name)) ||
-					(OptWnd.dropQuarryartzSetting && "quarryquartz".equals((name)))))
+			if (OptWnd.toggleDropItemsCheckBox.a && (
+					(OptWnd.dropStoneCheckbox.a && Config.mineablesStone.contains(name)) ||
+					(OptWnd.dropOreCheckbox.a && Config.mineablesOre.contains(name)) ||
+					(OptWnd.dropPreciousOreCheckbox.a && Config.mineablesOrePrecious.contains(name)) ||
+					(OptWnd.dropMinedCuriosCheckbox.a && Config.mineablesCurios.contains(name)) ||
+					(OptWnd.dropQuarryartzCheckbox.a && "quarryquartz".equals((name)))))
 			{
 				this.wdgmsg("drop", Coord.z);
 			}

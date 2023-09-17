@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 
 public class GobHealthInfo extends GobInfo {
     public static Color BG = new Color(0, 0, 0, 0);
-    public static boolean displayHealthPercentage = Utils.getprefb("gobHealthDisplayToggle", true);
 
     private GobHealth health;
 
@@ -15,7 +14,7 @@ public class GobHealthInfo extends GobInfo {
 
     @Override
     protected boolean enabled() {
-        return displayHealthPercentage;
+        return OptWnd.toggleGobHealthDisplayCheckBox.a;
     }
 
     @Override

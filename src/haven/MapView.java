@@ -524,9 +524,6 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		if (reverted) freeCamYAxisReverter = -1;
 		else freeCamYAxisReverter = 1;
 	}
-	public static boolean freeCamTiltBool = false;
-	public static float cameraHeightDistance = 15f;
-	public static int freeCameraZoomSpeed = 25;
 	public static float publicFreeCamDist = 500.0f;
 	public static int publicCurrentCameraName = 1;
 	public static float freeCamAngle = (float)Math.PI / 4.0f;
@@ -559,7 +556,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 				cc = mc;
 			else
 				cc = cc.add(mc.sub(cc).mul(cf));
-			view = haven.render.Camera.pointed(cc.add(0.0f, 0.0f, cameraHeightDistance), dist, elev, angl);
+			view = haven.render.Camera.pointed(cc.add(0.0f, 0.0f, (float) OptWnd.freeCamHeightSlider.val/10), dist, elev, angl);
 		}
 
 		public float angle() {
@@ -575,7 +572,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 
 		public void drag(Coord c) {
 			telev = elevorig - freeCamYAxisReverter * ((float)(c.y - dragorig.y) / 100.0f);
-			if (freeCamTiltBool){
+			if (OptWnd.allowLowerFreeCamTiltCheckBox.a){
 				if(telev < -0.5f) telev = -0.5f;
 			}
 			else {
@@ -587,7 +584,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		}
 
 		public boolean wheel(Coord c, int amount) {
-			float d = tdist + (amount * freeCameraZoomSpeed);
+			float d = tdist + (amount * OptWnd.freeCamZoomSpeedSlider.val);
 			if(d < 10)
 				d = 10;
 			tdist = d;
@@ -632,8 +629,6 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	}
 	static {camtypes.put("NDFree", NDFreeCam.class);}
 
-	public static Boolean isometricNDOrtho = true;
-	public static int orthoCameraZoomSpeed = 10;
 	public static float publicOrthoCamDist = 150f;
 
 	public class NDSOrthoCam extends SOrthoCam {
@@ -707,7 +702,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		}
 
 		public void release() {
-			if(isometricNDOrtho && (tfield > 100))
+			if(!OptWnd.unlockedOrthoCamCheckBox.a && (tfield > 100))
 				tangl = (float)(Math.PI * 0.5 * (Math.floor(tangl / (Math.PI * 0.5)) + 0.5));
 		}
 
@@ -720,7 +715,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		}
 
 		public boolean wheel(Coord c, int amount) {
-			chfield(tfield + amount * orthoCameraZoomSpeed);
+			chfield(tfield + amount * OptWnd.orthoCamZoomSpeedSlider.val);
 			return(true);
 		}
 
@@ -785,8 +780,8 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	this.clickmap = new ClickMap();
 	clmaptree.add(clickmap);
 	setcanfocus(true);
-	if (Gob.showCollisionBoxes) updatePlobDrawable();
-	if (Gob.hideObjects) updatePlobDrawable();
+	if (OptWnd.toggleGobCollisionBoxesDisplayCheckBox.a) updatePlobDrawable();
+	if (OptWnd.toggleGobHidingCheckBox.a) updatePlobDrawable();
 	this.partyHighlight = new PartyHighlight(glob.party, plgob);
 	this.partyCircles = new PartyCircles(glob.party, plgob);
     }
@@ -1975,7 +1970,6 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	}
     }
 
-	public static boolean isWeatherDisabled = Utils.getprefb("isWeatherDisabled", false);
     public void tick(double dt) {
 	super.tick(dt);
 	checkload();
@@ -1994,7 +1988,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	basic(Camera.class, camera);
 	amblight();
 	updsmap(amblight);
-	if (!isWeatherDisabled) updweather();
+	if (!OptWnd.disableWeatherEffectsCheckBox.a) updweather();
 	synchronized(glob.map) {
 	    terrain.tick();
 	    oltick();
@@ -2286,7 +2280,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	}
 
 	protected void hit(Coord pc, Coord2d mc, ClickData inf) {
-		GameUI gui = gameui();
+		GameUI gui = ui.gui;
 		// reset alt so we could walk with alt+lmb while having item on the cursor
 		int modflags = ui.modflags();
 		if (gui.vhand != null && clickb == 1)
@@ -2299,7 +2293,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			Gob gob = glob.oc.getgob(gobid);
 			if(gob != null) {
 				if(ui.isCursor("gfx/hud/curs/study") && clickb == 1) {
-					gameui().setDetectGob(gob);
+					ui.gui.setDetectGob(gob);
 				}
 				if (ui.modmeta && gui.vhand == null) {
 					Map<String, ChatUI.MultiChat> chats = gui.chat.getMultiChannels();
@@ -2309,7 +2303,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 						if (chats.get("Party") != null)
 							chats.get("Party").send("@" + gob.id);
 					}
-					if(OptWnd.objectPermanentHighlighting && clickb == 2 && (ui.modmeta && !(ui.modshift || ui.modctrl))){
+					if(OptWnd.objectPermanentHighlightingCheckBox.a && clickb == 2 && (ui.modmeta && !(ui.modshift || ui.modctrl))){
 						if (Gob.listHighlighted.contains(gob.id)) {
 							Gob.listHighlighted.remove(gob.id);
 							gob.delattr(GobPermanentHighlight.class);
@@ -2321,7 +2315,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 					return;
 				} else {
 					if (clickb == 3) {
-						if (OptWnd.autoswitchBunnyPlateBoots) {
+						if (OptWnd.autoswitchBunnyPlateBootsCheckBox.a) {
 							try {
 								WItem eqboots = gui.getequipory().slots[Equipory.SLOTS.BOOTS.idx];
 								List<WItem> invboots;
@@ -2348,9 +2342,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 							}
 						}
 						wdgmsg("click", args);
-						if (OptWnd.instantFlowerMenuCTRL) {
+						if (OptWnd.instantFlowerMenuCTRLCheckBox.a) {
 							if (ui.modctrl) {
-								gameui().ui.rcvr.rcvmsg(gameui().ui.lastid + 1, "cl", 0, gameui().ui.modflags());
+								ui.gui.ui.rcvr.rcvmsg(ui.gui.ui.lastid + 1, "cl", 0, ui.gui.ui.modflags());
 							}
 						}
 						return;
@@ -2367,7 +2361,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			if (clickb == 1 && ui.modmeta && gui.vhand == null) {
 				addCheckpoint(mc);
 			} else if(clickb == 1) {
-				if (OptWnd.autoswitchBunnyPlateBoots) {
+				if (OptWnd.autoswitchBunnyPlateBootsCheckBox.a) {
 					try {
 						if (gui.getequipory() != null && gui.getequipory().slots != null) {
 							WItem eqboots = gui.getequipory().slots[Equipory.SLOTS.BOOTS.idx];
@@ -2457,7 +2451,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	    }
 	}  else if (ui.modshift && ui.modctrl) {
 		long now = System.currentTimeMillis();
-		if ((now - lastmmhittest > 500 || lasthittestc.dist(c) > tilesz.x) && gameui().hand.isEmpty()) {
+		if ((now - lastmmhittest > 500 || lasthittestc.dist(c) > tilesz.x) && ui.gui.hand.isEmpty()) {
 			lastmmhittest = now;
 			lasthittestc = c;
 
@@ -2530,7 +2524,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 								}
 								if (res != null) {
 									String tt;
-									if (OptWnd.advancedMouseInfo)
+									if (OptWnd.enableAdvancedMouseInfoCheckBox.a)
 										tt = "Object Resource Path: " + "$col[255,200,0]{" + res.name + "}" +
 												" \nID: " + gob.id +
 												" \nRC: " + ui.sess.glob.map.getzp(gob.rc) +
@@ -2554,7 +2548,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 						int t = map.gettile(mc.floor(tilesz));
 						Resource res = map.tilesetr(t);
 						if (res != null) {
-							if (OptWnd.advancedMouseInfo)
+							if (OptWnd.enableAdvancedMouseInfoCheckBox.a)
 								tooltip = RichText.render("Tile Resource Path: " + "$col[255,200,0]{" + res.name + "}" +
 									" \nMC: " + mc.floor(), UI.scale(400));
 							else
@@ -2566,7 +2560,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 				}
 
 				protected void nohit(Coord pc) {
-					if (OptWnd.advancedMouseInfo)
+					if (OptWnd.enableAdvancedMouseInfoCheckBox.a)
 						System.out.println(pc);
 					tooltip = null;
 				}
@@ -2605,9 +2599,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
     public boolean drop(final Coord cc, Coord ul) {
 	new Hittest(cc) {
 	    public void hit(Coord pc, Coord2d mc, ClickData inf) {
-			if((GameUI.preventDropAnywhere || GameUI.preventWaterDrop) && !ui.modctrl) {
+			if((OptWnd.noCursorItemDroppingCheckBox.a || OptWnd.noCursorItemDroppingInWaterCheckBox.a) && !ui.modctrl) {
 				boolean nodropping = false;
-				if (GameUI.preventDropAnywhere) {
+				if (OptWnd.noCursorItemDroppingCheckBox.a) {
 					nodropping = true;
 				} else {
 					int t = glob.map.gettile(player().rc.floor(tilesz));
@@ -2931,7 +2925,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		}
 	    });
     }
-	//ND: Using this "setcam" to change the camera in OptWnd.java. This depends on gameui() inside Widget.java
+	//ND: Using this "setcam" to change the camera in OptWnd.java. This depends on ui.gui inside Widget.java
 	public void setcam(String name, String... opts) throws Exception {
 		Class<? extends Camera> ct = camtypes.get(name);
 		if(ct != null) {
@@ -3053,7 +3047,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		if(checkpointManager != null && checkpointManagerThread != null){
 			checkpointManager.addCoord(coord);
 		} else {
-			GameUI gameUI = gameui();
+			GameUI gameUI = ui.gui;
 			checkpointManager = new CheckpointManager(gameUI);
 			Window window = checkpointManager;
 			gameUI.add(window, new Coord(gameUI.sz.x/2 - window.sz.x/2 + 100, gameUI.sz.y - window.sz.y));
@@ -3074,7 +3068,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 
 	@Override
 	public void wdgmsg(String msg, Object... args) {
-		GameUI gui = gameui();
+		GameUI gui = ui.gui;
 		if (gui != null && gui.refillWaterContainersThread != null && gui.refillWaterContainersThread.isAlive()){
 			if (msg.equals("drop")){
 				gui.refillWaterContainersThread.interrupt();
@@ -3094,7 +3088,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		if(MiningSafetyAssistant.preventMiningOutsideSupport){
 			Resource curs = ui.root.getcurs(Coord.z);
 			if (curs != null && curs.name.equals("gfx/hud/curs/mine") && msg.equals("sel")) {
-				safe = MiningSafetyAssistant.isAreaInSupportRange((Coord) args[0], (Coord) args[1], gameui());
+				safe = MiningSafetyAssistant.isAreaInSupportRange((Coord) args[0], (Coord) args[1], ui.gui);
 			}
 		}
 		if(safe){
