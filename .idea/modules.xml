@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ND-Client.iml" filepath="$PROJECT_DIR$/ND-Client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Havoc.iml" filepath="$PROJECT_DIR$/Havoc.iml" />
     </modules>
   </component>
 </project>
