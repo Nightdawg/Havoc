@@ -3073,13 +3073,13 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			if (msg.equals("drop")){
 				gui.refillWaterContainersThread.interrupt();
 				gui.refillWaterContainersThread = null;
-				gui.ui.msg("Water Refill was Aborted (One container was also dropped).");
+				gui.ui.msg("Water Refill was manually stopped (One container was also dropped).");
 			} else if (msg.equals("click")){
 				if (args.length == 4) {
 					if (args[2].toString().equals("1")) {
 						gui.refillWaterContainersThread.interrupt();
 						gui.refillWaterContainersThread = null;
-						gui.ui.msg("Water Refill was Aborted.");
+						gui.ui.msg("Water Refill was manually stopped.");
 					}
 				}
 			}
