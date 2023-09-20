@@ -392,7 +392,7 @@ public class Equipory extends Widget implements DTarget {
 					//Subtlety = Text.renderstroked2("Subtlety: " + x, Color.WHITE, Color.BLACK, acf).tex();
 					Detection = new TexI(Utils.outline2(Text.renderstroked2("Detection (Prc*Exp):  " + DetectionString, Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
 					Subtlety = new TexI(Utils.outline2(Text.renderstroked2("Subtlety (Int*Ste):  " + SubtletyString, Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
-					ArmorClass = new TexI(Utils.outline2(Text.renderstroked2("Armor Class:  " + aHard + "/" + aSoft + " (" + (aHard + aSoft) + ")", Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
+					ArmorClass = new TexI(Utils.outline2(Text.renderstroked2("Armor Class:  " + aHard + " + " + aSoft + " (" + (aHard + aSoft) + ")", Color.WHITE, Color.BLACK, acf).img, Color.BLACK));
 					updateBottomText = false;
 				} catch (Exception e) { // fail silently
 					e.printStackTrace();// Ignored

@@ -25,6 +25,6 @@ public class Armor extends ItemInfo.Tip {
     }
 
     public BufferedImage tipimg() {
-        return(Text.render(String.format("Armor: %,d/%,d" +" ("+(hard+soft)+")", hard, soft)).img);
+        return(Text.render(String.format("Armor: %,d + %,d" +" ("+(hard+soft)+")", hard, soft)).img);
     }
 }
