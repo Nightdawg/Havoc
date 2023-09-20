@@ -499,6 +499,10 @@ public class Config {
 		put("Period", ".");
 		put("Comma", ",");
 		put("Slash", "/");
+		put("Up", "↑");
+		put("Down", "↓");
+		put("Left", "←");
+		put("Right", "→");
 	}};
 
     public static void cmdline(String[] args) {

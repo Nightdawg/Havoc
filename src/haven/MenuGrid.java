@@ -167,7 +167,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    if(pos >= 0)
 		tt = tt.substring(0, pos) + "$b{$col[255,128,0]{" + tt.charAt(pos) + "}}" + tt.substring(pos + 1);
 	    else if(key != KeyMatch.nil)
-		tt += " [$b{$col[255,128,0]{" + key.name() + "}}]";
+		tt += " [$b{$col[255,128,0]{" + key.longname() + "}}]";
 	    BufferedImage ret = ttfnd.render(tt, UI.scale(300)).img;
 	    if(withpg) {
 		List<ItemInfo> info = info();

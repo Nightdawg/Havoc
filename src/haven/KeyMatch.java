@@ -108,6 +108,18 @@ public class KeyMatch {
 	return(buf.toString());
     }
 
+	public String longname() {
+		StringBuilder buf = new StringBuilder();
+		if((modmatch & S) != 0)
+			buf.append("Shift + ");
+		if((modmatch & C) != 0)
+			buf.append("Ctrl + ");
+		if((modmatch & M) != 0)
+			buf.append("Alt + ");
+		buf.append(keyname);
+		return(buf.toString());
+	}
+
     private boolean equals(KeyMatch that) {
 	return((this.chr == that.chr) && (this.casematch == that.casematch) &&
 	       (this.code == that.code) && (this.extmatch == that.extmatch) &&
@@ -218,7 +230,7 @@ public class KeyMatch {
 	private static String namefor(KeyMatch key) {
 	    if(key == null)
 		return("None");
-	    return(key.name());
+	    return(key.longname());
 	}
 
 	public Capture(int w, KeyMatch key) {
