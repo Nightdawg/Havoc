@@ -484,7 +484,7 @@ public class CharWnd extends Window {
 	    g.chcolor();
 	    Coord cn = new Coord(0, sz.y / 2);
 	    g.aimage(img, cn.add(5, 0), 0, 0.5);
-	    g.aimage(rnm, cn.add(img.sz().x + margin2, 1), 0, 0.5);
+	    g.aimage(rnm, cn.add(img.sz().x + margin2, 1), 0, 0.6);
 //	    if(ct != null)
 //		g.aimage(ct.tex(), cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
 		cbv = attr.base;
@@ -492,15 +492,15 @@ public class CharWnd extends Window {
 		if (ccv > cbv) {
 			if (requiresUpdate)
 				buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), buff));
-			g.aimage(buffedTex, cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
+			g.aimage(buffedTex, cn.add(sz.x - UI.scale(7), 1), 1, 0.6);
 		} else if (ccv < cbv) {
 			if (requiresUpdate)
 				debuffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), debuff));
-			g.aimage(debuffedTex, cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
+			g.aimage(debuffedTex, cn.add(sz.x - UI.scale(7), 1), 1, 0.6);
 		}
 		if (requiresUpdate)
 			baseTex = PUtils.strokeTex(attrf.render(Integer.toString(cbv), Color.WHITE));
-		g.aimage(baseTex, cn.add(sz.x - UI.scale(50), 1), 1, 0.5);
+		g.aimage(baseTex, cn.add(sz.x - UI.scale(60), 1), 1, 0.6);
 		requiresUpdate = false;
 	}
 
@@ -531,7 +531,7 @@ public class CharWnd extends Window {
 	    res = Resource.local().loadwait("gfx/hud/chr/" + attr);
 	    this.nm = attr;
 	    this.img = new TexI(convolve(res.flayer(Resource.imgc).img, new Coord(this.sz.y, this.sz.y), iconfilter));
-	    this.rnm = PUtils.strokeTex(attrf.render(res.layer(Resource.tooltip).t));
+	    this.rnm = SAttrName(res.layer(Resource.tooltip).t);
 	    this.attr = glob.getcattr(attr);
 	    this.bg = bg;
 	    adda(new IButton("gfx/hud/buttons/add", "u", "d", "h") {
@@ -541,6 +541,16 @@ public class CharWnd extends Window {
 		    public void click() {adj(-1);}
 		}, sz.x - margin3, sz.y / 2, 1, 0.5);
 	}
+
+	private Tex SAttrName (String t){
+		if (t.equals("Unarmed Combat")){
+			t = "Unarmed (UA)";
+		} else if (t.equals("Melee Combat")) {
+			t = "Melee (MC)";
+		}
+		return PUtils.strokeTex(attrf.render(t));
+	}
+
 
 		public void tick(double dt) {
 			if ((attr.base != cbv) || (attr.comp != ccv)) {
@@ -580,7 +590,7 @@ public class CharWnd extends Window {
 	    super.draw(g);
 	    Coord cn = new Coord(0, sz.y / 2);
 	    g.aimage(img, cn.add(5, 0), 0, 0.5);
-	    g.aimage(rnm, cn.add(img.sz().x + margin2, 1), 0, 0.5);
+	    g.aimage(rnm, cn.add(img.sz().x + margin2, 1), 0, 0.6);
 		cbv = attr.base;
 		ccv = attr.comp;
 		if (ccv > cbv) {
@@ -591,16 +601,16 @@ public class CharWnd extends Window {
 				if (requiresUpdate)
 					buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), buff));
 			}
-			g.aimage(buffedTex, cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
+			g.aimage(buffedTex, cn.add(sz.x - UI.scale(35), 1), 1, 0.6);
 		} else if (ccv < cbv) {
 			if (tbv > cbv) {
 				if (requiresUpdate)
 					buffedTex2 = PUtils.strokeTex(attrf.render(Integer.toString(ccv + (tbv - cbv)), tbuff));
-				g.aimage(buffedTex2, cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
+				g.aimage(buffedTex2, cn.add(sz.x - UI.scale(35), 1), 1, 0.6);
 			} else {
 				if (requiresUpdate)
 					debuffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), debuff));
-				g.aimage(debuffedTex, cn.add(sz.x - UI.scale(35), 1), 1, 0.5);
+				g.aimage(debuffedTex, cn.add(sz.x - UI.scale(35), 1), 1, 0.6);
 			}
 		}
 
@@ -611,7 +621,7 @@ public class CharWnd extends Window {
 			if (requiresUpdate)
 				baseTex = PUtils.strokeTex(attrf.render(Integer.toString(cbv), Color.WHITE));
 		}
-		g.aimage(baseTex, cn.add(sz.x - UI.scale(75), 1), 1, 0.5);
+		g.aimage(baseTex, cn.add(sz.x - UI.scale(85), 1), 1, 0.6);
 		requiresUpdate = false;
 	}
 
@@ -1955,7 +1965,7 @@ public class CharWnd extends Window {
         Tabs.Tab battr = tabs.add();
         {
 	    Widget prev;
-	    prev = battr.add(settip(new Img(catf.render("Base Attributes").tex()), "gfx/hud/chr/tips/base"), Coord.z);
+	    prev = battr.add(settip(new Img(catf.render("Attributes").tex()), "gfx/hud/chr/tips/base"), Coord.z);
 	    base = new ArrayList<>();
 	    Attr aw;
 	    base.add(aw = battr.add(new Attr(glob, "str", every), prev.pos("bl").adds(5, 0).add(wbox.btloff())));
