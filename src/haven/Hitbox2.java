@@ -13,9 +13,7 @@ public class Hitbox2 extends SlottedNode implements Rendered {
 	private final Gob gob;
 	private static final Map<Resource, Model> MODEL_CACHE = new HashMap<>();
 	private static final float Z = 0.1f;
-
-	public static String[] savedColorSetting = Utils.getprefsa("hitboxFilled" + "_colorSetting", new String[]{"0", "225", "255", "200"});
-	public static Color SOLID_COLOR = new Color(Integer.parseInt(savedColorSetting[0]), Integer.parseInt(savedColorSetting[1]), Integer.parseInt(savedColorSetting[2]), 140);
+	public static Color SOLID_COLOR = new Color(Integer.parseInt(OptWnd.hiddenObjectsColorSetting[0]), Integer.parseInt(OptWnd.hiddenObjectsColorSetting[1]), Integer.parseInt(OptWnd.hiddenObjectsColorSetting[2]), 140);
 	private static final Color CLOSEDGATE_COLOR = new Color(218, 0, 0, 100);
 	private static final Color OPENVISITORGATE_COLOR_NoCombat = new Color(255, 233, 0, 100);
 	private static final Color OPENVISITORGATE_COLOR_Combat = new Color(255, 150, 0, 100);

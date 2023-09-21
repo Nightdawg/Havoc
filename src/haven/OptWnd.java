@@ -1848,7 +1848,7 @@ public class OptWnd extends Window {
 	public static CheckBox hideHousesCheckbox;
 	public static CheckBox hideCropsCheckbox;
 	public static CheckBox hideStockpilesCheckbox;
-
+	public static String[] hiddenObjectsColorSetting = Utils.getprefsa("hitboxFilled" + "_colorSetting", new String[]{"0", "225", "255", "200"});
 
 	public class NDHidingSettingsPanel extends Panel {
 		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
@@ -1878,7 +1878,7 @@ public class OptWnd extends Window {
 			Widget cont = scroll.cont;
 			addbtn(cont, "Toggle object hiding hotkey:", GameUI.kb_toggleHidingBoxes, 0);
 
-			prev = add(new ColorOptionWidget("Hidden object box color:", "hitboxFilled", 126, 0, 200, 255, 200, (Color col) -> {
+			prev = add(new ColorOptionWidget("Hidden object box color:", "hitboxFilled", 126, Integer.parseInt(hiddenObjectsColorSetting[0]), Integer.parseInt(hiddenObjectsColorSetting[1]), Integer.parseInt(hiddenObjectsColorSetting[2]), Integer.parseInt(hiddenObjectsColorSetting[3]), (Color col) -> {
 
 				// ND: Update the inner filled box
 				HitboxFilled.SOLID_COLOR = col;
