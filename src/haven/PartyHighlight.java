@@ -5,9 +5,9 @@ import java.awt.*;
 import java.util.*;
 
 public class PartyHighlight {
-    public static final Color MEMBER_OL_COLOR = new Color(0, 160, 0, 128);
-    public static final Color LEADER_OL_COLOR = new Color(0, 74, 208, 128);
-    public static final Color MYSELF_OL_COLOR = new Color(255, 255, 255, 64);
+    public static Color MEMBER_OL_COLOR = OptWnd.partyMemberColorOptionWidget.currentColor;
+    public static Color LEADER_OL_COLOR = OptWnd.partyLeaderColorOptionWidget.currentColor;
+    public static Color MYSELF_OL_COLOR = OptWnd.myselfColorOptionWidget.currentColor;
 
     private final Party party;
     private final long playerId;

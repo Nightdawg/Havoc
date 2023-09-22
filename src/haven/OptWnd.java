@@ -28,6 +28,9 @@ package haven;
 
 import haven.render.*;
 import haven.res.gfx.fx.msrad.MSRad;
+import haven.sprites.AggroCircleSprite;
+import haven.sprites.ChaseVectorSprite;
+import haven.sprites.CurrentTargetSprite;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -838,7 +841,7 @@ public class OptWnd extends Window {
 			}
 		}, leftColumn.pos("bl").adds(0, 12));
 
-		leftColumn = add(highlightCliffsCheckBox = new CheckBox("Highlight Cliffs (Red Overlay)"){
+		leftColumn = add(highlightCliffsCheckBox = new CheckBox("Highlight Cliffs (Color Overlay)"){
 			{a = (Utils.getprefb("highlightCliffs", false));}
 			public void set(boolean val) {
 				Utils.setprefb("highlightCliffs", val);
@@ -1659,7 +1662,7 @@ public class OptWnd extends Window {
 				}
 			}),prev.pos("bl").adds(0, 10).x(0));
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 16).x(UI.scale(55)));
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 20).x(UI.scale(55)));
 			setTooltipsForGameplaySettingsStuff();
 			pack();
 		}
@@ -1848,6 +1851,7 @@ public class OptWnd extends Window {
 	public static CheckBox hideHousesCheckbox;
 	public static CheckBox hideCropsCheckbox;
 	public static CheckBox hideStockpilesCheckbox;
+	public static ColorOptionWidget hiddenObjectsColorOptionWidget;
 	public static String[] hiddenObjectsColorSetting = Utils.getprefsa("hitboxFilled" + "_colorSetting", new String[]{"0", "225", "255", "200"});
 
 	public class NDHidingSettingsPanel extends Panel {
@@ -1878,24 +1882,28 @@ public class OptWnd extends Window {
 			Widget cont = scroll.cont;
 			addbtn(cont, "Toggle object hiding hotkey:", GameUI.kb_toggleHidingBoxes, 0);
 
-			prev = add(new ColorOptionWidget("Hidden object box color:", "hitboxFilled", 126, Integer.parseInt(hiddenObjectsColorSetting[0]), Integer.parseInt(hiddenObjectsColorSetting[1]), Integer.parseInt(hiddenObjectsColorSetting[2]), Integer.parseInt(hiddenObjectsColorSetting[3]), (Color col) -> {
-
-				// ND: Update the inner filled box
-				HitboxFilled.SOLID_COLOR = col;
-				HitboxFilled.SOLID = Pipe.Op.compose(new BaseColor(col), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
-
-				// ND: Update the outer box lines
-				Color col2 = Hitbox2.SOLID_COLOR = new Color(col.getRed(), col.getGreen(), col.getBlue(), 140);
-				Hitbox2.SOLID = Pipe.Op.compose(new BaseColor(col2), new States.LineWidth(Hitbox2.WIDTH));
-				Hitbox2.SOLID_TOP = Pipe.Op.compose(new BaseColor(col2), new States.LineWidth(Hitbox2.WIDTH), Hitbox2.TOP);
-
-				// ND: Reload the boxes
+			prev = add(hiddenObjectsColorOptionWidget = new ColorOptionWidget("Hidden Objects Box Color:", "hitboxFilled", 150, Integer.parseInt(hiddenObjectsColorSetting[0]), Integer.parseInt(hiddenObjectsColorSetting[1]), Integer.parseInt(hiddenObjectsColorSetting[2]), Integer.parseInt(hiddenObjectsColorSetting[3]), (Color col) -> {
+				HidingBoxFilled.SOLID = Pipe.Op.compose(new BaseColor(col), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				HidingBox.SOLID_TOP = Pipe.Op.compose(new BaseColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), 153)), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
 				if (ui != null && ui.gui != null) {
 					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
 					ui.gui.map.updatePlobDrawable();
 				}
-
+				hiddenObjectsColorOptionWidget2.cb.colorChooser.setColor(hiddenObjectsColorOptionWidget2.currentColor = col); // ND: set the color for the other widget as well
 			}){}, scroll.pos("bl").adds(1, -2));
+
+			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("hitboxFilled" + "_colorSetting", new String[]{"0", "225", "255", "200"});
+				hiddenObjectsColorOptionWidget.cb.colorChooser.setColor(hiddenObjectsColorOptionWidget.currentColor = new Color(0, 225, 255, 200));
+				HidingBoxFilled.SOLID = Pipe.Op.compose(new BaseColor(hiddenObjectsColorOptionWidget.currentColor), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				HidingBox.SOLID_TOP = Pipe.Op.compose(new BaseColor(new Color(hiddenObjectsColorOptionWidget.currentColor.getRed(), hiddenObjectsColorOptionWidget.currentColor.getGreen(), hiddenObjectsColorOptionWidget.currentColor.getBlue(), 153)), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					ui.gui.map.updatePlobDrawable();
+				}
+				hiddenObjectsColorOptionWidget2.cb.colorChooser.setColor(hiddenObjectsColorOptionWidget2.currentColor = new Color(0, 225, 255, 200)); // ND: set the color for the other widget as well
+			}), prev.pos("ur").adds(30, 0));
+			prev.tooltip = RichText.render("Reset to default color", UI.scale(300));
 
 			prev = add(new Label("Objects that will be hidden:"), prev.pos("bl").adds(0, 20).x(0));
 
@@ -2799,6 +2807,455 @@ public class OptWnd extends Window {
 	}
 
 
+	public static ColorOptionWidget hiddenObjectsColorOptionWidget2;
+	public static ColorOptionWidget collisionBoxesColorOptionWidget;
+	public static String[] collisionBoxesColorSetting = Utils.getprefsa("collisionBoxes" + "_colorSetting", new String[]{"255", "255", "255", "235"});
+	public static ColorOptionWidget cliffsHighlightColorOptionWidget;
+	public static String[] cliffsHighlightColorSetting = Utils.getprefsa("cliffsHighlight" + "_colorSetting", new String[]{"255", "0", "0", "170"});
+	public static ColorOptionWidget fullContainerOrFinishedWorkstationColorOptionWidget;
+	public static String[] fullContainerOrFinishedWorkstationColorSetting = Utils.getprefsa("fullContainerOrFinishedWorkstation" + "_colorSetting", new String[]{"170", "0", "0", "170"});
+	public static ColorOptionWidget somewhatFilledContainerOrInProgressWorkstationColorOptionWidget;
+	public static String[] somewhatFilledContainerOrInProgressWorkstationColorSetting = Utils.getprefsa("somewhatFilledContainerOrInProgressWorkstation" + "_colorSetting", new String[]{"194", "155", "2", "140"});
+	public static ColorOptionWidget emptyContainerOrPreparedWorkstationColorOptionWidget;
+	public static String[] emptyContainerOrPreparedWorkstationColorSetting = Utils.getprefsa("emptyContainerOrPreparedWorkstation" + "_colorSetting", new String[]{"0", "120", "0", "180"});
+	public static ColorOptionWidget unpreparedWorkstationColorOptionWidget;
+	public static String[] unpreparedWorkstationColorSetting = Utils.getprefsa("unpreparedWorkstation" + "_colorSetting", new String[]{"20", "20", "20", "170"});
+	public static ColorOptionWidget closedGateColorOptionWidget;
+	public static String[] closedGateColorSetting = Utils.getprefsa("closedGate" + "_colorSetting", new String[]{"218", "0", "0", "100"});
+	public static ColorOptionWidget openVisitorGateNoCombatColorOptionWidget;
+	public static String[] openVisitorGateNoCombatColorSetting = Utils.getprefsa("openVisitorGateNoCombat" + "_colorSetting", new String[]{"255", "233", "0", "100"});
+	public static ColorOptionWidget openVisitorGateInCombatColorOptionWidget;
+	public static String[] openVisitorGateInCombatColorSetting = Utils.getprefsa("openVisitorGateInCombat" + "_colorSetting", new String[]{"255", "150", "0", "100"});
+	public static ColorOptionWidget passableGateCombatColorOptionWidget;
+	public static String[] passableGateCombatColorSetting = Utils.getprefsa("passableGate" + "_colorSetting", new String[]{"0", "217", "30", "100"});
+	public static ColorOptionWidget objectPingColorOptionWidget;
+	public static String[] objectPingColorSetting = Utils.getprefsa("objectPing" + "_colorSetting", new String[]{"255", "183", "0", "255"});
+	public static ColorOptionWidget partyObjectPingColorOptionWidget;
+	public static String[] partyObjectPingColorSetting = Utils.getprefsa("partyObjectPing" + "_colorSetting", new String[]{"243", "0", "0", "255"});
+	public static ColorOptionWidget permanentHighlightColorOptionWidget;
+	public static String[] permanentHighlightColorSetting = Utils.getprefsa("permanentHighlight" + "_colorSetting", new String[]{"116", "0", "178", "200"});
+	public static ColorOptionWidget partyMemberColorOptionWidget;
+	public static String[] partyMemberColorSetting = Utils.getprefsa("partyMember" + "_colorSetting", new String[]{"0", "160", "0", "164"});
+	public static ColorOptionWidget partyLeaderColorOptionWidget;
+	public static String[] partyLeaderColorSetting = Utils.getprefsa("partyLeader" + "_colorSetting", new String[]{"0", "74", "208", "164"});
+	public static ColorOptionWidget myselfColorOptionWidget;
+	public static String[] myselfLeaderColorSetting = Utils.getprefsa("myself" + "_colorSetting", new String[]{"255", "255", "255", "128"});
+	public static ColorOptionWidget aggroedEnemiesColorOptionWidget;
+	public static String[] aggroedEnemiesColorSetting = Utils.getprefsa("aggroedEnemies" + "_colorSetting", new String[]{"255", "0", "0", "140"});
+	public static boolean refreshCurrentTargetSpriteColor = false;
+	public static ColorOptionWidget myselfChaseVectorColorOptionWidget;
+	public static String[] myselfChaseVectorColorSetting = Utils.getprefsa("myselfChaseVector" + "_colorSetting", new String[]{"255", "255", "255", "220"});
+	public static ColorOptionWidget friendChaseVectorColorOptionWidget;
+	public static String[] friendChaseVectorColorSetting = Utils.getprefsa("friendChaseVector" + "_colorSetting", new String[]{"47", "191", "7", "230"});
+	public static ColorOptionWidget foeChaseVectorColorOptionWidget;
+	public static String[] foeChaseVectorColorSetting = Utils.getprefsa("foeChaseVector" + "_colorSetting", new String[]{"255", "0", "0", "230"});
+	public static ColorOptionWidget unknownChaseVectorColorOptionWidget;
+	public static String[] unknownChaseVectorColorSetting = Utils.getprefsa("unknownChaseVector" + "_colorSetting", new String[]{"255", "199", "0", "230"});
+
+
+	public class NDColorSettingsPanel extends Panel {
+		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
+			return (cont.addhl(new Coord(0, y), cont.sz.x,
+					new Label(nm), new SetButton(UI.scale(140), cmd))
+					+ UI.scale(2));
+		}
+
+		public NDColorSettingsPanel(Panel back) {
+			Widget topLabel;
+			Widget leftColumn;
+			Widget rightColumn;
+			topLabel = add(new Label("These settings exist thanks to my colorblind friend, who asked me if I could add this. You can change most custom feature colors here, if you don't like the defaults."), 0, 0);
+			leftColumn = add(hiddenObjectsColorOptionWidget2 = new ColorOptionWidget("Hidden Objects Box:", "hitboxFilled", 246, Integer.parseInt(hiddenObjectsColorSetting[0]), Integer.parseInt(hiddenObjectsColorSetting[1]), Integer.parseInt(hiddenObjectsColorSetting[2]), Integer.parseInt(hiddenObjectsColorSetting[3]), (Color col) -> {
+				HidingBoxFilled.SOLID = Pipe.Op.compose(new BaseColor(col), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				HidingBox.SOLID_TOP = Pipe.Op.compose(new BaseColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), 153)), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					ui.gui.map.updatePlobDrawable();
+				}
+				hiddenObjectsColorOptionWidget.cb.colorChooser.setColor(hiddenObjectsColorOptionWidget.currentColor = col); // ND: set the color for the other widget as well
+			}){}, topLabel.pos("bl").adds(0, 16).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("hitboxFilled" + "_colorSetting", new String[]{"0", "225", "255", "200"});
+				hiddenObjectsColorOptionWidget2.cb.colorChooser.setColor(hiddenObjectsColorOptionWidget2.currentColor = new Color(0, 225, 255, 200));
+				HidingBoxFilled.SOLID = Pipe.Op.compose(new BaseColor(hiddenObjectsColorOptionWidget2.currentColor), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				HidingBox.SOLID_TOP = Pipe.Op.compose(new BaseColor(new Color(hiddenObjectsColorOptionWidget2.currentColor.getRed(), hiddenObjectsColorOptionWidget2.currentColor.getGreen(), hiddenObjectsColorOptionWidget2.currentColor.getBlue(), 153)), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					ui.gui.map.updatePlobDrawable();
+				}
+				hiddenObjectsColorOptionWidget.cb.colorChooser.setColor(hiddenObjectsColorOptionWidget.currentColor = new Color(0, 225, 255, 200));// ND: set the color for the other widget as well
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			leftColumn = add(collisionBoxesColorOptionWidget = new ColorOptionWidget("Collision Boxes:", "collisionBoxes", 246, Integer.parseInt(collisionBoxesColorSetting[0]), Integer.parseInt(collisionBoxesColorSetting[1]), Integer.parseInt(collisionBoxesColorSetting[2]), Integer.parseInt(collisionBoxesColorSetting[3]), (Color col) -> {
+				CollisionBox.SOLID_TOP = Pipe.Op.compose(new BaseColor(col), new States.LineWidth(CollisionBox.WIDTH), CollisionBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated);
+					ui.gui.map.updatePlobDrawable();
+				}
+			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("collisionBoxes" + "_colorSetting", new String[]{"255", "255", "255", "235"});
+				collisionBoxesColorOptionWidget.cb.colorChooser.setColor(collisionBoxesColorOptionWidget.currentColor = new Color(255, 255, 255, 235));
+				CollisionBox.SOLID_TOP = Pipe.Op.compose(new BaseColor(OptWnd.collisionBoxesColorOptionWidget.currentColor), new States.LineWidth(CollisionBox.WIDTH), CollisionBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated);
+					ui.gui.map.updatePlobDrawable();
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			leftColumn = add(cliffsHighlightColorOptionWidget = new ColorOptionWidget("Cliffs Highlight (Color Overlay):", "cliffsHighlight", 246, Integer.parseInt(cliffsHighlightColorSetting[0]), Integer.parseInt(cliffsHighlightColorSetting[1]), Integer.parseInt(cliffsHighlightColorSetting[2]), Integer.parseInt(cliffsHighlightColorSetting[3]), (Color col) -> {
+				if (ui.sess != null)
+					ui.sess.glob.map.invalidateAll();
+			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("cliffsHighlight" + "_colorSetting", new String[]{"255", "0", "0", "170"});
+				cliffsHighlightColorOptionWidget.cb.colorChooser.setColor(cliffsHighlightColorOptionWidget.currentColor = new Color(255, 0, 0, 170));
+				if (ui.sess != null)
+					ui.sess.glob.map.invalidateAll();
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+
+			leftColumn = add(new Label("Containers & Workstations"), leftColumn.pos("bl").adds(0, 12).x(UI.scale(122)));
+			leftColumn = add(fullContainerOrFinishedWorkstationColorOptionWidget = new ColorOptionWidget("Full Container / Finished Workstation:", "fullContainerOrFinishedWorkstation", 246,
+					Integer.parseInt(fullContainerOrFinishedWorkstationColorSetting[0]), Integer.parseInt(fullContainerOrFinishedWorkstationColorSetting[1]),
+					Integer.parseInt(fullContainerOrFinishedWorkstationColorSetting[2]), Integer.parseInt(fullContainerOrFinishedWorkstationColorSetting[3]), (Color col) -> {
+
+				GobStateHighlight.red = new MixColor(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha());
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				}
+			}){}, leftColumn.pos("bl").adds(0, 6).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("fullContainerOrFinishedWorkstation" + "_colorSetting", new String[]{"170", "0", "0", "170"});
+				fullContainerOrFinishedWorkstationColorOptionWidget.cb.colorChooser.setColor(fullContainerOrFinishedWorkstationColorOptionWidget.currentColor = new Color(170, 0, 0, 170));
+				GobStateHighlight.red = new MixColor(170, 0, 0, 170);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+
+			leftColumn = add(somewhatFilledContainerOrInProgressWorkstationColorOptionWidget = new ColorOptionWidget("Partly Filled Container / In Progress Workstation:", "somewhatFilledContainerOrInProgressWorkstation", 246,
+					Integer.parseInt(somewhatFilledContainerOrInProgressWorkstationColorSetting[0]), Integer.parseInt(somewhatFilledContainerOrInProgressWorkstationColorSetting[1]),
+					Integer.parseInt(somewhatFilledContainerOrInProgressWorkstationColorSetting[2]), Integer.parseInt(somewhatFilledContainerOrInProgressWorkstationColorSetting[3]), (Color col) -> {
+
+				GobStateHighlight.yellow = new MixColor(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha());
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				}
+			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("somewhatFilledContainerOrInProgressWorkstation" + "_colorSetting", new String[]{"194", "155", "2", "140"});
+				somewhatFilledContainerOrInProgressWorkstationColorOptionWidget.cb.colorChooser.setColor(somewhatFilledContainerOrInProgressWorkstationColorOptionWidget.currentColor = new Color(194, 155, 2, 140));
+				GobStateHighlight.yellow = new MixColor(194, 155, 2, 140);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+
+			leftColumn = add(emptyContainerOrPreparedWorkstationColorOptionWidget = new ColorOptionWidget("Empty Container / Prepared Workstation:", "emptyContainerOrPreparedWorkstation", 246,
+					Integer.parseInt(emptyContainerOrPreparedWorkstationColorSetting[0]), Integer.parseInt(emptyContainerOrPreparedWorkstationColorSetting[1]),
+					Integer.parseInt(emptyContainerOrPreparedWorkstationColorSetting[2]), Integer.parseInt(emptyContainerOrPreparedWorkstationColorSetting[3]), (Color col) -> {
+
+				GobStateHighlight.green = new MixColor(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha());
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				}
+			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("emptyContainerOrPreparedWorkstation" + "_colorSetting", new String[]{"0", "120", "0", "180"});
+				emptyContainerOrPreparedWorkstationColorOptionWidget.cb.colorChooser.setColor(emptyContainerOrPreparedWorkstationColorOptionWidget.currentColor = new Color(0, 120, 0, 180));
+				GobStateHighlight.green = new MixColor(0, 120, 0, 180);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+
+			leftColumn = add(unpreparedWorkstationColorOptionWidget = new ColorOptionWidget("Unprepared Workstation:", "unpreparedWorkstation", 246,
+					Integer.parseInt(unpreparedWorkstationColorSetting[0]), Integer.parseInt(unpreparedWorkstationColorSetting[1]),
+					Integer.parseInt(unpreparedWorkstationColorSetting[2]), Integer.parseInt(unpreparedWorkstationColorSetting[3]), (Color col) -> {
+
+				GobStateHighlight.gray = new MixColor(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha());
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				}
+			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("unpreparedWorkstation" + "_colorSetting", new String[]{"20", "20", "20", "170"});
+				unpreparedWorkstationColorOptionWidget.cb.colorChooser.setColor(unpreparedWorkstationColorOptionWidget.currentColor = new Color(20, 20, 20, 170));
+				GobStateHighlight.gray = new MixColor(20, 20, 20, 170);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::updateContainerHighlight);
+					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+
+			leftColumn = add(new Label("Gate Combat Passability"), leftColumn.pos("bl").adds(0, 12).x(UI.scale(126)));
+			leftColumn = add(closedGateColorOptionWidget = new ColorOptionWidget("Closed Gate (Unpassable):", "closedGate", 246,
+					Integer.parseInt(closedGateColorSetting[0]), Integer.parseInt(closedGateColorSetting[1]),
+					Integer.parseInt(closedGateColorSetting[2]), Integer.parseInt(closedGateColorSetting[3]), (Color col) -> {
+				HidingBox.CLOSEDGATE_TOP = Pipe.Op.compose(new BaseColor(col), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
+				HidingBoxFilled.CLOSEDGATE = Pipe.Op.compose(new BaseColor(col), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				CollisionBox.CLOSEDGATE_TOP = Pipe.Op.compose(new BaseColor(new Color(col.getRed(), col.getGreen(),
+						col.getBlue(), collisionBoxesColorOptionWidget.currentColor.getAlpha())), new States.LineWidth(CollisionBox.WIDTH), CollisionBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated); // ND: Gotta update collision boxes too, cause the gate colors depend on this setting
+				}
+			}){}, leftColumn.pos("bl").adds(0, 6).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("closedGate" + "_colorSetting", new String[]{"218", "0", "0", "100"});
+				closedGateColorOptionWidget.cb.colorChooser.setColor(closedGateColorOptionWidget.currentColor = new Color(218, 0, 0, 100));
+				HidingBox.CLOSEDGATE_TOP = Pipe.Op.compose(new BaseColor(closedGateColorOptionWidget.currentColor), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
+				HidingBoxFilled.CLOSEDGATE = Pipe.Op.compose(new BaseColor(closedGateColorOptionWidget.currentColor), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				CollisionBox.CLOSEDGATE_TOP = Pipe.Op.compose(new BaseColor(new Color(218, 0,0, collisionBoxesColorOptionWidget.currentColor.getAlpha())), new States.LineWidth(CollisionBox.WIDTH), CollisionBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated); // ND: Gotta update collision boxes too, cause the gate colors depend on this setting
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			leftColumn = add(openVisitorGateNoCombatColorOptionWidget = new ColorOptionWidget("Open Visitor Gate (Out of Combat):", "openVisitorGateNoCombat", 246,
+					Integer.parseInt(openVisitorGateNoCombatColorSetting[0]), Integer.parseInt(openVisitorGateNoCombatColorSetting[1]),
+					Integer.parseInt(openVisitorGateNoCombatColorSetting[2]), Integer.parseInt(openVisitorGateNoCombatColorSetting[3]), (Color col) -> {
+				HidingBox.OPENVISITORGATE_TOP_NoCombat = Pipe.Op.compose(new BaseColor(col), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
+				HidingBoxFilled.OPENVISITORGATE_NoCombat = Pipe.Op.compose(new BaseColor(col), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				CollisionBox.OPENVISITORGATE_TOP_NoCombat = Pipe.Op.compose(new BaseColor(new Color(col.getRed(), col.getGreen(),
+						col.getBlue(), collisionBoxesColorOptionWidget.currentColor.getAlpha())), new States.LineWidth(CollisionBox.WIDTH), CollisionBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated); // ND: Gotta update collision boxes too, cause the gate colors depend on this setting
+				}
+			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("openVisitorGateNoCombat" + "_colorSetting", new String[]{"255", "233", "0", "100"});
+				openVisitorGateNoCombatColorOptionWidget.cb.colorChooser.setColor(openVisitorGateNoCombatColorOptionWidget.currentColor = new Color(255, 233, 0, 100));
+				HidingBox.OPENVISITORGATE_TOP_NoCombat = Pipe.Op.compose(new BaseColor(openVisitorGateNoCombatColorOptionWidget.currentColor), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
+				HidingBoxFilled.OPENVISITORGATE_NoCombat = Pipe.Op.compose(new BaseColor(openVisitorGateNoCombatColorOptionWidget.currentColor), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				CollisionBox.OPENVISITORGATE_TOP_NoCombat = Pipe.Op.compose(new BaseColor(new Color(255, 233,0, collisionBoxesColorOptionWidget.currentColor.getAlpha())), new States.LineWidth(CollisionBox.WIDTH), CollisionBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated); // ND: Gotta update collision boxes too, cause the gate colors depend on this setting
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			leftColumn = add(openVisitorGateInCombatColorOptionWidget = new ColorOptionWidget("Open Visitor Gate (In Combat):", "openVisitorGateInCombat", 246,
+					Integer.parseInt(openVisitorGateInCombatColorSetting[0]), Integer.parseInt(openVisitorGateInCombatColorSetting[1]),
+					Integer.parseInt(openVisitorGateInCombatColorSetting[2]), Integer.parseInt(openVisitorGateInCombatColorSetting[3]), (Color col) -> {
+				HidingBox.OPENVISITORGATE_TOP_InCombat = Pipe.Op.compose(new BaseColor(col), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
+				HidingBoxFilled.OPENVISITORGATE_InCombat = Pipe.Op.compose(new BaseColor(col), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				CollisionBox.OPENVISITORGATE_TOP_InCombat = Pipe.Op.compose(new BaseColor(new Color(col.getRed(), col.getGreen(),
+						col.getBlue(), collisionBoxesColorOptionWidget.currentColor.getAlpha())), new States.LineWidth(CollisionBox.WIDTH), CollisionBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated); // ND: Gotta update collision boxes too, cause the gate colors depend on this setting
+				}
+			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("openVisitorGateInCombat" + "_colorSetting", new String[]{"255", "150", "0", "100"});
+				openVisitorGateInCombatColorOptionWidget.cb.colorChooser.setColor(openVisitorGateInCombatColorOptionWidget.currentColor = new Color(255, 150, 0, 100));
+				HidingBox.OPENVISITORGATE_TOP_InCombat = Pipe.Op.compose(new BaseColor(openVisitorGateInCombatColorOptionWidget.currentColor), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
+				HidingBoxFilled.OPENVISITORGATE_InCombat = Pipe.Op.compose(new BaseColor(openVisitorGateInCombatColorOptionWidget.currentColor), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				CollisionBox.OPENVISITORGATE_TOP_InCombat = Pipe.Op.compose(new BaseColor(new Color(255, 150,0, collisionBoxesColorOptionWidget.currentColor.getAlpha())), new States.LineWidth(CollisionBox.WIDTH), CollisionBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated); // ND: Gotta update collision boxes too, cause the gate colors depend on this setting
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			leftColumn = add(passableGateCombatColorOptionWidget = new ColorOptionWidget("Open Non-Visitor Gate / Other Passable Objects:", "passableGate", 246,
+					Integer.parseInt(passableGateCombatColorSetting[0]), Integer.parseInt(passableGateCombatColorSetting[1]),
+					Integer.parseInt(passableGateCombatColorSetting[2]), Integer.parseInt(passableGateCombatColorSetting[3]), (Color col) -> {
+				HidingBox.PASSABLE_TOP = Pipe.Op.compose(new BaseColor(col), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
+				HidingBoxFilled.PASSABLE = Pipe.Op.compose(new BaseColor(col), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				CollisionBox.PASSABLE_TOP = Pipe.Op.compose(new BaseColor(new Color(col.getRed(), col.getGreen(),
+						col.getBlue(), collisionBoxesColorOptionWidget.currentColor.getAlpha())), new States.LineWidth(CollisionBox.WIDTH), CollisionBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated); // ND: Gotta update collision boxes too, cause the gate colors depend on this setting
+				}
+			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("passableGate" + "_colorSetting", new String[]{"0", "217", "30", "100"});
+				passableGateCombatColorOptionWidget.cb.colorChooser.setColor(passableGateCombatColorOptionWidget.currentColor = new Color(0, 217, 30, 100));
+				HidingBox.PASSABLE_TOP = Pipe.Op.compose(new BaseColor(passableGateCombatColorOptionWidget.currentColor), new States.LineWidth(HidingBox.WIDTH), HidingBox.TOP);
+				HidingBoxFilled.PASSABLE = Pipe.Op.compose(new BaseColor(passableGateCombatColorOptionWidget.currentColor), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
+				CollisionBox.PASSABLE_TOP = Pipe.Op.compose(new BaseColor(new Color(0, 217,30, collisionBoxesColorOptionWidget.currentColor.getAlpha())), new States.LineWidth(CollisionBox.WIDTH), CollisionBox.TOP);
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated); // ND: Gotta update collision boxes too, cause the gate colors depend on this setting
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			rightColumn = add(objectPingColorOptionWidget = new ColorOptionWidget("Object Ping (Alt + Left Click, Area Chat):", "objectPing", 246,
+					Integer.parseInt(objectPingColorSetting[0]), Integer.parseInt(objectPingColorSetting[1]), Integer.parseInt(objectPingColorSetting[2]), Integer.parseInt(objectPingColorSetting[3]), (Color col) -> {
+			}){}, topLabel.pos("bl").adds(0, 16).x(UI.scale(400)));
+
+			rightColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("objectPing" + "_colorSetting", new String[]{"255", "183", "0", "255"});
+				objectPingColorOptionWidget.cb.colorChooser.setColor(objectPingColorOptionWidget.currentColor = new Color(255, 183, 0, 255));
+			}), rightColumn.pos("ur").adds(30, 0));
+			rightColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			rightColumn = add(partyObjectPingColorOptionWidget = new ColorOptionWidget("Party Object Ping (Alt + Right Click, Party Chat):", "partyObjectPing", 246,
+					Integer.parseInt(partyObjectPingColorSetting[0]), Integer.parseInt(partyObjectPingColorSetting[1]), Integer.parseInt(partyObjectPingColorSetting[2]), Integer.parseInt(partyObjectPingColorSetting[3]), (Color col) -> {
+			}){}, rightColumn.pos("bl").adds(0, 1).x(UI.scale(400)));
+
+			rightColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("partyObjectPing" + "_colorSetting", new String[]{"255", "183", "0", "255"});
+				partyObjectPingColorOptionWidget.cb.colorChooser.setColor(partyObjectPingColorOptionWidget.currentColor = new Color(243, 0, 0, 255));
+			}), rightColumn.pos("ur").adds(30, 0));
+			rightColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			rightColumn = add(permanentHighlightColorOptionWidget = new ColorOptionWidget("Permanent Object Highlight (Alt + Middle Click):", "permanentHighlight", 246,
+					Integer.parseInt(permanentHighlightColorSetting[0]), Integer.parseInt(permanentHighlightColorSetting[1]), Integer.parseInt(permanentHighlightColorSetting[2]), Integer.parseInt(permanentHighlightColorSetting[3]), (Color col) -> {
+				GobPermanentHighlight.purple = new MixColor(col);
+				if (ui != null && ui.gui != null)
+					ui.sess.glob.oc.gobAction(Gob::setHighlightedObjects);
+			}){}, rightColumn.pos("bl").adds(0, 1).x(UI.scale(400)));
+
+			rightColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("permanentHighlight" + "_colorSetting", new String[]{"116", "0", "178", "200"});
+				permanentHighlightColorOptionWidget.cb.colorChooser.setColor(permanentHighlightColorOptionWidget.currentColor = new Color(116, 0, 178, 200));
+				GobPermanentHighlight.purple = new MixColor(permanentHighlightColorOptionWidget.currentColor);
+				if (ui != null && ui.gui != null)
+					ui.sess.glob.oc.gobAction(Gob::setHighlightedObjects);
+			}), rightColumn.pos("ur").adds(30, 0));
+			rightColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			rightColumn = add(new Label("Combat Friends & Foes"), rightColumn.pos("bl").adds(0, 12).x(UI.scale(520)));
+			rightColumn = add(partyMemberColorOptionWidget = new ColorOptionWidget("Party Member Circle/Highlight:", "partyMember", 246,
+					Integer.parseInt(partyMemberColorSetting[0]), Integer.parseInt(partyMemberColorSetting[1]), Integer.parseInt(partyMemberColorSetting[2]), Integer.parseInt(partyMemberColorSetting[3]), (Color col) -> {
+				PartyHighlight.MEMBER_OL_COLOR = col;
+				PartyCircles.MEMBER_OL_COLOR = col;
+			}){}, rightColumn.pos("bl").adds(0, 1).x(UI.scale(400)));
+			rightColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("partyMember" + "_colorSetting", new String[]{"0", "160", "0", "164"});
+				partyMemberColorOptionWidget.cb.colorChooser.setColor(partyMemberColorOptionWidget.currentColor = new Color(0, 160, 0, 164));
+				PartyHighlight.MEMBER_OL_COLOR = partyMemberColorOptionWidget.currentColor;
+				PartyCircles.MEMBER_OL_COLOR = partyMemberColorOptionWidget.currentColor;
+			}), rightColumn.pos("ur").adds(30, 0));
+			rightColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			rightColumn = add(partyLeaderColorOptionWidget = new ColorOptionWidget("Party Leader Circle/Highlight:", "partyLeader", 246,
+					Integer.parseInt(partyLeaderColorSetting[0]), Integer.parseInt(partyLeaderColorSetting[1]), Integer.parseInt(partyLeaderColorSetting[2]), Integer.parseInt(partyLeaderColorSetting[3]), (Color col) -> {
+				PartyHighlight.LEADER_OL_COLOR = col;
+				PartyCircles.LEADER_OL_COLOR = col;
+			}){}, rightColumn.pos("bl").adds(0, 1).x(UI.scale(400)));
+			rightColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("partyLeader" + "_colorSetting", new String[]{"0", "74", "208", "164"});
+				partyLeaderColorOptionWidget.cb.colorChooser.setColor(partyLeaderColorOptionWidget.currentColor = new Color(0, 74, 208, 164));
+				PartyHighlight.LEADER_OL_COLOR = partyLeaderColorOptionWidget.currentColor;
+				PartyCircles.LEADER_OL_COLOR = partyLeaderColorOptionWidget.currentColor;
+			}), rightColumn.pos("ur").adds(30, 0));
+			rightColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			rightColumn = add(myselfColorOptionWidget = new ColorOptionWidget("My own Circle/Highlight:", "myself", 246,
+					Integer.parseInt(myselfLeaderColorSetting[0]), Integer.parseInt(myselfLeaderColorSetting[1]), Integer.parseInt(myselfLeaderColorSetting[2]), Integer.parseInt(myselfLeaderColorSetting[3]), (Color col) -> {
+				PartyHighlight.MYSELF_OL_COLOR = col;
+				PartyCircles.MYSELF_OL_COLOR = col;
+			}){}, rightColumn.pos("bl").adds(0, 1).x(UI.scale(400)));
+			rightColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("myself" + "_colorSetting", new String[]{"255", "255", "255", "128"});
+				myselfColorOptionWidget.cb.colorChooser.setColor(myselfColorOptionWidget.currentColor = new Color(255, 255, 255, 128));
+				PartyHighlight.MYSELF_OL_COLOR = myselfColorOptionWidget.currentColor;
+				PartyCircles.MYSELF_OL_COLOR = myselfColorOptionWidget.currentColor;
+			}), rightColumn.pos("ur").adds(30, 0));
+			rightColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			rightColumn = add(aggroedEnemiesColorOptionWidget = new ColorOptionWidget("Aggroed Enemy Circles / Current Target Mark:", "aggroedEnemies", 246,
+					Integer.parseInt(aggroedEnemiesColorSetting[0]), Integer.parseInt(aggroedEnemiesColorSetting[1]), Integer.parseInt(aggroedEnemiesColorSetting[2]), Integer.parseInt(aggroedEnemiesColorSetting[3]), (Color col) -> {
+				AggroCircleSprite.col = col;
+				refreshCurrentTargetSpriteColor = true;
+				CurrentTargetSprite.col = new BaseColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), 255));
+				if (ui != null && ui.gui != null && ui.gui.fv != null && ui.gui.fv.lsrel != null){
+					for (Fightview.Relation rel : ui.gui.fv.lsrel) {
+						try {
+							rel.destroy();
+						} catch (Exception ignored) {}
+					}
+				}
+			}){}, rightColumn.pos("bl").adds(0, 1).x(UI.scale(400)));
+			rightColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("aggroedEnemies" + "_colorSetting", new String[]{"255", "0", "0", "140"});
+				aggroedEnemiesColorOptionWidget.cb.colorChooser.setColor(aggroedEnemiesColorOptionWidget.currentColor = new Color(255, 0, 0, 140));
+				AggroCircleSprite.col = aggroedEnemiesColorOptionWidget.currentColor;
+				CurrentTargetSprite.col = new BaseColor(new Color(255, 0, 0, 255));
+				refreshCurrentTargetSpriteColor = true;
+				if (ui != null && ui.gui != null && ui.gui.fv != null && ui.gui.fv.lsrel != null){
+					for (Fightview.Relation rel : ui.gui.fv.lsrel) {
+						try {
+							rel.destroy();
+						} catch (Exception ignored) {}
+					}
+				}
+			}), rightColumn.pos("ur").adds(30, 0));
+			rightColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+
+			rightColumn = add(new Label("Combat Chase Vectors"), rightColumn.pos("bl").adds(0, 12).x(UI.scale(522)));
+			rightColumn = add(myselfChaseVectorColorOptionWidget = new ColorOptionWidget("My own Vector:", "myselfChaseVector", 246,
+					Integer.parseInt(myselfChaseVectorColorSetting[0]), Integer.parseInt(myselfChaseVectorColorSetting[1]), Integer.parseInt(myselfChaseVectorColorSetting[2]), Integer.parseInt(myselfChaseVectorColorSetting[3]), (Color col) -> {
+				ChaseVectorSprite.MAINCOLOR = col;
+			}){}, rightColumn.pos("bl").adds(0, 1).x(UI.scale(400)));
+			rightColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("myselfChaseVector" + "_colorSetting", new String[]{"255", "255", "255", "220"});
+				myselfChaseVectorColorOptionWidget.cb.colorChooser.setColor(myselfChaseVectorColorOptionWidget.currentColor = new Color(255, 255, 255, 220));
+				ChaseVectorSprite.MAINCOLOR = myselfChaseVectorColorOptionWidget.currentColor;
+			}), rightColumn.pos("ur").adds(30, 0));
+			rightColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			rightColumn = add(friendChaseVectorColorOptionWidget = new ColorOptionWidget("Party Member Vector:", "friendChaseVector", 246,
+					Integer.parseInt(friendChaseVectorColorSetting[0]), Integer.parseInt(friendChaseVectorColorSetting[1]), Integer.parseInt(friendChaseVectorColorSetting[2]), Integer.parseInt(friendChaseVectorColorSetting[3]), (Color col) -> {
+				ChaseVectorSprite.FRIENDCOLOR = col;
+			}){}, rightColumn.pos("bl").adds(0, 1).x(UI.scale(400)));
+			rightColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("friendChaseVector" + "_colorSetting", new String[]{"47", "191", "7", "230"});
+				friendChaseVectorColorOptionWidget.cb.colorChooser.setColor(friendChaseVectorColorOptionWidget.currentColor = new Color(47, 191, 7, 230));
+				ChaseVectorSprite.FRIENDCOLOR = friendChaseVectorColorOptionWidget.currentColor;
+			}), rightColumn.pos("ur").adds(30, 0));
+			rightColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			rightColumn = add(foeChaseVectorColorOptionWidget = new ColorOptionWidget("Foe Vector:", "foeChaseVector", 246,
+					Integer.parseInt(foeChaseVectorColorSetting[0]), Integer.parseInt(foeChaseVectorColorSetting[1]), Integer.parseInt(foeChaseVectorColorSetting[2]), Integer.parseInt(foeChaseVectorColorSetting[3]), (Color col) -> {
+				ChaseVectorSprite.FOECOLOR = col;
+			}){}, rightColumn.pos("bl").adds(0, 1).x(UI.scale(400)));
+			rightColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("foeChaseVector" + "_colorSetting", new String[]{"255", "0", "0", "230"});
+				foeChaseVectorColorOptionWidget.cb.colorChooser.setColor(foeChaseVectorColorOptionWidget.currentColor = new Color(255, 0, 0, 230));
+				ChaseVectorSprite.FOECOLOR = foeChaseVectorColorOptionWidget.currentColor;
+			}), rightColumn.pos("ur").adds(30, 0));
+			rightColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+			rightColumn = add(unknownChaseVectorColorOptionWidget = new ColorOptionWidget("Animal / Random Irrelevant Player Vector:", "unknownChaseVector", 246,
+					Integer.parseInt(unknownChaseVectorColorSetting[0]), Integer.parseInt(unknownChaseVectorColorSetting[1]), Integer.parseInt(unknownChaseVectorColorSetting[2]), Integer.parseInt(unknownChaseVectorColorSetting[3]), (Color col) -> {
+				ChaseVectorSprite.UNKNOWNCOLOR = col;
+			}){}, rightColumn.pos("bl").adds(0, 1).x(UI.scale(400)));
+			rightColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("unknownChaseVector" + "_colorSetting", new String[]{"255", "199", "0", "230"});
+				unknownChaseVectorColorOptionWidget.cb.colorChooser.setColor(unknownChaseVectorColorOptionWidget.currentColor = new Color(255, 199, 0, 230));
+				ChaseVectorSprite.UNKNOWNCOLOR = unknownChaseVectorColorOptionWidget.currentColor;
+			}), rightColumn.pos("ur").adds(30, 0));
+			rightColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), leftColumn.pos("bl").adds(0, 18).x(UI.scale(285)));
+			setTooltipsForColorSettingsStuff();
+			pack();
+		}
+	}
+
+
 	public class SetButton extends KeyMatch.Capture {
 	    public final KeyBinding cmd;
 
@@ -2963,6 +3420,7 @@ public class OptWnd extends Window {
 		Panel hidingsettings = add(new NDHidingSettingsPanel(advancedSettings));
 		Panel dropsettings = add(new NDAutoDropSettingsPanel(advancedSettings));
 		Panel alarmsettings = add(new NDAlarmsAndSoundsSettingsPanel(advancedSettings));
+		Panel colorsettings = add(new NDColorSettingsPanel(advancedSettings));
 
 		int y2 = UI.scale(6);
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Interface & Display Settings", -1, iface, "Interface & Display Settings"), 0, y2).pos("bl").adds(0, 5).y;
@@ -2976,6 +3434,8 @@ public class OptWnd extends Window {
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Hiding Settings", -1, hidingsettings, "Hiding Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Mining Auto-Drop Settings", -1, dropsettings, "Mining Auto-Drop Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Alarms & Sounds Settings", -1, alarmsettings, "Alarms & Sounds Settings"), 0, y2).pos("bl").adds(0, 25).y;
+
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Color Settings", -1, colorsettings, "Color Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Back", 27, main, "Options            "), 0, y2).pos("bl").adds(0, 5).y;
 		this.advancedSettings.pack();
@@ -3049,14 +3509,22 @@ public class OptWnd extends Window {
 		alwaysOpenBeltCheckBox.tooltip = RichText.render("Enabling this will cause your belt window to always open when you log in.\n$col[218,163,0]{Note:} $col[185,185,185]{By default, Loftar saves the status of the belt at logout. So if you don't enable this setting, but leave the belt window open when you log out/exit the game, it will still open on login.}", UI.scale(300));
 		showQuickSlotsBar.tooltip = RichText.render("$col[218,163,0]{Note:} The Quick Switch keybinds ('Right Hand' and 'Left Hand') will still work, regardless of this widget being visible or not.", UI.scale(300));
 		toggleGobGrowthInfoCheckBox.tooltip = RichText.render("Enabling this will show the following growth information:\n$col[185,185,185]{> Trees and Bushes will display their current growth percentage\n> Crops will display their growth stage as \"Current / Final\"\n}$col[218,163,0]{Note:} If a Tree or Bush is not showing a percentage, that means it is fully grown, and can be harvested.\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(300));
-		toggleGobCollisionBoxesDisplayCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using a Hotkey.}", UI.scale(300));
+		toggleGobCollisionBoxesDisplayCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using a Hotkey.}" +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{The Collision Box Color can be changed in the Color Settings.}", UI.scale(300));
 		toggleBeastDangerRadiiCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		toggleCritterAurasCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		showContainerFullnessCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Container Objects, to indicate their fullness:" +
-				"\n$col[185,0,0]{Red: }$col[255,255,255]{Full}\n$col[224,213,0]{Yellow: }$col[255,255,255]{Contains some}\n$col[0,185,0]{Green: }$col[255,255,255]{Empty}", UI.scale(300));
+				"\n=====================" +
+				"\n$col[185,0,0]{Red: }$col[255,255,255]{Full}\n$col[224,213,0]{Yellow: }$col[255,255,255]{Contains some}\n$col[0,185,0]{Green: }$col[255,255,255]{Empty}" +
+				"\n=====================" +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{The Highlight Colors can be changed in the Color Settings.}", UI.scale(310));
 		showWorkstationStageCheckBox.tooltip = RichText.render("Enabling this will overlay the following colors over Workstation Objects (Drying Frame, Tanning Tub, Garden Pot, Cheese Rack), to indicate their progress stage:" +
-				"\n$col[185,0,0]{Red: }$col[255,255,255]{Finished}\n$col[224,213,0]{Yellow: }$col[255,255,255]{In progress}\n$col[0,185,0]{Green: }$col[255,255,255]{Prepared (Ready for use)}\n$col[160,160,160]{Gray: }$col[255,255,255]{Unprepared (Missing: Water, Soil, Tanning Liquid, etc.)}", UI.scale(310));
-		displayGatePassabilityBoxesCheckBox.tooltip = RichText.render("Enabling this will cause a collision box to be displayed under gates at all times.\nThe displayed colors depend on the gate type, and your combat status." +
+				"\n=====================" +
+				"\n$col[185,0,0]{Red: }$col[255,255,255]{Finished}\n$col[224,213,0]{Yellow: }$col[255,255,255]{In progress}\n$col[0,185,0]{Green: }$col[255,255,255]{Prepared (Ready for use)}\n$col[160,160,160]{Gray: }$col[255,255,255]{Unprepared (Missing: Water, Soil, Tanning Liquid, etc.)}" +
+				"\n=====================" +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{The Highlight Colors can be changed in the Color Settings.}", UI.scale(310));
+		displayGatePassabilityBoxesCheckBox.tooltip = RichText.render("By default, these only show up while you're in combat." +
+				"\nEnabling this will cause a collision box to be displayed under gates at all times.\nThe displayed colors depend on the gate type, and your combat status." +
 				"\n=====================" +
 				"\n$col[0,160,0]{Green: }$col[185,185,185]{Normal Gate, Open and Passable, even in combat}" +
 				"\n$col[224,213,0]{Yellow: }$col[185,185,185]{Visitor Gate, Open and Passable (you're out of combat)}" +
@@ -3064,7 +3532,8 @@ public class OptWnd extends Window {
 				"\n$col[185,0,0]{Red: }$col[185,185,185]{Normal/Visitor Gate, Closed, so it's NOT Passable}" +
 				"\n=====================" +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
-		highlightCliffsCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
+		highlightCliffsCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{The Highlight Color can be changed in the Color Settings.}" +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		objectPermanentHighlightingCheckBox.tooltip = RichText.render("Enabling this setting will allow you to highlight objects by using Alt + Middle Click (Mouse Scroll Click)." +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{Objects remain highlighted until you completely restart your client, even if you switch characters or accounts. " +
 				"\nIf you want to reset the highlighted objects without restarting the client, you can disable and re-enable this setting.}", UI.scale(320));
@@ -3085,21 +3554,26 @@ public class OptWnd extends Window {
 				"\n=====================" +
 				"\n$col[255,255,255]{White: }$col[185,185,185]{Yourself}\n$col[0,74,208]{Blue: }$col[185,185,185]{Party Leader}\n$col[0,160,0]{Green: }$col[185,185,185]{Other Members}" +
 				"\n=====================" +
-				"\n$col[218,163,0]{Note:} $col[185,185,185]{If you are the party leader, your color highlight will always be $col[0,74,208]{Blue}, rather than $col[255,255,255]{White}.}", UI.scale(300));
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{If you are the party leader, your color highlight will always be $col[0,74,208]{Blue}, rather than $col[255,255,255]{White}.}" +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{The Highlight Colors can be changed in the Color Settings.}", UI.scale(310));
 		partyMembersCirclesCheckBox.tooltip = RichText.render("Enabling this will put a colored circle under all party members." +
 				"\n=====================" +
 				"\n$col[255,255,255]{White: }$col[185,185,185]{Yourself}\n$col[0,74,208]{Blue: }$col[185,185,185]{Party Leader}\n$col[0,160,0]{Green: }$col[185,185,185]{Other Members}" +
 				"\n=====================" +
-				"\n$col[218,163,0]{Note:} $col[185,185,185]{If you are the party leader, your circle's color will always be $col[0,74,208]{Blue}, rather than $col[255,255,255]{White}.}", UI.scale(300));
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{If you are the party leader, your circle's color will always be $col[0,74,208]{Blue}, rather than $col[255,255,255]{White}.}" +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{The Circle Colors can be changed in the Color Settings.}", UI.scale(300));
 		drawChaseVectorsCheckBox.tooltip = RichText.render("If this setting is enabled, colored lines will be drawn between chasers and chased targets." +
 				"\n=====================" +
-				"\n$col[255,255,255]{White: }$col[185,185,185]{You are the chaser}" +
-				"\n$col[0,160,0]{Green: }$col[185,185,185]{A party member is the chaser}" +
-				"\n$col[185,0,0]{Red: }$col[185,185,185]{A player is chasing you or a party member}" +
-				"\n$col[224,213,0]{Yellow: }$col[185,185,185]{An animal is the chaser, OR random (non-party) players are chasing each other}" +
+				"\n$col[255,255,255]{White: }$col[185,185,185]{You are the chaser.}" +
+				"\n$col[0,160,0]{Green: }$col[185,185,185]{A party member is the chaser.}" +
+				"\n$col[185,0,0]{Red: }$col[185,185,185]{A player is chasing you or a party member.}" +
+				"\n$col[224,213,0]{Yellow: }$col[185,185,185]{An animal is the chaser, OR random (non-party) players are chasing each other.}" +
 				"\n=====================" +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{Chase vectors include queuing attacks, clicking a critter to pick up, or simply following someone.}" +
-				"\n$col[218,163,0]{Disclaimer:} $col[185,185,185]{Chase vectors sometimes don't show when chasing a critter that is standing still. The client treats this as something else for some reason and I can't fix it.}", UI.scale(430));
+				"\n$col[218,163,0]{Disclaimer:} $col[185,185,185]{Chase vectors sometimes don't show when chasing a critter that is standing still. The client treats this as something else for some reason and I can't fix it.}" +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{The Chase Vector Colors can be changed in the Color Settings.}", UI.scale(430));
+		markCurrentCombatTargetCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{The Target Mark Color can be changed in the Color Settings.}" , UI.scale(400));
+		aggroedEnemiesCirclesCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{The Circle Color can be changed in the Color Settings.}" , UI.scale(300));
 	}
 	private void setTooltipsForGameplaySettingsStuff(){
 		defaultSpeedLabel.tooltip = RichText.render("Sets your character's movement speed on login.", UI.scale(300));
@@ -3140,11 +3614,31 @@ public class OptWnd extends Window {
 
 	private void setTooltipsForHidingSettingsStuff(){
 		toggleGobHidingCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using a Hotkey.", UI.scale(300));
+		hiddenObjectsColorOptionWidget.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{The Hidden Object Box Edges are always visible, even through other objects, at a fixed transparency (40%)." +
+				"\nThe transparency level you set here only affects the filled box.}", UI.scale(310));
 	}
 
 	private void setTooltipsForAlarmSettingsStuff(){
 		lowEnergySoundEnabledCheckbox.tooltip = RichText.render("This alarm will also trigger again when you reach <2000% energy.\n$col[185,185,185]{Don't starve yourself, dumbass.}", UI.scale(400));
 		whiteVillageOrRealmPlayerAlarmEnabledCheckbox.tooltip = RichText.render("This alarm will only be triggered on White or Unmemorised Village/Realm Members.\n$col[185,185,185]{If you have them Kinned or Memorised and have changed their Kin color from White, the alarm of their respective kin color will be triggered instead (if enabled).}", UI.scale(300));
+	}
+
+	private void setTooltipsForColorSettingsStuff(){
+		hiddenObjectsColorOptionWidget2.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{The Hidden Object Box Edges are always visible, even through other objects, at a fixed transparency (40%)." +
+				"\nThe transparency level you set here only affects the filled box.}", UI.scale(310));
+		collisionBoxesColorOptionWidget.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{Collision boxes for gates and other passable objects will use the combat passability colors, which can be set further below." +
+				"\n(The transparency levels are the same for all collision boxes, which you set here!)}", UI.scale(310));
+		closedGateColorOptionWidget.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This also affects the Collision Box Color, but not the transparency.}", UI.scale(350));
+		openVisitorGateNoCombatColorOptionWidget.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This also affects the Collision Box Color, but not the transparency.}", UI.scale(350));
+		openVisitorGateInCombatColorOptionWidget.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This also affects the Collision Box Color, but not the transparency.}", UI.scale(350));
+		passableGateCombatColorOptionWidget.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This also affects the Collision Box Color, but not the transparency.}", UI.scale(350));
+		permanentHighlightColorOptionWidget.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{For this to work, this option must be Enabled in Interface & Display Settings!}", UI.scale(400));
+		myselfColorOptionWidget.tooltip = RichText.render("$col[218,163,0]{Remember:} $col[185,185,185]{If you're the Party Leader, your own color is overwritten by the Party Leader Color.}", UI.scale(310));
+		aggroedEnemiesColorOptionWidget.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{For the sake of visibility, the Current Target transparency level is not affected by this setting.\nIt always stays fully visible, with the lowest transparency (0%).}", UI.scale(300));
+		myselfChaseVectorColorOptionWidget.tooltip = RichText.render("$col[185,185,185]{You are the chaser.}", UI.scale(350));
+		friendChaseVectorColorOptionWidget.tooltip = RichText.render("$col[185,185,185]{A party member is the chaser.}", UI.scale(350));
+		foeChaseVectorColorOptionWidget.tooltip = RichText.render("$col[185,185,185]{A player is chasing you or a party member.}", UI.scale(350));
+		unknownChaseVectorColorOptionWidget.tooltip = RichText.render("$col[185,185,185]{An animal is the chaser, OR random (non-party) players are chasing each other.}", UI.scale(350));
 	}
 
     public OptWnd() {

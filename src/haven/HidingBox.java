@@ -7,35 +7,32 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HitboxFilled extends SlottedNode implements Rendered {
+public class HidingBox extends SlottedNode implements Rendered {
 	private static final VertexArray.Layout LAYOUT = new VertexArray.Layout(new VertexArray.Layout.Input(Homo3D.vertex, new VectorFormat(3, NumberFormat.FLOAT32), 0, 0, 12));
 	private Model model;
 	private final Gob gob;
 	private static final Map<Resource, Model> MODEL_CACHE = new HashMap<>();
 	private static final float Z = 0.1f;
-	public static Color SOLID_COLOR = new Color(Integer.parseInt(OptWnd.hiddenObjectsColorSetting[0]), Integer.parseInt(OptWnd.hiddenObjectsColorSetting[1]), Integer.parseInt(OptWnd.hiddenObjectsColorSetting[2]), Integer.parseInt(OptWnd.hiddenObjectsColorSetting[3]));
-	private static final Color CLOSEDGATE_COLOR = new Color(218, 0, 0, 100);
-	private static final Color OPENVISITORGATE_COLOR_NoCombat = new Color(255, 233, 0, 100);
-	private static final Color OPENVISITORGATE_COLOR_Combat = new Color(255, 150, 0, 100);
-	private static final Color PASSABLE_COLOR = new Color(0, 217, 30, 100);
-	public static Pipe.Op SOLID = Pipe.Op.compose(new BaseColor(SOLID_COLOR), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
-	private static final Pipe.Op CLOSEDGATE = Pipe.Op.compose(new BaseColor(CLOSEDGATE_COLOR), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
-	private static final Pipe.Op OPENVISITORGATE_NoCombat = Pipe.Op.compose(new BaseColor(OPENVISITORGATE_COLOR_NoCombat), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
-	private static final Pipe.Op OPENVISITORGATE_Combat = Pipe.Op.compose(new BaseColor(OPENVISITORGATE_COLOR_Combat), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
-	private static final Pipe.Op PASSABLE = Pipe.Op.compose(new BaseColor(PASSABLE_COLOR), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last);
-	private Pipe.Op state = SOLID;
+	public static final float WIDTH = 2f;
+	public static final Pipe.Op TOP = Pipe.Op.compose(Rendered.last, States.Depthtest.none, States.maskdepth);
+	public static Pipe.Op SOLID_TOP = Pipe.Op.compose(Pipe.Op.compose(new BaseColor(new Color(Integer.parseInt(OptWnd.hiddenObjectsColorSetting[0]), Integer.parseInt(OptWnd.hiddenObjectsColorSetting[1]), Integer.parseInt(OptWnd.hiddenObjectsColorSetting[2]), 140)), new States.LineWidth(WIDTH)), TOP);
+	public static Pipe.Op CLOSEDGATE_TOP = Pipe.Op.compose(new BaseColor(OptWnd.closedGateColorOptionWidget.currentColor), new States.LineWidth(WIDTH), TOP);
+	public static Pipe.Op OPENVISITORGATE_TOP_NoCombat = Pipe.Op.compose(new BaseColor(OptWnd.openVisitorGateNoCombatColorOptionWidget.currentColor), new States.LineWidth(WIDTH), TOP);
+	public static Pipe.Op OPENVISITORGATE_TOP_InCombat = Pipe.Op.compose(new BaseColor(OptWnd.openVisitorGateInCombatColorOptionWidget.currentColor), new States.Facecull(States.Facecull.Mode.NONE), Rendered.last, TOP);
+	public static Pipe.Op PASSABLE_TOP = Pipe.Op.compose(new BaseColor(OptWnd.passableGateCombatColorOptionWidget.currentColor), new States.LineWidth(WIDTH), TOP);
+	private Pipe.Op state = SOLID_TOP;
 	private boolean issaGate = false;
 	private boolean issaVisitorGate = false;
 
-	private HitboxFilled(Gob gob) {
+	private HidingBox(Gob gob) {
 		model = getModel(gob);
 		this.gob = gob;
 		updateState();
 	}
 
-	public static HitboxFilled forGob(Gob gob) {
+	public static HidingBox forGob(Gob gob) {
 		try {
-			return new HitboxFilled(gob);
+			return new HidingBox(gob);
 		} catch (Loading ignored) { }
 		return null;
 	}
@@ -56,14 +53,12 @@ public class HitboxFilled extends SlottedNode implements Rendered {
 
 	public void updateState() {
 		if(model != null && slots != null) {
-			boolean top = true;
-			//Pipe.Op newState = passable() ? (top ? PASSABLE_TOP : PASSABLE) : (top ? (issaGate ? CLOSEDGATE_TOP : SOLID_TOP) : (issaGate ? CLOSEDGATE : SOLID));
 			Pipe.Op newState;
 			boolean inCombat = gob.glob.sess.ui.gui.fv != null && gob.glob.sess.ui.gui.fv.current != null;
 			if (passable()){
-				if (issaVisitorGate) newState = (inCombat) ? OPENVISITORGATE_Combat : OPENVISITORGATE_NoCombat; else newState = PASSABLE;
+				if (issaVisitorGate) newState = (inCombat) ? OPENVISITORGATE_TOP_InCombat : OPENVISITORGATE_TOP_NoCombat; else newState = PASSABLE_TOP;
 			} else {
-				if (issaGate) newState = CLOSEDGATE; else newState = SOLID;
+				if (issaGate) newState = CLOSEDGATE_TOP; else newState = SOLID_TOP;
 			}
 			try {
 				Model m = getModel(gob);
@@ -144,7 +139,6 @@ public class HitboxFilled extends SlottedNode implements Rendered {
 						}
 					}
 				}
-
 				if(!polygons.isEmpty()) {
 					List<Float> vertices = new LinkedList<>();
 
@@ -156,7 +150,7 @@ public class HitboxFilled extends SlottedNode implements Rendered {
 					VertexArray.Buffer vbo = new VertexArray.Buffer(data.length * 4, DataBuffer.Usage.STATIC, DataBuffer.Filler.of(data));
 					VertexArray va = new VertexArray(LAYOUT, vbo);
 
-					model = new Model(Model.Mode.TRIANGLE_FAN, va, null);
+					model = new Model(Model.Mode.LINES, va, null);
 
 					MODEL_CACHE.put(res, model);
 				}
@@ -174,11 +168,13 @@ public class HitboxFilled extends SlottedNode implements Rendered {
 		return ret;
 	}
 
-	static void addLoopedVertices(List<Float> target, List<Coord3f> vertices) {
+	private static void addLoopedVertices(List<Float> target, List<Coord3f> vertices) {
 		int n = vertices.size();
 		for (int i = 0; i < n; i++) {
 			Coord3f a = vertices.get(i);
+			Coord3f b = vertices.get((i + 1) % n);
 			Collections.addAll(target, a.x, a.y, a.z);
+			Collections.addAll(target, b.x, b.y, b.z);
 		}
 	}
 

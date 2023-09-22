@@ -56,11 +56,11 @@ public class Ridges implements MapMesh.ConsHooks {
 	public static class RMPart extends MPart{
 		public RMPart(RMPart... parts){
 			super(parts);
-			this.mat = new MixColor(new Color(255, 0, 0, 170));
+			this.mat = new MixColor(OptWnd.cliffsHighlightColorOptionWidget.currentColor);
 		}
 		public RMPart (Coord lc, Coord gc, Surface.Vertex[] v, float[] tcx, float[] tcy, int[] f) {
 			super(lc, gc, v, tcx, tcy, f);
-			this.mat = new MixColor(new Color(255, 0, 0, 170));
+			this.mat = new MixColor(OptWnd.cliffsHighlightColorOptionWidget.currentColor);
 		}
 	}
 

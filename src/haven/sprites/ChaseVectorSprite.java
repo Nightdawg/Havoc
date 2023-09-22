@@ -11,10 +11,10 @@ import java.util.HashMap;
 public class ChaseVectorSprite extends Sprite implements PView.Render2D {
 
 
-    public static final Color MAINCOLOR = new Color(255, 255, 255, 220);
-    public static final Color FOECOLOR = new Color(255, 0, 0, 230);
-    public static final Color FRIENDCOLOR = new Color(47, 191, 7, 230);
-    public static final Color UNKNOWNCOLOR = new Color(255, 199, 0, 230);
+    public static Color MAINCOLOR = OptWnd.myselfChaseVectorColorOptionWidget.currentColor;
+    public static Color FOECOLOR = OptWnd.foeChaseVectorColorOptionWidget.currentColor;
+    public static Color FRIENDCOLOR = OptWnd.friendChaseVectorColorOptionWidget.currentColor;
+    public static Color UNKNOWNCOLOR = OptWnd.unknownChaseVectorColorOptionWidget.currentColor;
     private final Homing homing;
 
     public ChaseVectorSprite(Gob gob, Homing homing) {

@@ -986,9 +986,9 @@ public class ChatUI extends Widget {
 						Gob gob = ui.gui.map.glob.oc.getgob(Long.parseLong(matcher.group(1)));
 						if (gob != null) {
 							if (name.equals("Party")) {
-								gob.highlight(new Color(243, 0, 0, 255));
+								gob.highlight(OptWnd.partyObjectPingColorOptionWidget.currentColor);
 							} else if (name.equals("Area Chat")) {
-								gob.highlight(new Color(255, 183, 0, 255));
+								gob.highlight(OptWnd.objectPingColorOptionWidget.currentColor);
 							}
 						}
 						return false;

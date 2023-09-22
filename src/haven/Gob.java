@@ -68,9 +68,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     private Loader.Future<?> deferral = null;
 	private GobDamageInfo damage;
 	public StatusUpdates status = new StatusUpdates();
-	public CollisionBoxGobSprite<Hitbox> collisionBox = null;
-	private CollisionBoxGobSprite<Hitbox2> collisionBox2 = null;
-	private CollisionBoxGobSprite<HitboxFilled> hidingBox = null;
+	public CollisionBoxGobSprite<CollisionBox> collisionBox = null;
+	private CollisionBoxGobSprite<HidingBox> collisionBox2 = null;
+	private CollisionBoxGobSprite<HidingBoxFilled> hidingBox = null;
 	private GobGrowthInfo growthInfo;
 	private GobQualityInfo qualityInfo;
 	private final List<Overlay> dols = new ArrayList<>();
@@ -111,9 +111,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void init(boolean throwLoading) {
 		Resource res = getres();
 		if (res != null) {
-			if (listHighlighted.contains(id)) {
-				setattr(new GobPermanentHighlight(this, GobPermanentHighlight.State.PURPLE));
-			}
+			setHighlightedObjects();
 			initiateSupportOverlays();
 			toggleMineLadderRadius();
 			toggleBeeSkepRadius();
@@ -1546,9 +1544,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					collisionBox.fx.updateState();
 				}
 			} else if(!virtual || this instanceof MapView.Plob) {
-				Hitbox hitbox = Hitbox.forGob(this);
-				if(hitbox != null) {
-					this.collisionBox = new CollisionBoxGobSprite<>(this, hitbox);
+				CollisionBox collisionBox = CollisionBox.forGob(this);
+				if(collisionBox != null) {
+					this.collisionBox = new CollisionBoxGobSprite<>(this, collisionBox);
 					addol(this.collisionBox);
 				}
 			}
@@ -1624,9 +1622,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 						hidingBox.fx.updateState();
 					}
 				} else if (!virtual || this instanceof MapView.Plob) {
-					HitboxFilled hitbox = HitboxFilled.forGob(this);
-					if (hitbox != null) {
-						this.hidingBox = new CollisionBoxGobSprite<>(this, hitbox);
+					HidingBoxFilled hidingboxfilled = HidingBoxFilled.forGob(this);
+					if (hidingboxfilled != null) {
+						this.hidingBox = new CollisionBoxGobSprite<>(this, hidingboxfilled);
 						addol(this.hidingBox);
 					}
 				}
@@ -1635,9 +1633,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 						collisionBox2.fx.updateState();
 					}
 				} else if(!virtual || this instanceof MapView.Plob) {
-					Hitbox2 hitbox = Hitbox2.forGob(this);
-					if(hitbox != null) {
-						this.collisionBox2 = new CollisionBoxGobSprite<>(this, hitbox);
+					HidingBox hidingbox = HidingBox.forGob(this);
+					if(hidingbox != null) {
+						this.collisionBox2 = new CollisionBoxGobSprite<>(this, hidingbox);
 						addol(this.collisionBox2);
 					}
 				}
@@ -1957,6 +1955,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			}
 		} else {
 			delattr(GobStateHighlight.class);
+		}
+	}
+
+	public void setHighlightedObjects(){
+		if (listHighlighted.contains(id)) {
+			setattr(new GobPermanentHighlight(this, GobPermanentHighlight.State.PURPLE));
 		}
 	}
 

@@ -11,7 +11,7 @@ import java.nio.ShortBuffer;
 
 public class CurrentTargetSprite extends Sprite {
     private static final ObstMesh mesh;
-    private static final BaseColor col = new BaseColor(new Color(255, 0, 0, 255));
+    public static BaseColor col = new BaseColor(new Color(Integer.parseInt(OptWnd.aggroedEnemiesColorSetting[0]), Integer.parseInt(OptWnd.aggroedEnemiesColorSetting[1]), Integer.parseInt(OptWnd.aggroedEnemiesColorSetting[2]), 255));
 
     static {
 	final Coord2d[][] shapes = new Coord2d[2][4];

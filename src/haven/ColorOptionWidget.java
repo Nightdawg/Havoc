@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 public class ColorOptionWidget extends Widget{
     ColorOptionButton cb;
     Label label;
-    Color currentColor;
+    public Color currentColor;
     Consumer<Color> function;
 
     public ColorOptionWidget(String text, String key, int horizontalButtonDistance, int Red, int Green, int Blue, int Alpha, Consumer<Color> function){
@@ -35,7 +35,7 @@ public class ColorOptionWidget extends Widget{
             this.colorChooser = new JColorChooser();
             final AbstractColorChooserPanel[] panels = colorChooser.getChooserPanels();
             for (final AbstractColorChooserPanel accp : panels) {
-                if (!accp.getDisplayName().equals("RGB")) {
+                if (!accp.getDisplayName().equals("HSV")) {
                     colorChooser.removeChooserPanel(accp);
                 }
             }
@@ -46,7 +46,7 @@ public class ColorOptionWidget extends Widget{
 
         @Override
         public void draw(GOut g) {
-            int delta = 2;
+            int delta = UI.scale(2);
             Coord size = new Coord(sz.x-2*delta,sz.y-2*delta);
             g.chcolor(currentColor);
             g.frect(new Coord(delta,  delta), size);
@@ -64,7 +64,7 @@ public class ColorOptionWidget extends Widget{
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    JDialog chooser = JColorChooser.createDialog(null, "SelectColor", true, colorChooser, new AbstractAction() {
+                    JDialog chooser = JColorChooser.createDialog(null, label.texts + " Color Selection", true, colorChooser, new AbstractAction() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             currentColor = colorChooser.getColor();

@@ -405,7 +405,10 @@ public class Fightsess extends Widget {
 			g.aimage(oip.get().tex(), OptWnd.useProperCombatUICheckBox.a ? new Coord(x0 + UI.scale(40), y0 - UI.scale(30)) : pcc.add(UI.scale(75), 0), 0, 0.5);
 
 			if (OptWnd.markCurrentCombatTargetCheckBox.a) {
-				curtgtfx = fxon(fv.current.gobid, tgtfx, curtgtfx);
+				if (!OptWnd.refreshCurrentTargetSpriteColor)
+					curtgtfx = fxon(fv.current.gobid, tgtfx, curtgtfx);
+				else
+					OptWnd.refreshCurrentTargetSpriteColor = false;
 			}
 		}
 

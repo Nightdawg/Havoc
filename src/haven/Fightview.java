@@ -408,6 +408,7 @@ public class Fightview extends Widget {
             lsrel.addFirst(rel);
 	    updrel();
 		ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+		ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated);
             return;
         } else if(msg == "del") {
             Relation rel = getrel(uint32((Integer)args[0]));
@@ -418,6 +419,7 @@ public class Fightview extends Widget {
 		setcur(null);
 	    updrel();
 		ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
+		ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated);
             return;
         } else if(msg == "upd") {
             Relation rel = getrel(uint32((Integer)args[0]));
