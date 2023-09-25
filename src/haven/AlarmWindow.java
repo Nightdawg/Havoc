@@ -102,7 +102,7 @@ public class AlarmWindow extends Window {
 					future.cancel(true);
 				boolean alreadyExists = false;
 				for (int i = 0; i < al.items.size(); i++)
-					if (al.items.get(i).gobResname.text.text.equals(addGobResname.buf.line()))
+					if (al.items.get(i).gobResname.texts.equals(addGobResname.buf.line()))
 						alreadyExists = true;
 				if (!alreadyExists) {
 					al.addItem(new AlarmItem(addGobResname.buf.line(), enabled.a, alarmName.buf.line(), addAlarmFilename.buf.line(), addVolume.val, knocked.a));
@@ -387,7 +387,7 @@ public class AlarmWindow extends Window {
 		}
 
 		public String getGobResname() {
-			return gobResname.text.text;
+			return gobResname.texts;
 		}
 
 		public String getAlarmFilename() {
