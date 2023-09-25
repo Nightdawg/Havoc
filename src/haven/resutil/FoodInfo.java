@@ -27,6 +27,8 @@
 package haven.resutil;
 
 import haven.*;
+import haven.res.ui.tt.q.qbuff.QBuff;
+
 import java.util.*;
 import java.awt.Color;
 import java.awt.image.*;
@@ -36,6 +38,7 @@ public class FoodInfo extends ItemInfo.Tip {
     public final Event[] evs;
     public final Effect[] efs;
     public final int[] types;
+	private UI ui = null;
 
     public FoodInfo(Owner owner, double end, double glut, double cons, Event[] evs, Effect[] efs, int[] types) {
 	super(owner);
@@ -45,6 +48,9 @@ public class FoodInfo extends ItemInfo.Tip {
 	this.evs = evs;
 	this.efs = efs;
 	this.types = types;
+	if (owner instanceof GItem){
+		this.ui = ((GItem) owner).ui;
+	}
     }
 
     public FoodInfo(Owner owner, double end, double glut, Event[] evs, Effect[] efs, int[] types) {
@@ -72,15 +78,38 @@ public class FoodInfo extends ItemInfo.Tip {
     }
 
     public BufferedImage tipimg() {
-	String head = String.format("Energy: $col[128,128,255]{%s%%}, Hunger: $col[255,192,128]{%s\u2030}", Utils.odformat2(end * 100, 2), Utils.odformat2(glut * 1000, 2));
-	if(cons != 0)
-	    head += String.format(", Satiation: $col[192,192,128]{%s%%}", Utils.odformat2(cons * 100, 2));
+	String head = null;
+	boolean matchFound = false;
+	double efficiency = 100;
+	boolean calculateEfficiency = ui != null && ui.modshift;
+	for (CharWnd.Constipations.El el : ui.gui.chrwdg.cons.els) {
+		if (el.t.res.get().name.equals(((GItem) this.owner).resname())) {
+			Color c = (el.a > 1.0)? CharWnd.Constipations.buffed:Utils.blendcol(CharWnd.Constipations.none, CharWnd.Constipations.full, el.a);
+			efficiency = 100 * (1.0 - el.a);
+			head = String.format("\nFood Efficiency: $col["+ c.getRed() +","+ c.getGreen() +","+ c.getBlue() +"]{%s%%}", Utils.odformat2(efficiency, 2));
+			matchFound = true;
+			break;
+		}
+	}
+	if (!matchFound)
+		head = String.format("Food Efficiency: $col[49,255,39]{%s%%}", Utils.odformat2(efficiency, 2));
+
+	head += String.format("\nEnergy: $col[128,128,255]{%s%%}  |  Hunger: $col[255,192,128]{%s\u2030}", Utils.odformat2(end * 100, 2), Utils.odformat2(calculateEfficiency ? (glut * 1000 * (efficiency/100)) : (glut * 1000), 2));
+	head += String.format("\nEnergy/Hunger: $col[128,128,255]{%s}", Utils.odformat2((end * 100) / (glut * 1000), 2));
+	double totalFeps = 0;
+	for (int i = 0; i < evs.length; i++) {
+		totalFeps += evs[i].a;
+	}
+
+	if (evs.length > 0) {
+		head += "\n\nFood Event Points:";
+	}
 	BufferedImage base = RichText.render(head, 0).img;
 	Collection<BufferedImage> imgs = new LinkedList<BufferedImage>();
 	imgs.add(base);
 	for(int i = 0; i < evs.length; i++) {
 	    Color col = Utils.blendcol(evs[i].ev.col, Color.WHITE, 0.5);
-	    imgs.add(catimgsh(5, evs[i].img, RichText.render(String.format("%s: $col[%d,%d,%d]{%s}", evs[i].ev.nm, col.getRed(), col.getGreen(), col.getBlue(), Utils.odformat2(evs[i].a, 2)), 0).img));
+	    imgs.add(catimgsh(5, UI.scale(15), null, evs[i].img, RichText.render(String.format("%s: $col[%d,%d,%d]{%s}", evs[i].ev.nm, col.getRed(), col.getGreen(), col.getBlue(), Utils.odformat2(calculateEfficiency ? (evs[i].a * (efficiency/100)) : evs[i].a, 2)), 0).img));
 	}
 	for(int i = 0; i < efs.length; i++) {
 	    BufferedImage efi = ItemInfo.longtip(efs[i].info);
@@ -88,6 +117,9 @@ public class FoodInfo extends ItemInfo.Tip {
 		efi = catimgsh(5, efi, RichText.render(String.format("$i{($col[192,192,255]{%d%%} chance)}", (int)Math.round(efs[i].p * 100)), 0).img);
 	    imgs.add(efi);
 	}
+		imgs.add(RichText.render(String.format("\nTotal FEPs: $col[0,180,0]{%s}", Utils.odformat2(calculateEfficiency ? (totalFeps * (efficiency/100)) : totalFeps, 2)), 0).img);
+		imgs.add(RichText.render(String.format("FEPs/Hunger: $col[0,180,0]{%s}", Utils.odformat2(totalFeps / (1000 * glut), 2)), 0).img);
+		imgs.add(RichText.render(calculateEfficiency ? "$col[218,163,0]{<Calculated with Efficiency>}" : "$col[185,185,185]{<Hold Shift for Efficiency>}", 300).img);
 	return(catimgs(0, imgs.toArray(new BufferedImage[0])));
     }
 }

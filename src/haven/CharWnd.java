@@ -280,20 +280,21 @@ public class CharWnd extends Window {
 	private Tex rtip = null;
 	public Object tooltip(Coord c, Widget prev) {
 	    if(rtip == null) {
-		rtip = RichText.render(String.format("%s: %.1f\u2030\nFood efficacy: %d%%", lbl, glut * 1000, Math.round(gmod * 100)), -1).tex();
+		rtip = RichText.render(String.format("%s: %.1f\u2030\nFEP Multiplier: %sx (%d%%)", lbl, glut * 1000, Utils.odformat2(gmod, 2), Math.round(gmod * 100)), -1).tex();
 	    }
 	    return(rtip);
 	}
     }
 
     public static class Constipations extends Listbox<Constipations.El> {
-	public static final Color hilit = new Color(255, 255, 0, 48);
+	public static final Color hilit = new Color(0, 200, 0, 96);
 	public static final Text.Foundry elf = attrf;
 	public static final int elh = elf.height() + UI.scale(2);
 	public static final int ellw = elf.strsize("...").x;
 	public static final int etmaxw = elf.strsize("100%").x;
 	public static final Convolution tflt = new Hanning(1);
-	public static final Color buffed = new Color(160, 255, 160), full = new Color(250, 230, 64), none = new Color(250, 19, 43);
+//	public static final Color buffed = new Color(160, 255, 160), full = new Color(250, 230, 64), none = new Color(250, 19, 43);
+	public static final Color buffed = new Color(160, 255, 160), full = new Color(255, 21, 21), none = new Color(49, 255, 39);
 	public final List<El> els = new ArrayList<El>();
 	private Integer[] order = {};
 
@@ -303,8 +304,8 @@ public class CharWnd extends Window {
 	    private Tex tt, at;
 	    private boolean hl;
 
-	    public El(ResData t, double a) {this.t = t; this.a = a;}
-	    public void update(double a) {this.a = a; at = null;}
+	    public El(ResData t, double a) {this.t = t; this.a = 1.0-a;}
+	    public void update(double a) {this.a = 1.0-a; at = null;}
 
 	    public Tex tt() {
 		if(tt == null) {
@@ -321,7 +322,7 @@ public class CharWnd extends Window {
 		    BufferedImage buf = TexI.mkbuf(new Coord(elh + 5 + rnm.sz().x, elh));
 		    Graphics g = buf.getGraphics();
 		    g.drawImage(convolvedown(img, new Coord(elh, elh), tflt), 0, 0, null);
-		    g.drawImage(rnm.back, elh + 5, ((elh - rnm.sz().y) / 2) + 1, null);
+		    g.drawImage(rnm.back, elh + 5, ((elh - rnm.sz().y) / 2) - UI.scale(2), null);
 		    g.dispose();
 		    tt = new TexI(buf);
 		}
@@ -330,8 +331,8 @@ public class CharWnd extends Window {
 
 	    public Tex at() {
 		if(at == null) {
-		    Color c= (a > 1.0)?buffed:Utils.blendcol(none, full, a);
-			at = PUtils.strokeTex(elf.render(String.format("%d%%", Math.max((int)Math.round((1.0 - a) * 100), 1)), c));
+		    Color c = (a > 1.0)?buffed:Utils.blendcol(none, full, a);
+			at = PUtils.strokeTex(elf.render(String.format("%s%%", Utils.odformat2(100 * (1.0 - a), 2)), c));
 		}
 		return(at);
 	    }
@@ -393,7 +394,7 @@ public class CharWnd extends Window {
 		g.image(el.tt(), Coord.z);
 	    } catch(Loading e) {}
 	    Tex at = el.at();
-	    g.image(at, new Coord(sz.x - at.sz().x - sb.sz.x, (elh - at.sz().y) / 2));
+	    g.image(at, new Coord(sz.x - at.sz().x - sb.sz.x, ((elh - at.sz().y) / 2) - UI.scale(1)));
 	}
 
 	private void order() {
@@ -1981,10 +1982,16 @@ public class CharWnd extends Window {
 	    prev = battr.add(settip(new Img(catf.render("Food Event Points").tex()), "gfx/hud/chr/tips/fep"), prev.pos("bl").x(0).adds(0, 10));
 	    feps = battr.add(new FoodMeter(), prev.pos("bl").adds(5, 2));
 
-	    prev = battr.add(settip(new Img(catf.render("Food Satiations").tex()), "gfx/hud/chr/tips/constip"), width, 0);
+	    prev = battr.add(settip(new Img(catf.render("Food Efficiency").tex()), "gfx/hud/chr/tips/constip"), width, 0);
+		prev.tooltip = RichText.render("$col[218,163,0]{Food Efficiency} affects the amount of $col[0,180,0]{FEPs} and $col[255,192,128]{Hunger} you gain from food." +
+				"\n$col[185,185,185]{Note that your Table + Chair, Account Verification and Subscription Status also affect FEP and Hunger gain.}" +
+				"\n" +
+				"\n$col[128,128,255]{Energy} gain is *NEVER* affected by $col[218,163,0]{Food Efficiency}, or anything else!" +
+				"\n$col[185,185,185]{You will always gain the full energy provided by all foods.}", 370);
 	    cons = battr.add(new Constipations(attrw, base.size()), prev.pos("bl").adds(5, 0).add(wbox.btloff()));
 	    prev = Frame.around(battr, Collections.singletonList(cons));
 	    prev = battr.add(settip(new Img(catf.render("Hunger Level").tex()), "gfx/hud/chr/tips/hunger"), prev.pos("bl").x(width).adds(0, 10));
+		prev.tooltip = RichText.render("More Hunger (Satiety) = Less FEP Multiplier\nOK? ok.", 370);
 	    glut = battr.add(new GlutMeter(), prev.pos("bl").adds(5, 2));
         }
 

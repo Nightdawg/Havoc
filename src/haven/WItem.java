@@ -46,6 +46,7 @@ public class WItem extends Widget implements DTarget {
 	public static final Text.Foundry quantityFoundry = new Text.Foundry(Text.dfont, 9);
 	private static final Color quantityColor = new Color(255, 255, 255, 255);
 	public static final Coord TEXT_PADD_BOT = new Coord(1, 2);
+	private boolean holdingShift = false;
 
     public WItem(GItem item) {
 	super(sqsz);
@@ -108,6 +109,14 @@ public class WItem extends Widget implements DTarget {
 //		    shorttip = new ShortTip(info);
 //		return(shorttip);
 //	    } else {
+		if (ui.modshift && !holdingShift) {
+			holdingShift = true;
+			longtip = null;
+		}
+		if (!ui.modshift && holdingShift) {
+			holdingShift = false;
+			longtip = null;
+		}
 		if(longtip == null)
 		    longtip = new LongTip(info);
 		return(longtip);
