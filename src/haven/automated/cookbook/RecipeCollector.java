@@ -3,8 +3,12 @@ package haven.automated.cookbook;
 import haven.ItemInfo;
 import haven.res.ui.tt.q.qbuff.QBuff;
 import haven.resutil.FoodInfo;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.io.File;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -33,10 +37,10 @@ public class RecipeCollector implements Runnable {
     @Override
     public void run() {
         while (run) {
-            checkAndInsertFood();
+            insertAndSendFood();
             queuedFood.clear();
             try {
-                Thread.sleep(5000);
+                Thread.sleep(15000);
             } catch (InterruptedException ignored) {
             }
         }
@@ -53,12 +57,38 @@ public class RecipeCollector implements Runnable {
                 ParsedFoodInfo parsedFoodInfo = new ParsedFoodInfo();
                 parsedFoodInfo.resourceName = resName;
                 parsedFoodInfo.energy = (int) (Math.round(foodInfo.end * 100));
-                parsedFoodInfo.hunger = round2Dig(foodInfo.glut * 100);
+                parsedFoodInfo.hunger = round3Dig(foodInfo.glut * 100);
 
+                double totalFep = 0.0;
                 for (int i = 0; i < foodInfo.evs.length; i++) {
-                    parsedFoodInfo.feps.add(new ParsedFoodInfo.FoodFEP(foodInfo.evs[i].ev.nm, round2Dig(foodInfo.evs[i].a / multiplier)));
-                }
+                    double value = round3Dig(foodInfo.evs[i].a / multiplier);
+                    totalFep += value;
 
+                    switch (foodInfo.evs[i].ev.nm) {
+                        case "Strength +1" -> parsedFoodInfo.str1 = value;
+                        case "Strength +2" -> parsedFoodInfo.str2 = value;
+                        case "Agility +1" -> parsedFoodInfo.agi1 = value;
+                        case "Agility +2" -> parsedFoodInfo.agi2 = value;
+                        case "Intelligence +1" -> parsedFoodInfo.int1 = value;
+                        case "Intelligence +2" -> parsedFoodInfo.int2 = value;
+                        case "Constitution +1" -> parsedFoodInfo.con1 = value;
+                        case "Constitution +2" -> parsedFoodInfo.con2 = value;
+                        case "Perception +1" -> parsedFoodInfo.per1 = value;
+                        case "Perception +2" -> parsedFoodInfo.per2 = value;
+                        case "Charisma +1" -> parsedFoodInfo.cha1 = value;
+                        case "Charisma +2" -> parsedFoodInfo.cha2 = value;
+                        case "Dexterity +1" -> parsedFoodInfo.dex1 = value;
+                        case "Dexterity +2" -> parsedFoodInfo.dex2 = value;
+                        case "Will +1" -> parsedFoodInfo.wil1 = value;
+                        case "Will +2" -> parsedFoodInfo.wil2 = value;
+                        case "Psyche +1" -> parsedFoodInfo.psy1 = value;
+                        case "Psyche +2" -> parsedFoodInfo.psy2 = value;
+                        default -> {
+                            return;
+                        }
+                    }
+                }
+                parsedFoodInfo.totalFep = round3Dig(totalFep);
                 for (ItemInfo info : infoList) {
                     if (info instanceof ItemInfo.AdHoc) {
                         String text = ((ItemInfo.AdHoc) info).str.text;
@@ -81,134 +111,198 @@ public class RecipeCollector implements Runnable {
                         parsedFoodInfo.ingredients.add(new ParsedFoodInfo.FoodIngredient(name, (int) (value * 100)));
                     }
                 }
+                parsedFoodInfo.hash = createHash(parsedFoodInfo);
                 queuedFood.add(parsedFoodInfo);
             }
-        } catch (Exception ex) {
-            System.out.println("Cannot create food info: " + ex.getMessage());
+        } catch (Exception ignored) {}
+    }
+
+    private void insertAndSendFood() {
+        Set<ParsedFoodInfo> currentQueue = new HashSet<>(queuedFood);
+        queuedFood.clear();
+
+        if(currentQueue.size() > 0){
+            sendToHttpServer(currentQueue);
+
+            for(ParsedFoodInfo foodInfo : currentQueue){
+                insertIntoDatabase(foodInfo);
+            }
         }
     }
 
-    private void checkAndInsertFood() {
-        Set<ParsedFoodInfo> currentQueue = new HashSet<>(queuedFood);
-        queuedFood.clear();
-        try (Connection conn = DriverManager.getConnection(DATABASE)) {
-            for (ParsedFoodInfo food : currentQueue) {
-                String hash = createHash(food);
-                String sql = "SELECT count(*) FROM food WHERE hash = ?";
-                try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                    pstmt.setString(1, hash);
-                    try (ResultSet rs = pstmt.executeQuery()) {
-                        if (rs.getInt(1) == 0) {
-                            int foodId = insertFood(conn, food, hash);  // Get the returned food id
-                            for (ParsedFoodInfo.FoodIngredient foodIngredient : food.getIngredients()) {
-                                int ingredientId = getOrInsertIngredient(conn, foodIngredient.getName());
-                                insertFoodIngredient(conn, foodId, ingredientId, foodIngredient.getPercentage());
-                            }
-                        }
+    public void sendToHttpServer(Set<ParsedFoodInfo> foodInfos) {
+        JSONArray jsonArray = new JSONArray();
+        for (ParsedFoodInfo foodInfo : foodInfos) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("hash", foodInfo.hash);
+            jsonObject.put("name", foodInfo.itemName);
+            jsonObject.put("resource", foodInfo.resourceName);
+            jsonObject.put("energy", foodInfo.energy);
+            jsonObject.put("hunger", foodInfo.hunger);
+            jsonObject.put("totalFep", foodInfo.totalFep);
+            jsonObject.put("str1", foodInfo.str1);
+            jsonObject.put("str2", foodInfo.str2);
+            jsonObject.put("agi1", foodInfo.agi1);
+            jsonObject.put("agi2", foodInfo.agi2);
+            jsonObject.put("int1", foodInfo.int1);
+            jsonObject.put("int2", foodInfo.int2);
+            jsonObject.put("con1", foodInfo.con1);
+            jsonObject.put("con2", foodInfo.con2);
+            jsonObject.put("per1", foodInfo.per1);
+            jsonObject.put("per2", foodInfo.per2);
+            jsonObject.put("cha1", foodInfo.cha1);
+            jsonObject.put("cha2", foodInfo.cha2);
+            jsonObject.put("dex1", foodInfo.dex1);
+            jsonObject.put("dex2", foodInfo.dex2);
+            jsonObject.put("wil1", foodInfo.wil1);
+            jsonObject.put("wil2", foodInfo.wil2);
+            jsonObject.put("psy1", foodInfo.psy1);
+            jsonObject.put("psy2", foodInfo.psy2);
+            JSONArray ingredientsArray = new JSONArray();
+            for (ParsedFoodInfo.FoodIngredient ingredient : foodInfo.ingredients) {
+                JSONObject ingredientObject = new JSONObject();
+                ingredientObject.put("name", ingredient.name);
+                ingredientObject.put("percentage", ingredient.percentage);
+                ingredientsArray.put(ingredientObject);
+            }
+            jsonObject.put("ingredients", ingredientsArray);
+            jsonArray.put(jsonObject);
+        }
+        System.out.println("sending food");
+        try {
+            URL apiUrl = new URL("http://localhost:3000/food-log/create");
+            HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("x-security-token", "63b510b2f610d4b6a8e6b03c2c");
+            connection.setDoOutput(true);
+
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonArray.toString().getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            connection.getResponseCode();
+            connection.disconnect();
+        } catch (IOException ignored) {}
+    }
+
+    private void insertIntoDatabase(ParsedFoodInfo foodInfo){
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(DATABASE);
+            connection.setAutoCommit(false);
+
+            String sql = "SELECT id FROM food WHERE hash = ?";
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setString(1, foodInfo.hash);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    return;
+                }
+            }
+
+            List<Integer> ingredientIds = new ArrayList<>();
+            for (ParsedFoodInfo.FoodIngredient ingredient : foodInfo.ingredients) {
+                sql = "INSERT OR IGNORE INTO ingredient (name) VALUES (?)";
+                try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                    pstmt.setString(1, ingredient.name);
+                    pstmt.executeUpdate();
+                }
+
+                sql = "SELECT id FROM ingredient WHERE name = ?";
+                try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                    pstmt.setString(1, ingredient.name);
+                    ResultSet rs = pstmt.executeQuery();
+                    if (rs.next()) {
+                        ingredientIds.add(rs.getInt("id"));
                     }
                 }
             }
-        } catch (SQLException | NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
-    private int insertFood(Connection conn, ParsedFoodInfo food, String hash) throws SQLException {
-        double totalFep = 0.0;
-        Map<String, String> fepMap = new HashMap<>();
-        fepMap.put("Strength", "str");
-        fepMap.put("Agility", "agi");
-        fepMap.put("Intelligence", "int");
-        fepMap.put("Constitution", "con");
-        fepMap.put("Perception", "per");
-        fepMap.put("Charisma", "cha");
-        fepMap.put("Dexterity", "dex");
-        fepMap.put("Will", "wil");
-        fepMap.put("Psyche", "psy");
+            int foodId = -1;
+            sql = "INSERT INTO food (hash, name, resource, energy, hunger, totalFep, " +
+                    "str1, str2, agi1, agi2, int1, int2, con1, con2, per1, per2, cha1, cha2, dex1, dex2, wil1, wil2, psy1, psy2) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        Map<String, Double> valuesMap = new HashMap<>();
-        for (String fep : fepMap.values()) {
-            valuesMap.put(fep + "1", 0.0);
-            valuesMap.put(fep + "2", 0.0);
-        }
-
-        for (ParsedFoodInfo.FoodFEP fep : food.getFeps()) {
-            totalFep += fep.getValue();
-            String[] splitName = fep.getName().split(" ");
-            String fepName = fepMap.get(splitName[0]) + splitName[1].replace("+", "");
-            valuesMap.put(fepName, fep.getValue());
-        }
-
-        String fieldNames = String.join(", ", valuesMap.keySet());
-        String fieldValues = valuesMap.values().stream().map(Object::toString).collect(Collectors.joining(", "));
-
-        String insertSql = "INSERT INTO food(hash, name, resource, energy, hunger, totalFep, " + fieldNames + ") " +
-                "VALUES (?, ?, ?, ?, ?, ?, " + fieldValues + ")";
-
-        try (PreparedStatement pstmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, hash);
-            pstmt.setString(2, food.getItemName());
-            pstmt.setString(3, food.getResourceName());
-            pstmt.setInt(4, food.getEnergy());
-            pstmt.setDouble(5, food.getHunger());
-            pstmt.setDouble(6, Math.round(totalFep * 100.0) / 100.0);
-            pstmt.executeUpdate();
-
-            ResultSet rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getInt(1);  // Returning the generated id
-            } else {
-                throw new SQLException("Creating food failed, no ID obtained.");
-            }
-        }
-    }
-    private int getOrInsertIngredient(Connection conn, String ingredientName) throws SQLException {
-        String checkSql = "SELECT id FROM ingredient WHERE name = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(checkSql)) {
-            pstmt.setString(1, ingredientName);
-            try (ResultSet rs = pstmt.executeQuery()) {
+            try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setString(1, foodInfo.hash);
+                pstmt.setString(2, foodInfo.itemName);
+                pstmt.setString(3, foodInfo.resourceName);
+                pstmt.setInt(4, foodInfo.energy);
+                pstmt.setDouble(5, foodInfo.hunger);
+                pstmt.setDouble(6, foodInfo.totalFep);
+                pstmt.setDouble(7, foodInfo.str1);
+                pstmt.setDouble(8, foodInfo.str2);
+                pstmt.setDouble(9, foodInfo.agi1);
+                pstmt.setDouble(10, foodInfo.agi2);
+                pstmt.setDouble(11, foodInfo.int1);
+                pstmt.setDouble(12, foodInfo.int2);
+                pstmt.setDouble(13, foodInfo.con1);
+                pstmt.setDouble(14, foodInfo.con2);
+                pstmt.setDouble(15, foodInfo.per1);
+                pstmt.setDouble(16, foodInfo.per2);
+                pstmt.setDouble(17, foodInfo.cha1);
+                pstmt.setDouble(18, foodInfo.cha2);
+                pstmt.setDouble(19, foodInfo.dex1);
+                pstmt.setDouble(20, foodInfo.dex2);
+                pstmt.setDouble(21, foodInfo.wil1);
+                pstmt.setDouble(22, foodInfo.wil2);
+                pstmt.setDouble(23, foodInfo.psy1);
+                pstmt.setDouble(24, foodInfo.psy2);
+                pstmt.executeUpdate();
+                ResultSet rs = pstmt.getGeneratedKeys();
                 if (rs.next()) {
-                    return rs.getInt("id");
+                    foodId = rs.getInt(1);
                 }
             }
-        }
 
-        String insertSql = "INSERT INTO ingredient(name) VALUES (?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, ingredientName);
-            int affectedRows = pstmt.executeUpdate();
+            for (int i = 0; i < foodInfo.ingredients.size(); i++) {
+                int ingredientId = ingredientIds.get(i);
+                double percentage = foodInfo.ingredients.get(i).percentage;
 
-            if (affectedRows == 0) {
-                throw new SQLException("Creating ingredient failed, no rows affected.");
-            }
-
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
-                } else {
-                    throw new SQLException("Creating ingredient failed, no ID obtained.");
+                sql = "INSERT INTO food_ingredient (food_id, ingredient_id, percentage) VALUES (?, ?, ?)";
+                try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                    pstmt.setInt(1, foodId);
+                    pstmt.setInt(2, ingredientId);
+                    pstmt.setDouble(3, percentage);
+                    pstmt.executeUpdate();
                 }
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException ignored) {}
             }
         }
     }
-    private void insertFoodIngredient(Connection conn, int foodId, int ingredientId, int percentage) throws SQLException {
-        String insertSql = "INSERT INTO food_ingredient(food_id, ingredient_id, percentage) VALUES (?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
-            pstmt.setInt(1, foodId);
-            pstmt.setInt(2, ingredientId);
-            pstmt.setInt(3, percentage);
-            pstmt.executeUpdate();
-        }
-    }
-    private String createHash(ParsedFoodInfo foodInfo) throws NoSuchAlgorithmException {
+
+    private static String createHash(ParsedFoodInfo foodInfo) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        String inputData = foodInfo.getItemName() + foodInfo.getResourceName() + foodInfo.getIngredients().toString();
+        String inputData = foodInfo.itemName + "|" +
+                foodInfo.resourceName + "|" +
+                foodInfo.energy + "|" +
+                foodInfo.hunger + "|" +
+                foodInfo.totalFep + "|" +
+                foodInfo.ingredients.stream()
+                        .map(ParsedFoodInfo.FoodIngredient::toString)
+                        .collect(Collectors.joining(","));
         byte[] hash = digest.digest(inputData.getBytes(StandardCharsets.UTF_8));
         return Base64.getEncoder().encodeToString(hash);
     }
 
-    private static double round2Dig(double value) {
-        return Math.round(value * 100.0) / 100.0;
+    private static double round3Dig(double value) {
+        return Math.round(value * 1000.0) / 1000.0;
     }
 
     public static void createDatabaseIfNotExist() throws SQLException {
@@ -222,6 +316,7 @@ public class RecipeCollector implements Runnable {
             createSchemaElementIfNotExist(conn, dbExists, "food",
                     "id INTEGER PRIMARY KEY, " +
                             "hash VARCHAR(255) UNIQUE NOT NULL, " +
+                            "created DATETIME DEFAULT CURRENT_TIMESTAMP, " +
                             "name VARCHAR(255) NOT NULL, " +
                             "resource VARCHAR(255) NOT NULL, " +
                             "energy INTEGER, " +
@@ -256,6 +351,11 @@ public class RecipeCollector implements Runnable {
                             "percentage REAL, " +
                             "FOREIGN KEY(food_id) REFERENCES food(id), " +
                             "FOREIGN KEY(ingredient_id) REFERENCES ingredient(id)", "table");
+
+            createSchemaElementIfNotExist(conn, dbExists, "synchronization",
+                    "id INTEGER PRIMARY KEY, " +
+                            "last_sync_timestamp DATETIME",
+                    "table");
 
             createSchemaElementIfNotExist(conn, dbExists, "idx_ingredients_name", "ingredient(name)", "index");
             createSchemaElementIfNotExist(conn, dbExists, "idx_food_ingredients_food_id_ingredient_id", "food_ingredient(food_id, ingredient_id)", "index");
