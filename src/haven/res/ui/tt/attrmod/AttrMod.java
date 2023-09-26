@@ -5,6 +5,7 @@ import haven.*;
 import static haven.PUtils.*;
 import java.util.*;
 import java.awt.image.BufferedImage;
+import java.util.stream.Collectors;
 
 /* >tt: AttrMod$Fac */
 @haven.FromResource(name = "ui/tt/attrmod", version = 10)
@@ -20,8 +21,14 @@ public class AttrMod extends ItemInfo.Tip {
 
     public AttrMod(Owner owner, Collection<Mod> mods) {
 	super(owner);
-	this.mods = mods;
+	this.mods = mods.stream().sorted(this::BY_PRIORITY).collect(Collectors.toList());
     }
+
+	private int BY_PRIORITY(Mod o1, Mod o2) {
+		Resource r1 = o1.attr;
+		Resource r2 = o2.attr;
+		return Integer.compare(Config.statsAndAttributesOrder.indexOf(r2.layer(Resource.tooltip).t), Config.statsAndAttributesOrder.indexOf(r1.layer(Resource.tooltip).t));
+	}
 
     public static class Fac implements InfoFactory {
 	public ItemInfo build(Owner owner, Raw raw, Object... args) {

@@ -504,6 +504,33 @@ public class Config {
 		put("Left", "←");
 		put("Right", "→");
 	}};
+	public static final List<String> statsAndAttributesOrder = new ArrayList<String>(){{
+		// ND: I ordered them backwards, in case there's some stupid stat I overlooked, like "Swimming".
+		// When they're ordered like this, the overlooked stat should show up last, rather than first.
+		add("Swimming");
+		add("Lore");
+		add("Survival");
+		add("Farming");
+		add("Cooking");
+		add("Carpentry");
+		add("Masonry");
+		add("Smithing");
+		add("Sewing");
+		add("Stealth");
+		add("Exploration");
+		add("Marksmanship");
+		add("Melee Combat");
+		add("Unarmed Combat");
+		add("Psyche");
+		add("Will");
+		add("Dexterity");
+		add("Charisma");
+		add("Perception");
+		add("Constitution");
+		add("Intelligence");
+		add("Agility");
+		add("Strength");
+	}};
 
     public static void cmdline(String[] args) {
 	PosixArgs opt = PosixArgs.getopt(args, "hdPGfU:r:A:u:C:p:");
