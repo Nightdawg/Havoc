@@ -97,15 +97,15 @@ public class Grainslot extends Widget implements DTarget, ItemInfo.Owner {
 	    if(prev != this)
 		hoverstart = now;
 	    try {
-		if(now - hoverstart < 1.0) {
-		    if(shorttip == null)
-			shorttip = new TexI(ItemInfo.shorttip(info()));
-		    return(shorttip);
-		} else {
+//		if(now - hoverstart < 1.0) {
+//		    if(shorttip == null)
+//			shorttip = new TexI(ItemInfo.shorttip(info()));
+//		    return(shorttip);
+//		} else {
 		    if(longtip == null)
 			longtip = new TexI(ItemInfo.longtip(info()));
 		    return(longtip);
-		}
+//		}
 	    } catch(Loading l) {
 		return("...");
 	    }
