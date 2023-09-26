@@ -313,7 +313,7 @@ public class UI {
 	}
 	public static void initTableUi(Window pwdg, Inventory inv) {
 		TableInfo tableInfo = new TableInfo(inv.sz.x, UI.scale(20));
-		pwdg.add(tableInfo, new Coord(UI.scale(0), inv.sz.y + UI.scale(160)));
+		pwdg.add(tableInfo, new Coord(UI.scale(0), inv.sz.y + UI.scale(194)));
 
 		pwdg.pack();
 	}
