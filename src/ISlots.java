@@ -36,7 +36,7 @@ public class ISlots extends ItemInfo.Tip implements GItem.NumberInfo {
 
 	public static final String chc = "192,192,255";
 	public void layout(Layout l) {
-		boolean extendedView = ui.modshift;
+		boolean extendedView = ui != null && ui.modshift;
 		l.cmp.add(ch.img, new Coord(0, l.cmp.sz.y));
 
 		if(attrs.length > 0) {
