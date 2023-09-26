@@ -122,7 +122,7 @@ public class FoodInfo extends ItemInfo.Tip {
 		imgs.add(RichText.render(String.format("\nTotal FEPs: $col[0,180,0]{%s}", Utils.odformat2(calculateEfficiency ? (totalFeps * (efficiency/100)) : totalFeps, 2)), 0).img);
 		imgs.add(RichText.render(String.format("FEPs/Hunger: $col[0,180,0]{%s}", Utils.odformat2(totalFeps / (1000 * glut), 2)), 0).img);
 		if (ui != null)
-			imgs.add(RichText.render(calculateEfficiency ? "$col[218,163,0]{<Calculated with Efficiency>}" : "$col[185,185,185]{<Hold Shift for Efficiency>}", 300).img);
+			imgs.add(RichText.render(calculateEfficiency ? "$col[218,163,0]{<Multiplied by Efficiency>}" : "$col[185,185,185]{<Hold Shift for Efficiency>}", 300).img);
 	return(catimgs(0, imgs.toArray(new BufferedImage[0])));
     }
 }

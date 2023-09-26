@@ -639,7 +639,7 @@ public class GobIcon extends GAttrib {
 	}
 
 		public SettingsWindow(Settings conf, Runnable save) {
-			super(Coord.z, "Icon settings");
+			super(Coord.z, "Map Icon Settings");
 			this.conf = conf;
 			this.save = save;
 			PackCont.LinPack.VPack left = new PackCont.LinPack.VPack();
