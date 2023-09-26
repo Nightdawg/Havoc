@@ -47,7 +47,7 @@ public class AttrMod extends ItemInfo.Tip {
 	}
     }
 
-    private static String buff = "128,255,128", debuff = "255,128,128";
+    private static String buff = "96,235,96", debuff = "235,96,96";
     public static BufferedImage modimg(Collection<Mod> mods) {
 	Collection<BufferedImage> lines = new ArrayList<BufferedImage>(mods.size());
 	for(Mod mod : mods) {
