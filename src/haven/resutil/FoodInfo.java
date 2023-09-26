@@ -82,18 +82,20 @@ public class FoodInfo extends ItemInfo.Tip {
 	boolean matchFound = false;
 	double efficiency = 100;
 	boolean calculateEfficiency = ui != null && ui.modshift;
-	for (CharWnd.Constipations.El el : ui.gui.chrwdg.cons.els) {
-		if (el.t.res.get().name.equals(((GItem) this.owner).resname())) {
-			Color c = (el.a > 1.0)? CharWnd.Constipations.buffed:Utils.blendcol(CharWnd.Constipations.none, CharWnd.Constipations.full, el.a);
-			efficiency = 100 * (1.0 - el.a);
-			head = String.format("\nFood Efficiency: $col["+ c.getRed() +","+ c.getGreen() +","+ c.getBlue() +"]{%s%%}", Utils.odformat2(efficiency, 2));
-			matchFound = true;
-			break;
+	if (ui != null)
+		for (CharWnd.Constipations.El el : ui.gui.chrwdg.cons.els) {
+			if (el.t.res.get().name.equals(((GItem) this.owner).resname())) {
+				Color c = (el.a > 1.0)? CharWnd.Constipations.buffed:Utils.blendcol(CharWnd.Constipations.none, CharWnd.Constipations.full, el.a);
+				efficiency = 100 * (1.0 - el.a);
+				head = String.format("\nFood Efficiency: $col["+ c.getRed() +","+ c.getGreen() +","+ c.getBlue() +"]{%s%%}", Utils.odformat2(efficiency, 2));
+				matchFound = true;
+				break;
+			}
 		}
-	}
-	if (!matchFound)
+	if (!matchFound && ui != null)
 		head = String.format("Food Efficiency: $col[49,255,39]{%s%%}", Utils.odformat2(efficiency, 2));
-
+	else if (ui == null)
+		head = "";
 	head += String.format("\nEnergy: $col[128,128,255]{%s%%}  |  Hunger: $col[255,192,128]{%s\u2030}", Utils.odformat2(end * 100, 2), Utils.odformat2(calculateEfficiency ? (glut * 1000 * (efficiency/100)) : (glut * 1000), 2));
 	head += String.format("\nEnergy/Hunger: $col[128,128,255]{%s}", Utils.odformat2((end * 100) / (glut * 1000), 2));
 	double totalFeps = 0;
@@ -119,7 +121,8 @@ public class FoodInfo extends ItemInfo.Tip {
 	}
 		imgs.add(RichText.render(String.format("\nTotal FEPs: $col[0,180,0]{%s}", Utils.odformat2(calculateEfficiency ? (totalFeps * (efficiency/100)) : totalFeps, 2)), 0).img);
 		imgs.add(RichText.render(String.format("FEPs/Hunger: $col[0,180,0]{%s}", Utils.odformat2(totalFeps / (1000 * glut), 2)), 0).img);
-		imgs.add(RichText.render(calculateEfficiency ? "$col[218,163,0]{<Calculated with Efficiency>}" : "$col[185,185,185]{<Hold Shift for Efficiency>}", 300).img);
+		if (ui != null)
+			imgs.add(RichText.render(calculateEfficiency ? "$col[218,163,0]{<Calculated with Efficiency>}" : "$col[185,185,185]{<Hold Shift for Efficiency>}", 300).img);
 	return(catimgs(0, imgs.toArray(new BufferedImage[0])));
     }
 }

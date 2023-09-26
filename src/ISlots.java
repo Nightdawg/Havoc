@@ -87,7 +87,8 @@ public class ISlots extends ItemInfo.Tip implements GItem.NumberInfo {
 
 		if(left > 0)
 			l.cmp.add(progf.render((left > 1)?String.format("Gildable \u00d7%d", left):"Gildable").img, new Coord(10, l.cmp.sz.y));
-		l.cmp.add(RichText.render(extendedView ? "$col[218,163,0]{<Showing Each Individual Gilding>}" : "$col[185,185,185]{<Hold Shift for Individual Gildings>}", 0).img, new Coord(0, l.cmp.sz.y));
+		if (ui != null)
+			l.cmp.add(RichText.render(extendedView ? "$col[218,163,0]{<Showing Each Individual Gilding>}" : "$col[185,185,185]{<Hold Shift for Individual Gildings>}", 0).img, new Coord(0, l.cmp.sz.y));
 	}
 
 	private int BY_PRIORITY(Map.Entry<Resource, Integer> o1, Map.Entry<Resource, Integer> o2) {
