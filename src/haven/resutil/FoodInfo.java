@@ -93,7 +93,7 @@ public class FoodInfo extends ItemInfo.Tip {
 			}
 		}
 	if (!matchFound && ui != null)
-		head = String.format("Food Efficiency: $col[49,255,39]{%s%%}", Utils.odformat2(efficiency, 2));
+		head = String.format("\nFood Efficiency: $col[49,255,39]{%s%%}", Utils.odformat2(efficiency, 2));
 	else if (ui == null)
 		head = "";
 	head += String.format("\nEnergy: $col[128,128,255]{%s%%}  |  Hunger: $col[255,192,128]{%s\u2030}", Utils.odformat2(end * 100, 2), Utils.odformat2(calculateEfficiency ? (glut * 1000 * (efficiency/100)) : (glut * 1000), 2));
