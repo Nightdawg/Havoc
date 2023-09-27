@@ -413,29 +413,11 @@ public class GobIcon extends GAttrib {
 				@Override
 				public void set(boolean val) {
 					String iconTooltipName = icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t;
-					switch(iconTooltipName){
-						case("Player"):
-							icon.conf.show = true;
-							ui.gui.error("You're NOT disabling the player map icon. I don't care what you have to say.");
-							break;
-						case("Cave Passage"):
-							icon.conf.show = true;
-							ui.gui.error("Let's keep Caves visible, yeah?");
-							break;
-						case("Swirling Vortex"):
-							icon.conf.show = true;
-							ui.gui.error("Vortexes can be dangerous. You don't want to miss them, right?");
-							break;
-						case("Boost Speed"):
-							icon.conf.show = true;
-							ui.gui.error("You need to see Speed Boosts at all times. Keep them enabled.");
-							break;
-						case("Burrow"):
-							icon.conf.show = true;
-							ui.gui.error("Let's keep Burrows visible, yeah?");
-							break;
-						default:
-							icon.conf.show = val;
+					if (Config.mandatoryAlwaysEnabledMapIcons.keySet().stream().anyMatch(iconTooltipName::equals)){
+						icon.conf.show = true;
+						ui.gui.error(Config.mandatoryAlwaysEnabledMapIcons.get(iconTooltipName));
+					} else {
+						icon.conf.show = val;
 					}
 					if(save != null)
 						save.run();
@@ -529,29 +511,11 @@ public class GobIcon extends GAttrib {
 					@Override
 					public void set(boolean val) {
 						String iconTooltipName = conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t;
-						switch(iconTooltipName){
-							case("Player"):
-								conf.show = true;
-								ui.gui.error("You're NOT disabling the player map icon. I don't care what you have to say.");
-								break;
-							case("Cave Passage"):
-								conf.show = true;
-								ui.gui.error("Let's keep Caves visible, yeah?");
-								break;
-							case("Swirling Vortex"):
-								conf.show = true;
-								ui.gui.error("Vortexes can be dangerous. You don't want to miss them, right?");
-								break;
-							case("Boost Speed"):
-								conf.show = true;
-								ui.gui.error("You need to see Speed Boosts at all times. Keep them enabled.");
-								break;
-							case("Burrow"):
-								conf.show = true;
-								ui.gui.error("Let's keep Burrows visible, yeah?");
-								break;
-							default:
-								conf.show = val;
+						if (Config.mandatoryAlwaysEnabledMapIcons.keySet().stream().anyMatch(iconTooltipName::equals)){
+							conf.show = true;
+							ui.gui.error(Config.mandatoryAlwaysEnabledMapIcons.get(iconTooltipName));
+						} else {
+							conf.show = val;
 						}
 						if(save != null)
 							save.run();
@@ -653,20 +617,8 @@ public class GobIcon extends GAttrib {
 				public void changed(boolean val) {
 					try {
 						list.items().forEach(icon -> {
-							// ND: Check if the tooltip of the icon is "Player", and make sure to always set it to true.
-							if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Player"))
-								icon.conf.show = true;
-								// ND: Check if the tooltip of the icon is "Cave Passage", and make sure to always set it to true.
-							else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Cave Passage"))
-								icon.conf.show = true;
-								// ND: Check if the tooltip of the icon is "Swirling Vortex", and make sure to always set it to true.
-							else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Swirling Vortex"))
-								icon.conf.show = true;
-								// ND: Check if the tooltip of the icon is "Boost Speed", and make sure to always set it to true.
-							else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Boost Speed"))
-								icon.conf.show = true;
-								// ND: Check if the tooltip of the icon is "Burrow", and make sure to always set it to true.
-							else if (icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t.equals("Burrow"))
+							// ND: First check if it's a mandatory icon, and keep it enabled at all times
+							if (Config.mandatoryAlwaysEnabledMapIcons.keySet().stream().anyMatch(icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t::equals))
 								icon.conf.show = true;
 							else
 								icon.conf.show = val;
@@ -699,6 +651,15 @@ public class GobIcon extends GAttrib {
 //			left.last(new Button(UI.scale(170), "Remove Ender's Icons", false).action(() -> {
 //				gameui().saveiconconf();
 //			}).settip("Use this button to remove Ender's custom icons from your account.", true), UI.scale(10));
+			left.last(new Button(UI.scale(170), "Deselect all", false).action(() -> {
+				list.items().forEach(icon -> {
+					// ND: First check if it's a mandatory icon, and keep it enabled at all times
+					if (Config.mandatoryAlwaysEnabledMapIcons.keySet().stream().anyMatch(icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t::equals))
+						icon.conf.show = true;
+					else
+						icon.conf.show = false;
+				});
+			}), UI.scale(10));
 			cont.pack();
 			left.pack();
 			root.pack();
