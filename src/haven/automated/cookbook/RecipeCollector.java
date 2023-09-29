@@ -170,7 +170,7 @@ public class RecipeCollector implements Runnable {
         }
         System.out.println("sending food");
         try {
-            URL apiUrl = new URL("http://localhost:3000/food-log/create");
+            URL apiUrl = new URL("https://logs.havocandhearth.net/food-log/create");
             HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
