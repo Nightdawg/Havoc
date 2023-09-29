@@ -98,6 +98,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
             HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("x-security-token", "d3f72d7bb40e38b6e8c1ebe8e");
             connection.setDoOutput(true);
 
             try (OutputStream os = connection.getOutputStream()) {

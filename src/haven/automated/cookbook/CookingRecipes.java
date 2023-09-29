@@ -4,7 +4,7 @@ import haven.Button;
 import haven.Label;
 import haven.Window;
 import haven.*;
-import haven.automated.cookbook.importExport.ImportExportHelper;
+
 
 import java.awt.*;
 import java.sql.*;
@@ -101,19 +101,19 @@ public class CookingRecipes extends Window {
         foodList = new FoodList(1090, 10);
         add(foodList, UI.scale(5, 50));
 
-        add(new Button(UI.scale(50), "Export") {
-            @Override
-            public void click() {
-                ImportExportHelper.exportRecipes(ui.gui);
-            }
-        }, UI.scale(1015, 658));
-
-        add(new Button(UI.scale(50), "Import") {
-            @Override
-            public void click() {
-                ImportExportHelper.importRecipes(ui.gui);
-            }
-        }, UI.scale(950, 658));
+//        add(new Button(UI.scale(50), "Export") {
+//            @Override
+//            public void click() {
+//                ImportExportHelper.exportRecipes(ui.gui);
+//            }
+//        }, UI.scale(1015, 658));
+//
+//        add(new Button(UI.scale(50), "Import") {
+//            @Override
+//            public void click() {
+//                ImportExportHelper.importRecipes(ui.gui);
+//            }
+//        }, UI.scale(950, 658));
 
         getData();
     }
@@ -200,7 +200,7 @@ public class CookingRecipes extends Window {
 
             ResultSet rs = stmt.executeQuery(sql.toString());
 
-            java.util.List<ParsedFoodInfo> foods = new ArrayList<>();
+            List<ParsedFoodInfo> foods = new ArrayList<>();
             List<Integer> foodIds = new ArrayList<>();
             while (rs.next()) {
                 ParsedFoodInfo foodInfo = parseFood(rs);
@@ -248,15 +248,25 @@ public class CookingRecipes extends Window {
         foodInfo.resourceName = rs.getString("resource");
         foodInfo.energy = rs.getInt("energy");
         foodInfo.hunger = rs.getDouble("hunger");
-
-        String[] fepNames = {"str1", "str2", "agi1", "agi2", "int1", "int2", "con1", "con2", "per1", "per2", "cha1", "cha2", "dex1", "dex2", "wil1", "wil2", "psy1", "psy2"};
-        for (String fepName : fepNames) {
-            Double fepValue = rs.getDouble(fepName);
-            if (fepValue != 0) {
-                ParsedFoodInfo.FoodFEP foodFEP = new ParsedFoodInfo.FoodFEP(fepName, fepValue);
-                foodInfo.feps.add(foodFEP);
-            }
-        }
+        foodInfo.totalFep = rs.getDouble("totalFep");
+        foodInfo.str1 = rs.getDouble("str1");
+        foodInfo.str2 = rs.getDouble("str2");
+        foodInfo.agi1 = rs.getDouble("agi1");
+        foodInfo.agi2 = rs.getDouble("agi2");
+        foodInfo.int1 = rs.getDouble("int1");
+        foodInfo.int2 = rs.getDouble("int2");
+        foodInfo.con1 = rs.getDouble("con1");
+        foodInfo.con2 = rs.getDouble("con2");
+        foodInfo.per1 = rs.getDouble("per1");
+        foodInfo.per2 = rs.getDouble("per2");
+        foodInfo.cha1 = rs.getDouble("cha1");
+        foodInfo.cha2 = rs.getDouble("cha2");
+        foodInfo.dex1 = rs.getDouble("dex1");
+        foodInfo.dex2 = rs.getDouble("dex2");
+        foodInfo.wil1 = rs.getDouble("wil1");
+        foodInfo.wil2 = rs.getDouble("wil2");
+        foodInfo.psy1 = rs.getDouble("psy1");
+        foodInfo.psy2 = rs.getDouble("psy2");
         return foodInfo;
     }
 
@@ -403,132 +413,134 @@ public class CookingRecipes extends Window {
         public Food(ParsedFoodInfo food) {
             this.foodName = new Label(food.itemName);
             add(this.foodName, UI.scale(5, 25));
-            this.hunger = new Label(String.valueOf(food.getHunger()));
+            this.hunger = new Label(String.valueOf(food.hunger));
             add(this.hunger, UI.scale(977, 25));
-            this.energy = new Label(String.valueOf(food.getEnergy()));
+            this.energy = new Label(String.valueOf(food.energy));
             add(this.energy, UI.scale(1037, 25));
 
-            Map<String, Label> labels = new HashMap<>();
-            labels.put("str1", str1);
-            labels.put("str2", str2);
-            labels.put("agi1", agi1);
-            labels.put("agi2", agi2);
-            labels.put("int1", int1);
-            labels.put("int2", int2);
-            labels.put("con1", con1);
-            labels.put("con2", con2);
-            labels.put("per1", per1);
-            labels.put("per2", per2);
-            labels.put("cha1", cha1);
-            labels.put("cha2", cha2);
-            labels.put("dex1", dex1);
-            labels.put("dex2", dex2);
-            labels.put("wil1", wil1);
-            labels.put("wil2", wil2);
-            labels.put("psy1", psy1);
-            labels.put("psy2", psy2);
+            str1.settext(food.str1 == 0.0 ? "" : String.valueOf(food.str1));
+            add(str1, UI.scale(185 - 2 * (String.valueOf(food.str1).length()), 17));
+            str1.setcolor(new Color(176, 6, 6, 255));
 
-            Map<String, Integer> scales = new HashMap<>();
-            scales.put("str1", 185);
-            scales.put("str2", 185);
-            scales.put("agi1", 235);
-            scales.put("agi2", 235);
-            scales.put("int1", 285);
-            scales.put("int2", 285);
-            scales.put("con1", 335);
-            scales.put("con2", 335);
-            scales.put("per1", 385);
-            scales.put("per2", 385);
-            scales.put("cha1", 435);
-            scales.put("cha2", 435);
-            scales.put("dex1", 485);
-            scales.put("dex2", 485);
-            scales.put("wil1", 535);
-            scales.put("wil2", 535);
-            scales.put("psy1", 585);
-            scales.put("psy2", 585);
+            str2.settext(food.str2 == 0 ? "" : String.valueOf(food.str2));
+            add(str2, UI.scale(185 - 2 * (String.valueOf(food.str2).length()), 33));
+            str2.setcolor(new Color(213, 0, 0));
 
-            Map<String, Color> colors = new HashMap<>();
-            colors.put("str1", new Color(176, 6, 6, 255));
-            colors.put("str2", new Color(213, 0, 0));
-            colors.put("agi1", new Color(80, 69, 189));
-            colors.put("agi2", new Color(102, 84, 255));
-            colors.put("int1", new Color(44, 154, 166));
-            colors.put("int2", new Color(0, 231, 255));
-            colors.put("con1", new Color(169, 0, 128));
-            colors.put("con2", new Color(255, 0, 195));
-            colors.put("per1", new Color(180, 91, 0));
-            colors.put("per2", new Color(255, 127, 0));
-            colors.put("cha1", new Color(20, 171, 0));
-            colors.put("cha2", new Color(26, 255, 0));
-            colors.put("dex1", new Color(194, 194, 133));
-            colors.put("dex2", new Color(255, 255, 180));
-            colors.put("wil1", new Color(180, 180, 0, 255));
-            colors.put("wil2", new Color(255, 255, 0, 255));
-            colors.put("psy1", new Color(144, 0, 201));
-            colors.put("psy2", new Color(184, 0, 255));
+            agi1.settext(food.agi1 == 0 ? "" : String.valueOf(food.agi1));
+            add(agi1, UI.scale(235 - 2 * (String.valueOf(food.agi1).length()), 17));
+            agi1.setcolor(new Color(80, 69, 189));
 
-            for (ParsedFoodInfo.FoodFEP fep : food.feps) {
-                String name = fep.getName();
-                if (labels.containsKey(name)) {
-                    Label label = labels.get(name);
-                    label.settext(String.valueOf(fep.getValue()));
-                    add(label, UI.scale(scales.get(name) - label.getText().text.length(), (name.endsWith("1") ? 17 : 33)));
-                    label.setcolor(colors.get(name));
-                }
-            }
+            agi2.settext(food.agi2 == 0 ? "" : String.valueOf(food.agi2));
+            add(agi2, UI.scale(235 - 2 * (String.valueOf(food.agi2).length()), 33));
+            agi2.setcolor(new Color(102, 84, 255));
+
+            int1.settext(food.int1 == 0 ? "" : String.valueOf(food.int1));
+            add(int1, UI.scale(285 - 2 * (String.valueOf(food.int1).length()), 17));
+            int1.setcolor(new Color(44, 154, 166));
+
+            int2.settext(food.int2 == 0 ? "" : String.valueOf(food.int2));
+            add(int2, UI.scale(285 - 2 * (String.valueOf(food.int2).length()), 33));
+            int2.setcolor(new Color(0, 231, 255));
+
+            con1.settext(food.con1 == 0 ? "" : String.valueOf(food.con1));
+            add(con1, UI.scale(335 - 2 * (String.valueOf(food.con1).length()), 17));
+            con1.setcolor(new Color(169, 0, 128));
+
+            con2.settext(food.con2 == 0 ? "" : String.valueOf(food.con2));
+            add(con2, UI.scale(335 - 2 * (String.valueOf(food.con2).length()), 33));
+            con2.setcolor(new Color(255, 0, 195));
+
+            per1.settext(food.per1 == 0 ? "" : String.valueOf(food.per1));
+            add(per1, UI.scale(385 - 2 * (String.valueOf(food.per1).length()), 17));
+            per1.setcolor(new Color(180, 91, 0));
+
+            per2.settext(food.per2 == 0 ? "" : String.valueOf(food.per2));
+            add(per2, UI.scale(385 - 2 * (String.valueOf(food.per2).length()), 33));
+            per2.setcolor(new Color(255, 127, 0));
+
+            cha1.settext(food.cha1 == 0 ? "" : String.valueOf(food.cha1));
+            add(cha1, UI.scale(435 - 2 * (String.valueOf(food.cha1).length()), 17));
+            cha1.setcolor(new Color(20, 171, 0));
+
+            cha2.settext(food.cha2 == 0 ? "" : String.valueOf(food.cha2));
+            add(cha2, UI.scale(435 - 2 * (String.valueOf(food.cha2).length()), 33));
+            cha2.setcolor(new Color(26, 255, 0));
+
+            dex1.settext(food.dex1 == 0 ? "" : String.valueOf(food.dex1));
+            add(dex1, UI.scale(485 - 2 * (String.valueOf(food.dex1).length()), 17));
+            dex1.setcolor(new Color(194, 194, 133));
+
+            dex2.settext(food.dex2 == 0 ? "" : String.valueOf(food.dex2));
+            add(dex2, UI.scale(485 - 2 * (String.valueOf(food.dex2).length()), 33));
+            dex2.setcolor(new Color(255, 255, 180));
+
+            wil1.settext(food.wil1 == 0 ? "" : String.valueOf(food.wil1));
+            add(wil1, UI.scale(535 - 2 * (String.valueOf(food.wil1).length()), 17));
+            wil1.setcolor(new Color(180, 180, 0, 255));
+
+            wil2.settext(food.wil2 == 0 ? "" : String.valueOf(food.wil2));
+            add(wil2, UI.scale(535 - 2 * (String.valueOf(food.wil2).length()), 33));
+            wil2.setcolor(new Color(255, 255, 0, 255));
+
+            psy1.settext(food.psy1 == 0 ? "" : String.valueOf(food.psy1));
+            add(psy1, UI.scale(585 - 2 * (String.valueOf(food.psy1).length()), 17));
+            psy1.setcolor(new Color(144, 0, 201));
+
+            psy2.settext(food.psy2 == 0 ? "" : String.valueOf(food.psy2));
+            add(psy2, UI.scale(585 - 2 * (String.valueOf(food.psy2).length()), 33));
+            psy2.setcolor(new Color(184, 0, 255));
+
 
             if (food.ingredients.size() == 1) {
-                ingredient1.settext(food.ingredients.get(0).getName() + " " + food.ingredients.get(0).getPercentage() + "%");
+                ingredient1.settext(food.ingredients.get(0).name + " " + food.ingredients.get(0).percentage + "%");
                 add(this.ingredient1, UI.scale(625, 8));
             } else if (food.ingredients.size() == 2) {
-                ingredient1.settext(food.ingredients.get(0).getName() + " " + food.ingredients.get(0).getPercentage() + "%, " + food.ingredients.get(1).getName() + " " + food.ingredients.get(1).getPercentage() + "%");
+                ingredient1.settext(food.ingredients.get(0).name + " " + food.ingredients.get(0).percentage + "%, " + food.ingredients.get(1).name + " " + food.ingredients.get(1).percentage + "%");
                 add(this.ingredient1, UI.scale(625, 8));
             } else if (food.ingredients.size() == 3) {
-                ingredient1.settext(food.ingredients.get(0).getName() + " " + food.ingredients.get(0).getPercentage() + "%, " + food.ingredients.get(1).getName() + " " + food.ingredients.get(1).getPercentage() + "%,");
-                ingredient2.settext(food.ingredients.get(2).getName() + " " + food.ingredients.get(2).getPercentage() + "%");
+                ingredient1.settext(food.ingredients.get(0).name + " " + food.ingredients.get(0).percentage + "%, " + food.ingredients.get(1).name + " " + food.ingredients.get(1).percentage + "%,");
+                ingredient2.settext(food.ingredients.get(2).name + " " + food.ingredients.get(2).percentage + "%");
                 add(this.ingredient1, UI.scale(625, 8));
                 add(this.ingredient2, UI.scale(625, 21));
             } else if (food.ingredients.size() == 4) {
-                ingredient1.settext(food.ingredients.get(0).getName() + " " + food.ingredients.get(0).getPercentage() + "%, " + food.ingredients.get(1).getName() + " " + food.ingredients.get(1).getPercentage() + "%,");
-                ingredient2.settext(food.ingredients.get(2).getName() + " " + food.ingredients.get(2).getPercentage() + "%, " + food.ingredients.get(3).getName() + " " + food.ingredients.get(3).getPercentage() + "%");
+                ingredient1.settext(food.ingredients.get(0).name + " " + food.ingredients.get(0).percentage + "%, " + food.ingredients.get(1).name + " " + food.ingredients.get(1).percentage + "%,");
+                ingredient2.settext(food.ingredients.get(2).name + " " + food.ingredients.get(2).percentage + "%, " + food.ingredients.get(3).name + " " + food.ingredients.get(3).percentage + "%");
                 add(this.ingredient1, UI.scale(625, 8));
                 add(this.ingredient2, UI.scale(625, 21));
             } else if (food.ingredients.size() == 5) {
-                ingredient1.settext(food.ingredients.get(0).getName() + " " + food.ingredients.get(0).getPercentage() + "%, " + food.ingredients.get(1).getName() + " " + food.ingredients.get(1).getPercentage() + "%,");
-                ingredient2.settext(food.ingredients.get(2).getName() + " " + food.ingredients.get(2).getPercentage() + "%, " + food.ingredients.get(3).getName() + " " + food.ingredients.get(3).getPercentage() + "%,");
-                ingredient3.settext(food.ingredients.get(4).getName() + " " + food.ingredients.get(4).getPercentage() + "%");
+                ingredient1.settext(food.ingredients.get(0).name + " " + food.ingredients.get(0).percentage + "%, " + food.ingredients.get(1).name + " " + food.ingredients.get(1).percentage + "%,");
+                ingredient2.settext(food.ingredients.get(2).name + " " + food.ingredients.get(2).percentage + "%, " + food.ingredients.get(3).name + " " + food.ingredients.get(3).percentage + "%,");
+                ingredient3.settext(food.ingredients.get(4).name + " " + food.ingredients.get(4).percentage + "%");
                 add(this.ingredient1, UI.scale(625, 8));
                 add(this.ingredient2, UI.scale(625, 21));
                 add(this.ingredient3, UI.scale(625, 34));
             } else if (food.ingredients.size() == 6) {
-                ingredient1.settext(food.ingredients.get(0).getName() + " " + food.ingredients.get(0).getPercentage() + "%, " + food.ingredients.get(1).getName() + " " + food.ingredients.get(1).getPercentage() + "%,");
-                ingredient2.settext(food.ingredients.get(2).getName() + " " + food.ingredients.get(2).getPercentage() + "%, " + food.ingredients.get(3).getName() + " " + food.ingredients.get(3).getPercentage() + "%,");
-                ingredient3.settext(food.ingredients.get(4).getName() + " " + food.ingredients.get(4).getPercentage() + "%, " + food.ingredients.get(5).getName() + " " + food.ingredients.get(5).getPercentage() + "%");
+                ingredient1.settext(food.ingredients.get(0).name + " " + food.ingredients.get(0).percentage + "%, " + food.ingredients.get(1).name + " " + food.ingredients.get(1).percentage + "%,");
+                ingredient2.settext(food.ingredients.get(2).name + " " + food.ingredients.get(2).percentage + "%, " + food.ingredients.get(3).name + " " + food.ingredients.get(3).percentage + "%,");
+                ingredient3.settext(food.ingredients.get(4).name + " " + food.ingredients.get(4).percentage + "%, " + food.ingredients.get(5).name + " " + food.ingredients.get(5).percentage + "%");
                 add(this.ingredient1, UI.scale(625, 8));
                 add(this.ingredient2, UI.scale(625, 21));
                 add(this.ingredient3, UI.scale(625, 34));
             } else if (food.ingredients.size() == 7) {
-                ingredient1.settext(food.ingredients.get(0).getName() + " " + food.ingredients.get(0).getPercentage() + "%, " + food.ingredients.get(1).getName() + " " + food.ingredients.get(1).getPercentage() + "%,");
-                ingredient2.settext(food.ingredients.get(2).getName() + " " + food.ingredients.get(2).getPercentage() + "%, " + food.ingredients.get(3).getName() + " " + food.ingredients.get(3).getPercentage() + "%,");
-                ingredient3.settext(food.ingredients.get(4).getName() + " " + food.ingredients.get(4).getPercentage() + "%, " + food.ingredients.get(5).getName() + " " + food.ingredients.get(5).getPercentage() + "%,");
-                ingredient4.settext(food.ingredients.get(6).getName() + " " + food.ingredients.get(6).getPercentage() + "%");
+                ingredient1.settext(food.ingredients.get(0).name + " " + food.ingredients.get(0).percentage + "%, " + food.ingredients.get(1).name + " " + food.ingredients.get(1).percentage + "%,");
+                ingredient2.settext(food.ingredients.get(2).name + " " + food.ingredients.get(2).percentage + "%, " + food.ingredients.get(3).name + " " + food.ingredients.get(3).percentage + "%,");
+                ingredient3.settext(food.ingredients.get(4).name + " " + food.ingredients.get(4).percentage + "%, " + food.ingredients.get(5).name + " " + food.ingredients.get(5).percentage + "%,");
+                ingredient4.settext(food.ingredients.get(6).name + " " + food.ingredients.get(6).percentage + "%");
                 add(this.ingredient1, UI.scale(625, 8));
                 add(this.ingredient2, UI.scale(625, 21));
                 add(this.ingredient3, UI.scale(625, 34));
                 add(this.ingredient4, UI.scale(625, 47));
             } else if (food.ingredients.size() == 8) {
-                ingredient1.settext(food.ingredients.get(0).getName() + " " + food.ingredients.get(0).getPercentage() + "%, " + food.ingredients.get(1).getName() + " " + food.ingredients.get(1).getPercentage() + "%,");
-                ingredient2.settext(food.ingredients.get(2).getName() + " " + food.ingredients.get(2).getPercentage() + "%, " + food.ingredients.get(3).getName() + " " + food.ingredients.get(3).getPercentage() + "%,");
-                ingredient3.settext(food.ingredients.get(4).getName() + " " + food.ingredients.get(4).getPercentage() + "%, " + food.ingredients.get(5).getName() + " " + food.ingredients.get(5).getPercentage() + "%,");
-                ingredient4.settext(food.ingredients.get(6).getName() + " " + food.ingredients.get(6).getPercentage() + "%, " + food.ingredients.get(7).getName() + " " + food.ingredients.get(7).getPercentage() + "%");
+                ingredient1.settext(food.ingredients.get(0).name + " " + food.ingredients.get(0).percentage + "%, " + food.ingredients.get(1).name + " " + food.ingredients.get(1).percentage + "%,");
+                ingredient2.settext(food.ingredients.get(2).name + " " + food.ingredients.get(2).percentage + "%, " + food.ingredients.get(3).name + " " + food.ingredients.get(3).percentage + "%,");
+                ingredient3.settext(food.ingredients.get(4).name + " " + food.ingredients.get(4).percentage + "%, " + food.ingredients.get(5).name + " " + food.ingredients.get(5).percentage + "%,");
+                ingredient4.settext(food.ingredients.get(6).name + " " + food.ingredients.get(6).percentage + "%, " + food.ingredients.get(7).name + " " + food.ingredients.get(7).percentage + "%");
                 add(this.ingredient1, UI.scale(625, 8));
                 add(this.ingredient2, UI.scale(625, 21));
                 add(this.ingredient3, UI.scale(625, 34));
                 add(this.ingredient4, UI.scale(625, 47));
             }
         }
-
         @Override
         public void draw(GOut g) {
             super.draw(g);
