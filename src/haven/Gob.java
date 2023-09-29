@@ -28,6 +28,7 @@ package haven;
 
 import haven.automated.helpers.HitBoxes;
 import haven.render.*;
+import haven.render.gl.GLObject;
 import haven.res.gfx.fx.msrad.MSRad;
 import haven.sprites.*;
 
@@ -1141,7 +1142,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	Map<Class<? extends GAttrib>, GAttrib> attr = cloneattrs();
 	for(GAttrib a : attr.values()) {
 	    if(a instanceof RenderTree.Node && !a.skipRender)
-		slot.add((RenderTree.Node)a);
+			try {
+				slot.add((RenderTree.Node) a);
+			} catch (GLObject.UseAfterFreeException e) {
+				// ND: I have no clue what causes this, and what happens if we just ignore it?
+				// >> Meeku said he crashed on this when he got out of the minehole
+				e.printStackTrace();
+			}
 	}
 	slots.add(slot);
     }
@@ -1609,11 +1616,22 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				if (doHide) {
 					if (d.slots != null) {
 						ArrayList<RenderTree.Slot> tmpSlots = new ArrayList<>(d.slots);
-						glob.loader.defer(() -> RUtils.multiremSafe(tmpSlots), null);
+						try {
+							glob.loader.defer(() -> RUtils.multiremSafe(tmpSlots), null);
+						} catch (RenderTree.SlotRemoved e) {
+							// ND: I have no clue what causes this, and what happens if we just ignore it?
+							// I crashed once when I was just walking around Menillos' base, never happened before
+							e.printStackTrace();
+						}
 					}
 				} else {
 					ArrayList<RenderTree.Slot> tmpSlots = new ArrayList<>(slots);
-					glob.loader.defer(() -> RUtils.multiadd(tmpSlots, d), null);
+					try {
+						glob.loader.defer(() -> RUtils.multiadd(tmpSlots, d), null);
+					} catch (RenderTree.SlotRemoved e) {
+						// ND: I have no clue what causes this, and what happens if we just ignore it?
+						e.printStackTrace();
+					}
 				}
 			}
 			if ((OptWnd.toggleGobHidingCheckBox.a && doShowHidingBox) || (isGate && OptWnd.displayGatePassabilityBoxesCheckBox.a)) {
