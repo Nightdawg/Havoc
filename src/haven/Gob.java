@@ -2171,8 +2171,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"gfx/kritter/toad/toad",
 			"gfx/kritter/waterstrider/waterstrider",
 			"gfx/kritter/woodworm/woodworm",
+			"gfx/kritter/whirlingsnowflake/whirlingsnowflake",
+
 
 			"gfx/terobjs/items/grub", // ND: lmao
+			"gfx/terobjs/items/hoppedcow",
+			"gfx/terobjs/items/mandrakespirited",
 	};
 
 	public static final String[] BEASTDANGER_PATHS = {
