@@ -26,7 +26,12 @@
 
 package haven;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.io.*;
 import java.nio.file.*;
@@ -42,6 +47,7 @@ public class GobIcon extends GAttrib {
     private static final Map<Indir<Resource>, Image> cache = new WeakHashMap<>();
     public final Indir<Resource> res;
     private Image img;
+	private static LinkedHashMap<String, ArrayList<String>> mapIconPresets = new LinkedHashMap<String, ArrayList<String>>();
 
     public GobIcon(Gob g, Indir<Resource> res) {
 	super(g);
@@ -602,6 +608,12 @@ public class GobIcon extends GAttrib {
 	    }
 	}
 
+		private GobIconCategoryList iconCategories;
+		private Dropbox iconPresetsDropbox;
+		private String selectedPreset = null;
+		private ArrayList<String> enabledIcons = null;
+		private TextEntry newPresetName = null;
+
 		public SettingsWindow(Settings conf, Runnable save) {
 			super(Coord.z, "Map Icon Settings");
 			this.conf = conf;
@@ -629,7 +641,7 @@ public class GobIcon extends GAttrib {
 				}}, 0);
 			list = cont.last(new IconList(UI.scale(280, 500)), 0);
 
-			left.last(new GobIconCategoryList(UI.scale(190), 13, elh){
+			left.last(iconCategories = new GobIconCategoryList(UI.scale(190), 13, elh){
 				@Override
 				public void change(GobIconCategoryList.GobCategory item) {
 					super.change(item);
@@ -648,24 +660,89 @@ public class GobIcon extends GAttrib {
 						save.run();
 				}
 			}, UI.scale(5));
-//			left.last(new Button(UI.scale(170), "Remove Ender's Icons", false).action(() -> {
-//				gameui().saveiconconf();
-//			}).settip("Use this button to remove Ender's custom icons from your account.", true), UI.scale(10));
-			left.last(new Button(UI.scale(170), "Deselect all", false).action(() -> {
-				list.items().forEach(icon -> {
-					// ND: First check if it's a mandatory icon, and keep it enabled at all times
-					if (Config.mandatoryAlwaysEnabledMapIcons.keySet().stream().anyMatch(icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t::equals))
-						icon.conf.show = true;
-					else
-						icon.conf.show = false;
-				});
+			left.last(new Label(">> Map Icon Presets <<"), UI.scale(36));
+			left.last(new Label("Select Preset:"), UI.scale(0));
+			add(iconPresetsDropbox = new Dropbox<String>(116, 10, 17) {
+				{
+					super.change(0);
+					selectedPreset = "";
+				}
+				@Override
+				protected String listitem(int i) {
+					List<String> keys = new ArrayList<String>(mapIconPresets.keySet());
+					if (keys.size() > 0)
+						return keys.get(i);
+					else return "";
+				}
+				@Override
+				protected int listitems() {
+					return mapIconPresets.keySet().size();
+				}
+				@Override
+				protected void drawitem(GOut g, String item, int i) {
+					g.text(item, Coord.z);
+				}
+				@Override
+				public void change(String item) {
+					super.change(item);
+					selectedPreset = item;
+				}
+			}, UI.scale(new Coord(74, 400)));
+
+			left.last(new Button(UI.scale(170), "Load Selected Preset", false).action(() -> {
+				if (!selectedPreset.equals("")) {
+					iconCategories.change(GobIconCategoryList.GobCategory.ALL);
+					enabledIcons = new ArrayList<String>(mapIconPresets.get(selectedPreset));
+					if (future != null)
+						future.cancel(true);
+					future = executor.scheduleWithFixedDelay(this::applyPreset, 200, 300, TimeUnit.MILLISECONDS);
+					applyPreset();
+				} else {
+					ui.gui.error("Please select a preset to load!");
+				}
 			}), UI.scale(10));
+
+			left.last(new Button(UI.scale(170), "Delete Selected Preset", false).action(() -> {
+				if (!selectedPreset.equals("")) {
+					mapIconPresets.remove(selectedPreset);
+					ui.gui.msg(selectedPreset + " map icons preset has been deleted!");
+					selectedPreset = "";
+					iconPresetsDropbox.change(0);
+					savePresetsToFile();
+				} else {
+					ui.gui.error("Please select a preset to delete!");
+				}
+			}), UI.scale(10));
+
+			left.last(new Label(""), UI.scale(0));
+			left.last(new Label("New Preset:"), UI.scale(8));
+			add(newPresetName = new TextEntry(UI.scale(120), ""){
+
+			}, UI.scale(new Coord(72, 502)));
+			left.last(new Button(UI.scale(170), "Save New Preset", false).action(() -> {
+				if (newPresetName.text().equals(""))
+					ui.gui.error("Please set a name for the new map icons preset!");
+				else if (newPresetName.text().trim().length() == 0)
+					ui.gui.error("Brother don't just use a bunch of spaces as the preset name, that's stupid. Give it a nice name.");
+				else if (mapIconPresets.keySet().stream().anyMatch(newPresetName.text()::equals))
+					ui.gui.error("A preset named " + "\"" + newPresetName.text() + "\"" + " already exists. Please choose a different name, or delete the old one.");
+				else {
+					iconCategories.change(GobIconCategoryList.GobCategory.ALL);
+
+					if (future != null)
+						future.cancel(true);
+					future = executor.scheduleWithFixedDelay(this::savePreset, 200, 300, TimeUnit.MILLISECONDS);
+				}
+			}), UI.scale(10));
+
 			cont.pack();
 			left.pack();
 			root.pack();
 			updateAllCheckbox();
 		}
 
+		private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+		private Future<?> future;
 		private void updateAllCheckbox() {
 			if(toggleAll == null) {
 				return;
@@ -675,6 +752,41 @@ public class GobIcon extends GAttrib {
 					&& !items.isEmpty()
 					&& items.stream().allMatch(icon -> icon.conf.show);
 		}
+
+		private void applyPreset(){
+			if (!list.reorder){
+				future.cancel(true);
+				list.items().forEach(icon -> {
+					if (Config.mandatoryAlwaysEnabledMapIcons.keySet().stream().anyMatch(icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t::equals))
+						icon.conf.show = true;
+					if (enabledIcons.stream().anyMatch(icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t::equals))
+						icon.conf.show = true;
+					else
+						icon.conf.show = false;
+				});
+				if (save != null)
+					save.run();
+				ui.gui.msg(selectedPreset + " map icons preset has been set!");
+			}
+		}
+
+		private void savePreset(){
+			if (!list.reorder){
+				future.cancel(true);
+				String presetName = newPresetName.text();
+				mapIconPresets.put(presetName, new ArrayList<String>() {{
+					list.items().forEach(icon -> {
+						if (icon.conf.show) {
+							add(icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip).t);
+						}
+					});
+				}});
+				ui.gui.msg(presetName + " map icons preset has been saved!");
+				newPresetName.settext("");
+				savePresetsToFile();
+			}
+		}
+
 	}
 
 
@@ -691,4 +803,59 @@ public class GobIcon extends GAttrib {
 	    }
 	}
     }
+
+	public static void initPresets() {
+		load();
+	}
+
+	public static void load() {
+		mapIconPresets.clear();
+		File config = new File("Map_Icons_Presets/yourSavedPresets");
+		if (!config.exists()) {
+			defaultPresets();
+		} else {
+			loadPresetsFromFile(config);
+		}
+	}
+	private static void loadPresetsFromFile(File config) {
+		try {
+			mapIconPresets.put("", null);
+			for (String s : Files.readAllLines(Paths.get(config.toURI()), StandardCharsets.UTF_8)) {
+				String[] split = s.split("(;)");
+				if (!mapIconPresets.containsKey(split[0])) {
+					mapIconPresets.put(split[0], new ArrayList<String>() {{
+						for (int x = 1; x < split.length; x++) {
+							add(split[x]);
+						}
+					}});
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void defaultPresets() {
+		mapIconPresets.clear();
+		loadPresetsFromFile(new File("Map_Icons_Presets/defaultPresets"));
+	}
+
+	public static void savePresetsToFile() {
+		try {
+			BufferedWriter bw = Files.newBufferedWriter(Paths.get(new File("Map_Icons_Presets/yourSavedPresets").toURI()), StandardCharsets.UTF_8);
+			for (int x = 1; x < mapIconPresets.keySet().size(); x++) { // ND: Start at 1, cause 0 is always an empty string added in the code when settings are loaded
+				String presetName = ((String) mapIconPresets.keySet().toArray()[x]);
+				StringBuilder enabledIcons = new StringBuilder();
+				for (String icon : mapIconPresets.get(presetName)){
+					enabledIcons.append(";").append(icon);
+				}
+				bw.write(presetName + enabledIcons + "\n");
+			}
+			bw.flush();
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

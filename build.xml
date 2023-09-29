@@ -168,6 +168,9 @@
     <copy todir="bin/Alarms" >
       <fileset dir="Alarms" includes="**"/>
     </copy>
+    <copy todir="bin/Map_Icons_Presets" >
+      <fileset dir="Map_Icons_Presets" includes="**"/>
+    </copy>
     <copy file="etc/ansgar-config.properties" tofile="bin/haven-config.properties" />
     <copy file="RUN.bat" todir="bin"/>
     <chmod file="bin/hafen.jar" perm="a+x" />
