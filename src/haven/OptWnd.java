@@ -408,15 +408,17 @@ public class OptWnd extends Window {
 	}
     }
 
+	public static HSlider clapSoundVolumeSlider;
+
     public class AudioPanel extends Panel {
 	public AudioPanel(Panel back) {
-	    prev = add(new Label("Master audio volume"), 0, 0);
+	    prev = add(new Label("Master Audio Volume"), 0, 0);
 	    prev = add(new HSlider(UI.scale(200), 0, 1000, (int)(Audio.volume * 1000)) {
 		    public void changed() {
 			Audio.setvolume(val / 1000.0);
 		    }
 		}, prev.pos("bl").adds(0, 2));
-	    prev = add(new Label("Interface sound volume"), prev.pos("bl").adds(0, 15));
+	    prev = add(new Label("Interface Sound Volume"), prev.pos("bl").adds(0, 10));
 	    prev = add(new HSlider(UI.scale(200), 0, 1000, 0) {
 		    protected void attach(UI ui) {
 			super.attach(ui);
@@ -426,7 +428,7 @@ public class OptWnd extends Window {
 			ui.audio.aui.setvolume(val / 1000.0);
 		    }
 		}, prev.pos("bl").adds(0, 2));
-	    prev = add(new Label("In-game event volume"), prev.pos("bl").adds(0, 5));
+	    prev = add(new Label("In-game Event Volume"), prev.pos("bl").adds(0, 5));
 	    prev = add(new HSlider(UI.scale(200), 0, 1000, 0) {
 		    protected void attach(UI ui) {
 			super.attach(ui);
@@ -436,7 +438,7 @@ public class OptWnd extends Window {
 			ui.audio.pos.setvolume(val / 1000.0);
 		    }
 		}, prev.pos("bl").adds(0, 2));
-	    prev = add(new Label("Ambient volume"), prev.pos("bl").adds(0, 5));
+	    prev = add(new Label("Ambient Volume"), prev.pos("bl").adds(0, 5));
 	    prev = add(new HSlider(UI.scale(200), 0, 1000, 0) {
 		    protected void attach(UI ui) {
 			super.attach(ui);
@@ -446,7 +448,7 @@ public class OptWnd extends Window {
 			ui.audio.amb.setvolume(val / 1000.0);
 		    }
 		}, prev.pos("bl").adds(0, 2));
-	    prev = add(new Label("Audio latency"), prev.pos("bl").adds(0, 15));
+	    prev = add(new Label("Audio Latency"), prev.pos("bl").adds(0, 10));
 	    {
 		Label dpy = new Label("");
 		addhlp(prev.pos("bl").adds(0, 2), UI.scale(5),
@@ -466,7 +468,20 @@ public class OptWnd extends Window {
 				"\n$col[185,185,185]{Loftar claims that smaller sizes are better, but anything below 50ms always fucking stutters, so I limited it there." +
 				"\nIncrease this if your audio is still stuttering.}", true);
 	    }
-		add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 30));
+
+		prev = add(new Label("Other Sound Settings"), prev.pos("bl").adds(52, 20));
+		prev = add(new Label("Clap Sound Effect Volume"), prev.pos("bl").adds(0, 5).x(0));
+		prev = add(clapSoundVolumeSlider = new HSlider(UI.scale(200), 0, 100, Utils.getprefi("clapSoundVolume", 10)) {
+			protected void attach(UI ui) {
+				super.attach(ui);
+			}
+			public void changed() {
+				Utils.setprefi("clapSoundVolume", val);
+			}
+		}, prev.pos("bl").adds(0, 2));
+
+
+		add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 30).x(0));
 	    pack();
 	}
     }
