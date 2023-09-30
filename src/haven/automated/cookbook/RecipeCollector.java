@@ -57,7 +57,7 @@ public class RecipeCollector implements Runnable {
                 ParsedFoodInfo parsedFoodInfo = new ParsedFoodInfo();
                 parsedFoodInfo.resourceName = resName;
                 parsedFoodInfo.energy = (int) (Math.round(foodInfo.end * 100));
-                parsedFoodInfo.hunger = round3Dig(foodInfo.glut * 100);
+                parsedFoodInfo.hunger = round3Dig(foodInfo.glut * 1000);
 
                 double totalFep = 0.0;
                 for (int i = 0; i < foodInfo.evs.length; i++) {
@@ -351,11 +351,6 @@ public class RecipeCollector implements Runnable {
                             "percentage REAL, " +
                             "FOREIGN KEY(food_id) REFERENCES food(id), " +
                             "FOREIGN KEY(ingredient_id) REFERENCES ingredient(id)", "table");
-
-            createSchemaElementIfNotExist(conn, dbExists, "synchronization",
-                    "id INTEGER PRIMARY KEY, " +
-                            "last_sync_timestamp DATETIME",
-                    "table");
 
             createSchemaElementIfNotExist(conn, dbExists, "idx_ingredients_name", "ingredient(name)", "index");
             createSchemaElementIfNotExist(conn, dbExists, "idx_food_ingredients_food_id_ingredient_id", "food_ingredient(food_id, ingredient_id)", "index");

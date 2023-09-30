@@ -4,6 +4,7 @@ import haven.Button;
 import haven.Label;
 import haven.Window;
 import haven.*;
+import haven.automated.cookbook.importExport.SynchronizationHelper;
 
 
 import java.awt.*;
@@ -27,7 +28,7 @@ public class CookingRecipes extends Window {
     }
 
     public CookingRecipes() {
-        super(UI.scale(1100, 675), "CookBook");
+        super(UI.scale(1100, 685), "CookBook");
         this.show = false;
         this.query = "";
         this.page = 1;
@@ -101,19 +102,13 @@ public class CookingRecipes extends Window {
         foodList = new FoodList(1090, 10);
         add(foodList, UI.scale(5, 50));
 
-//        add(new Button(UI.scale(50), "Export") {
-//            @Override
-//            public void click() {
-//                ImportExportHelper.exportRecipes(ui.gui);
-//            }
-//        }, UI.scale(1015, 658));
-//
-//        add(new Button(UI.scale(50), "Import") {
-//            @Override
-//            public void click() {
-//                ImportExportHelper.importRecipes(ui.gui);
-//            }
-//        }, UI.scale(950, 658));
+
+        add(new Button(UI.scale(150), "Synchronize") {
+            @Override
+            public void click() {
+                SynchronizationHelper.synchronizeRecipes(ui.gui);
+            }
+        }, UI.scale(25, 658));
 
         getData();
     }
