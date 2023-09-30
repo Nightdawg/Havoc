@@ -409,6 +409,7 @@ public class OptWnd extends Window {
     }
 
 	public static HSlider clapSoundVolumeSlider;
+	public static HSlider quernSoundVolumeSlider;
 
     public class AudioPanel extends Panel {
 	public AudioPanel(Panel back) {
@@ -480,8 +481,18 @@ public class OptWnd extends Window {
 			}
 		}, prev.pos("bl").adds(0, 2));
 
+		prev = add(new Label("Quern Sound Effect Volume"), prev.pos("bl").adds(0, 5).x(0));
+		prev = add(quernSoundVolumeSlider = new HSlider(UI.scale(200), 0, 100, Utils.getprefi("quernSoundVolume", 10)) {
+			protected void attach(UI ui) {
+				super.attach(ui);
+			}
+			public void changed() {
+				Utils.setprefi("quernSoundVolume", val);
+			}
+		}, prev.pos("bl").adds(0, 2));
 
-		add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 30).x(0));
+
+		add(new PButton(UI.scale(200), "Back", 27, back, "Options            "), prev.pos("bl").adds(0, 24).x(0));
 	    pack();
 	}
     }

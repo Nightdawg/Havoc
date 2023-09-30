@@ -69,8 +69,10 @@ public class AudioSprite {
 	public ClipSprite(Owner owner, Resource res, Audio.Clip clip) {
 	    super(owner, res);
 		haven.Audio.CS stream = clip.stream();
-		if ("sfx/borka/clap".equals(res.name))
+		if (res.name.equals("sfx/borka/clap"))
 			stream = new Audio.VolAdjust(stream, OptWnd.clapSoundVolumeSlider.val/100d);
+		else if (res.name.equals("sfx/terobjs/quern"))
+			stream = new Audio.VolAdjust(stream, OptWnd.quernSoundVolumeSlider.val/100d);
 	    this.clip = new ActAudio.PosClip(new Audio.Monitor(stream) {
 		    protected void eof() {
 			super.eof();
