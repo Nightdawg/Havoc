@@ -189,7 +189,7 @@ public class OptWnd extends Window {
 		    Label dpy = new Label("");
 		    final int max = 250;
 		    addhlp(prev.pos("bl").adds(0, 2), UI.scale(5),
-			   prev = new HSlider(UI.scale(160), 1, max, (prefs.hz.val == Float.POSITIVE_INFINITY) ? max : prefs.hz.val.intValue()) {
+			   prev = new HSlider(UI.scale(160), 20, max, (prefs.hz.val == Float.POSITIVE_INFINITY) ? max : prefs.hz.val.intValue()) {
 			       protected void added() {
 				   dpy();
 			       }
@@ -219,7 +219,7 @@ public class OptWnd extends Window {
 		    Label dpy = new Label("");
 		    final int max = 250;
 		    addhlp(prev.pos("bl").adds(0, 2), UI.scale(5),
-			   prev = new HSlider(UI.scale(160), 1, max, (prefs.bghz.val == Float.POSITIVE_INFINITY) ? max : prefs.bghz.val.intValue()) {
+			   prev = new HSlider(UI.scale(160), 20, max, (prefs.bghz.val == Float.POSITIVE_INFINITY) ? max : prefs.bghz.val.intValue()) {
 			       protected void added() {
 				   dpy();
 			       }
