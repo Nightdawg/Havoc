@@ -96,6 +96,9 @@ public class ICheckBox extends ACheckBox {
 	if((button == 1) && checkhit(c)) {
 	    click();
 	    return(true);
+	} else if((button == 3) && checkhit(c)) {
+		rclick();
+		return true;
 	}
 	return(super.mousedown(c, button));
     }

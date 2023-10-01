@@ -60,6 +60,10 @@ public abstract class ACheckBox extends Widget {
     public ACheckBox click(Runnable click) {this.click = click; return(this);}
     public void click() {click.run();}
 
+    public Runnable rclick;
+    public ACheckBox rclick(Runnable rclick) {this.rclick = rclick; return(this);}
+    public void rclick() {if(rclick != null) {rclick.run();}}
+
     public boolean gkeytype(java.awt.event.KeyEvent ev) {
 	click();
 	return(true);
