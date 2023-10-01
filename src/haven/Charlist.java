@@ -49,11 +49,11 @@ public class Charlist extends Widget {
 
     public Charlist(int height) {
 	super(Coord.z);
-	this.height = height;
+	this.height = height + 1;
 	setcanfocus(true);
 	sau = adda(new IButton("gfx/hud/buttons/csau", "u", "d", "o"), bg.sz().x / 2, 0, 0.5, 0)
 	    .action(() -> scroll(-1));
-	list = add(new Boxlist(height), 0, sau.c.y + sau.sz.y + margin);
+	list = add(new Boxlist(height + 1), 0, sau.c.y + sau.sz.y + margin);
 	sad = adda(new IButton("gfx/hud/buttons/csad", "u", "d", "o"), bg.sz().x / 2, list.c.y + list.sz.y + margin, 0.5, 0)
 	    .action(() -> scroll(1));
 	sau.hide(); sad.hide();
@@ -135,6 +135,8 @@ public class Charlist extends Widget {
 	}
     }
 
+	boolean movedAvalink = false;
+
     protected void added() {
 	parent.setfocus(this);
 		parent.add(new Button(UI.scale(120), "Log out") {
@@ -147,6 +149,8 @@ public class Charlist extends Widget {
 //				super.click();
 			}
 		}, UI.scale(20, 560));
+		this.c = new Coord(this.c.x, this.c.y - UI.scale(110));
+		parent.c = new Coord(parent.c.x - (UI.scale(267)/2), parent.c.y);
     }
 
     private int scrolltgt = -1;
@@ -164,6 +168,15 @@ public class Charlist extends Widget {
 	    }
 	    list.scrollval((int)Math.round(scrollval = nv));
 	}
+
+	if (avalink != null && !movedAvalink) {
+		avalink.parent.c = new Coord(avalink.parent.c.x + UI.scale(267), avalink.parent.c.y - UI.scale(50));
+		avalink.parent.sz = new Coord(avalink.parent.sz.x + UI.scale(100), avalink.parent.sz.y + UI.scale(100));
+		avalink.sz = new Coord(avalink.sz.x + UI.scale(30), avalink.sz.y + UI.scale(50));
+		movedAvalink = true;
+		parent.pack();
+	}
+
 	super.tick(dt);
     }
 
