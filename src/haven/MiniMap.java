@@ -66,6 +66,7 @@ public class MiniMap extends Widget {
 	private Tex biometex;
 	public static boolean showMapViewRange = Utils.getprefb("showMapViewRange", true);
 	public static boolean showMapGridLines = Utils.getprefb("showMapGridLines", false);
+	public static boolean highlightMapTiles = Utils.getprefb("highlightMapTiles", false);
 	private final List<MapSprite> mapSprites = new LinkedList<>();
 
     public MiniMap(Coord sz, MapFile file) {

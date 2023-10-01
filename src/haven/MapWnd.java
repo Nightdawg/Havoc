@@ -66,7 +66,6 @@ public class MapWnd extends Window implements Console.Directory {
     private List<ListMarker> markers = Collections.emptyList();
     private int markerseq = -1;
     private boolean domark = false;
-    private int olalpha = 80;
     private final Collection<Runnable> deferred = new LinkedList<>();
 	private Coord bigmapc = Utils.getprefc("bigmapc", new Coord(0,0));
 	private Coord smallmapc = Utils.getprefc("smallmapc", new Coord(0,100));
@@ -131,6 +130,21 @@ public class MapWnd extends Window implements Console.Directory {
 				})
 				.settip("Show Grid Lines");
 
+		toolbarTop.add(new ICheckBox("gfx/hud/mmap/maphighlight", "", "-d", "-h", "-dh") {
+				}, UI.scale(new Coord(25, 0)))
+				.state(() -> Utils.getprefb("highlightMapTiles", false))
+				.click(() -> {
+					if (!MiniMap.highlightMapTiles) {
+						MiniMap.highlightMapTiles = true;
+						Utils.setprefb("highlightMapTiles", true);
+					} else{
+						MiniMap.highlightMapTiles = false;
+						Utils.setprefb("highlightMapTiles", false);
+					}
+				})
+
+				.settip("Highlight Map Tiles\n\nLeft-click to toggle Tile Highlighting\nRight-click to open Highlight Settings", true);
+
 	toolbarTop.c = new Coord(UI.scale(2), UI.scale(2));
 	toolbarTop.pack();
 	toolbar = add(new Widget(Coord.z));
@@ -163,14 +177,7 @@ public class MapWnd extends Window implements Console.Directory {
 		})
 	    .settip("Hide markers").setgkey(kb_hmark);
 	if(Utils.getprefb("pclaim-claimMapState", false)) overlays.add("cplot");
-	toolbar.add(new ICheckBox("gfx/hud/mmap/pclaim", "", "-d", "-h", "-dh") {
-				public boolean mousewheel(Coord c, int amount) {
-					if(!checkhit(c) || !ui.modshift || !a)
-						return(super.mousewheel(c, amount));
-					olalpha = Utils.clip(olalpha + (amount * -16), 48, 256);
-					return(true);
-				}
-			})
+	toolbar.add(new ICheckBox("gfx/hud/mmap/pclaim", "", "-d", "-h", "-dh"))
 			.state(() -> visol("cplot"))
 			.click(() -> {
 				if (!visol("cplot")) {
@@ -183,14 +190,7 @@ public class MapWnd extends Window implements Console.Directory {
 			})
 			.settip("Show Personal Claims on Map").setgkey(kb_claim);
 	if(Utils.getprefb("vclaim-claimMapState", false)) overlays.add("vlg");
-	toolbar.add(new ICheckBox("gfx/hud/mmap/vclaim", "", "-d", "-h", "-dh") {
-				public boolean mousewheel(Coord c, int amount) {
-					if(!checkhit(c) || !ui.modshift || !a)
-						return(super.mousewheel(c, amount));
-					olalpha = Utils.clip(olalpha + (amount * -16), 48, 256);
-					return(true);
-				}
-			})
+	toolbar.add(new ICheckBox("gfx/hud/mmap/vclaim", "", "-d", "-h", "-dh"))
 			.state(() -> visol("vlg"))
 			.click(() -> {
 				if (!visol("vlg")) {
@@ -209,14 +209,7 @@ public class MapWnd extends Window implements Console.Directory {
 		})
 	    .settip("Compact mode").setgkey(kb_compact);
 	if(Utils.getprefb("prov-claimMapState", false)) overlays.add("realm");
-	toolbar.add(new ICheckBox("gfx/hud/mmap/prov", "", "-d", "-h", "-dh") {
-		public boolean mousewheel(Coord c, int amount) {
-		    if(!checkhit(c) || !ui.modshift || !a)
-			return(super.mousewheel(c, amount));
-		    olalpha = Utils.clip(olalpha + (amount * -16), 48, 256);
-		    return(true);
-		}
-	    })
+	toolbar.add(new ICheckBox("gfx/hud/mmap/prov", "", "-d", "-h", "-dh"))
 			.state(() -> visol("realm"))
 			.click(() -> {
 				if (!visol("realm")) {
@@ -380,6 +373,7 @@ public class MapWnd extends Window implements Console.Directory {
     }
 
     private class View extends MiniMap {
+	private double a = 0;
 	View(MapFile file) {
 	    super(file);
 	}
@@ -388,9 +382,12 @@ public class MapWnd extends Window implements Console.Directory {
 	    super.drawgrid(g, ul, disp);
 	    for(String tag : overlays) {
 		try {
+			int alpha = 96;
+			if (tag.equals("cplot"))
+				alpha = (int) (100 + 155 * a);
 		    Tex img = disp.olimg(tag);
 		    if(img != null) {
-			g.chcolor(255, 255, 255, olalpha);
+			g.chcolor(255, 255, 255, alpha);
 				g.image(img, ul, UI.scale(img.sz()).mul(dlvl).div(zoomlevel));
 		    }
 		} catch(Loading l) {
@@ -461,6 +458,12 @@ public class MapWnd extends Window implements Console.Directory {
 		return(markcurs);
 	    return(super.getcurs(c));
 	}
+
+		@Override
+		public void tick(double dt) {
+			super.tick(dt);
+			a = Math.sin(Math.PI * ((System.currentTimeMillis() % 1000) / 1000.0));
+		}
     }
 
     public void tick(double dt) {
