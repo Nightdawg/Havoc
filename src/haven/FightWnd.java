@@ -859,7 +859,7 @@ public class FightWnd extends Widget {
 					renwnd.remove();
 					renwnd = null;
 				}
-				renwnd = new Window(UI.scale(new Coord(225, 100)), "Rename School") {
+				renwnd = new Window(UI.scale(new Coord(225, 100)), "Rename Deck") {
 					{
 						final TextEntry txtname = new TextEntry(UI.scale(200), sel.a.text);
 						add(txtname, UI.scale(new Coord(15, 20)));
@@ -893,7 +893,7 @@ public class FightWnd extends Widget {
 					}
 
 				};
-				ui.gui.add(renwnd, new Coord(ui.gui.sz.x / 2 - 200, ui.gui.sz.y / 2 - 200));
+				ui.gui.add(renwnd, new Coord((ui.gui.sz.x - renwnd.sz.x) / 2, (ui.gui.sz.y - renwnd.sz.y*3) / 2));
 				renwnd.show();
 			}
 		}, p.pos("ur").adds(6, 0));
