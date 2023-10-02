@@ -41,6 +41,8 @@ import java.util.function.*;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.image.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 
@@ -2334,4 +2336,18 @@ public class Utils {
 		double rvalue = (double) Math.round(value * 10) / 10;
 		return (rvalue % 1 == 0) ? Integer.toString((int)rvalue) : Double.toString(rvalue);
 	}
+
+	private static final Pattern RESID = Pattern.compile(".*\\[([^,]*),?.*]");
+
+	public static String prettyResName(String resname) {
+		Matcher m = RESID.matcher(resname);
+		if(m.matches()) {
+			resname = m.group(1);
+		}
+		int k = resname.lastIndexOf("/");
+		resname = resname.substring(k + 1);
+		resname = resname.substring(0, 1).toUpperCase() + resname.substring(1);
+		return resname;
+	}
+
 }

@@ -130,19 +130,16 @@ public class MapWnd extends Window implements Console.Directory {
 				})
 				.settip("Show Grid Lines");
 
-		toolbarTop.add(new ICheckBox("gfx/hud/mmap/maphighlight", "", "-d", "-h", "-dh") {
-				}, UI.scale(new Coord(25, 0)))
-				.state(() -> Utils.getprefb("highlightMapTiles", false))
+		toolbarTop.add(new ICheckBox("gfx/hud/mmap/maphighlight", "", "-d", "-h", "-dh"), UI.scale(new Coord(25, 0)))
+				.state(() -> MiniMap.highlightMapTiles)
 				.click(() -> {
-					if (!MiniMap.highlightMapTiles) {
-						MiniMap.highlightMapTiles = true;
-						Utils.setprefb("highlightMapTiles", true);
-					} else{
-						MiniMap.highlightMapTiles = false;
-						Utils.setprefb("highlightMapTiles", false);
-					}
+					Utils.setprefb("highlightMapTiles", !MiniMap.highlightMapTiles);
+					toggleol(TileHighlight.TAG, !MiniMap.highlightMapTiles);
+					MiniMap.highlightMapTiles = !MiniMap.highlightMapTiles;
 				})
-
+				.rclick(() -> {
+					TileHighlight.toggle(ui.gui);
+				})
 				.settip("Highlight Map Tiles\n\nLeft-click to toggle Tile Highlighting\nRight-click to open Highlight Settings", true);
 
 	toolbarTop.c = new Coord(UI.scale(2), UI.scale(2));
@@ -383,11 +380,15 @@ public class MapWnd extends Window implements Console.Directory {
 	    for(String tag : overlays) {
 		try {
 			int alpha = 96;
-			if (tag.equals("cplot"))
+		    Tex img;
+			if(TileHighlight.TAG.equals(tag)) {
 				alpha = (int) (100 + 155 * a);
-		    Tex img = disp.olimg(tag);
+				img = disp.tileimg();
+			} else {
+				img = disp.olimg(tag);
+			}
 		    if(img != null) {
-			g.chcolor(255, 255, 255, alpha);
+				g.chcolor(255, 255, 255, alpha);
 				g.image(img, ul, UI.scale(img.sz()).mul(dlvl).div(zoomlevel));
 		    }
 		} catch(Loading l) {

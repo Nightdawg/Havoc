@@ -134,6 +134,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public Thread refillWaterContainersThread;
 	public Thread harvestNearestDreamcatcherThread;
 	public Thread autoFlowerRepeaterScriptThread;
+	public TileHighlight.TileHighlightCFG tileHighlight;
 
 
 
@@ -394,6 +395,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
     protected void attached() {
 	iconconf = loadiconconf();
+	TileHighlight.toggle(this);
+	tileHighlight.hide();
 	super.attached();
     }
 

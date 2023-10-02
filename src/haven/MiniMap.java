@@ -436,10 +436,10 @@ public class MiniMap extends Widget {
 
 	    public Tex get() {
 		DataGrid grid = gref.get();
-		if(grid != cgrid) {
+		if(grid != cgrid || !valid()) {
 		    if(next != null)
 			next.cancel();
-		    next = src.apply(grid);
+		    next = getNext(grid);
 		    cgrid = grid;
 		}
 		if(next != null) {
@@ -449,6 +449,29 @@ public class MiniMap extends Widget {
 		}
 		return(img);
 	    }
+		protected Defer.Future<Tex> getNext(DataGrid grid) {
+			return src.apply(grid);
+		}
+
+		protected boolean valid() {return true;}
+	}
+
+	class CachedTileOverlay extends MiniMap.DisplayGrid.CachedImage {
+		private long seq = 0;
+		CachedTileOverlay(Function<MapFile.DataGrid, Defer.Future<Tex>> src) {
+			super(src);
+		}
+
+		@Override
+		protected boolean valid() {
+			return this.seq == TileHighlight.seq;
+		}
+
+		@Override
+		protected Defer.Future<Tex> getNext(DataGrid grid) {
+			this.seq = TileHighlight.seq;
+			return super.getNext(grid);
+		}
 	}
 
 	private CachedImage img_c;
@@ -479,7 +502,7 @@ public class MiniMap extends Widget {
 	    return(img_c.get());
 	}
 
-	private Map<String, CachedImage> olimg_c = new HashMap<>();
+	private final Map<String, CachedImage> olimg_c = new HashMap<>();
 	public Tex olimg(String tag) {
 	    CachedImage ret;
 	    synchronized(olimg_c) {
@@ -488,6 +511,15 @@ public class MiniMap extends Widget {
 	    }
 	    return(ret.get());
 	}
+
+		public Tex tileimg() {
+			CachedImage ret;
+			synchronized(olimg_c) {
+				if((ret = olimg_c.get(TileHighlight.TAG)) == null)
+					olimg_c.put(TileHighlight.TAG, ret = new CachedTileOverlay(grid -> Defer.later(() -> new TexI(TileHighlight.olrender(grid)))));
+			}
+			return(ret.get());
+		}
 
 	private Collection<DisplayMarker> markers = Collections.emptyList();
 	private int markerseq = -1;
