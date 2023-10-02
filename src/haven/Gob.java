@@ -1147,7 +1147,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			} catch (GLObject.UseAfterFreeException e) {
 				// ND: I have no clue what causes this, and what happens if we just ignore it?
 				// >> Meeku said he crashed on this when he got out of the minehole
-				e.printStackTrace();
+//				e.printStackTrace();
+				// ND: I got this stacktrace once and nothing seems to have happened, so I commented it, the try catch seems to work fine.
 			}
 	}
 	slots.add(slot);
