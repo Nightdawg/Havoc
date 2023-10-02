@@ -28,7 +28,7 @@ public class TileHighlight {
     public static final int elh = elf.height() + UI.scale(2);
 
 	public static final Map<String, List<String>> tileHighhlightNames = new HashMap<String, List<String>>(){{
-		put("Overworld Biomes", new ArrayList<String>(){{
+		put("Ground Tiles", new ArrayList<String>(){{
 			add("gfx/tiles/ashland");
 			add("gfx/tiles/beach");
 			add("gfx/tiles/beechgrove");
