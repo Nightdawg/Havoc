@@ -29,6 +29,7 @@ package haven;
 import haven.automated.*;
 import haven.automated.cookbook.CookingRecipes;
 import haven.automated.cookbook.RecipeCollector;
+import haven.automated.mapper.MappingClient;
 import haven.res.ui.stackinv.ItemStack;
 
 import java.awt.*;
@@ -95,6 +96,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean crimeon = false;
 	public static boolean trackon = false;
 	public static boolean autoFlowerSelect = Utils.getprefb("autoFlowerMenuSelect", false);
+
+	// TempMapper
+	public static boolean mapperUploadingMarkers = true;
+	public static boolean mapperUploadingMap = true;
+	public static boolean mapperTracking = true;
+	public static String mapperEndpoint = "http://88.198.35.125:8080/client/1e14f5de9f3838dd82e868ff3a882c67";
 
 	public static boolean muteNonFriendly = false;
 
@@ -848,6 +855,17 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		MapFile file;
 		try {
 		    file = MapFile.load(mapstore, mapfilename());
+			if(mapperUploadingMap) {
+				MappingClient.getInstance().ProcessMap(file, (m) -> {
+					if(m instanceof MapFile.PMarker && mapperUploadingMarkers) {
+						if(((MapFile.PMarker) m).color.equals(new Color(255, 115, 0, 255))){
+							return true;
+						}
+					}
+					return true;
+				});
+			}
+
 		} catch(java.io.IOException e) {
 		    /* XXX: Not quite sure what to do here. It's
 		     * certainly not obvious that overwriting the

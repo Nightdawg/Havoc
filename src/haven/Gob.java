@@ -27,6 +27,7 @@
 package haven;
 
 import haven.automated.helpers.HitBoxes;
+import haven.automated.mapper.MappingClient;
 import haven.render.*;
 import haven.render.gl.GLObject;
 import haven.res.gfx.fx.msrad.MSRad;
@@ -918,6 +919,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			this.gobSpeed = m.getv();
 		} else {
 			this.gobSpeed = 0;
+		}
+		if(Boolean.TRUE.equals(isMe()) && GameUI.mapperTracking) {
+			MappingClient.getInstance().CheckGridCoord(c);
+			MappingClient.getInstance().Track(id, c);
 		}
 	this.rc = c;
 	this.a = a;
