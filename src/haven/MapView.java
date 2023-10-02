@@ -2378,7 +2378,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 				}
 			}
 		}
-		if(checkpointManager != null && checkpointManagerThread != null){
+		if(checkpointManager != null && checkpointManagerThread != null && clickb == 1){
 			checkpointManager.pauseIt();
 		}
 		if(!GameUI.walkWithPathfinder){
