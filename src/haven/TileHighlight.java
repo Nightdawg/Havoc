@@ -258,6 +258,9 @@ public class TileHighlight {
 	    gui.tileHighlight = gui.add(new TileHighlightCFG(), Utils.getprefc("tileHighlightWnd", gui.mapfile.c));
 	} else {
 	    gui.tileHighlight.show(!gui.tileHighlight.visible());
+		if (gui.tileHighlight.visible()) {
+			gui.tileHighlight.raisedAndFocused = false;
+		}
 	}
     }
     
@@ -300,6 +303,8 @@ public class TileHighlight {
 	private final TileList list;
 	private final Label filter;
 	private String category = lastCategory;
+
+	public boolean raisedAndFocused = false;
 
 	private final CheckBox toggleAll;
 	
@@ -347,10 +352,13 @@ public class TileHighlight {
 	}
 	
 	@Override
-	public void tick(double dt) { // ND: Do this to keep the window above everything at all times. Mainly just so it's above the map window.
+	public void tick(double dt) {
 	    super.tick(dt);
-		parent.setfocus(this);
-		raise();
+		if (!raisedAndFocused) {
+			parent.setfocus(this);
+			raise();
+			raisedAndFocused = true;
+		}
 	}
 	
 	@Override
