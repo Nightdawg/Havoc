@@ -41,6 +41,8 @@ import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.*;
 
+import static haven.CharWnd.attrf;
+
 public class GobIcon extends GAttrib {
     private static final int size = UI.scale(20);
     public static final PUtils.Convolution filter = new PUtils.Hanning(1);
@@ -613,6 +615,7 @@ public class GobIcon extends GAttrib {
 		private String selectedPreset = null;
 		private ArrayList<String> enabledIcons = null;
 		private TextEntry newPresetName = null;
+		Window confirmOverwriteWnd = null;
 
 		public SettingsWindow(Settings conf, Runnable save) {
 			super(Coord.z, "Map Icon Settings");
@@ -724,9 +727,55 @@ public class GobIcon extends GAttrib {
 					ui.gui.error("Please set a name for the new map icons preset!");
 				else if (newPresetName.text().trim().length() == 0)
 					ui.gui.error("Brother don't just use a bunch of spaces as the preset name, that's stupid. Give it a nice name.");
-				else if (mapIconPresets.keySet().stream().anyMatch(newPresetName.text()::equals))
-					ui.gui.error("A preset named " + "\"" + newPresetName.text() + "\"" + " already exists. Please choose a different name, or delete the old one.");
-				else {
+				else if (mapIconPresets.keySet().stream().anyMatch(newPresetName.text()::equals)) {
+//					ui.gui.error("A preset named " + "\"" + newPresetName.text() + "\"" + " already exists. Please choose a different name, or delete the old one.");
+					SettingsWindow thisSettingsWindow = this;
+					if (confirmOverwriteWnd != null){
+						confirmOverwriteWnd.remove();
+						confirmOverwriteWnd = null;
+					}
+					confirmOverwriteWnd = new Window(UI.scale(new Coord(235, 90)), "Preset already exists!") {
+						{
+							Widget prev;
+							add(new Label("Are you sure you want to overwrite the preset?"), UI.scale(new Coord(10, 10)));
+							prev = add(new Label("Preset Name: "), UI.scale(new Coord(10, 30)));
+							add(new Label(newPresetName.text()), prev.pos("ur").adds(10, 0)).setcolor(new Color(255, 205, 0,255));
+
+							Button add = new Button(UI.scale(90), "Overwrite") {
+								@Override
+								public void click() {
+									iconCategories.change(GobIconCategoryList.GobCategory.ALL);
+
+									if (future != null)
+										future.cancel(true);
+									future = executor.scheduleWithFixedDelay(thisSettingsWindow::savePreset, 200, 300, TimeUnit.MILLISECONDS);
+
+									parent.reqdestroy();
+								}
+							};
+							add(add, UI.scale(new Coord(15, 60)));
+
+							Button cancel = new Button(UI.scale(90), "No! Cancel!") {
+								@Override
+								public void click() {
+									parent.reqdestroy();
+								}
+							};
+							add(cancel, UI.scale(new Coord(130, 60)));
+						}
+
+						@Override
+						public void wdgmsg(Widget sender, String msg, Object... args) {
+							if (msg.equals("close"))
+								reqdestroy();
+							else
+								super.wdgmsg(sender, msg, args);
+						}
+
+					};
+					ui.gui.add(confirmOverwriteWnd, new Coord((ui.gui.sz.x - confirmOverwriteWnd.sz.x) / 2, (ui.gui.sz.y - confirmOverwriteWnd.sz.y*3) / 2));
+					confirmOverwriteWnd.show();
+				} else {
 					iconCategories.change(GobIconCategoryList.GobCategory.ALL);
 
 					if (future != null)
