@@ -454,8 +454,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				fitwdg(GameUI.this.add(iconwnd, Utils.getprefc("wndc-icon", new Coord(200, 200))));
 			} else {
 				Utils.setprefc("wndc-icon",iconwnd.c); // ND: Add this to save the icon settings window location
-				ui.destroy(iconwnd);
-				iconwnd = null;
+				iconwnd.show(!iconwnd.visible());
+//				ui.destroy(iconwnd);
+//				iconwnd = null;
 			}
 		});
 		brpanel.add(new MenuCheckBox("lbtn-claim", kb_claim, "Display Personal Claims on Ground"), bg.c).state(() -> visol("cplot")).click(() -> {
@@ -1475,8 +1476,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    return;
 	} else if((sender == iconwnd) && (msg == "close")) {
 		Utils.setprefc("wndc-icon",iconwnd.c); // ND: Add this to save the icon settings window location
-	    ui.destroy(iconwnd);
-	    iconwnd = null;
+//	    ui.destroy(iconwnd);
+//	    iconwnd = null;
+		iconwnd.hide();
 	    return;
 	}
 	super.wdgmsg(sender, msg, args);
