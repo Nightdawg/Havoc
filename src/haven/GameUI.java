@@ -1589,6 +1589,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_nightVision  = KeyBinding.get("nightVisionKB",  KeyMatch.forchar('N', KeyMatch.C));
 
 	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("clickNearestGateKB",  KeyMatch.nil);
+	public static KeyBinding kb_enterNearestVessel  = KeyBinding.get("enderNearestVessel",  KeyMatch.forchar('Q', KeyMatch.C));
+
 	public static KeyBinding kb_aggroLastTarget = KeyBinding.get("aggroLastTarget",  KeyMatch.forchar('T', KeyMatch.S));
 	public static KeyBinding kb_peaceCurrentTarget  = KeyBinding.get("peaceCurrentTargetKB",  KeyMatch.forchar('P', KeyMatch.M));
 
@@ -1601,33 +1603,33 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_buttonForTesting  = KeyBinding.get("testButton",  KeyMatch.nil);
 
 	public boolean globtype(char key, KeyEvent ev) {
-		if(key == ':') {
+		if (key == ':') {
 			entercmd();
-			return(true);
-		} else if((Screenshooter.screenurl.get() != null) && kb_shoot.key().match(ev)) {
+			return (true);
+		} else if ((Screenshooter.screenurl.get() != null) && kb_shoot.key().match(ev)) {
 			Screenshooter.take(this, Screenshooter.screenurl.get());
-			return(true);
-		} else if(kb_hide.key().match(ev)) {
+			return (true);
+		} else if (kb_hide.key().match(ev)) {
 			toggleui();
-			return(true);
-		} else if(kb_logout.key().match(ev)) {
+			return (true);
+		} else if (kb_logout.key().match(ev)) {
 			act("lo");
-			return(true);
-		} else if(kb_switchchr.key().match(ev)) {
+			return (true);
+		} else if (kb_switchchr.key().match(ev)) {
 			act("lo", "cs");
-			return(true);
-		} else if(kb_chat.key().match(ev)) {
-			if(chat.visible() && !chat.hasfocus) {
-			setfocus(chat);
+			return (true);
+		} else if (kb_chat.key().match(ev)) {
+			if (chat.visible() && !chat.hasfocus) {
+				setfocus(chat);
 			}
-			return(true);
-		} else if(kb_drinkButton.key().match(ev)) {
+			return (true);
+		} else if (kb_drinkButton.key().match(ev)) {
 			wdgmsg("act", "drink");
-			return(true);
-		} else if(kb_clickNearestObject.key().match(ev)) {
+			return (true);
+		} else if (kb_clickNearestObject.key().match(ev)) {
 			this.runActionThread(new Thread(new InteractWithNearestObject(this), "InteractWithNearestObject"));
-			return(true);
-		} else if(kb_nightVision.key().match(ev)) {
+			return (true);
+		} else if (kb_nightVision.key().match(ev)) {
 			if (OptWnd.nightVisionSlider.max - OptWnd.nightVisionSlider.val >= OptWnd.nightVisionSlider.val - OptWnd.nightVisionSlider.min) {
 				OptWnd.nightVisionSlider.val = OptWnd.nightVisionSlider.max;
 				OptWnd.nightVisionSlider.changed();
@@ -1635,11 +1637,13 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				OptWnd.nightVisionSlider.val = OptWnd.nightVisionSlider.min;
 				OptWnd.nightVisionSlider.changed();
 			}
-			return(true);
-		}
-		else if(kb_clickNearestGate.key().match(ev)) {
+			return (true);
+		} else if (kb_clickNearestGate.key().match(ev)) {
 			this.runActionThread(new Thread(new ClickNearestGate(this), "ClickNearestGate"));
-			return(true);
+			return (true);
+		} else if (kb_enterNearestVessel.key().match(ev)) {
+			this.runActionThread(new Thread(new EnterNearestVessel(this), "EnterNearestVessel"));
+			return (true);
 		} else if(kb_rightQuickSlotButton.key().match(ev)) {
 			quickslots.drop(QuickSlotsWdg.rc, Coord.z);
 			quickslots.simulateclick(QuickSlotsWdg.rc);

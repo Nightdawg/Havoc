@@ -1106,6 +1106,17 @@ public class OptWnd extends Window {
 					"\n$col[218,163,0]{Range:} $col[185,185,185]{8 tiles (approximately)}" +
 					"\n$col[185,185,185]{Use this one if you only want a dedicated button for gates, without the other stuff.}", new Color(255, 188, 0,255), GameUI.kb_clickNearestGate, y);
 
+			y = addbtnImproved(cont, "Hop on Nearest Vehicle/Mount", "When this button is pressed, your character will run towards the nearest mountable Vehicle/Animal, and try to mount it." +
+					"\n\nThe behavior differs for every object:" +
+					"\n=====================" +
+					"\n$col[218,163,0]{Tamed Horses:} Whistle at the Horse, then run to it and mount." +
+					"\n$col[218,163,0]{Rowboats, Dugouts, Kicksleds:} Run to it and mount." +
+					"\n$col[218,163,0]{Knarrs, Snekkjas:} Run to it and try to man the helm. If helm is occupied, join as passenger." +
+					"\n=====================" +
+					"\n$col[200,0,0]{WARNING:} Only the Vehicles/Mounts mentioned above are taken into consideration! " +
+					"\nOther Vehicles/Mounts are completely ignored ($col[200,0,0]{Coracles}, $col[200,0,0]{Skis}, $col[200,0,0]{Wagons}, $col[200,0,0]{Wild Horses}, etc.)!" +
+					"\n\n$col[218,163,0]{Range:} $col[185,185,185]{36 tiles (approximately)}", new Color(0, 197, 255,255), GameUI.kb_enterNearestVessel, y);
+
 			y = addbtn(cont, "Left Hand (Quick switch)", GameUI.kb_leftQuickSlotButton, y+6);
 			y = addbtn(cont, "Right Hand (Quick switch)", GameUI.kb_rightQuickSlotButton, y);
 
