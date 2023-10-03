@@ -1771,7 +1771,7 @@ public class OptWnd extends Window {
 			}, prev.pos("bl").adds(0, 2));
 
 			prev = add(drawFloatingCombatDataOnCurrentTargetCheckBox = new CheckBox("Display Combat Data above Current Target"){
-				{a = Utils.getprefb("drawFloatingCombatData", true);}
+				{a = Utils.getprefb("drawFloatingCombatDataOnCurrentTarget", true);}
 				public void set(boolean val) {
 					Utils.setprefb("drawFloatingCombatDataOnCurrentTarget", val);
 					a = val;
