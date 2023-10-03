@@ -556,12 +556,14 @@ public abstract class ItemInfo {
 				}
 			} else if(info instanceof Name) {
 				Name name = (Name) info;
-				try {
-					Matcher m = count_pattern.matcher(name.original);
-					if(m.find()) {
-						res = m.group(1);
+				if (!name.str.text.contains("seed")){
+					try {
+						Matcher m = count_pattern.matcher(name.original);
+						if(m.find()) {
+							res = m.group(1);
+						}
+					} catch (Exception ignored) {
 					}
-				} catch (Exception ignored) {
 				}
 			}
 			if(res != null) {
