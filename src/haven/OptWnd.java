@@ -3356,8 +3356,6 @@ public class OptWnd extends Window {
 	public static CheckBox enableLocationTrackingCheckbox;
 	public static CheckBox enableMarkerUploadCheckbox;
 
-	public static String webMapEndpointString = Utils.getpref("webMapEndpoint", "");
-
 
 	public class NDWebMapIntegrationSettingsPanel extends Panel {
 		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
@@ -3375,7 +3373,7 @@ public class OptWnd extends Window {
 					super.changed();
 				}
 			}, prev.pos("ur").adds(6, 0));
-			webmapEndpointTextEntry.settext(webMapEndpointString);
+			webmapEndpointTextEntry.settext(Utils.getpref("webMapEndpoint", ""));
 			prev = add(enableMapUploaderCheckbox = new CheckBox("Enable Map Uploader"){
 				{a = Utils.getprefb("enableMapUploader", true);}
 				public void set(boolean val) {
