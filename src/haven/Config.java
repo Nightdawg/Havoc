@@ -35,6 +35,7 @@ import java.io.*;
 import java.nio.file.*;
 
 public class Config {
+	public static final String ClientVersion = "Unreleased";
 	public static final File HOMEDIR = new File("").getAbsoluteFile();
     public static final Properties jarprops = getjarprops();
     public static final String confid = jarprops.getProperty("config.client-id", "unknown");
