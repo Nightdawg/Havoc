@@ -21,7 +21,9 @@ public class EnterNearestVessel implements Runnable {
         Gob player = gui.map.player();
         if (player == null)
             return;
-        
+        Coord3f raw = player.placed.getc();
+        if(raw == null) // ND: This works for checking if the player's on foot.
+            return;
         try {
             synchronized (gui.map.glob.oc) {
                 for (Gob gob : gui.map.glob.oc) {
