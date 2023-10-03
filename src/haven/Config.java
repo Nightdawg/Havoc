@@ -504,6 +504,7 @@ public class Config {
 		put("Down", "↓");
 		put("Left", "←");
 		put("Right", "→");
+
 	}};
 	public static final List<String> statsAndAttributesOrder = new ArrayList<String>(){{
 		// ND: I ordered them backwards, in case there's some stupid stat I overlooked, like "Swimming".

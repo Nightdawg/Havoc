@@ -51,6 +51,8 @@ public class KeyMatch {
     }
 
 	private String setProperKeyNames(String keyname){
+		if (keyname.contains("NumPad"))
+			return keyname.replace("NumPad ", "n");
 		if (Config.properKeyNames.keySet().stream().anyMatch(keyname::matches)){
 			return Config.properKeyNames.get(keyname);
 		} else {
