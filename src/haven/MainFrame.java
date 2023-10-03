@@ -319,9 +319,9 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 	    String t = fun.title();
 		username = fun.title();
 	    if(t == null)
-		setTitle("Havoc");
+		setTitle("Havoc (" + Config.ClientVersion + ")");
 	    else
-		setTitle("Havoc \u2013 " + t);
+		setTitle("Havoc (" + Config.ClientVersion + ") \u2013 " + t);
 	    fun = fun.run(p.newui(fun));
 	}
     }
