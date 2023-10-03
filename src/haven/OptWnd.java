@@ -40,6 +40,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -513,6 +514,7 @@ public class OptWnd extends Window {
 	public static CheckBox objectPermanentHighlightingCheckBox;
 	public static CheckBox showStudyWindowHistoryCheckBox;
 	public static CheckBox disableMenuGridHotkeysCheckBox;
+	public static CheckBox enableMineSweeperCheckBox;
 	public static CheckBox lockStudyWindowCheckBox;
 	public static CheckBox playSoundOnFinishedCurioCheckBox;
 	public static CheckBox toggleGobHealthDisplayCheckBox;
@@ -539,6 +541,9 @@ public class OptWnd extends Window {
 	public static CheckBox showBeeSkepsRadiiCheckBox;
 	public static CheckBox showFoodTroughsRadiiCheckBox;
 	public static boolean expWindowLocationIsTop = Utils.getprefb("expWindowLocationIsTop", true);
+	public static Dropbox<Integer> sweeperDurationDropbox;
+	public static final List<Integer> sweeperDurations = Arrays.asList(5, 10, 15, 30, 45, 60, 120);
+	public static int sweeperSetDuration = Utils.getprefi("sweeperSetDuration", 3);
     public class InterfacePanel extends Panel {
 
 	public InterfacePanel(Panel back) {
@@ -703,13 +708,55 @@ public class OptWnd extends Window {
 			}
 		}, leftColumn.pos("bl").adds(0, 12));
 
-		leftColumn = add(disableMenuGridHotkeysCheckBox = new CheckBox("Disable All Menu Grid Hotkeys"){
+		rightColumn = add(disableMenuGridHotkeysCheckBox = new CheckBox("Disable All Menu Grid Hotkeys"){
 			{a = (Utils.getprefb("disableMenuGridHotkeys", false));}
 			public void set(boolean val) {
 				Utils.setprefb("disableMenuGridHotkeys", val);
 				a = val;
 			}
 		}, leftColumn.pos("ur").adds(0, 0).x(UI.scale(230)));
+
+		rightColumn = add(enableMineSweeperCheckBox = new CheckBox("Show Mine Sweeper Numbers"){
+			{a = (Utils.getprefb("enableMineSweeper", true));}
+			public void set(boolean val) {
+				Utils.setprefb("enableMineSweeper", val);
+				if (ui != null && ui.gui != null && ui.gui.miningSafetyAssistantWindow != null)
+					ui.gui.miningSafetyAssistantWindow.enableMineSweeperCheckBox.a = val;
+				a = val;
+			}
+		}, rightColumn.pos("bl").adds(0, 2));
+
+		rightColumn = add(new Label("Sweeper Display Duration (Min):"), rightColumn.pos("bl").adds(0, 2));
+
+		rightColumn.tooltip = RichText.render("Use this to set how long you want the numbers to be displayed on the ground, in minutes. The numbers will be visible as long as the dust particle effect stays on the tile." +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{Changing this option will only affect the duration of newly spawned cave dust tiles. The duration is set once the wall tile is mined and the cave dust spawns in.}", UI.scale(300));
+
+		add(sweeperDurationDropbox = new Dropbox<Integer>(40, sweeperDurations.size(), 17) {
+			{
+				super.change(sweeperDurations.get(sweeperSetDuration));
+			}
+			@Override
+			protected Integer listitem(int i) {
+				return sweeperDurations.get(i);
+			}
+			@Override
+			protected int listitems() {
+				return sweeperDurations.size();
+			}
+			@Override
+			protected void drawitem(GOut g, Integer item, int i) {
+				g.text(item.toString(), Coord.z);
+			}
+			@Override
+			public void change(Integer item) {
+				super.change(item);
+				sweeperSetDuration = sweeperDurations.indexOf(item);
+				System.out.println(sweeperSetDuration);
+				Utils.setprefi("sweeperSetDuration", sweeperDurations.indexOf(item));
+				if (ui != null && ui.gui != null && ui.gui.miningSafetyAssistantWindow != null)
+					ui.gui.miningSafetyAssistantWindow.sweeperDurationDropbox.change2(item);
+			}
+		}, rightColumn.pos("ul").adds(160, 2));
 		leftColumn = add(lockStudyWindowCheckBox = new CheckBox("Lock Study Report"){
 			{a = (Utils.getprefb("lockStudyWindow", false));}
 			public void set(boolean val) {
@@ -3595,6 +3642,9 @@ public class OptWnd extends Window {
 		lockStudyWindowCheckBox.tooltip = RichText.render("Enabling this will prevent moving or dropping items from the Study Report", UI.scale(300));
 		disableMenuGridHotkeysCheckBox.tooltip = RichText.render("This option completely disables the hotkeys for the Action Buttons & Categories in the bottom right corner menu (aka the Menu Grid)." +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{Your Action Bar Keybinds are not affected by this setting.}", UI.scale(300));
+		enableMineSweeperCheckBox.tooltip = RichText.render("Enabling this will cause cave dust tiles to show the number of potential cave-ins surrounding them, just like in Minesweeper." +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{If a cave-in has been mined out, the tiles surrounding it will still drop cave dust, and they will still show a number on the ground. The cave dust tiles are pre-generated with the world. That's just how Loftar coded it.}" +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{You can still pick up the cave dust item off the ground. The numbers are affected only by the duration of the falling dust particles effect (aka dust rain), which can be set below}", UI.scale(300));
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){

@@ -49,11 +49,13 @@ public class Text implements Disposable {
     public static final Color white = Color.WHITE;
 	public static final Font latin;
 	public static final Foundry num12boldFnd;
+	public static final Foundry num30boldFnd;
 	
     static {
 	std = new Foundry(sans, 10);
 		latin = new Font("Dialog", Font.PLAIN, 10);
 	num12boldFnd = new Text.Foundry(latin.deriveFont(Font.BOLD), 12).aa(true);
+	num30boldFnd = new Text.Foundry(latin.deriveFont(Font.BOLD), 30).aa(true);
     }
 	
     public static class Line extends Text {

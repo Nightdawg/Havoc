@@ -28,6 +28,9 @@ public class MiningSafetyAssistant extends Window implements Runnable {
     private boolean stopMiningLooseRock = Utils.getprefb("stopMiningLooseRock", false);
     private final CheckBox stopMiningLooseRockCb;
 
+    public CheckBox enableMineSweeperCheckBox;
+    public Dropbox<Integer> sweeperDurationDropbox;
+
 
     ArrayList<Gob> supports = new ArrayList<>();
     ArrayList<Gob> looseRocks = new ArrayList<>();
@@ -109,6 +112,44 @@ public class MiningSafetyAssistant extends Window implements Runnable {
         };
         prev = add(stopMiningLooseRockCb, prev.pos("bl").adds(0, 6));
         stopMiningLooseRockCb.tooltip = RichText.render("If currently mined tile is withing ~9 tiles from any \nloose rock mining will stop.", UI.scale(300));
+
+        prev = add(enableMineSweeperCheckBox = new CheckBox("Show Mine Sweeper Numbers"){
+            {a = (Utils.getprefb("enableMineSweeper", true));}
+            public void set(boolean val) {
+                OptWnd.enableMineSweeperCheckBox.set(val);
+                a = val;
+            }
+        }, prev.pos("bl").adds(0, 10));
+        enableMineSweeperCheckBox.tooltip = RichText.render("Enabling this will cause cave dust tiles to show the number of potential cave-ins surrounding them, just like in Minesweeper." +
+                "\n$col[218,163,0]{Note:} $col[185,185,185]{If a cave-in has been mined out, the tiles surrounding it will still drop cave dust, and they will still show a number on the ground. The cave dust tiles are pre-generated with the world. That's just how Loftar coded it.}" +
+                "\n$col[218,163,0]{Note:} $col[185,185,185]{You can still pick up the cave dust item off the ground. The numbers are affected only by the duration of the falling dust particles effect (aka dust rain), which can be set below}", UI.scale(300));
+
+        prev = add(new Label("Sweeper Display Duration (Min):"), prev.pos("bl").adds(0, 2));
+        prev.tooltip = RichText.render("Use this to set how long you want the numbers to be displayed on the ground, in minutes. The numbers will be visible as long as the dust particle effect stays on the tile." +
+                "\n$col[218,163,0]{Note:} $col[185,185,185]{Changing this option will only affect the duration of newly spawned cave dust tiles. The duration is set once the wall tile is mined and the cave dust spawns in.}", UI.scale(300));
+
+        add(sweeperDurationDropbox = new Dropbox<Integer>(40, OptWnd.sweeperDurations.size(), 17) {
+            {
+                super.change(OptWnd.sweeperDurations.get(OptWnd.sweeperSetDuration));
+            }
+            @Override
+            protected Integer listitem(int i) {
+                return OptWnd.sweeperDurations.get(i);
+            }
+            @Override
+            protected int listitems() {
+                return OptWnd.sweeperDurations.size();
+            }
+            @Override
+            protected void drawitem(GOut g, Integer item, int i) {
+                g.text(item.toString(), Coord.z);
+            }
+            @Override
+            public void change(Integer item) {
+                super.change(item);
+                OptWnd.sweeperDurationDropbox.change(item);
+            }
+        }, prev.pos("ul").adds(160, 2));
 
 
         add(new Label("Movement"), UI.scale(154, 10));
