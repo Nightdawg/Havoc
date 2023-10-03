@@ -61,21 +61,15 @@ public class MappingClient {
     }
     
     private boolean trackingEnabled;
-    
-    /***
-     * Enable tracking for this execution.  Must be called each time the client is started.
-     * @param enabled
-     */
+
+	//Tracking on/off
     public void EnableTracking(boolean enabled) {
 	trackingEnabled = enabled;
     }
     
     private boolean gridEnabled;
     
-    /***
-     * Enable grid data/image upload for this execution.  Must be called each time the client is started.
-     * @param enabled
-     */
+    // Map upload on/off
     public void EnableGridUploads(boolean enabled) {
 	gridEnabled = enabled;
     }
@@ -88,21 +82,14 @@ public class MappingClient {
     }
     
     private String endpoint;
-    
-    /***
-     * Set mapping server endpoint.  Must be called each time the client is started.  Takes effect immediately.
-     * @param endpoint
-     */
+
+	//Set endpoint
     public void SetEndpoint(String endpoint) {
 	this.endpoint = endpoint;
     }
     
     private String playerName;
-    
-    /***
-     * Set the player name.  Typically called from Charlist.wdgmsg
-     * @param name
-     */
+
     public void SetPlayerName(String name) {
 	playerName = name;
     }
@@ -124,7 +111,6 @@ public class MappingClient {
     public void CheckGridCoord(Coord2d c) {
 	Coord gc = toGC(c);
 	if(lastGC == null || !gc.equals(lastGC)) {
-		System.out.println("enter grid");
 	    EnterGrid(gc);
 	}
     }
@@ -153,12 +139,10 @@ public class MappingClient {
 		    Indir<MapFile.Grid> indirGrid = mapfile.segments.get(m.seg).grid(mgc);
 		    return new MarkerData(m, indirGrid);
 		}).collect(Collectors.toList());
-		System.out.println("collected " + markers.size() + " markers");
 		mapfile.lock.readLock().unlock();
 		scheduler.execute(new ProcessMapper(mapfile, markers));
 	    } else {
 		if(retries-- > 0) {
-		    System.out.println("rescheduling upload");
 		    scheduler.schedule(this, 5, TimeUnit.SECONDS);
 		}
 	    }
@@ -188,7 +172,6 @@ public class MappingClient {
 	public void run() {
 	    ArrayList<JSONObject> loadedMarkers = new ArrayList<>();
 	    while (!markers.isEmpty()) {
-		System.out.println("processing " + markers.size() + " markers");
 		Iterator<MarkerData> iterator = markers.iterator();
 		while (iterator.hasNext()) {
 		    MarkerData md = iterator.next();
@@ -219,7 +202,6 @@ public class MappingClient {
 		    Thread.sleep(50);
 		} catch (InterruptedException ex) { }
 	    }
-	    System.out.println("scheduling marker upload");
 	    try {
 		scheduler.execute(new MarkerUpdate(new JSONArray(loadedMarkers.toArray())));
 	    } catch (Exception ex) {
@@ -438,9 +420,7 @@ public class MappingClient {
 			}
 		    }
 		    
-		} catch (Exception ex) {
-		    System.out.println(ex);
-		}
+		} catch (Exception ignored) {}
 	    }
 	}
     }
@@ -460,32 +440,21 @@ public class MappingClient {
 		MCache.Grid g = grid.get();
 		if(g != null && glob != null) {
 			BufferedImage image = MinimapImageGenerator.drawmap(glob.map, g);
-			System.out.println("pre loading1");
 		    if(image == null) {
 			throw new Loading();
 		    }
-			System.out.println("past loading");
 		    try {
-				System.out.println("do you even trying");
 			JSONObject extraData = new JSONObject();
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			ImageIO.write(image, "png", outputStream);
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-				System.out.println("Grids bein uploaded");
 			MultipartUtility multipart = new MultipartUtility(endpoint + "/gridUpload", "utf-8");
 			multipart.addFormField("id", this.gridID);
 			multipart.addFilePart("file", inputStream, "minimap.png");
 			extraData.put("season", glob.ast.is);
 			multipart.addFormField("extraData", extraData.toString());
 			MultipartUtility.Response response = multipart.finish();
-			if(response.statusCode != 200) {
-			    System.out.println("Upload Error: Code" + response.statusCode + " - " + response.response);
-			} else {
-				System.out.println("Grids bein uploaded 200");
-			}
-		    } catch (IOException e) {
-			System.out.println("Cannot upload " + gridID + ": " + e.getMessage());
-		    }
+		    } catch (IOException ignored) {}
 		}
 	    } catch (Loading ex) {
 		gridsUploader.submit(this);

@@ -101,7 +101,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean mapperUploadingMarkers = true;
 	public static boolean mapperUploadingMap = true;
 	public static boolean mapperTracking = true;
-	public static String mapperEndpoint = "http://88.198.35.125:8080/client/1e14f5de9f3838dd82e868ff3a882c67";
+	public static String mapperEndpoint = "https://map.havocandhearth.net/client/984d4e129b77c639ba33ce10d9c0459a";
 
 	public static boolean muteNonFriendly = false;
 
@@ -858,13 +858,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			if(mapperUploadingMap) {
 				MappingClient.getInstance().ProcessMap(file, (m) -> {
 					if(m instanceof MapFile.PMarker && mapperUploadingMarkers) {
-						if(((MapFile.PMarker) m).color.equals(new Color(255, 115, 0, 255))){
-							return true;
-						}
+						return ((MapFile.PMarker)m).color.equals(new Color(255, 115, 0, 255));
 					}
-					return true;
+					return false;
 				});
 			}
+
 
 		} catch(java.io.IOException e) {
 		    /* XXX: Not quite sure what to do here. It's

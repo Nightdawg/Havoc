@@ -73,11 +73,8 @@ public class MinimapImageGenerator {
                 }
             }
         }
-        } catch (Exception e) {
-            e.printStackTrace(); // This will print the stack trace of any uncaught exceptions
-            System.out.println("Exception Occurred");
+        } catch (Exception ignored) {
         }
-        System.out.println("Before Return");
         return buf;
     }
 }
