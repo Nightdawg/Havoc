@@ -228,7 +228,7 @@ public class TunnelerBot extends Window implements Runnable {
                                 AUtils.waitPf(gui);
                                 stage = 0;
                             } else {
-                                System.out.println("build next");
+//                                System.out.println("build next");
                                 buildNextColumn(currentAnchorColumn);
                             }
                         }
@@ -241,7 +241,7 @@ public class TunnelerBot extends Window implements Runnable {
                 sleep(500);
             }
         } catch (InterruptedException e) {
-            System.out.println("Tunneler interrupted..");
+//            System.out.println("Tunneler interrupted..");
         }
 
     }
