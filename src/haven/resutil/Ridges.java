@@ -731,7 +731,11 @@ public class Ridges implements MapMesh.ConsHooks {
     }
 
     public static boolean brokenp(MapSource map, Coord tc) {
-	Tiler t = map.tiler(map.gettile(tc));
+		Tiler t = null;
+		try{
+			t = map.tiler(map.gettile(tc));
+		} catch (Loading l){}
+
 	if(!(t instanceof RidgeTile))
 	    return(false);
 	double bz = ((RidgeTile)t).breakz() + EPSILON;

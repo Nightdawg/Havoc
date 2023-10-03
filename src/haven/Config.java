@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.automated.mapper.MappingClient;
+
 import java.net.URL;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -606,4 +608,22 @@ public class Config {
 		}
 	    });
     }
+
+	private static String  playername;
+
+	public static void setPlayerName(String playername) {
+		Config.playername = playername;
+	}
+
+	public static void initAutomapper(UI ui) {
+		if (MappingClient.initialized()) {
+			MappingClient.destroy();
+		}
+		MappingClient.init(ui.sess.glob);
+		MappingClient automapper = MappingClient.getInstance();
+		automapper.SetPlayerName(playername);
+		automapper.SetEndpoint(GameUI.mapperEndpoint);
+		automapper.EnableGridUploads(GameUI.mapperUploadingMap);
+		automapper.EnableTracking(GameUI.mapperTracking);
+	}
 }
