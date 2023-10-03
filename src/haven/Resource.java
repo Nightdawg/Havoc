@@ -1926,7 +1926,7 @@ public class Resource implements Serializable {
 					"customMapIcons/woodenplow",
 					"customMapIcons/wreckingball",
 
-					"gfx/tiles/notile(v0)"
+					"gfx/tiles/notile"
 			);
     private static final byte[] RESOURCE_SIG = "Haven Resource 1".getBytes(Utils.ascii);
     private void load(InputStream st) throws IOException {
