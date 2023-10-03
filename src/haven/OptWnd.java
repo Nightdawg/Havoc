@@ -40,7 +40,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -3352,6 +3351,63 @@ public class OptWnd extends Window {
 		}
 	}
 
+	public static TextEntry webmapEndpointTextEntry;
+	public static CheckBox enableMapUploaderCheckbox;
+	public static CheckBox enableLocationTrackingCheckbox;
+	public static CheckBox enableMarkerUploadCheckbox;
+
+	public static String webMapEndpointString = Utils.getpref("webMapEndpoint", "");
+
+
+	public class NDWebMapIntegrationSettingsPanel extends Panel {
+		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
+			return (cont.addhl(new Coord(0, y), cont.sz.x,
+					new Label(nm), new SetButton(UI.scale(140), cmd))
+					+ UI.scale(2));
+		}
+
+		public NDWebMapIntegrationSettingsPanel(Panel back) {
+			Widget prev;
+			prev = add(new Label("Web Map Endpoint:"), 0, 6);
+			prev = add(webmapEndpointTextEntry = new TextEntry(UI.scale(220), ""){
+				protected void changed() {
+					Utils.setpref("webMapEndpoint", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6, 0));
+			webmapEndpointTextEntry.settext(webMapEndpointString);
+			prev = add(enableMapUploaderCheckbox = new CheckBox("Enable Map Uploader"){
+				{a = Utils.getprefb("enableMapUploader", true);}
+				public void set(boolean val) {
+					Utils.setprefb("enableMapUploader", val);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 8).x(12));
+
+			prev = add(enableLocationTrackingCheckbox = new CheckBox("Enable Location Tracking"){
+				{a = Utils.getprefb("enableLocationTracking", false);}
+				public void set(boolean val) {
+					Utils.setprefb("enableLocationTracking", val);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+			prev = add(enableMarkerUploadCheckbox = new CheckBox("Enable Markers Upload"){
+				{a = Utils.getprefb("enableMarkerUpload", false);}
+				public void set(boolean val) {
+					Utils.setprefb("enableMarkerUpload", val);
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 4));
+
+
+
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 16).x(UI.scale(62)));
+
+			pack();
+		}
+	}
+
 
 	public class SetButton extends KeyMatch.Capture {
 	    public final KeyBinding cmd;
@@ -3518,6 +3574,8 @@ public class OptWnd extends Window {
 		Panel dropsettings = add(new NDAutoDropSettingsPanel(advancedSettings));
 		Panel alarmsettings = add(new NDAlarmsAndSoundsSettingsPanel(advancedSettings));
 		Panel colorsettings = add(new NDColorSettingsPanel(advancedSettings));
+		Panel webmapsettings = add(new NDWebMapIntegrationSettingsPanel(advancedSettings));
+
 
 		int y2 = UI.scale(6);
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Interface & Display Settings", -1, iface, "Interface & Display Settings"), 0, y2).pos("bl").adds(0, 5).y;
@@ -3532,7 +3590,8 @@ public class OptWnd extends Window {
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Mining Auto-Drop Settings", -1, dropsettings, "Mining Auto-Drop Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Alarms & Sounds Settings", -1, alarmsettings, "Alarms & Sounds Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
-		y2 = advancedSettings.add(new PButton(UI.scale(200), "Color Settings", -1, colorsettings, "Color Settings"), 0, y2).pos("bl").adds(0, 25).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Color Settings", -1, colorsettings, "Color Settings"), 0, y2).pos("bl").adds(0, 5).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Web Map Integration Settings", -1, webmapsettings, "Web Map Integration Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Back", 27, main, "Options            "), 0, y2).pos("bl").adds(0, 5).y;
 		this.advancedSettings.pack();
