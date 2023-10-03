@@ -137,17 +137,6 @@ public class Fightsess extends Widget {
 	    return;
 	pcc = map.screenxf(raw).round2();
 	pho = (int)(map.screenxf(raw.add(0, 0, UI.scale(20))).round2().sub(pcc).y) - UI.scale(20);
-
-	relations.clear();
-	for (Fightview.Relation rel : fv.lsrel) {
-		try {
-			Coord3f rawc = map.glob.oc.getgob(rel.gobid).placed.getc();
-			rawc.z = rawc.z + 15;
-			if (rawc == null)
-				continue;
-			relations.put(rel, map.screenxf(rawc).round2());
-		} catch (NullPointerException ignore) {}
-	}
     }
 
     private static class Effect implements RenderTree.Node {
@@ -242,6 +231,19 @@ public class Fightsess extends Widget {
 	public static boolean markCombatTargetSetting = true;
 	public void draw(GOut g) {
 		updatepos();
+		relations.clear();
+		MapView map = getparent(GameUI.class).map;
+		if (map != null){
+			for (Fightview.Relation rel : fv.lsrel) {
+				try {
+					Coord3f rawc = map.glob.oc.getgob(rel.gobid).placed.getc();
+					rawc.z = rawc.z + 15;
+					if (rawc == null)
+						continue;
+					relations.put(rel, map.screenxf(rawc).round2());
+				} catch (NullPointerException ignore) {}
+			}
+		}
 		GameUI gui = ui.gui;
 		tickAlert++;
 		if(tickAlert > 20){
