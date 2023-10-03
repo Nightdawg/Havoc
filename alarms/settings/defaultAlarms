@@ -16,5 +16,9 @@ gfx/kritter/nidbane/nidbane;true;Nidbane;ND_Nidbane;60;false
 gfx/kritter/orca/orca;true;Orca;ND_Orca;20;false
 gfx/kritter/troll/troll;true;Troll;ND_Troll;50;false
 gfx/kritter/walrus/walrus;true;Walrus;ND_Walrus;20;false
-gfx/kritter/wolf/wolf;true;Wolf;ND_Wolf;30;false
+gfx/kritter/wolf/wolf;true;Wolf;ND_Wolf;25;false
 gfx/kritter/wolverine/wolverine;true;Wolverine;ND_Wolverine;50;false
+gfx/terobjs/herbs/bloatedbolete;true;Curio: Bloated Bolete;ND_MarioCoin;40;false
+gfx/terobjs/herbs/edelweiss;true;Curio: Edelweiss;ND_MarioCoin;40;false
+gfx/terobjs/herbs/flotsam;true;Curio: Peculiar Flotsam;ND_MarioCoin;40;false
+gfx/terobjs/herbs/glimmermoss;true;Curio: Glimmermoss;ND_MarioCoin;40;false
