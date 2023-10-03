@@ -24,12 +24,15 @@ public class OceanScoutBot extends Window implements Runnable {
     private boolean active = false;
 
     public OceanScoutBot(GameUI gui) {
-        super(new Coord(190, 65), "Ocean Shoreline Scouting");
+        super(UI.scale(new Coord(274, 96)), "Ocean Scouting Bot");
         this.gui = gui;
         checkClock = 0;
         stop = false;
         mcache = gui.map.glob.map;
-        CheckBox dirBox = new CheckBox("Sail Clockwise") {
+        add(new Label(""), UI.scale(263, 0)); // ND: Label to fix horizontal size
+        add(new Label("Remember: The direction of the Shoreline is always"), UI.scale(10, 4));
+        add(new Label("reversed compared to the Deeper Water Edge."), UI.scale(10, 18));
+        CheckBox dirBox = new CheckBox("Reverse Direction") {
             {
                 a = true;
             }
@@ -39,9 +42,9 @@ public class OceanScoutBot extends Window implements Runnable {
                 a = val;
             }
         };
-        add(dirBox, UI.scale(10, 10));
+        add(dirBox, UI.scale(16, 42));
 
-        add(new Button(170, "Start"){
+        add(new Button(UI.scale(170), "Start"){
             @Override
             public void click() {
                 active = !active;
@@ -52,7 +55,8 @@ public class OceanScoutBot extends Window implements Runnable {
                     this.change("Start");
                 }
             }
-        }, UI.scale(10, 30));
+        }, UI.scale(52, 66));
+        pack();
     }
 
     @Override
@@ -239,7 +243,7 @@ public class OceanScoutBot extends Window implements Runnable {
             stop = true;
             stop();
             reqdestroy();
-            gui.shorelineScoutBot = null;
+            gui.OceanScoutBot = null;
         } else {
             super.wdgmsg(sender, msg, args);
         }
@@ -250,9 +254,9 @@ public class OceanScoutBot extends Window implements Runnable {
         if (gui.map.pfthread != null) {
             gui.map.pfthread.interrupt();
         }
-        if (gui.shorelineScoutBotThread != null) {
-            gui.shorelineScoutBotThread.interrupt();
-            gui.shorelineScoutBotThread = null;
+        if (gui.oceanScoutBotThread != null) {
+            gui.oceanScoutBotThread.interrupt();
+            gui.oceanScoutBotThread = null;
         }
         this.destroy();
     }

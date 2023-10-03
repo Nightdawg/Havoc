@@ -29,7 +29,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
                     "HarvestNearestDreamcatcher",
                     "InteractWithNearestObject",
                     "miningSafetyAssistantThread",
-                    "OceanShorelineScout",
+                    "OceanScoutBot",
                     "OreAndStoneCounter",
                     "Pathfinder",
                     "RecipeCollectorThread",

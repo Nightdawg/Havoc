@@ -355,7 +355,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_bronzeshield");
 		makeLocal("paginae/nightdawg/QuickSwitchFromBelt/eq_fyrdsmanshield");
 
-		makeLocal("paginae/nightdawg/Bots/OceanShorelineScout");
+		makeLocal("paginae/nightdawg/Bots/OceanScoutBot");
 		makeLocal("paginae/nightdawg/Bots/AutoTunneler");
 		makeLocal("paginae/nightdawg/Bots/CleanupBot");
 		makeLocal("paginae/nightdawg/Bots/TurnipBot");
@@ -593,19 +593,19 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		} else if (ad[1].equals("equipFromBelt")) {
 			new Thread(new EquipFromBelt(gui, ad[2]), "EquipFromBelt").start();
 		} else if (ad[1].equals("Bots")) {
-			if (ad[2].equals("OceanShorelineScout")) {
-				if (gui.shorelineScoutBot == null && gui.shorelineScoutBotThread == null) {
-					gui.shorelineScoutBot = new OceanScoutBot(gui);
-					gui.add(gui.shorelineScoutBot, new Coord(gui.sz.x / 2 - gui.shorelineScoutBot.sz.x / 2, gui.sz.y / 2 - gui.shorelineScoutBot.sz.y / 2 - 200));
-					gui.shorelineScoutBotThread = new Thread(gui.shorelineScoutBot, "OceanShorelineScout");
-					gui.shorelineScoutBotThread.start();
+			if (ad[2].equals("OceanScoutBot")) {
+				if (gui.OceanScoutBot == null && gui.oceanScoutBotThread == null) {
+					gui.OceanScoutBot = new OceanScoutBot(gui);
+					gui.add(gui.OceanScoutBot, new Coord(gui.sz.x / 2 - gui.OceanScoutBot.sz.x / 2, gui.sz.y / 2 - gui.OceanScoutBot.sz.y / 2 - 200));
+					gui.oceanScoutBotThread = new Thread(gui.OceanScoutBot, "OceanScoutBot");
+					gui.oceanScoutBotThread.start();
 				} else {
-					if (gui.shorelineScoutBot != null) {
-						gui.shorelineScoutBot.stop = true;
-						gui.shorelineScoutBot.stop();
-						gui.shorelineScoutBot.reqdestroy();
-						gui.shorelineScoutBot = null;
-						gui.shorelineScoutBotThread = null;
+					if (gui.OceanScoutBot != null) {
+						gui.OceanScoutBot.stop = true;
+						gui.OceanScoutBot.stop();
+						gui.OceanScoutBot.reqdestroy();
+						gui.OceanScoutBot = null;
+						gui.oceanScoutBotThread = null;
 					}
 				}
 			} else if (ad[2].equals("AutoTunneler")) {

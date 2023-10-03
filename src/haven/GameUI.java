@@ -107,8 +107,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	private long lastAutoDrinkTime = 0;
 	public Thread keyboundActionThread;
 	private Gob detectGob;
-	public OceanScoutBot shorelineScoutBot;
-	public Thread shorelineScoutBotThread;
+	public OceanScoutBot OceanScoutBot;
+	public Thread oceanScoutBotThread;
 	public TunnelerBot tunnelerBot;
 	public Thread tunnelerBotThread;
 	private RecipeCollector recipeCollector;
