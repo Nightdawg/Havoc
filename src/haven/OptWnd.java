@@ -512,6 +512,7 @@ public class OptWnd extends Window {
 	public static CheckBox requireShiftHoverStacksCheckBox;
 	public static CheckBox objectPermanentHighlightingCheckBox;
 	public static CheckBox showStudyWindowHistoryCheckBox;
+	public static CheckBox disableMenuGridHotkeysCheckBox;
 	public static CheckBox lockStudyWindowCheckBox;
 	public static CheckBox playSoundOnFinishedCurioCheckBox;
 	public static CheckBox toggleGobHealthDisplayCheckBox;
@@ -701,6 +702,14 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 12));
+
+		leftColumn = add(disableMenuGridHotkeysCheckBox = new CheckBox("Disable All Menu Grid Hotkeys"){
+			{a = (Utils.getprefb("disableMenuGridHotkeys", false));}
+			public void set(boolean val) {
+				Utils.setprefb("disableMenuGridHotkeys", val);
+				a = val;
+			}
+		}, leftColumn.pos("ur").adds(0, 0).x(UI.scale(230)));
 		leftColumn = add(lockStudyWindowCheckBox = new CheckBox("Lock Study Report"){
 			{a = (Utils.getprefb("lockStudyWindow", false));}
 			public void set(boolean val) {
@@ -708,7 +717,7 @@ public class OptWnd extends Window {
 				Utils.setprefb("lockStudyWindow", val);
 				a = val;
 			}
-		}, leftColumn.pos("bl").adds(0, 2));
+		}, leftColumn.pos("bl").adds(0, 2).x(0));
 		leftColumn = add(playSoundOnFinishedCurioCheckBox = new CheckBox("Sound Alert for Finished Curiosities"){
 			{a = (Utils.getprefb("playSoundOnFinishedCurio", false));}
 			public void set(boolean val) {
@@ -3584,6 +3593,8 @@ public class OptWnd extends Window {
 		showStudyWindowHistoryCheckBox.tooltip = RichText.render("If this is enabled, the Study Report will show what curiosity was formerly placed in each slot. The history is saved separately for every Account and Character." +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{It does not work for Gems. Don't ask me why.}", UI.scale(300));
 		lockStudyWindowCheckBox.tooltip = RichText.render("Enabling this will prevent moving or dropping items from the Study Report", UI.scale(300));
+		disableMenuGridHotkeysCheckBox.tooltip = RichText.render("This option completely disables the hotkeys for the Action Buttons & Categories in the bottom right corner menu (aka the Menu Grid)." +
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{Your Action Bar Keybinds are not affected by this setting.}", UI.scale(300));
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){
