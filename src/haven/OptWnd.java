@@ -3367,13 +3367,12 @@ public class OptWnd extends Window {
 		public NDWebMapIntegrationSettingsPanel(Panel back) {
 			Widget prev;
 			prev = add(new Label("Web Map Endpoint:"), 0, 6);
-			prev = add(webmapEndpointTextEntry = new TextEntry(UI.scale(220), ""){
+			prev = add(webmapEndpointTextEntry = new TextEntry(UI.scale(220), Utils.getpref("webMapEndpoint", "")){
 				protected void changed() {
 					Utils.setpref("webMapEndpoint", this.buf.line());
 					super.changed();
 				}
 			}, prev.pos("ur").adds(6, 0));
-			webmapEndpointTextEntry.settext(Utils.getpref("webMapEndpoint", ""));
 			prev = add(enableMapUploaderCheckbox = new CheckBox("Enable Map Uploader"){
 				{a = Utils.getprefb("enableMapUploader", true);}
 				public void set(boolean val) {
