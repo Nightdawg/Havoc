@@ -34,7 +34,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
     private int counter = 0;
 
     public MiningSafetyAssistant(GameUI gui) {
-        super(new Coord(220, 180), "Mining Safety Assistant");
+        super(UI.scale(new Coord(220, 180)), "Mining Safety Assistant");
         this.gui = gui;
         this.stop = false;
         Widget prev;
@@ -50,7 +50,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 a = val;
             }
         };
-        prev = add(preventUnsafeMiningCb, new Coord(10, 10));
+        prev = add(preventUnsafeMiningCb, UI.scale(new Coord(10, 12)));
         preventUnsafeMiningCb.tooltip = RichText.render("This option will prevent selecting mining area even \npartially outside (visible) mining supports range. \n(Cannot select area outside view range)", UI.scale(300));
 
         stopUnsafeMiningCb = new CheckBox("Stop unsafe mining.") {
@@ -64,7 +64,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 a = val;
             }
         };
-        prev = add(stopUnsafeMiningCb, prev.pos("bl").adds(0, 20));
+        prev = add(stopUnsafeMiningCb, prev.pos("bl").adds(0, 6));
         stopUnsafeMiningCb.tooltip = RichText.render("If currently mined tile is outside support range \nmining will stop. (Drinking animation overrides mining \nand delay bot reaction - not 100% safe)", UI.scale(300));
 
         stopMiningFiftyCb = new CheckBox("Stop mining <50.") {
@@ -78,7 +78,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 a = val;
             }
         };
-        prev = add(stopMiningFiftyCb, prev.pos("bl").adds(0, 20));
+        prev = add(stopMiningFiftyCb, prev.pos("bl").adds(0, 6));
         stopMiningFiftyCb.tooltip = RichText.render("If currently mined tile is withing support range \nbelow 50% hp mining will stop.", UI.scale(300));
 
 
@@ -93,7 +93,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 a = val;
             }
         };
-        prev = add(stopMiningTwentyFiveCb, prev.pos("bl").adds(0, 20));
+        prev = add(stopMiningTwentyFiveCb, prev.pos("bl").adds(0, 6));
         stopMiningTwentyFiveCb.tooltip = RichText.render("If currently mined tile is withing support range \nbelow 25% hp mining will stop.", UI.scale(300));
 
         stopMiningLooseRockCb = new CheckBox("Stop mining near loose rock.") {
@@ -107,12 +107,12 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 a = val;
             }
         };
-        prev = add(stopMiningLooseRockCb, prev.pos("bl").adds(0, 20));
+        prev = add(stopMiningLooseRockCb, prev.pos("bl").adds(0, 6));
         stopMiningLooseRockCb.tooltip = RichText.render("If currently mined tile is withing ~9 tiles from any \nloose rock mining will stop.", UI.scale(300));
 
 
         add(new Label("Movement"), UI.scale(154, 10));
-        add(new Button(20, "↖") {
+        add(new Button(UI.scale(20), "↖") {
             @Override
             public void click() {
                 if (gui.map.player().getv() == 0) {
@@ -120,7 +120,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 }
             }
         }, UI.scale(150, 27));
-        add(new Button(20, "↑") {
+        add(new Button(UI.scale(20), "↑") {
             @Override
             public void click() {
                 if (gui.map.player().getv() == 0) {
@@ -128,7 +128,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 }
             }
         }, UI.scale(170, 27));
-        add(new Button(20, "↗") {
+        add(new Button(UI.scale(20), "↗") {
             @Override
             public void click() {
                 if (gui.map.player().getv() == 0) {
@@ -137,7 +137,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
             }
         }, UI.scale(190, 27));
 
-        add(new Button(20, "←") {
+        add(new Button(UI.scale(20), "←") {
             @Override
             public void click() {
                 if (gui.map.player().getv() == 0) {
@@ -145,7 +145,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 }
             }
         }, UI.scale(150, 50));
-        add(new Button(20, "○") {
+        add(new Button(UI.scale(20), "○") {
             @Override
             public void click() {
                 if (gui.map.player().getv() == 0) {
@@ -154,7 +154,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 }
             }
         }, UI.scale(170, 50));
-        add(new Button(20, "→") {
+        add(new Button(UI.scale(20), "→") {
             @Override
             public void click() {
                 if (gui.map.player().getv() == 0) {
@@ -164,7 +164,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
         }, UI.scale(190, 50));
 
 
-        add(new Button(20, "↙") {
+        add(new Button(UI.scale(20), "↙") {
             @Override
             public void click() {
                 if (gui.map.player().getv() == 0) {
@@ -172,7 +172,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 }
             }
         }, UI.scale(150, 73));
-        add(new Button(20, "↓") {
+        add(new Button(UI.scale(20), "↓") {
             @Override
             public void click() {
                 if (gui.map.player().getv() == 0) {
@@ -180,7 +180,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 }
             }
         }, UI.scale(170, 73));
-        add(new Button(20, "↘") {
+        add(new Button(UI.scale(20), "↘") {
             @Override
             public void click() {
                 if (gui.map.player().getv() == 0) {
@@ -188,7 +188,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                 }
             }
         }, UI.scale(190, 73));
-
+    pack();
 
     }
 
