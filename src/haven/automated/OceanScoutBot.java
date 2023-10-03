@@ -99,7 +99,7 @@ public class OceanScoutBot extends Window implements Runnable {
                 checkClock++;
             }
         } catch (InterruptedException e) {
-            System.out.println("interrupted.. after checkclock: " + checkClock);
+//            System.out.println("interrupted.. after checkclock: " + checkClock);
         }
 
     }
