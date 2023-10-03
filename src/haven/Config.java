@@ -609,7 +609,7 @@ public class Config {
 	    });
     }
 
-	private static String  playername;
+	private static String playername;
 
 	public static void setPlayerName(String playername) {
 		Config.playername = playername;
@@ -622,8 +622,5 @@ public class Config {
 		MappingClient.init(ui.sess.glob);
 		MappingClient automapper = MappingClient.getInstance();
 		automapper.SetPlayerName(playername);
-		automapper.SetEndpoint(GameUI.mapperEndpoint);
-		automapper.EnableGridUploads(GameUI.mapperUploadingMap);
-		automapper.EnableTracking(GameUI.mapperTracking);
 	}
 }

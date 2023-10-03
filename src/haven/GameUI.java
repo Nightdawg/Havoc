@@ -97,12 +97,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static boolean trackon = false;
 	public static boolean autoFlowerSelect = Utils.getprefb("autoFlowerMenuSelect", false);
 
-	// TempMapper
-	public static boolean mapperUploadingMarkers = true;
-	public static boolean mapperUploadingMap = true;
-	public static boolean mapperTracking = true;
-	public static String mapperEndpoint = "https://map.havocandhearth.net/client/984d4e129b77c639ba33ce10d9c0459a";
-
 	public static boolean muteNonFriendly = false;
 
 	public static boolean walkWithPathfinder = false;
@@ -856,9 +850,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		MapFile file;
 		try {
 		    file = MapFile.load(mapstore, mapfilename());
-			if(mapperUploadingMap) {
+			if(OptWnd.mapUploadBoolean) {
 				MappingClient.getInstance().ProcessMap(file, (m) -> {
-					if(m instanceof MapFile.PMarker && mapperUploadingMarkers) {
+					if(m instanceof MapFile.PMarker && OptWnd.markerUploadBoolean) {
 						return ((MapFile.PMarker)m).color.equals(new Color(255, 115, 0, 255));
 					}
 					return false;

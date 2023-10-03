@@ -59,35 +59,14 @@ public class MappingClient {
 	    return INSTANCE;
 	}
     }
-    
-    private boolean trackingEnabled;
 
-	//Tracking on/off
-    public void EnableTracking(boolean enabled) {
-	trackingEnabled = enabled;
-    }
-    
-    private boolean gridEnabled;
-    
-    // Map upload on/off
-    public void EnableGridUploads(boolean enabled) {
-	gridEnabled = enabled;
-    }
-    
     private PositionUpdates pu = new PositionUpdates();
     
     private MappingClient(Glob glob) {
 	this.glob = glob;
 	scheduler.scheduleAtFixedRate(pu, 2L, 2L, TimeUnit.SECONDS);
     }
-    
-    private String endpoint;
 
-	//Set endpoint
-    public void SetEndpoint(String endpoint) {
-	this.endpoint = endpoint;
-    }
-    
     private String playerName;
 
     public void SetPlayerName(String name) {
@@ -221,7 +200,7 @@ public class MappingClient {
 	public void run() {
 	    try {
 		HttpURLConnection connection =
-		    (HttpURLConnection) new URL(endpoint + "/markerUpdate").openConnection();
+		    (HttpURLConnection) new URL(OptWnd.mapClientEndpoint + "/markerUpdate").openConnection();
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
 		connection.setDoOutput(true);
@@ -293,7 +272,7 @@ public class MappingClient {
 	public void run() {
 	    if(spamCount == spamPreventionVal) {
 		spamCount = 0;
-		if(trackingEnabled) {
+		if(OptWnd.trackingEnableBoolean) {
 		    Glob g = glob;
 		    Iterator<Map.Entry<Long, Tracking>> i = tracking.entrySet().iterator();
 		    JSONObject upload = new JSONObject();
@@ -308,7 +287,7 @@ public class MappingClient {
 		    
 		    try {
 			final HttpURLConnection connection =
-			    (HttpURLConnection) new URL(endpoint + "/positionUpdate").openConnection();
+			    (HttpURLConnection) new URL(OptWnd.mapClientEndpoint + "/positionUpdate").openConnection();
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
 			connection.setDoOutput(true);
@@ -352,7 +331,7 @@ public class MappingClient {
 	
 	@Override
 	public void run() {
-	    if(gridEnabled) {
+	    if(OptWnd.mapUploadBoolean) {
 		final String[][] gridMap = new String[3][3];
 		Map<String, WeakReference<MCache.Grid>> gridRefs = new HashMap<String, WeakReference<MCache.Grid>>();
 		try {
@@ -386,13 +365,13 @@ public class MappingClient {
 	
 	@Override
 	public void run() {
-	    if(gridEnabled) {
+	    if(OptWnd.mapUploadBoolean) {
 		HashMap<String, Object> dataToSend = new HashMap<>();
 		
 		dataToSend.put("grids", this.gridUpdate.grids);
 		try {
 		    HttpURLConnection connection =
-			(HttpURLConnection) new URL(endpoint + "/gridUpdate").openConnection();
+			(HttpURLConnection) new URL(OptWnd.mapClientEndpoint + "/gridUpdate").openConnection();
 		    connection.setRequestMethod("POST");
 		    connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
 		    connection.setDoOutput(true);
@@ -448,7 +427,7 @@ public class MappingClient {
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			ImageIO.write(image, "png", outputStream);
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-			MultipartUtility multipart = new MultipartUtility(endpoint + "/gridUpload", "utf-8");
+			MultipartUtility multipart = new MultipartUtility(OptWnd.mapClientEndpoint + "/gridUpload", "utf-8");
 			multipart.addFormField("id", this.gridID);
 			multipart.addFilePart("file", inputStream, "minimap.png");
 			extraData.put("season", glob.ast.is);

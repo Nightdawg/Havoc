@@ -3352,9 +3352,13 @@ public class OptWnd extends Window {
 	}
 
 	public static TextEntry webmapEndpointTextEntry;
+	public static String mapClientEndpoint = Utils.getpref("webMapEndpoint", "https://map.havocandhearth.net/client/984d4e129b77c639ba33ce10d9c0459a");
 	public static CheckBox enableMapUploaderCheckbox;
+	public static boolean mapUploadBoolean = Utils.getprefb("enableMapUploader", true);
 	public static CheckBox enableLocationTrackingCheckbox;
+	public static boolean markerUploadBoolean = Utils.getprefb("enableMarkerUpload", false);
 	public static CheckBox enableMarkerUploadCheckbox;
+	public static boolean trackingEnableBoolean = Utils.getprefb("enableLocationTracking", false);
 
 
 	public class NDWebMapIntegrationSettingsPanel extends Panel {
@@ -3364,35 +3368,40 @@ public class OptWnd extends Window {
 					+ UI.scale(2));
 		}
 
+
 		public NDWebMapIntegrationSettingsPanel(Panel back) {
 			Widget prev;
 			prev = add(new Label("Web Map Endpoint:"), 0, 6);
-			prev = add(webmapEndpointTextEntry = new TextEntry(UI.scale(220), Utils.getpref("webMapEndpoint", "")){
+			prev = add(webmapEndpointTextEntry = new TextEntry(UI.scale(220), mapClientEndpoint){
 				protected void changed() {
 					Utils.setpref("webMapEndpoint", this.buf.line());
+					mapClientEndpoint = this.buf.line();
 					super.changed();
 				}
 			}, prev.pos("ur").adds(6, 0));
 			prev = add(enableMapUploaderCheckbox = new CheckBox("Enable Map Uploader"){
-				{a = Utils.getprefb("enableMapUploader", true);}
+				{a = mapUploadBoolean;}
 				public void set(boolean val) {
 					Utils.setprefb("enableMapUploader", val);
+					mapUploadBoolean = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 8).x(12));
 
-			prev = add(enableLocationTrackingCheckbox = new CheckBox("Enable Location Tracking"){
-				{a = Utils.getprefb("enableLocationTracking", false);}
+			prev = add(enableMarkerUploadCheckbox = new CheckBox("Enable Markers Upload"){
+				{a = markerUploadBoolean;}
 				public void set(boolean val) {
-					Utils.setprefb("enableLocationTracking", val);
+					Utils.setprefb("enableMarkerUpload", val);
+					markerUploadBoolean = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
 
-			prev = add(enableMarkerUploadCheckbox = new CheckBox("Enable Markers Upload"){
-				{a = Utils.getprefb("enableMarkerUpload", false);}
+			prev = add(enableLocationTrackingCheckbox = new CheckBox("Enable Location Tracking"){
+				{a = trackingEnableBoolean;}
 				public void set(boolean val) {
-					Utils.setprefb("enableMarkerUpload", val);
+					Utils.setprefb("enableLocationTracking", val);
+					trackingEnableBoolean = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 4));
