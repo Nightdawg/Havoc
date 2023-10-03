@@ -1510,10 +1510,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if(status.updated(StatusType.drawable)) {
 			if (virtual){
 				for(Overlay ol : ols) {
-					if (ol.res.get().name.equals("gfx/fx/death")){
+					if (ol.res != null && ol.res.get().name.equals("gfx/fx/death")){
 						setSomethingJustDiedStatus();
 					}
 				}
+				updateSupportOverlays();
 			}
 			try {
 				if (getres().name.equals("gfx/borka/body")){
@@ -2237,7 +2238,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private void initiateSupportOverlays(){
 		if (getres() != null && OptWnd.showMineSupportSafeTilesCheckBox.a) {
 			String resourceName = getres().name;
-			if (resourceName.equals("gfx/terobjs/ladder") || resourceName.equals("gfx/terobjs/minesupport") ){
+			if (getres().name.equals("gfx/terobjs/map/naturalminesupport") ){
+				setMiningOl(true, (float) a, 0);
+			} else if (resourceName.equals("gfx/terobjs/ladder") || resourceName.equals("gfx/terobjs/minesupport") ){
 				setMiningOl(true, (float) a, 1);
 			} else if (resourceName.equals("gfx/terobjs/column")){
 				setMiningOl(true, (float) a, 2);
@@ -2248,8 +2251,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	private void updateSupportOverlays(){
-		if (getres() != null){
-			if (getres().name.equals("gfx/terobjs/ladder") || getres().name.equals("gfx/terobjs/minesupport") ){
+		if (getres() != null) {
+			if (getres().name.equals("gfx/terobjs/map/naturalminesupport") ){
+				setMiningOl(OptWnd.showMineSupportSafeTilesCheckBox.a, (float) a, 0);
+			} else if (getres().name.equals("gfx/terobjs/ladder") || getres().name.equals("gfx/terobjs/minesupport") ){
 				setMiningOl(OptWnd.showMineSupportSafeTilesCheckBox.a, (float) a, 1);
 			} else if (getres().name.equals("gfx/terobjs/column")){
 				setMiningOl(OptWnd.showMineSupportSafeTilesCheckBox.a, (float) a, 2);
