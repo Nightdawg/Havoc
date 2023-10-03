@@ -27,8 +27,6 @@
 package haven;
 
 import haven.res.ui.tt.armor.Armor;
-import haven.res.ui.tt.attrmod.AttrMod;
-import haven.res.ui.tt.q.quality.Quality;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -1896,7 +1894,7 @@ public class Resource implements Serializable {
     }
 
 	public static boolean showResourceConsolePrints = Utils.getprefb("showResourceConsolePrints", false);
-	private static final List<String> ignoreCustomIconResVersionList = // ND: Used to prevent the console from printing stuff like: "Wrong res version (1 != 65535) customMapIcons/dugout(v65535)"
+	private static final List<String> ignoreResVersionWarningList = // ND: Used to prevent the console from printing stuff like: "Wrong res version (1 != 65535) customMapIcons/dugout(v65535)"
 			Arrays.asList(
 					"customMapIcons/bram",
 					"customMapIcons/burrow",
@@ -1926,7 +1924,9 @@ public class Resource implements Serializable {
 					"customMapIcons/wellspring",
 					"customMapIcons/wheelbarrow",
 					"customMapIcons/woodenplow",
-					"customMapIcons/wreckingball"
+					"customMapIcons/wreckingball",
+
+					"gfx/tiles/notile(v0)"
 			);
     private static final byte[] RESOURCE_SIG = "Haven Resource 1".getBytes(Utils.ascii);
     private void load(InputStream st) throws IOException {
@@ -1938,7 +1938,7 @@ public class Resource implements Serializable {
 	if(this.ver == -1)
 	    this.ver = ver;
 	else if(ver != this.ver) {
-		if (ignoreCustomIconResVersionList.stream().noneMatch(name::matches) && showResourceConsolePrints) {
+		if (ignoreResVersionWarningList.stream().noneMatch(name::matches) && showResourceConsolePrints) {
 			System.out.printf("Wrong res version (%d != %d) %s%n", ver, this.ver, this);
 			throw (new LoadException("Wrong res version (" + ver + " != " + this.ver + ")", this));
 		}
