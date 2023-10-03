@@ -972,7 +972,7 @@ public class MiniMap extends Widget {
 					}
 				} catch (Exception e) {}
 			}
-			if(mv.checkpointManager != null && mv.checkpointManagerThread != null){
+			if(mv.checkpointManager != null && mv.checkpointManagerThread != null && button == 1){
 				if (!ui.modmeta)
 					mv.checkpointManager.pauseIt();
 			}
