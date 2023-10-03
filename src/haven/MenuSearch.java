@@ -48,11 +48,11 @@ public class MenuSearch extends Window {
 			boolean psel = sel == item;
 			super.mousedown(c, button);
 			double now = Utils.rtime();
-			if(psel) {
-			    if(now - lastcl < 0.5)
+//			if(psel) {
+//			    if(now - lastcl < 0.5)
 				menu.use(item.btn, new MenuGrid.Interaction(1, ui.modflags()), false);
-			}
-			lastcl = now;
+//			}
+//			lastcl = now;
 			return(true);
 		    }
 		});
