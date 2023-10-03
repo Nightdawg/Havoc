@@ -66,5 +66,9 @@ public class ClickNearestGate implements Runnable {
         if (theGate == null)
             return;
         gui.map.wdgmsg("click", Coord.z, theGate.rc.floor(posres), 3, 0, 0, (int) theGate.id, theGate.rc.floor(posres), 0, -1);
+        if (gui.clickNearestGateThread != null) {
+            gui.clickNearestGateThread.interrupt();
+            gui.clickNearestGateThread = null;
+        }
     }
 }

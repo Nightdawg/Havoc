@@ -83,5 +83,9 @@ public class InteractWithNearestObject implements Runnable {
         if (theObject == null)
             return;
         gui.map.wdgmsg("click", Coord.z, theObject.rc.floor(posres), 3, 0, 0, (int) theObject.id, theObject.rc.floor(posres), 0, -1);
+        if (gui.interactWithNearestObjectThread != null) {
+            gui.interactWithNearestObjectThread.interrupt();
+            gui.interactWithNearestObjectThread = null;
+        }
     }
 }

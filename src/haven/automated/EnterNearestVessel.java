@@ -80,5 +80,9 @@ public class EnterNearestVessel implements Runnable {
             }
         } catch (InterruptedException e) {
         }
+        if (gui.enterNearestVesselThread != null) {
+            gui.enterNearestVesselThread.interrupt();
+            gui.enterNearestVesselThread = null;
+        }
     }
 }

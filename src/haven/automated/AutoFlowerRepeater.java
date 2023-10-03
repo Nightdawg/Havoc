@@ -77,5 +77,9 @@ public class AutoFlowerRepeater implements Runnable{
         }
         option = null;
         FlowerMenu.setNextSelection(null);
+        if (gui.autoFlowerRepeaterScriptThread != null) {
+            gui.autoFlowerRepeaterScriptThread.interrupt();
+            gui.autoFlowerRepeaterScriptThread = null;
+        }
     }
 }

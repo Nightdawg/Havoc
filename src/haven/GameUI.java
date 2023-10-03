@@ -135,6 +135,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public Thread refillWaterContainersThread;
 	public Thread harvestNearestDreamcatcherThread;
 	public Thread autoFlowerRepeaterScriptThread;
+	public Thread enterNearestVesselThread;
+	public Thread clickNearestGateThread;
+	public Thread interactWithNearestObjectThread;
 	public TileHighlight.TileHighlightCFG tileHighlight;
 
 
@@ -1640,7 +1643,15 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			wdgmsg("act", "drink");
 			return (true);
 		} else if (kb_clickNearestObject.key().match(ev)) {
-			this.runActionThread(new Thread(new InteractWithNearestObject(this), "InteractWithNearestObject"));
+			if (interactWithNearestObjectThread == null) {
+				interactWithNearestObjectThread = new Thread(new InteractWithNearestObject(this), "InteractWithNearestObject");
+				interactWithNearestObjectThread.start();
+			} else {
+				interactWithNearestObjectThread.interrupt();
+				interactWithNearestObjectThread = null;
+				interactWithNearestObjectThread = new Thread(new InteractWithNearestObject(this), "InteractWithNearestObject");
+				interactWithNearestObjectThread.start();
+			}
 			return (true);
 		} else if (kb_nightVision.key().match(ev)) {
 			if (OptWnd.nightVisionSlider.max - OptWnd.nightVisionSlider.val >= OptWnd.nightVisionSlider.val - OptWnd.nightVisionSlider.min) {
@@ -1652,10 +1663,26 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			}
 			return (true);
 		} else if (kb_clickNearestGate.key().match(ev)) {
-			this.runActionThread(new Thread(new ClickNearestGate(this), "ClickNearestGate"));
+			if (clickNearestGateThread == null) {
+				clickNearestGateThread = new Thread(new ClickNearestGate(this), "ClickNearestGate");
+				clickNearestGateThread.start();
+			} else {
+				clickNearestGateThread.interrupt();
+				clickNearestGateThread = null;
+				clickNearestGateThread = new Thread(new ClickNearestGate(this), "ClickNearestGate");
+				clickNearestGateThread.start();
+			}
 			return (true);
 		} else if (kb_enterNearestVessel.key().match(ev)) {
-			this.runActionThread(new Thread(new EnterNearestVessel(this), "EnterNearestVessel"));
+			if (enterNearestVesselThread == null) {
+				enterNearestVesselThread = new Thread(new EnterNearestVessel(this), "EnterNearestVessel");
+				enterNearestVesselThread.start();
+			} else {
+				enterNearestVesselThread.interrupt();
+				enterNearestVesselThread = null;
+				enterNearestVesselThread = new Thread(new EnterNearestVessel(this), "EnterNearestVessel");
+				enterNearestVesselThread.start();
+			}
 			return (true);
 		} else if(kb_rightQuickSlotButton.key().match(ev)) {
 			quickslots.drop(QuickSlotsWdg.rc, Coord.z);

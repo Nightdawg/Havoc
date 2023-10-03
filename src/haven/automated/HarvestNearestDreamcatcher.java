@@ -48,6 +48,11 @@ public class HarvestNearestDreamcatcher implements Runnable {
 
         FlowerMenu.setNextSelection("Harvest");
         gui.map.wdgmsg("click", Coord.z, dreca.rc.floor(posres), 3, 0, 0, (int) dreca.id, dreca.rc.floor(posres), 0, -1);
+
+        if (gui.harvestNearestDreamcatcherThread != null) {
+            gui.harvestNearestDreamcatcherThread.interrupt();
+            gui.harvestNearestDreamcatcherThread = null;
+        }
     }
 }
 
