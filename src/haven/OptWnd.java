@@ -725,7 +725,7 @@ public class OptWnd extends Window {
 				Utils.setprefb("CornerFPSSettingBool", val);
 				a = val;
 			}
-		}, prev.pos("bl").adds(0, 20).x(UI.scale(230)));
+		}, prev.pos("bl").adds(0, 18).x(UI.scale(230)));
 
 		rightColumn = add(enableSnapWindowsBackInsideCheckBox = new CheckBox("Snap windows back when dragged out"){
 			{a = (Utils.getprefb("snapWindowsBackInside", true));}
@@ -744,7 +744,7 @@ public class OptWnd extends Window {
 		}, rightColumn.pos("bl").adds(0, 2));
 
 		Label expWindowLabel;
-		rightColumn = add(expWindowLabel = new Label("New Experience Event Window Location:"), rightColumn.pos("bl").adds(0, 9));{
+		rightColumn = add(expWindowLabel = new Label("New Experience Event Window Location:"), rightColumn.pos("bl").adds(0, 11));{
 			boolean[] done = {false};
 			RadioGroup expWindowGrp = new RadioGroup(this) {
 				public void changed(int btn, String lbl) {
@@ -890,7 +890,7 @@ public class OptWnd extends Window {
 					ui.gui.map.updatePlobDrawable();
 				}
 			}
-		}, prev.pos("bl").adds(0, 20).x(UI.scale(230)));
+		}, prev.pos("bl").adds(0, 18).x(UI.scale(230)));
 
 		rightColumn = add(toggleBeastDangerRadiiCheckBox = new CheckBox("Show Animal Danger Radii"){
 			{a = (Utils.getprefb("beastDangerRadii", true));}
