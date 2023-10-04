@@ -27,17 +27,20 @@
 package haven;
 
 import haven.automated.mapper.MappingClient;
+import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
 import java.io.*;
 import java.nio.file.*;
 
 public class Config {
-	public static final String ClientVersion = "Unreleased";
+	public static final String clientVersion = "Unreleased";
 	public static String webClientVersion = "";
 	public static final File HOMEDIR = new File("").getAbsoluteFile();
     public static final Properties jarprops = getjarprops();
@@ -55,6 +58,46 @@ public class Config {
 	    return(global);
 	}
     }
+
+	static {
+		getVersion();
+	}
+
+	public static void getVersion() {
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		Future<Void> future = executor.submit(() -> {
+			try {
+				URL url = new URL("https://logs.havocandhearth.net/version/check");
+				HttpURLConnection con = (HttpURLConnection) url.openConnection();
+				con.setRequestMethod("GET");
+				int responseCode = con.getResponseCode();
+				if (responseCode == HttpURLConnection.HTTP_OK) {
+					try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+						String inputLine;
+						StringBuilder response = new StringBuilder();
+						while ((inputLine = in.readLine()) != null) {
+							response.append(inputLine);
+						}
+						JSONObject jsonObject = new JSONObject(response.toString());
+						webClientVersion = jsonObject.getString("version");
+					}
+				} else {
+					webClientVersion = clientVersion;
+				}
+			} catch (Exception e) {
+				webClientVersion = clientVersion;
+			}
+			return null;
+		});
+
+		try {
+			future.get(1, TimeUnit.SECONDS);
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			webClientVersion = clientVersion;
+		} finally {
+			executor.shutdown();
+		}
+	}
 
 	public static File getFile(String name) {
 		return new File(HOMEDIR, name);

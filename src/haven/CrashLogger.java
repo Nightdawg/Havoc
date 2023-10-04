@@ -48,7 +48,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         logCrash(t, stackTrace);
 
         // Always attempt to report the crash via HTTP
-        reportCrash(MainFrame.username, Config.ClientVersion, stackTrace, !EXCLUDED_THREADS.contains(t.getName()));
+        reportCrash(MainFrame.username, Config.clientVersion, stackTrace, !EXCLUDED_THREADS.contains(t.getName()));
 
         if (!EXCLUDED_THREADS.contains(t.getName())) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,

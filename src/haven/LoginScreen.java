@@ -31,8 +31,6 @@ import java.util.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-import static haven.CharWnd.attrf;
-
 public class LoginScreen extends Widget {
     public static final Text.Foundry
 	textf = new Text.Foundry(Text.sans, 18).aa(true),//ND: Increased size from 16 to 18
@@ -383,7 +381,7 @@ public class LoginScreen extends Widget {
 	}
 
 	public void tick(double dt){
-		if (!Config.ClientVersion.equals(Config.webClientVersion) && !updateWindowShown) {
+		if (!Config.clientVersion.equals(Config.webClientVersion) && !updateWindowShown) {
 			adda(updateWindow, 0.5, 0);
 			updateWindowShown = true;
 		}

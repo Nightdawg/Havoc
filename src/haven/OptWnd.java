@@ -3352,9 +3352,9 @@ public class OptWnd extends Window {
 	}
 
 	public static TextEntry webmapEndpointTextEntry;
-	public static String mapClientEndpoint = Utils.getpref("webMapEndpoint", "https://map.havocandhearth.net/client/984d4e129b77c639ba33ce10d9c0459a");
+	public static String mapClientEndpoint = Utils.getpref("webMapEndpoint", "");
 	public static CheckBox enableMapUploaderCheckbox;
-	public static boolean mapUploadBoolean = Utils.getprefb("enableMapUploader", true);
+	public static boolean mapUploadBoolean = Utils.getprefb("enableMapUploader", false);
 	public static CheckBox enableLocationTrackingCheckbox;
 	public static boolean markerUploadBoolean = Utils.getprefb("enableMarkerUpload", false);
 	public static CheckBox enableMarkerUploadCheckbox;
