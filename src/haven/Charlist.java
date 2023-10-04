@@ -155,6 +155,7 @@ public class Charlist extends Widget {
 		}, UI.scale(20, 560));
 		this.c = new Coord(this.c.x, this.c.y - UI.scale(110));
 		parent.c = new Coord(parent.c.x - (UI.scale(267)/2), parent.c.y);
+		parent.resize(UI.scale(new Coord(1067, 600)));
     }
 
     private int scrolltgt = -1;
@@ -175,10 +176,9 @@ public class Charlist extends Widget {
 
 	if (avalink != null && !movedAvalink) {
 		avalink.parent.c = new Coord(avalink.parent.c.x + UI.scale(267), avalink.parent.c.y - UI.scale(50));
-		avalink.parent.sz = new Coord(avalink.parent.sz.x + UI.scale(100), avalink.parent.sz.y + UI.scale(100));
+		avalink.parent.sz = new Coord(avalink.parent.sz.x + UI.scale(50), avalink.parent.sz.y + UI.scale(50));
 		avalink.sz = new Coord(avalink.sz.x + UI.scale(30), avalink.sz.y + UI.scale(50));
 		movedAvalink = true;
-		parent.pack();
 	}
 
 	super.tick(dt);
