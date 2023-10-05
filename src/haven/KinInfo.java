@@ -112,39 +112,41 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
     }
     
     public void draw(GOut g, Pipe state) {
-	Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 15), state, Area.sized(g.sz())).round2();
-	if(sc.isect(Coord.z, g.sz())) {
-	    double now = Utils.rtime();
-	    if(seen == 0)
-		seen = now;
-	    double tm = now - seen;
-	    Color show = null;
-	    boolean auto = (type & 1) == 0;
-	    if(false) {
-		/* XXX: QQ, RIP in peace until constant
-		 * mouse-over checks can be had. */
-		if(auto && (tm < 7.5)) {
-		    show = Utils.clipcol(255, 255, 255, (int)(255 - ((255 * tm) / 7.5)));
-		}
-	    } else {
-		show = Color.WHITE;
-	    }
-	    if(show != null) {
-		Tex t = rendered();
-		if(t != null) {
-			if (gob != null && gob.glob != null && gob.glob.map != null && gob.glob.map.sess != null && gob.glob.map.sess.ui != null
-					&& gob.glob.map.sess.ui.gui != null && gob.glob.map.sess.ui.gui.map != null) { // ND: Probably overkill. I have no clue if anything can break here, but just to be safe I guess?
-				final Double angle = gob.glob.map.sess.ui.gui.map.screenangle(gob.rc, true);
-				if (angle.equals(Double.NaN)) {
-					g.chcolor(show);
-					g.aimage(t, sc, 0.5, 1.0);
-					g.chcolor();
+		if (GameUI.showUI) {
+		Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 15), state, Area.sized(g.sz())).round2();
+		if (sc.isect(Coord.z, g.sz())) {
+			double now = Utils.rtime();
+			if (seen == 0)
+				seen = now;
+			double tm = now - seen;
+			Color show = null;
+			boolean auto = (type & 1) == 0;
+			if (false) {
+				/* XXX: QQ, RIP in peace until constant
+				 * mouse-over checks can be had. */
+				if (auto && (tm < 7.5)) {
+					show = Utils.clipcol(255, 255, 255, (int) (255 - ((255 * tm) / 7.5)));
+				}
+			} else {
+				show = Color.WHITE;
+			}
+			if (show != null) {
+				Tex t = rendered();
+				if (t != null) {
+					if (gob != null && gob.glob != null && gob.glob.map != null && gob.glob.map.sess != null && gob.glob.map.sess.ui != null
+							&& gob.glob.map.sess.ui.gui != null && gob.glob.map.sess.ui.gui.map != null) { // ND: Probably overkill. I have no clue if anything can break here, but just to be safe I guess?
+						final Double angle = gob.glob.map.sess.ui.gui.map.screenangle(gob.rc, true);
+						if (angle.equals(Double.NaN)) {
+							g.chcolor(show);
+							g.aimage(t, sc, 0.5, 1.0);
+							g.chcolor();
+						}
+					}
 				}
 			}
+		} else {
+			seen = 0;
 		}
-	    }
-	} else {
-	    seen = 0;
 	}
     }
 

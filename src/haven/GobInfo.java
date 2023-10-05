@@ -33,14 +33,16 @@ public abstract class GobInfo extends GAttrib implements RenderTree.Node, PView.
 
     @Override
     public void draw(GOut g, Pipe state) {
-        synchronized (texLock) {
-            if(enabled() && tex != null) {
-                Coord3f c3d = Homo3D.obj2view2(pos, state, Area.sized(g.sz()));
-                if(c3d == null) {return;}
-                Coord sc = c3d.round2();
-                sc.y = sc.y + UI.scale(17);
-                if(sc.isect(Coord.z, g.sz())) {
-                    g.aimage(tex, sc, center.a, center.b);
+        if (GameUI.showUI){
+            synchronized (texLock) {
+                if(enabled() && tex != null) {
+                    Coord3f c3d = Homo3D.obj2view2(pos, state, Area.sized(g.sz()));
+                    if(c3d == null) {return;}
+                    Coord sc = c3d.round2();
+                    sc.y = sc.y + UI.scale(17);
+                    if(sc.isect(Coord.z, g.sz())) {
+                        g.aimage(tex, sc, center.a, center.b);
+                    }
                 }
             }
         }

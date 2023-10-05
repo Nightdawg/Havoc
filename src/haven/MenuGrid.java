@@ -886,7 +886,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
     public static final KeyBinding kb_back = KeyBinding.get("scm-back", KeyMatch.forcode(KeyEvent.VK_BACK_SPACE, 0));
     public static final KeyBinding kb_next = KeyBinding.get("scm-next", KeyMatch.forchar('N', KeyMatch.S | KeyMatch.C | KeyMatch.M, KeyMatch.S));
     public boolean globtype(char k, KeyEvent ev) {
-	if (OptWnd.disableMenuGridHotkeysCheckBox.a)
+	if (OptWnd.disableMenuGridHotkeysCheckBox.a || !GameUI.showUI)
 		return (false);
 	if(kb_root.key().match(ev) && (this.cur != null)) {
 	    change(null);

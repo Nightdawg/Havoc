@@ -140,6 +140,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public Thread interactWithNearestObjectThread;
 	public TileHighlight.TileHighlightCFG tileHighlight;
 
+	public static boolean showUI = true;
+
 
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
@@ -337,46 +339,49 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		add(new Widget(new Coord(360, umpanel.sz.y)) {
 			@Override
 			public void draw(GOut g) {
-				if (c.x != umpanel.c.x - (int)(this.sz.x*0.98))
-					c.x = umpanel.c.x - (int)(this.sz.x*0.98);
-				Tex mtime = ui.sess.glob.mservertimetex.get().b;
-				Tex ltime = ui.sess.glob.lservertimetex.get().b;
-				Tex rtime = ui.sess.glob.rservertimetex.get().b;
-				Tex btime = ui.sess.glob.bservertimetex.get().b;
+				if (showUI) {
+					if (c.x != umpanel.c.x - (int) (this.sz.x * 0.98))
+						c.x = umpanel.c.x - (int) (this.sz.x * 0.98);
+					Tex mtime = ui.sess.glob.mservertimetex.get().b;
+					Tex ltime = ui.sess.glob.lservertimetex.get().b;
+					Tex rtime = ui.sess.glob.rservertimetex.get().b;
+					Tex btime = ui.sess.glob.bservertimetex.get().b;
 
-				int y = UI.scale(10);
-				if (mtime != null) {
-					g.aimage(mtime, new Coord(sz.x, y), 1, 0);
-					y += mtime.sz().y;
+					int y = UI.scale(10);
+					if (mtime != null) {
+						g.aimage(mtime, new Coord(sz.x, y), 1, 0);
+						y += mtime.sz().y;
+					}
+					if (ltime != null) {
+						g.aimage(ltime, new Coord(sz.x, y), 1, 0);
+						y += ltime.sz().y;
+					}
+					if (rtime != null) {
+						g.aimage(rtime, new Coord(sz.x, y), 1, 0);
+						y += rtime.sz().y;
+					}
+					if (btime != null) {
+						g.aimage(btime, new Coord(sz.x, y), 1, 0);
+						y += btime.sz().y;
+					}
+					if (sz.y != y) resize(sz.x, y);
 				}
-				if (ltime != null) {
-					g.aimage(ltime, new Coord(sz.x, y), 1, 0);
-					y += ltime.sz().y;
-				}
-				if (rtime != null) {
-					g.aimage(rtime, new Coord(sz.x, y), 1, 0);
-					y += rtime.sz().y;
-				}
-				if (btime != null) {
-					g.aimage(btime, new Coord(sz.x, y), 1, 0);
-					y += btime.sz().y;
-				}
-				if (sz.y != y) resize(sz.x, y);
 			}
 		}, new Coord(umpanel.c.x - (int)(this.sz.x*0.98), UI.scale(1)));
 
 	add(new StatusWdg(){
 		@Override
 		public void draw(GOut g) {
-			if (c.x != umpanel.c.x + umpanel.sz.x - UI.scale(10))
-				c.x = umpanel.c.x + umpanel.sz.x - UI.scale(10);
-			g.image(players, Coord.z);
-			g.image(pingtime, new Coord(0, players.sz().y));
-
-			int w = players.sz().x;
-			if (pingtime.sz().x > w)
-				w = pingtime.sz().x;
-			this.sz = new Coord(w, players.sz().y + pingtime.sz().y);
+			if (showUI){
+				if (c.x != umpanel.c.x + umpanel.sz.x - UI.scale(10))
+					c.x = umpanel.c.x + umpanel.sz.x - UI.scale(10);
+				g.image(players, Coord.z);
+				g.image(pingtime, new Coord(0, players.sz().y));
+				int w = players.sz().x;
+				if (pingtime.sz().x > w)
+					w = pingtime.sz().x;
+				this.sz = new Coord(w, players.sz().y + pingtime.sz().y);
+			}
 		}
 	}, new Coord(umpanel.sz.x, UI.scale(11)));
 
@@ -386,7 +391,21 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	zerg.hide();
 	makewnd = add(new CraftWindow(), UI.scale(400, 200));
 	makewnd.hide();
-	quickslots = add(new QuickSlotsWdg(), Utils.getprefc("wndc-quickslots", UI.scale(new Coord(426, 10))));
+	quickslots = add(new QuickSlotsWdg(){
+		@Override
+		public void draw(GOut g) {
+			if (showUI)
+				super.draw(g);
+		}
+
+		@Override
+		public boolean mousedown(Coord c, int button) {
+			if (showUI)
+				return super.mousedown(c, button);
+			else
+				return false;
+		}
+	}, Utils.getprefc("wndc-quickslots", UI.scale(new Coord(426, 10))));
 	if (!Utils.getprefb("showQuickSlotsBar", true)) {
 		quickslots.hide();
 	}
@@ -539,7 +558,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    this.id = id;
 	    this.base = base;
 	    this.g = g;
-	    cur = show(tvis = Utils.getprefb(id + "-visible", true))?0:1;
+//	    cur = show(tvis = Utils.getprefb(id + "-visible", true))?0:1; // ND: Don't save it lol
+		cur = show(tvis = true)?0:1;
 	}
 
 	public <T extends Widget> T add(T child) {
@@ -600,11 +620,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	}
 
 	public boolean mshow() {
-	    return(mshow(Utils.getprefb(id + "-visible", true)));
+//	    return(mshow(Utils.getprefb(id + "-visible", true))); // ND: Don't save it lol
+		return(mshow(true));
 	}
 
 	public boolean cshow(boolean vis) {
-	    Utils.setprefb(id + "-visible", vis);
+//	    Utils.setprefb(id + "-visible", vis); // ND: Don't save it lol
 	    if(vis != tvis)
 		mshow(vis);
 	    return(vis);
@@ -932,7 +953,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	} else if(place == "chat") {
 	    chat.addchild(child);
 	} else if(place == "party") {
-	    add(child, portrait.pos("bl").adds(0, 10));
+	    ulpanel.add(child, portrait.pos("bl").adds(0, 10));
 	} else if(place == "meter") {
 	    int x = (meters.size() % 3) * (IMeter.fsz.x + UI.scale(5));
 	    int y = (meters.size() / 3) * (IMeter.fsz.y + UI.scale(2));
@@ -955,6 +976,20 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			qqview = null;
 			destroy();
 		    }
+
+			@Override
+			public void draw(GOut g) {
+				if (showUI)
+					super.draw(g);
+			}
+
+			@Override
+			public boolean mousedown(Coord c, int button) {
+				if (!showUI)
+					return(false);
+				else
+					return super.mousedown(c, button);
+			}
 		});
 	} else if(place == "misc") {
 	    Coord c;
@@ -1104,7 +1139,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		double y1 = this.sz.y - ((this.sz.y / 500.0) * OptWnd.combatUITopPanelHeightSlider.val);
 		int x0 = (int)x1;
 		int y0 = (int)y1;
-		if (OptWnd.alwaysShowHealthBarCheckBox.a){
+		if (OptWnd.alwaysShowHealthBarCheckBox.a && showUI){
 			IMeter.Meter hp = getmeter("hp", 0);
 			if (hp != null) {
 				Coord msz = UI.scale(new Coord(150, 20));
@@ -1113,7 +1148,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			}
 		}
 		// ND: Draw Combat UI stamina bar even when out of combat when drinking, or, if setting is enabled, always
-		if (OptWnd.alwaysShowStaminaBarCheckBox.a || (myself != null && myself.imDrinking)) {
+		if ((OptWnd.alwaysShowStaminaBarCheckBox.a || (myself != null && myself.imDrinking)) && showUI) {
 			IMeter.Meter stam = getmeter("stam", 0);
 			if (stam != null) {
 				Coord msz = UI.scale(new Coord(150, 20));
@@ -1729,7 +1764,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     public boolean mousedown(Coord c, int button) {
 	return(super.mousedown(c, button));
     }
-
     private int uimode = 1;
     public void toggleui(int mode) {
 	Hidepanel[] panels = {brpanel, ulpanel, umpanel, urpanel, menupanel};
@@ -1757,7 +1791,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
     }
 
     public void toggleui() {
-	toggleui((uimode + 1) % 3);
+//	toggleui((uimode + 1) % 3);
+	chat.show(!showUI);
+	Hidepanel[] panels = {brpanel, ulpanel, umpanel, urpanel, menupanel};
+	for(Hidepanel p : panels)
+		p.mshow(!showUI);
+	showUI = !showUI;
     }
 
     public void resize(Coord sz) {
@@ -2147,19 +2186,21 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		}
 
 		public void draw(GOut g) {
-			for(int i = 0; i < 10; i++) {
-				int slot = i + (curbelt * 12);
-				Coord c = beltc(i);
-				g.image(invsq, beltc(i));
-				try {
-					if(belt[slot] != null) {
-						belt[slot].spr().draw(g.reclip(c.add(UI.scale(1), UI.scale(1)), invsq.sz().sub(UI.scale(2), UI.scale(2))));
-					}
-				} catch(Loading e) {}
-				String keybindString = beltkeys[i].key().name();
-				g.aimage(new TexI(Utils.outline2(actBarKeybindsFoundry.render(keybindString).img, Color.BLACK, true)), c.add(invsq.sz().sub(UI.scale(2), 0)), 1, 1);
+			if (showUI){
+				for(int i = 0; i < 10; i++) {
+					int slot = i + (curbelt * 12);
+					Coord c = beltc(i);
+					g.image(invsq, beltc(i));
+					try {
+						if(belt[slot] != null) {
+							belt[slot].spr().draw(g.reclip(c.add(UI.scale(1), UI.scale(1)), invsq.sz().sub(UI.scale(2), UI.scale(2))));
+						}
+					} catch(Loading e) {}
+					String keybindString = beltkeys[i].key().name();
+					g.aimage(new TexI(Utils.outline2(actBarKeybindsFoundry.render(keybindString).img, Color.BLACK, true)), c.add(invsq.sz().sub(UI.scale(2), 0)), 1, 1);
+				}
+				super.draw(g);
 			}
-			super.draw(g);
 		}
 
 		public boolean globtype(char key, KeyEvent ev) {
@@ -2217,6 +2258,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
 		@Override
 		public boolean mousedown(Coord c, int button) {
+			if (!showUI)
+				return(false);
 			int slot = beltslot(c);
 			if (slot != -1) {
 				if (button == 1) {
