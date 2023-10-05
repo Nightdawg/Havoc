@@ -744,7 +744,7 @@ public class OptWnd extends Window {
 			}
 			@Override
 			protected void drawitem(GOut g, Integer item, int i) {
-				g.image(Text.renderstroked(item.toString()).tex(), Coord.dropListItemCoord);
+				g.aimage(Text.renderstroked(item.toString()).tex(), Coord.of(UI.scale(3), g.sz().y / 2), 0.0, 0.5);
 			}
 			@Override
 			public void change(Integer item) {
@@ -1637,7 +1637,7 @@ public class OptWnd extends Window {
 					}
 					@Override
 					protected void drawitem(GOut g, String item, int i) {
-						g.image(Text.renderstroked(item).tex(), Coord.dropListItemCoord);
+						g.aimage(Text.renderstroked(item).tex(), Coord.of(UI.scale(3), g.sz().y / 2), 0.0, 0.5);
 					}
 					@Override
 					public void change(String item) {

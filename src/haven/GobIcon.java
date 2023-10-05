@@ -565,7 +565,8 @@ public class GobIcon extends GAttrib {
 		protected int listitems() {return(items.size());}
 
 		protected void drawitem(GOut g, NotificationSetting item, int idx) {
-		    g.atext(item.name, Coord.of(0, g.sz().y / 2), 0.0, 0.5);
+//		    g.atext(item.name, Coord.of(0, g.sz().y / 2), 0.0, 0.5);
+			g.aimage(Text.renderstroked(item.name).tex(), Coord.of(0, g.sz().y / 2), 0.0, 0.5);
 		}
 
 		private void selectwav() {
@@ -681,7 +682,7 @@ public class GobIcon extends GAttrib {
 				}
 				@Override
 				protected void drawitem(GOut g, String item, int i) {
-					g.image(Text.renderstroked(item).tex(), Coord.dropListItemCoord);
+					g.aimage(Text.renderstroked(item).tex(), Coord.of(UI.scale(3), g.sz().y / 2), 0.0, 0.5);
 				}
 				@Override
 				public void change(String item) {

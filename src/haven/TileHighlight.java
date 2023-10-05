@@ -293,7 +293,7 @@ public class TileHighlight {
 	private TileItem(String res) {
 	    this.res = res;
 	    this.name = Utils.prettyResName(res);
-	    this.tex = elf.render(this.name).tex();
+	    this.tex = elf.renderstroked(this.name, Color.WHITE, Color.BLACK).tex();
 	}
     }
     
@@ -419,7 +419,7 @@ public class TileHighlight {
 		g.chcolor(((idx % 2) == 0) ? every : other);
 		g.frect(Coord.z, g.sz());
 		g.chcolor();
-		g.aimage(item.tex, new Coord(0, elh / 2), 0.0, 0.5);
+		g.aimage(item.tex, new Coord(UI.scale(3), elh / 2), 0.0, 0.5);
 		g.image(CheckBox.sbox, showc);
 		if(isHighlighted(item.res))
 		    g.image(CheckBox.smark, showc);
@@ -471,7 +471,7 @@ public class TileHighlight {
 		g.chcolor(((i % 2) == 0) ? every : other);
 		g.frect(Coord.z, g.sz());
 		g.chcolor();
-		g.atext(item, new Coord(0, elh / 2), 0, 0.5);
+		g.aimage(Text.renderstroked(item).tex(), new Coord(UI.scale(3), elh / 2), 0, 0.5);
 	    }
 	}
 		@Override
