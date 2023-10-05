@@ -1105,7 +1105,6 @@ public class OptWnd extends Window {
 			y = addbtn(cont, "Options", GameUI.kb_opt, y);
 			y = addbtn(cont, "Search actions", GameUI.kb_srch, y);
 			y = addbtn(cont, "Focus chat window", GameUI.kb_chat, y);
-			y = addbtn(cont, "Take screenshot", GameUI.kb_shoot, y);
 			y = addbtn(cont, "Minimap icons", GameUI.kb_ico, y);
 			y = addbtn(cont, "Toggle UI", GameUI.kb_hide, y);
 			y = addbtn(cont, "Log out", GameUI.kb_logout, y);
