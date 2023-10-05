@@ -662,8 +662,8 @@ public class GobIcon extends GAttrib {
 				}
 			}, UI.scale(5));
 			left.last(new Label(">> Map Icon Presets <<"), UI.scale(36));
-			left.last(new Label("Select Preset:"), UI.scale(0));
-			add(iconPresetsDropbox = new Dropbox<String>(UI.scale(116), 10, UI.scale(17)) {
+			Widget selectPresetLabel = left.last(new Label("Select Preset:"), UI.scale(0));
+			iconPresetsDropbox = new Dropbox<String>(UI.scale(116), 10, UI.scale(17)) {
 				{
 					super.change(0);
 					selectedPreset = "";
@@ -688,7 +688,7 @@ public class GobIcon extends GAttrib {
 					super.change(item);
 					selectedPreset = item;
 				}
-			}, UI.scale(new Coord(74, 400)));
+			};
 
 			left.last(new Button(UI.scale(170), "Load Selected Preset", false).action(() -> {
 				if (!selectedPreset.equals("")) {
@@ -716,10 +716,10 @@ public class GobIcon extends GAttrib {
 			}), UI.scale(10));
 
 			left.last(new Label(""), UI.scale(0));
-			left.last(new Label("New Preset:"), UI.scale(8));
-			add(newPresetName = new TextEntry(UI.scale(120), ""){
+			Widget newPresetWidget = left.last(new Label("New Preset:"), UI.scale(8));
+			newPresetName = new TextEntry(UI.scale(120), ""){
 
-			}, UI.scale(new Coord(72, 502)));
+			};
 			left.last(new Button(UI.scale(170), "Save New Preset", false).action(() -> {
 				if (newPresetName.text().equals(""))
 					ui.gui.error("Please set a name for the new map icons preset!");
@@ -784,6 +784,8 @@ public class GobIcon extends GAttrib {
 
 			cont.pack();
 			left.pack();
+			left.add(iconPresetsDropbox, selectPresetLabel.pos("ur").adds(3, 2));
+			left.add(newPresetName, newPresetWidget.pos("ur").adds(4, -1));
 			root.pack();
 			updateAllCheckbox();
 		}
