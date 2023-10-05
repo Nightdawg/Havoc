@@ -206,6 +206,8 @@ public class Fightsess extends Widget {
 	super.destroy();
     }
 
+	public static final Color ipInfoColorMe = new Color(0, 201, 4);
+	public static final Color ipInfoColorEnemy = new Color(245, 0, 0);
 	private static final Text.Furnace ipf = new PUtils.BlurFurn(new Text.Foundry(Text.serif.deriveFont(Font.BOLD), 22, new Color(0, 201, 4)).aa(true), 1, 1, new Color(0, 0, 0));
 	private static final Text.Furnace ipfEnemy = new PUtils.BlurFurn(new Text.Foundry(Text.serif.deriveFont(Font.BOLD), 22, new Color(245, 0, 0)).aa(true), 1, 1, new Color(0, 0, 0));
 	private final Text.UText<?> ip = new Text.UText<Integer>(ipf) {
@@ -600,16 +602,16 @@ public class Fightsess extends Widget {
 		g.chcolor(255, 255, 255, 255);
 
 		//prepare colors for ip text
-		Color ipcol = rels.ip >= 6 ? new Color(55, 255, 0) : new Color(255, 255, 255);
-		Color oipcol = rels.oip >= 6 ? new Color(255, 54, 0) : new Color(255, 255, 255);
+//		Color ipcol = rels.ip >= 6 ? new Color(0, 201, 4) : new Color(255, 255, 255);
+//		Color oipcol = rels.oip >= 6 ? new Color(245, 0, 0) : new Color(255, 255, 255);
 
 		//made different x offsets depending on how many digits coins have
 		int ipOffset = rels.ip < 10 ? 21 : rels.ip < 100 ? 25 : 29;
 		int oipOffset = rels.oip < 10 ? 77 : rels.oip < 100 ? 80 : 85;
 
 		//add ip / oip text
-		g.aimage(Text.renderstroked(Integer.toString(rels.ip), ipAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(ipOffset), topLeftFrame.y + UI.scale(13)), 1, 0.5);
-		g.aimage(Text.renderstroked(Integer.toString(rels.oip), ipAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(oipOffset), topLeftFrame.y + UI.scale(13)), 1, 0.5);
+ 		g.aimage(Text.renderstroked(Integer.toString(rels.ip), ipInfoColorMe, Color.BLACK, ipAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(ipOffset), topLeftFrame.y + UI.scale(13)), 1, 0.5);
+		g.aimage(Text.renderstroked(Integer.toString(rels.oip), ipInfoColorEnemy, Color.BLACK, ipAdditionalFont).tex(), new Coord(topLeftFrame.x + UI.scale(oipOffset), topLeftFrame.y + UI.scale(13)), 1, 0.5);
 		//maneuver
 		for (Buff buff : rels.buffs.children(Buff.class)) {
 			try {
