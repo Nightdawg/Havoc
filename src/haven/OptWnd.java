@@ -730,7 +730,7 @@ public class OptWnd extends Window {
 		rightColumn.tooltip = RichText.render("Use this to set how long you want the numbers to be displayed on the ground, in minutes. The numbers will be visible as long as the dust particle effect stays on the tile." +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{Changing this option will only affect the duration of newly spawned cave dust tiles. The duration is set once the wall tile is mined and the cave dust spawns in.}", UI.scale(300));
 
-		add(sweeperDurationDropbox = new Dropbox<Integer>(40, sweeperDurations.size(), 17) {
+		add(sweeperDurationDropbox = new Dropbox<Integer>(UI.scale(40), sweeperDurations.size(), UI.scale(17)) {
 			{
 				super.change(sweeperDurations.get(sweeperSetDuration));
 			}
@@ -744,7 +744,7 @@ public class OptWnd extends Window {
 			}
 			@Override
 			protected void drawitem(GOut g, Integer item, int i) {
-				g.text(item.toString(), Coord.z);
+				g.image(Text.renderstroked(item.toString()).tex(), Coord.dropListItemCoord);
 			}
 			@Override
 			public void change(Integer item) {
@@ -1637,7 +1637,7 @@ public class OptWnd extends Window {
 					}
 					@Override
 					protected void drawitem(GOut g, String item, int i) {
-						g.text(item, Coord.z);
+						g.image(Text.renderstroked(item).tex(), Coord.dropListItemCoord);
 					}
 					@Override
 					public void change(String item) {

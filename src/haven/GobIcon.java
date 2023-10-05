@@ -41,8 +41,6 @@ import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.*;
 
-import static haven.CharWnd.attrf;
-
 public class GobIcon extends GAttrib {
     private static final int size = UI.scale(20);
     public static final PUtils.Convolution filter = new PUtils.Hanning(1);
@@ -665,7 +663,7 @@ public class GobIcon extends GAttrib {
 			}, UI.scale(5));
 			left.last(new Label(">> Map Icon Presets <<"), UI.scale(36));
 			left.last(new Label("Select Preset:"), UI.scale(0));
-			add(iconPresetsDropbox = new Dropbox<String>(116, 10, 17) {
+			add(iconPresetsDropbox = new Dropbox<String>(UI.scale(116), 10, UI.scale(17)) {
 				{
 					super.change(0);
 					selectedPreset = "";
@@ -683,7 +681,7 @@ public class GobIcon extends GAttrib {
 				}
 				@Override
 				protected void drawitem(GOut g, String item, int i) {
-					g.text(item, Coord.z);
+					g.image(Text.renderstroked(item).tex(), Coord.dropListItemCoord);
 				}
 				@Override
 				public void change(String item) {

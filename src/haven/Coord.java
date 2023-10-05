@@ -32,6 +32,7 @@ import java.util.Iterator;
 public class Coord implements Comparable<Coord>, java.io.Serializable {
     public int x, y;
     public static Coord z = new Coord(0, 0);
+	public static Coord dropListItemCoord = UI.scale(new Coord(3, 1));
     public static Coord[] uecw = {of(0, -1), of(1, 0), of(0, 1), of(-1, 0)};
     public static Coord[] uccw = {of(0, 0), of(1, 0), of(1, 1), of(0, 1)};
     public static Coord[] upcw = {of( 0, -1), of( 1, -1), of( 1,  0), of( 1,  1),

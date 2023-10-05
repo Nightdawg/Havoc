@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import static haven.MCache.cmaps;
-import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 
 public class MiningSafetyAssistant extends Window implements Runnable {
@@ -128,7 +126,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
         prev.tooltip = RichText.render("Use this to set how long you want the numbers to be displayed on the ground, in minutes. The numbers will be visible as long as the dust particle effect stays on the tile." +
                 "\n$col[218,163,0]{Note:} $col[185,185,185]{Changing this option will only affect the duration of newly spawned cave dust tiles. The duration is set once the wall tile is mined and the cave dust spawns in.}", UI.scale(300));
 
-        add(sweeperDurationDropbox = new Dropbox<Integer>(40, OptWnd.sweeperDurations.size(), 17) {
+        add(sweeperDurationDropbox = new Dropbox<Integer>(UI.scale(40), OptWnd.sweeperDurations.size(), UI.scale(17)) {
             {
                 super.change(OptWnd.sweeperDurations.get(OptWnd.sweeperSetDuration));
             }
@@ -142,7 +140,7 @@ public class MiningSafetyAssistant extends Window implements Runnable {
             }
             @Override
             protected void drawitem(GOut g, Integer item, int i) {
-                g.text(item.toString(), Coord.z);
+                g.image(Text.renderstroked(item.toString()).tex(), Coord.dropListItemCoord);
             }
             @Override
             public void change(Integer item) {
