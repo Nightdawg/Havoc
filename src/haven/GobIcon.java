@@ -45,8 +45,9 @@ public class GobIcon extends GAttrib {
     private static final int size = UI.scale(20);
     public static final PUtils.Convolution filter = new PUtils.Hanning(1);
     private static final Map<Indir<Resource>, Image> cache = new WeakHashMap<>();
+    private static final Map<Indir<Resource>, Image> cachegray = new WeakHashMap<>();
     public final Indir<Resource> res;
-    private Image img;
+    private Image img, imggray;
 	private static LinkedHashMap<String, ArrayList<String>> mapIconPresets = new LinkedHashMap<String, ArrayList<String>>();
 
     public GobIcon(Gob g, Indir<Resource> res) {
@@ -86,6 +87,33 @@ public class GobIcon extends GAttrib {
 	    if(data != null)
 		this.z = Utils.intvard(data, 0);
 	}
+
+	public Image(Resource.Image rimg, BufferedImage img) {
+		Tex tex = new TexI(img);
+		if ((tex.sz().x > size) || (tex.sz().y > size)) {
+			BufferedImage buf;
+			buf = PUtils.rasterimg(PUtils.blurmask2(img.getRaster(), 1, 1, Color.BLACK));
+			Coord tsz;
+			if(buf.getWidth() > buf.getHeight())
+				tsz = new Coord(size, (size * buf.getHeight()) / buf.getWidth());
+			else
+				tsz = new Coord((size * buf.getWidth()) / buf.getHeight(), size);
+			buf = PUtils.convolve(buf, tsz, filter);
+			tex = new TexI(buf);
+		}
+		this.tex = tex;
+		this.cc = tex.sz().div(2);
+		byte[] data = rimg.kvdata.get("mm/rot");
+		if(data != null) {
+			this.rot = true;
+			this.ao = Utils.float32d(data, 0) * (Math.PI / 180f);
+		}
+		this.z = rimg.z;
+		data = rimg.kvdata.get("mm/z");
+		if(data != null)
+			this.z = Utils.intvard(data, 0);
+	}
+
     }
 
     public Image img() {
@@ -100,6 +128,21 @@ public class GobIcon extends GAttrib {
 	    }
 	}
 	return(this.img);
+    }
+
+    public Image imggray() {
+        if(this.imggray == null) {
+            synchronized(cachegray) {
+                Image img = cachegray.get(res);
+                if(img == null) {
+                    Resource.Image rimg = res.get().layer(Resource.imgc);
+                    img = new Image(rimg, PUtils.monochromize(rimg.img, Color.WHITE));
+                    cachegray.put(res, img);
+                }
+                this.imggray = img;
+            }
+        }
+        return(this.imggray);
     }
 
     private static Consumer<UI> resnotif(String nm) {

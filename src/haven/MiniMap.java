@@ -266,7 +266,7 @@ public class MiniMap extends Widget {
     public class DisplayIcon {
 	public final GobIcon icon;
 	public final Gob gob;
-	public final GobIcon.Image img;
+	public final GobIcon.Image img, imggray;
 	public Coord2d rc = null;
 	public Coord sc = null;
 	public double ang = 0.0;
@@ -280,6 +280,7 @@ public class MiniMap extends Widget {
 	    this.icon = icon;
 	    this.gob = icon.gob;
 	    this.img = icon.img();
+		this.imggray = icon.imggray();
 	    this.z = this.img.z;
 	    this.stime = Utils.rtime();
 	    if(this.notify = conf.notify)
@@ -298,7 +299,7 @@ public class MiniMap extends Widget {
 		this.sc = p2c(this.rc);
 	}
 
-	public void draw(GOut g) {
+	public void draw(GobIcon.Image img, GOut g) {
 	    if(col != null)
 		g.chcolor(col);
 	    else
@@ -331,6 +332,13 @@ public class MiniMap extends Widget {
 	    if(notify)
 		return(true);
 	    return(false);
+	}
+
+	public boolean isDead() {
+		if (gob.isComposite && gob.knocked != null)
+			return gob.knocked;
+		else
+			return false;
 	}
     }
 
@@ -686,8 +694,12 @@ public class MiniMap extends Widget {
 	    return;
 	for(DisplayIcon disp : icons) {
 	    if((disp.sc == null) || filter(disp))
-		continue;
-	    disp.draw(g);
+			continue;
+		GobIcon.Image img = disp.img;
+		if (disp.isDead()) {
+			img = disp.imggray;
+		}
+		disp.draw(img, g);
 	}
 	g.chcolor();
     }
