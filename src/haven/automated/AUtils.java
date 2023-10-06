@@ -495,4 +495,30 @@ public class AUtils {
         return gobs;
     }
 
+    public static List<WItem> getAllItemsFromAllInventoriesAndStacks(GameUI gui){
+        List<WItem> items = new ArrayList<>();
+        List<Inventory> allInventories = gui.getAllInventories();
+
+        for (Inventory inventory : allInventories) {
+            if (!isBeltOrKeyring(inventory)) {
+                for (WItem item : inventory.getAllItems()) {
+                    if (!item.item.getname().contains("stack of")) {
+                        items.add(item);
+                    }
+                }
+            }
+        }
+
+        items.addAll(gui.getAllContentsWindows());
+        return items;
+    }
+
+    public static boolean isBeltOrKeyring(Inventory inventory) {
+        if (inventory.parent instanceof Window) {
+            String cap = ((Window) inventory.parent).cap;
+            return cap.contains("Belt") || cap.contains("Keyring");
+        }
+        return false;
+    }
+
 }
