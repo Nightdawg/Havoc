@@ -12,6 +12,7 @@ import java.util.Arrays;
 @haven.FromResource(name = "ui/tt/q/quality", version = 25)
 public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
     public static final BufferedImage qualityWorkaround = Resource.remote().loadwait("ui/tt/q/quality").layer(Resource.imgc, 0).scaled();
+    public static Color BG = new Color(0, 0, 0, 200);
     public Quality(Owner owner, double q) {
 	//super(owner, Resource.classres(Quality.class).layer(Resource.imgc, 0).scaled(), "Quality", q);
         super(owner, qualityWorkaround, "Quality", q); //ND: workaround suggested by loftar
@@ -48,20 +49,26 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
                             if ((((Contents) info).content != null) && (((Contents) info).content.name != null)){
                                 if (((Contents) info).content.name.equals("Water")) {
                                     if(OptWnd.roundedQualityCheckBox.a)
-                                        return (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(54, 175, 255, 255), true)));
+                                        return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(54, 175, 255, 255), true)))))
+                                                : (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(54, 175, 255, 255), true)));
                                     else
-                                        return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(54, 175, 255, 255), true)));
+                                        return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(54, 175, 255, 255), true)))))
+                                                : (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(54, 175, 255, 255), true)));
                                 } else if (((Contents) info).content.name.equals("Tea")) {
                                     if(OptWnd.roundedQualityCheckBox.a)
-                                        return (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(83, 161, 0, 255), true)));
+                                        return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(83, 161, 0, 255), true)))))
+                                                : (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(83, 161, 0, 255), true)));
                                     else
-                                        return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(83, 161, 0, 255), true)));
+                                        return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(83, 161, 0, 255), true)))))
+                                                : (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(83, 161, 0, 255), true)));
                                 }
                             }
                             if(OptWnd.roundedQualityCheckBox.a)
-                                return (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(255, 255, 255, 255), true)));
+                                return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(255, 255, 255, 255), true)))))
+                                        : (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(255, 255, 255, 255), true)));
                             else
-                                return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(255, 255, 255, 255), true)));
+                                return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(255, 255, 255, 255), true)))))
+                                        : (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(255, 255, 255, 255), true)));
                         }
                     }
                 }
@@ -70,11 +77,14 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
         }
         if (!irrelevantQuality) {
             if(OptWnd.roundedQualityCheckBox.a)
-                return (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(q), new Color(255, 255, 255, 255), true)));
+                return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int)Math.round(q), new Color(255, 255, 255, 255), true)))))
+                        : (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(q), new Color(255, 255, 255, 255), true)));
             else
-                return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(q, new Color(255, 255, 255, 255), true)));
+                return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStrokedDecimal(q, new Color(255, 255, 255, 255), true)))))
+                        : (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(q, new Color(255, 255, 255, 255), true)));
         } else {
-            return (new TexI(GItem.NumberInfo.textrenderStroked("Empty", new Color(255, 78, 0, 255), true)));
+            return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.textrenderStroked("Empty", new Color(255, 78, 0, 255), true)))))
+                    : (new TexI(GItem.NumberInfo.textrenderStroked("Empty", new Color(255, 78, 0, 255), true)));
         }
     }
 
