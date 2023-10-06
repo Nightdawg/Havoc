@@ -470,10 +470,10 @@ public class CharWnd extends Window {
 		    tooltip = null;
 		}
 		ct = PUtils.strokeTex(attrf.render(Integer.toString(ccv), c));
-		requiresUpdate = true;
 	    }
 	    if((lvlt > 0.0) && ((lvlt -= dt) < 0))
 		lvlt = 0.0;
+		requiresUpdate = true;
 	}
 
 	public void draw(GOut g) {
@@ -556,7 +556,6 @@ public class CharWnd extends Window {
 		public void tick(double dt) {
 			if ((attr.base != cbv) || (attr.comp != ccv)) {
 				cbv = attr.base;
-				requiresUpdate = true;
 			}
 			if (attr.comp != ccv) {
 				ccv = attr.comp;
@@ -579,8 +578,8 @@ public class CharWnd extends Window {
 					c = tbuff;
 				ct = PUtils.strokeTex(attrf.render(Integer.toString(tcv), c));
 				cbv = tcv;
-				requiresUpdate = true;
 			}
+			requiresUpdate = true;
 			updcost();
 		}
 
