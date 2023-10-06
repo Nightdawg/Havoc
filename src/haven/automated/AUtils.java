@@ -401,6 +401,10 @@ public class AUtils {
         gui.ui.rcvr.rcvmsg(gui.ui.lastid+1, "cl", index, gui.ui.modflags());
     }
 
+    public static void rightClickShiftCtrl(GameUI gui, Gob gob) {
+        gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 3, 3, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
+    }
+
 
     public final static HashSet<String> potentialAggroTargets = new HashSet<String>() {{ // ND: Probably still missing dungeon ants, dungeon bees, dungeon beavers, dungeon bats?
         add("gfx/borka/body");
