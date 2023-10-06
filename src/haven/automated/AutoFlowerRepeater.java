@@ -45,7 +45,10 @@ public class AutoFlowerRepeater implements Runnable{
             if(option != null && !option.equals("")){
                 scheduler.shutdown();
                 if (option.equals("Study")){
-                    gui.error("Auto Flower Script: The \"Study\" option is not allowed for this script.");
+                    gui.error("Auto Flower Script: Stopped script. The \"Study\" option disabled for this script, cause you can only study one at a time, dummy.");
+                    stop = true;
+                } else if (option.equals("Eat")){
+                    gui.error("Auto Flower Script: Stopped script. The \"Eat\" option is disabled for this script, to avoid user error.");
                     stop = true;
                 } else {
                     int counter = 0;
