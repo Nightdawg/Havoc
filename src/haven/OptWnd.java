@@ -40,6 +40,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -507,6 +508,7 @@ public class OptWnd extends Window {
 	private Label granularityPositionLabel;
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
+	public static CheckBox roundedQualityCheckBox;
 	public static CheckBox alwaysShowStaminaBarCheckBox;
 	public static CheckBox alwaysShowHealthBarCheckBox;
 	public static CheckBox requireShiftHoverStacksCheckBox;
@@ -660,6 +662,30 @@ public class OptWnd extends Window {
 			{a = (Utils.getprefb("qtoggle", true));}
 			public void set(boolean val) {
 				Utils.setprefb("qtoggle", val);
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 2));
+
+		leftColumn = add(roundedQualityCheckBox = new CheckBox("Rounded Quality Number"){
+			{a = (Utils.getprefb("roundedQuality", true));}
+			public void set(boolean val) {
+				Utils.setprefb("roundedQuality", val);
+				if (ui != null && ui.gui != null) {
+					for (WItem item : ui.gui.getAllItemsFromAllInventoriesAndStacks()) {
+						item.reloadItemOls();
+					}
+					for (Widget window : ui.gui.getAllWindows()){
+						for (Widget w = window.lchild; w != null; w = w.prev) {
+							if (w instanceof Equipory) {
+								for (WItem equitem : ((Equipory) w).slots) {
+									if (equitem != null) {
+										equitem.reloadItemOls();
+									}
+								}
+							}
+						}
+					}
+				}
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 2));

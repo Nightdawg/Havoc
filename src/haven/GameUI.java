@@ -2362,6 +2362,22 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		return inventories;
 	}
 
+	public List<WItem> getAllItemsFromAllInventoriesAndStacks(){
+		List<WItem> items = new ArrayList<>();
+		List<Inventory> allInventories = getAllInventories();
+
+		for (Inventory inventory : allInventories) {
+			for (WItem item : inventory.getAllItems()) {
+				if (!item.item.getname().contains("stack of")) {
+					items.add(item);
+				}
+			}
+		}
+
+		items.addAll(getAllContentsWindows());
+		return items;
+	}
+
 	public List<WItem> getAllContentsWindows() {
 		List<WItem> itemsInStacks = new ArrayList<>();
 		for (Widget wdg = lchild; wdg != null; wdg = wdg.prev) {

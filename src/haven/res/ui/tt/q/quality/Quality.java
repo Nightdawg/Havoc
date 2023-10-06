@@ -30,6 +30,9 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
             "Birchbark Kuksa", "Bucket", "Waterskin", "Waterflask", "Glass Jug",
     };
 
+    // TODO: Use a linked hashmap for content name and color, instead of hardcoding it.
+    // ND: I just don't know what other liquids should have unique colors. For now just hardcoded water and tea lul
+
     public Tex overlay() {
         boolean irrelevantQuality = false; // ND: Use this to show the quality of some containers quality as "Empty", rather than their actual quality.
         try {
@@ -44,12 +47,21 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
                         if (info2 instanceof QBuff) {
                             if ((((Contents) info).content != null) && (((Contents) info).content.name != null)){
                                 if (((Contents) info).content.name.equals("Water")) {
-                                    return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(54, 175, 255, 255), true)));
+                                    if(OptWnd.roundedQualityCheckBox.a)
+                                        return (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(54, 175, 255, 255), true)));
+                                    else
+                                        return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(54, 175, 255, 255), true)));
                                 } else if (((Contents) info).content.name.equals("Tea")) {
-                                    return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(83, 161, 0, 255), true)));
+                                    if(OptWnd.roundedQualityCheckBox.a)
+                                        return (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(83, 161, 0, 255), true)));
+                                    else
+                                        return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(83, 161, 0, 255), true)));
                                 }
                             }
-                            return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(255, 255, 255, 255), true)));
+                            if(OptWnd.roundedQualityCheckBox.a)
+                                return (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(255, 255, 255, 255), true)));
+                            else
+                                return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(255, 255, 255, 255), true)));
                         }
                     }
                 }
@@ -57,7 +69,10 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
         } catch (Exception ignored) {
         }
         if (!irrelevantQuality) {
-            return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(q, new Color(255, 255, 255, 255), true)));
+            if(OptWnd.roundedQualityCheckBox.a)
+                return (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(q), new Color(255, 255, 255, 255), true)));
+            else
+                return (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(q, new Color(255, 255, 255, 255), true)));
         } else {
             return (new TexI(GItem.NumberInfo.textrenderStroked("Empty", new Color(255, 78, 0, 255), true)));
         }
@@ -65,6 +80,6 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
 
     public void drawoverlay(GOut g, Tex ol) {
 	if(OptWnd.toggleQualityDisplayCheckBox.a)
-	    g.aimage(ol, new Coord(g.sz().x, 0), 1, 0);
+	    g.aimage(ol, new Coord(g.sz().x, 0), 1, 0.2);
     }
 }

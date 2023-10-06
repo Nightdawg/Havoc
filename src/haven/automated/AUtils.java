@@ -499,7 +499,7 @@ public class AUtils {
         return gobs;
     }
 
-    public static List<WItem> getAllItemsFromAllInventoriesAndStacks(GameUI gui){
+    public static List<WItem> getAllItemsFromAllInventoriesAndStacksExcludeBeltAndKeyring(GameUI gui){
         List<WItem> items = new ArrayList<>();
         List<Inventory> allInventories = gui.getAllInventories();
 

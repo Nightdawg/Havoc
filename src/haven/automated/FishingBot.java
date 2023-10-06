@@ -125,7 +125,7 @@ public class FishingBot extends Window implements Runnable {
 
         List<WItem> items = new ArrayList<>();
         if(fishingPoleState < 3){
-            items = AUtils.getAllItemsFromAllInventoriesAndStacks(gui);
+            items = AUtils.getAllItemsFromAllInventoriesAndStacksExcludeBeltAndKeyring(gui);
         }
 
         if(fishingPoleState == 0){

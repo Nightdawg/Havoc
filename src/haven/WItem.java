@@ -126,7 +126,7 @@ public class WItem extends Widget implements DTarget {
 	}
     }
 
-    private List<ItemInfo> info() {return(item.info());}
+    public List<ItemInfo> info() {return(item.info());}
     public final AttrCache<Color> olcol = new AttrCache<>(this::info, info -> {
 	    ArrayList<GItem.ColorInfo> ols = new ArrayList<>();
 	    for(ItemInfo inf : info) {
@@ -148,7 +148,7 @@ public class WItem extends Widget implements DTarget {
 		    return(ret);
 		});
 	});
-    public final AttrCache<GItem.InfoOverlay<?>[]> itemols = new AttrCache<>(this::info, info -> {
+    public AttrCache<GItem.InfoOverlay<?>[]> itemols = new AttrCache<>(this::info, info -> {
 	    ArrayList<GItem.InfoOverlay<?>> buf = new ArrayList<>();
 	    for(ItemInfo inf : info) {
 		if(inf instanceof GItem.OverlayInfo)
@@ -157,6 +157,19 @@ public class WItem extends Widget implements DTarget {
 	    GItem.InfoOverlay<?>[] ret = buf.toArray(new GItem.InfoOverlay<?>[0]);
 	    return(() -> ret);
 	});
+
+	public void reloadItemOls(){
+		itemols = new AttrCache<>(this::info, info -> {
+			ArrayList<GItem.InfoOverlay<?>> buf = new ArrayList<>();
+			for(ItemInfo inf : info) {
+				if(inf instanceof GItem.OverlayInfo)
+					buf.add(GItem.InfoOverlay.create((GItem.OverlayInfo<?>)inf));
+			}
+			GItem.InfoOverlay<?>[] ret = buf.toArray(new GItem.InfoOverlay<?>[0]);
+			return(() -> ret);
+		});
+	}
+
     public final AttrCache<Double> itemmeter = new AttrCache<Double>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter)); // ND: (from Ender) Explicitly added type to be sure IDE is not confused
 	public static Color redDurability = new Color(255, 0, 0, 180);
 	public static Color orangeDurability = new Color(255, 153, 0, 180);
