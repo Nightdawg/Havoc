@@ -65,6 +65,21 @@ public class AUtils {
         return gobs;
     }
 
+    public static ArrayList<Gob> getGobFromTypeArray(List<String> gobNames, GameUI gui) {
+        ArrayList<Gob> gobs = new ArrayList<>();
+        synchronized (gui.map.glob.oc) {
+            for (Gob gob : gui.map.glob.oc) {
+                try {
+                    if (gob.getres() != null && gobNames.contains(gob.getres().name)) {
+                        gobs.add(gob);
+                    }
+                } catch (Loading ignored) {
+                }
+            }
+        }
+        return gobs;
+    }
+
     public static String getTileName(Coord coord, MCache mcache) {
         try {
             Coord c = new Coord(coord.x / 11, coord.y / 11).add(-1, -1);

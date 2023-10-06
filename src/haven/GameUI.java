@@ -1636,6 +1636,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleCollisionBoxes  = KeyBinding.get("toggleCollisionBoxesKB",  KeyMatch.forchar('B', KeyMatch.S));
 	public static KeyBinding kb_toggleHidingBoxes  = KeyBinding.get("toggleHidingBoxesKB",  KeyMatch.forchar('H', KeyMatch.C));
 	public static KeyBinding kb_clickNearestObject  = KeyBinding.get("clickNearestObjectKB",  KeyMatch.forchar('Q', 0));
+	public static KeyBinding kb_clickNearestDoorLadder = KeyBinding.get("clickNearestDoorLadder",  KeyMatch.nil);
 	public static KeyBinding kb_nightVision  = KeyBinding.get("nightVisionKB",  KeyMatch.forchar('N', KeyMatch.C));
 
 	public static KeyBinding kb_clickNearestGate  = KeyBinding.get("clickNearestGateKB",  KeyMatch.nil);
@@ -1644,7 +1645,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_aggroLastTarget = KeyBinding.get("aggroLastTarget",  KeyMatch.forchar('T', KeyMatch.S));
 	public static KeyBinding kb_peaceCurrentTarget  = KeyBinding.get("peaceCurrentTargetKB",  KeyMatch.forchar('P', KeyMatch.M));
 
-	public static KeyBinding kb_toggleVehicleSpeed  = KeyBinding.get("toggleVehicleSpeed",  KeyMatch.nil);
 
 	public static KeyBinding kb_toggleMuteNonFriendly  = KeyBinding.get("toggleMuteNonFriendly",  KeyMatch.nil);
 
@@ -1738,10 +1738,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if(kb_peaceCurrentTarget.key().match(ev)) {
 			peaceCurrentTarget();
 			return(true);
-		} else if (kb_toggleVehicleSpeed.key().match(ev)) {
-//			vehicleSpeed = !vehicleSpeed;
-//			msg("VehicleSpeed display " + (vehicleSpeed ? "enabled" : "disabled"));
-			msg("Not yet implemented");
+		} else if (kb_clickNearestDoorLadder.key().match(ev)) {
+			Thread t = new Thread(new Transition(this), "Transition");
+			t.start();
 		} else if (kb_toggleMuteNonFriendly.key().match(ev)) {
 			msg(muteNonFriendly ? "Non-Friendly players muted" : "Non-Friendly players unm uted");
 			muteNonFriendly = !muteNonFriendly;
@@ -1749,7 +1748,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);

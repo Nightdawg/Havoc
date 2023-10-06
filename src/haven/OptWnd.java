@@ -1159,6 +1159,9 @@ public class OptWnd extends Window {
 			y = addbtnImproved(cont, "Click Nearest Non-Visitor Gate", "This works the same as the button above, but it has a smaller range (for a slightly better precision) and completely ignores Forageables and Critters." +
 					"\n$col[218,163,0]{Range:} $col[185,185,185]{8 tiles (approximately)}" +
 					"\n$col[185,185,185]{Use this one if you only want a dedicated button for gates, without the other stuff.}", new Color(255, 188, 0,255), GameUI.kb_clickNearestGate, y);
+			y = addbtnImproved(cont, "Click Nearest Door Or Ladder","When this button is pressed, you will instantly click the nearest Door, Stairs, or Ladder." +
+					"\n$col[218,163,0]{Range:} $col[185,185,185]{12 tiles (approximately)}", new Color(255, 191, 0,255), GameUI.kb_clickNearestDoorLadder, y);
+
 
 			y = addbtnImproved(cont, "Hop on Nearest Vehicle/Mount", "When this button is pressed, your character will run towards the nearest mountable Vehicle/Animal, and try to mount it." +
 					"\n\nThe behavior differs for every object:" +
