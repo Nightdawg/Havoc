@@ -920,7 +920,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		} else {
 			this.gobSpeed = 0;
 		}
-		if(Boolean.TRUE.equals(isMe()) && OptWnd.trackingEnableBoolean) {
+		if(Boolean.TRUE.equals(isMe()) && OptWnd.trackingEnableBoolean && MappingClient.getInstance() != null) {
 			MappingClient.getInstance().CheckGridCoord(c);
 			MappingClient.getInstance().Track(id, c);
 		}

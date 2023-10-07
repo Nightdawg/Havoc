@@ -875,7 +875,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		MapFile file;
 		try {
 		    file = MapFile.load(mapstore, mapfilename());
-			if(OptWnd.mapUploadBoolean) {
+			if(OptWnd.mapUploadBoolean && MappingClient.getInstance() != null) {
 				MappingClient.getInstance().ProcessMap(file, (m) -> {
 					if(m instanceof MapFile.PMarker && OptWnd.markerUploadBoolean) {
 						return ((MapFile.PMarker)m).color.equals(new Color(255, 115, 0, 255));
