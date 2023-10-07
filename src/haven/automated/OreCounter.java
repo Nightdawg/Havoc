@@ -33,6 +33,9 @@ public class OreCounter extends Window implements Runnable {
             for (int x = -44; x < 44; x++) {
                 for (int y = -44; y < 44; y++) {
                     try {
+                        if(gui.map.player() == null){
+                            continue;
+                        }
                         int t = gui.ui.sess.glob.map.gettile(gui.map.player().rc.floor().div(11).add(x, y));
                         Resource res =  gui.ui.sess.glob.map.tilesetr(t);
                         if(res.name.contains("gfx/tiles/rocks/")){
@@ -44,7 +47,7 @@ public class OreCounter extends Window implements Runnable {
                                 rocks.put(name, rocks.getOrDefault(name, 1) + 1);
                             }
                         }
-                    } catch (Loading ignored){}
+                    } catch (Loading ignored) {}
                 }
             }
             oreList.removeAll();
