@@ -136,6 +136,28 @@ public class AUtils {
         return selected;
     }
 
+
+    public static ArrayList<Gob> getTrellisPlantsInSelection(Coord start, Coord end, GameUI gui) {
+        ArrayList<Gob> plantsInArea = new ArrayList<>();
+        List<String> plants = Arrays.asList("gfx/terobjs/plants/wine", "gfx/terobjs/plants/pepper", "gfx/terobjs/plants/hops", "gfx/terobjs/plants/peas", "gfx/terobjs/plants/cucumber");
+
+        synchronized (gui.map.glob.oc) {
+            for (Gob gob : gui.map.glob.oc) {
+                if (gob.rc.x > start.x && gob.rc.x < end.x && gob.rc.y > start.y && gob.rc.y < end.y) {
+                    try {
+                        Resource res = gob.getres();
+                        if (res != null && plants.contains(res.name)) {
+                            plantsInArea.add(gob);
+                        }
+                    } catch (Loading l) {}
+                }
+            }
+        }
+        return plantsInArea;
+    }
+
+
+
     public static Map<Gob, Integer> getGobsInSelectedArea(Coord start, Coord end, GameUI gui) {
         Map<Gob, Integer> gobsInArea = new HashMap<>();
         synchronized (gui.map.glob.oc) {
