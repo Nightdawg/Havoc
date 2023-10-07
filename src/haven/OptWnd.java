@@ -40,8 +40,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
 public class OptWnd extends Window {
@@ -3409,10 +3408,14 @@ public class OptWnd extends Window {
 	public static CheckBox enableMapUploaderCheckbox;
 	public static boolean mapUploadBoolean = Utils.getprefb("enableMapUploader", false);
 	public static CheckBox enableLocationTrackingCheckbox;
-	public static boolean markerUploadBoolean = Utils.getprefb("enableMarkerUpload", false);
-	public static CheckBox enableMarkerUploadCheckbox;
 	public static boolean trackingEnableBoolean = Utils.getprefb("enableLocationTracking", false);
+	public static Map<Color, Boolean> colorCheckboxesMap = new HashMap<>();
 
+	static {
+		for (Color color : BuddyWnd.gc) {
+			colorCheckboxesMap.put(color, Utils.getprefb("enableMarkerUpload" + color.getRGB(), false));
+		}
+	}
 
 	public class NDWebMapIntegrationSettingsPanel extends Panel {
 		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
@@ -3441,15 +3444,6 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 8).x(12));
 
-			prev = add(enableMarkerUploadCheckbox = new CheckBox("Enable Markers Upload"){
-				{a = markerUploadBoolean;}
-				public void set(boolean val) {
-					Utils.setprefb("enableMarkerUpload", val);
-					markerUploadBoolean = val;
-					a = val;
-				}
-			}, prev.pos("bl").adds(0, 4));
-
 			prev = add(enableLocationTrackingCheckbox = new CheckBox("Enable Location Tracking"){
 				{a = trackingEnableBoolean;}
 				public void set(boolean val) {
@@ -3459,7 +3453,31 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 4));
 
+			prev = add(new Label("Markers to upload:"), prev.pos("bl").adds(0, 4));
 
+			for (Map.Entry<Color, Boolean> entry : colorCheckboxesMap.entrySet()) {
+				Color color = entry.getKey();
+				boolean isChecked = entry.getValue();
+
+				CheckBox colorCheckbox = new CheckBox(""){
+					{a = isChecked;}
+					@Override
+					public void draw(GOut g) {
+						g.chcolor(color);
+						g.frect(Coord.z.add(0, (sz.y - box.sz().y) / 2), box.sz());
+						g.chcolor();
+						if(state())
+							g.image(mark, Coord.z.add(0, (sz.y - mark.sz().y) / 2));
+					}
+
+					public void set(boolean val) {
+						Utils.setprefb("enableMarkerUpload" + color.getRGB(), val);
+						colorCheckboxesMap.put(color, val);
+						a = val;
+					}
+				};
+				prev = add(colorCheckbox, prev.pos("ur").adds(10, 0));
+			}
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 16).x(UI.scale(62)));
 
