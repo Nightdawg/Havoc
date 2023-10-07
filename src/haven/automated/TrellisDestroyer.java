@@ -38,7 +38,7 @@ public class TrellisDestroyer extends Window implements Runnable, AreaSelectCall
             public void click() {
 
                 active = !active;
-                if (active){
+                if (active) {
                     gui.msg("Starting.");
                     this.change("Stop");
                 } else {
@@ -52,14 +52,19 @@ public class TrellisDestroyer extends Window implements Runnable, AreaSelectCall
 
     @Override
     public void run() {
-        while(!stop){
-            if(active){
+        while (!stop) {
+            if (active) {
                 Gob closestPlant = null;
-                if(plantsToDestroy != null && plantsToDestroy.size() > 0){
-                    if(gui.map.player().getv() == 0 && gui.prog == null){
+                if (plantsToDestroy != null && plantsToDestroy.size() > 0) {
+                    if (gui.map.player().getv() == 0 && gui.prog == null) {
                         closestPlant = findClosestPlantToPlayer();
+                        if (closestPlant == null) {
+                            active = false;
+                            startbutton.change("Start");
+                            continue;
+                        }
                         Coord2d startingPosition = getStartingPosition(closestPlant);
-                        if(gui.map.player().rc.dist(startingPosition) < 4){
+                        if (gui.map.player().rc.dist(startingPosition) < 4) {
                             gui.act("destroy");
                             gui.map.wdgmsg("click", Coord.z, closestPlant.rc.floor(posres), 1, 0, 0, (int) closestPlant.id, closestPlant.rc.floor(posres), 0, -1);
                             gui.map.wdgmsg("click", Coord.z, Coord.z, 3, 0);
@@ -84,20 +89,19 @@ public class TrellisDestroyer extends Window implements Runnable, AreaSelectCall
         }
     }
 
-    public Coord2d getStartingPosition(Gob closest){
+    public Coord2d getStartingPosition(Gob closest) {
         Coord2d adjustedCoord = new Coord2d(closest.rc.x, closest.rc.y);
         Gob player = gui.map.player();
-        double angle = (closest.a + 2*Math.PI) % (2*Math.PI);
+        double angle = (closest.a + 2 * Math.PI) % (2 * Math.PI);
 
-        if(angle > Math.PI/4 && angle <= 3*Math.PI/4 || angle > 5*Math.PI/4 && angle <= 7*Math.PI/4){
-            if(player.rc.y > closest.rc.y){
+        if (angle > Math.PI / 4 && angle <= 3 * Math.PI / 4 || angle > 5 * Math.PI / 4 && angle <= 7 * Math.PI / 4) {
+            if (player.rc.y > closest.rc.y) {
                 adjustedCoord.y += 11;
             } else {
                 adjustedCoord.y -= 11;
             }
-        }
-        else{
-            if(player.rc.x > closest.rc.x){
+        } else {
+            if (player.rc.x > closest.rc.x) {
                 adjustedCoord.x += 11;
             } else {
                 adjustedCoord.x -= 11;
