@@ -40,6 +40,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -507,6 +508,8 @@ public class OptWnd extends Window {
 	private Label granularityPositionLabel;
 	private Label granularityAngleLabel;
 	public static CheckBox toggleQualityDisplayCheckBox;
+	public static CheckBox roundedQualityCheckBox;
+	public static CheckBox showQualityBackgroundCheckBox;
 	public static CheckBox alwaysShowStaminaBarCheckBox;
 	public static CheckBox alwaysShowHealthBarCheckBox;
 	public static CheckBox requireShiftHoverStacksCheckBox;
@@ -664,13 +667,61 @@ public class OptWnd extends Window {
 			}
 		}, leftColumn.pos("bl").adds(0, 2));
 
+		leftColumn = add(roundedQualityCheckBox = new CheckBox("Rounded Quality Number"){
+			{a = (Utils.getprefb("roundedQuality", true));}
+			public void set(boolean val) {
+				Utils.setprefb("roundedQuality", val);
+				if (ui != null && ui.gui != null) {
+					for (WItem item : ui.gui.getAllItemsFromAllInventoriesAndStacks()) {
+						item.reloadItemOls();
+					}
+					for (Widget window : ui.gui.getAllWindows()){
+						for (Widget w = window.lchild; w != null; w = w.prev) {
+							if (w instanceof Equipory) {
+								for (WItem equitem : ((Equipory) w).slots) {
+									if (equitem != null) {
+										equitem.reloadItemOls();
+									}
+								}
+							}
+						}
+					}
+				}
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(16, 2));
+
+		leftColumn = add(showQualityBackgroundCheckBox = new CheckBox("Show Quality Background"){
+			{a = (Utils.getprefb("showQualityBackground", false));}
+			public void set(boolean val) {
+				Utils.setprefb("showQualityBackground", val);
+				if (ui != null && ui.gui != null) {
+					for (WItem item : ui.gui.getAllItemsFromAllInventoriesAndStacks()) {
+						item.reloadItemOls();
+					}
+					for (Widget window : ui.gui.getAllWindows()){
+						for (Widget w = window.lchild; w != null; w = w.prev) {
+							if (w instanceof Equipory) {
+								for (WItem equitem : ((Equipory) w).slots) {
+									if (equitem != null) {
+										equitem.reloadItemOls();
+									}
+								}
+							}
+						}
+					}
+				}
+				a = val;
+			}
+		}, leftColumn.pos("bl").adds(0, 2));
+
 		leftColumn = add(alwaysShowHealthBarCheckBox = new CheckBox("Always show Combat UI Health Bar"){
 			{a = (Utils.getprefb("alwaysShowHealthBar", false));}
 			public void set(boolean val) {
 				Utils.setprefb("alwaysShowHealthBar", val);
 				a = val;
 			}
-		}, leftColumn.pos("bl").adds(0, 12));
+		}, leftColumn.pos("bl").adds(0, 12).x(0));
 		leftColumn = add(alwaysShowStaminaBarCheckBox = new CheckBox("Always show Combat UI Stamina Bar"){
 			{a = (Utils.getprefb("alwaysShowStaminaBar", false));}
 			public void set(boolean val) {

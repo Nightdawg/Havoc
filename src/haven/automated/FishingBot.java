@@ -100,31 +100,6 @@ public class FishingBot extends Window implements Runnable {
         return count;
     }
 
-    private boolean isBeltOrKeyring(Inventory inventory) {
-        if (inventory.parent instanceof Window) {
-            String cap = ((Window) inventory.parent).cap;
-            return cap.contains("Belt") || cap.contains("Keyring");
-        }
-        return false;
-    }
-
-    private List<WItem> getAllItemsFromAllInventoriesAndStacks(){
-        List<WItem> items = new ArrayList<>();
-        List<Inventory> allInventories = gui.getAllInventories();
-
-        for (Inventory inventory : allInventories) {
-            if (!isBeltOrKeyring(inventory)) {
-                for (WItem item : inventory.getAllItems()) {
-                    if (!item.item.getname().contains("stack of")) {
-                        items.add(item);
-                    }
-                }
-            }
-        }
-
-        items.addAll(gui.getAllContentsWindows());
-        return items;
-    }
 
 
     private void manageFishingPole(){
@@ -150,7 +125,7 @@ public class FishingBot extends Window implements Runnable {
 
         List<WItem> items = new ArrayList<>();
         if(fishingPoleState < 3){
-            items = getAllItemsFromAllInventoriesAndStacks();
+            items = AUtils.getAllItemsFromAllInventoriesAndStacksExcludeBeltAndKeyring(gui);
         }
 
         if(fishingPoleState == 0){
@@ -236,7 +211,7 @@ public class FishingBot extends Window implements Runnable {
             if(active){
                 int freeSpace = 0;
                 for(Inventory inventory: gui.getAllInventories()){
-                    if (!isBeltOrKeyring(inventory)) {
+                    if (!AUtils.isBeltOrKeyring(inventory)) {
                         freeSpace = freeSpace + inventory.getFreeSpace();
                     }
                 }

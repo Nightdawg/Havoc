@@ -79,8 +79,8 @@ public class TarKilnCleanerBot extends Window implements Runnable {
                                     break;
                                 }
                             }
-                            AUtils.rightClickGobAndSelectOption(gui, closest, 0);
-                            Thread.sleep(2000);
+                            AUtils.rightClickShiftCtrl(gui, closest);
+                            Thread.sleep(1000);
                             AUtils.waitProgBar(gui);
                         }
                     }

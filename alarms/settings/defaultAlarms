@@ -18,6 +18,7 @@ gfx/kritter/troll/troll;true;Troll;ND_Troll;50;false
 gfx/kritter/walrus/walrus;true;Walrus;ND_Walrus;20;false
 gfx/kritter/wolf/wolf;true;Wolf;ND_Wolf;25;false
 gfx/kritter/wolverine/wolverine;true;Wolverine;ND_Wolverine;50;false
+gfx/terobjs/looserock;true;Loose Rock;ND_HeyWatchout;30;false
 gfx/terobjs/herbs/bloatedbolete;true;Curio: Bloated Bolete;ND_MarioCoin;25;false
 gfx/terobjs/herbs/edelweiss;true;Curio: Edelweiss;ND_MarioCoin;25;false
 gfx/terobjs/herbs/flotsam;true;Curio: Peculiar Flotsam;ND_MarioCoin;25;false

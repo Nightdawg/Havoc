@@ -401,6 +401,10 @@ public class AUtils {
         gui.ui.rcvr.rcvmsg(gui.ui.lastid+1, "cl", index, gui.ui.modflags());
     }
 
+    public static void rightClickShiftCtrl(GameUI gui, Gob gob) {
+        gui.map.wdgmsg("click", Coord.z, gob.rc.floor(posres), 3, 3, 0, (int) gob.id, gob.rc.floor(posres), 0, -1);
+    }
+
 
     public final static HashSet<String> potentialAggroTargets = new HashSet<String>() {{ // ND: Probably still missing dungeon ants, dungeon bees, dungeon beavers, dungeon bats?
         add("gfx/borka/body");
@@ -493,6 +497,32 @@ public class AUtils {
             }
         }
         return gobs;
+    }
+
+    public static List<WItem> getAllItemsFromAllInventoriesAndStacksExcludeBeltAndKeyring(GameUI gui){
+        List<WItem> items = new ArrayList<>();
+        List<Inventory> allInventories = gui.getAllInventories();
+
+        for (Inventory inventory : allInventories) {
+            if (!isBeltOrKeyring(inventory)) {
+                for (WItem item : inventory.getAllItems()) {
+                    if (!item.item.getname().contains("stack of")) {
+                        items.add(item);
+                    }
+                }
+            }
+        }
+
+        items.addAll(gui.getAllContentsWindows());
+        return items;
+    }
+
+    public static boolean isBeltOrKeyring(Inventory inventory) {
+        if (inventory.parent instanceof Window) {
+            String cap = ((Window) inventory.parent).cap;
+            return cap.contains("Belt") || cap.contains("Keyring");
+        }
+        return false;
     }
 
 }
