@@ -10,8 +10,6 @@ import java.util.*;
 import java.nio.*;
 import java.util.List;
 
-import static haven.OCache.posres;
-
 /* >spr: Cavein */
 @haven.FromResource(name = "gfx/fx/cavewarn", version = 6)
 public class Cavein extends Sprite implements Sprite.CDel, PView.Render2D {
@@ -29,6 +27,11 @@ public class Cavein extends Sprite implements Sprite.CDel, PView.Render2D {
     float life;
     Coord3f off;
     Coord3f sz;
+
+	final Tex numberTex;
+
+	final Gob ownerGob;
+	final MapView mapView;
 
 	Integer number;
 	Map colorMap = new LinkedHashMap<Integer, Color>(){{
@@ -51,20 +54,25 @@ public class Cavein extends Sprite implements Sprite.CDel, PView.Render2D {
 	life = 60 * OptWnd.sweeperDurations.get(OptWnd.sweeperSetDuration);
 	number = (int) Math.round(str / 30.0);
 	numberColor = (Color) colorMap.get(number);
+	if (number != 7)
+		numberTex = new TexI(Utils.outline2(Text.num20boldFnd.renderstroked(String.valueOf(number), numberColor, Color.BLACK).img, Color.BLACK, true));
+	else
+		numberTex = new TexI(Utils.outline2(Text.num20boldFnd.renderstroked(String.valueOf(number), numberColor, Color.WHITE).img, Color.BLACK, true));
+	if (owner instanceof Gob) {
+		ownerGob = (Gob) owner;
+		mapView = ownerGob.glob.sess.ui.gui.map;
+	} else {
+		ownerGob = null;
+		mapView = null;
+	}
     }
 
 	@Override
 	public void draw(GOut g, Pipe state) {
-		if (OptWnd.enableMineSweeperCheckBox.a){
-			if (owner instanceof Gob) {
-				Gob gob = (Gob) owner;
-				Coord3f sc3f = gob.getc();
-				Coord sc = gob.glob.sess.ui.gui.map.screenxf(sc3f).round2();
-				if (number != 7)
-					g.aimage(new TexI(Utils.outline2(Text.num30boldFnd.renderstroked(String.valueOf(number), numberColor, Color.BLACK).img, Color.BLACK, true)), sc, 0.5, 0.5);
-				else // ND: Number 7 is black, so the outline should be white
-					g.aimage(new TexI(Utils.outline2(Text.num30boldFnd.renderstroked(String.valueOf(number), numberColor, Color.WHITE).img, Color.BLACK, true)), sc, 0.5, 0.5);
-			}
+		if (OptWnd.enableMineSweeperCheckBox.a && ownerGob != null && mapView != null){
+			Coord3f sc3f = ownerGob.getc();
+			Coord sc = mapView.screenxf(sc3f).round2();
+			g.aimage(numberTex, sc, 0.5, 0.5);
 		}
 	}
 
