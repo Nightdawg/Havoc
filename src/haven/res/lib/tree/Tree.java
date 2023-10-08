@@ -103,7 +103,7 @@ public class Tree extends Sprite {
 	    gob.setattr(new TreeRotation(gob, rndrot(gob)));
 	    gob.setattr(new GobSvaj(gob));
 //	    if(fscale != 1.0f)
-		gob.setattr(new TreeScale(gob, (OptWnd.treesScaleSlider.val/100f) * fscale, fscale));
+		gob.setattr(new TreeScale(gob, (OptWnd.treesAndBushesScaleSlider.val/100f) * fscale, fscale));
 	}
 	parts = mkparts(res, s, fl);
 	sel = s;

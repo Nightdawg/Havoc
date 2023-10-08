@@ -1327,7 +1327,7 @@ public class OptWnd extends Window {
 	public static CheckBox tileSmoothingCheckBox;
 	public static CheckBox tileTransitionsCheckBox;
 	public static CheckBox flatCaveWallsCheckBox;
-	public static HSlider treesScaleSlider;
+	public static HSlider treesAndBushesScaleSlider;
 	public class NDWorldGraphicsSettingsPanel extends Panel {
 		public NDWorldGraphicsSettingsPanel(Panel back) {
 			Widget prev;
@@ -1442,14 +1442,14 @@ public class OptWnd extends Window {
 			}, prev.pos("bl").adds(0, 2));
 
 
-			prev = add(new Label("Trees Scale:"), prev.pos("bl").adds(0, 10).x(0));
-			prev = add(treesScaleSlider = new HSlider(UI.scale(200), 10, 100, Utils.getprefi("treesScale", 100)) {
+			prev = add(new Label("Trees & Bushes Scale:"), prev.pos("bl").adds(0, 10).x(0));
+			prev = add(treesAndBushesScaleSlider = new HSlider(UI.scale(200), 10, 100, Utils.getprefi("treesAndBushesScale", 100)) {
 				protected void attach(UI ui) {
 					super.attach(ui);
-					val = Utils.getprefi("treesScale", 100);
+					val = Utils.getprefi("treesAndBushesScale", 100);
 				}
 				public void changed() {
-					Utils.setprefi("treesScale", val);
+					Utils.setprefi("treesAndBushesScale", val);
 					if (ui != null && ui.gui != null) {
 						ui.sess.glob.oc.gobAction(Gob::reloadTreeScale);
 					}
@@ -1457,11 +1457,11 @@ public class OptWnd extends Window {
 			}, prev.pos("bl").adds(0, 6));
 
 			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
-				treesScaleSlider.val = 100;
+				treesAndBushesScaleSlider.val = 100;
 				if (ui != null && ui.gui != null) {
 					ui.sess.glob.oc.gobAction(Gob::reloadTreeScale);
 				}
-				Utils.setprefi("treesScale", 100);
+				Utils.setprefi("treesAndBushesScale", 100);
 			}), prev.pos("bl").adds(210, -20));
 			prev.tooltip = RichText.render("Reset to default");
 
