@@ -52,9 +52,10 @@ public class Fightview extends Widget {
     public final Map<Long, Widget> obinfo = new HashMap<>();
     public final Rellist lsdisp;
     public Relation current = null;
+	public boolean currentChanged = false;
     public Indir<Resource> blk, batk, iatk;
-    public double atkcs, atkct;
-	public Boolean cooldownUpdated = false;
+    public double atkcs, atkct, lastMoveCooldown, lastMoveCooldownSeconds;
+	public Boolean lastMoveUpdated = false;
     public Indir<Resource> lastact = null;
     public double lastuse = 0;
     public Mainrel curdisp;
@@ -72,6 +73,9 @@ public class Fightview extends Widget {
 	public Long lastDefenceDuration = null;
 	public double lastuse = 0;
 	public boolean invalid = false;
+
+	public double minAgi = 0D;
+	public double maxAgi = 2D;
 
         public Relation(long gobid) {
             this.gobid = gobid;
@@ -259,6 +263,8 @@ public class Fightview extends Widget {
 	lastact = act;
 	lastuse = Utils.rtime();
 	playCombatSoundEffect(lastact);
+	if (currentChanged) lastMoveUpdated = false;
+	currentChanged = false;
     }
     
     @RName("frv")
@@ -348,12 +354,14 @@ public class Fightview extends Widget {
 	if(rel != null) {
 	    add(curdisp = new Mainrel(rel));
 	}
+	currentChanged = true;
 	current = rel;
 		if (current != null) {
 			ui.gui.lastopponent = current.gobid;
 		}
 	layout();
 	updrel();
+
     }
     
     public void tick(double dt) {
@@ -447,7 +455,9 @@ public class Fightview extends Widget {
 	} else if(msg == "atkc") {
 	    atkcs = Utils.rtime();
 	    atkct = atkcs + (((Number)args[0]).doubleValue() * 0.06);
-		cooldownUpdated = true;
+		lastMoveCooldown = ((Number)args[0]).doubleValue();
+		lastMoveCooldownSeconds = lastMoveCooldown * 0.06;
+		lastMoveUpdated = true;
 	    return;
 	} else if(msg == "blk") {
 	    blk = n2r((Integer)args[0]);
