@@ -1458,6 +1458,9 @@ public class OptWnd extends Window {
 
 			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
 				treesScaleSlider.val = 100;
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::reloadTreeScale);
+				}
 				Utils.setprefi("treesScale", 100);
 			}), prev.pos("bl").adds(210, -20));
 			prev.tooltip = RichText.render("Reset to default");
