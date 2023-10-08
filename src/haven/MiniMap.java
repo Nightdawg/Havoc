@@ -298,15 +298,16 @@ public class MiniMap extends Widget {
 		this.sc = p2c(this.rc);
 	}
 
-	public void draw(GOut g) {
+	public void draw(GOut g, DisplayIcon disp) {
+		Tex icontex = disp.gob != null && disp.gob.knocked == Boolean.TRUE ? img.graytex : img.tex;
 	    if(col != null)
 		g.chcolor(col);
 	    else
 		g.chcolor();
 	    if(!img.rot)
-		g.image(img.tex, sc.sub(img.cc));
+		g.image(icontex, sc.sub(img.cc));
 	    else
-		g.rotimage(img.tex, sc, img.cc, -ang + img.ao);
+		g.rotimage(icontex, sc, img.cc, -ang + img.ao);
 	    if(notify) {
 		double t = (Utils.rtime() - stime) * 1.0;
 		if(t > 1) {
@@ -317,7 +318,7 @@ public class MiniMap extends Widget {
 		    g.usestate(new ColorMask(notifcol));
 		    g.chcolor(255, 255, 255, (int)Math.round(255 * a));
 		    if(!img.rot)
-			g.image(img.tex, sc.sub(img.cc.mul(f)), img.tex.sz().mul(f));
+			g.image(icontex, sc.sub(img.cc.mul(f)), img.tex.sz().mul(f));
 		    g.defstate();
 		}
 	    }
@@ -687,7 +688,7 @@ public class MiniMap extends Widget {
 	for(DisplayIcon disp : icons) {
 	    if((disp.sc == null) || filter(disp))
 		continue;
-	    disp.draw(g);
+	    disp.draw(g, disp);
 	}
 	g.chcolor();
     }

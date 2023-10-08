@@ -377,6 +377,28 @@ public class PUtils {
 	return(img);
     }
 
+	public static BufferedImage monochromizeCopy(BufferedImage img, Color col) {
+		ColorModel cm = img.getColorModel();
+		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		WritableRaster raster = img.copyData(null);
+		BufferedImage copy = new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+
+		Coord sz = Utils.imgsz(copy);
+		WritableRaster buf = copy.getRaster();
+		for(int y = 0; y < sz.y; y++) {
+			for(int x = 0; x < sz.x; x++) {
+				int r = buf.getSample(x, y, 0),
+						g = buf.getSample(x, y, 1),
+						b = buf.getSample(x, y, 2);
+				int val = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+				buf.setSample(x, y, 0, (col.getRed()   * val) / 255);
+				buf.setSample(x, y, 1, (col.getGreen() * val) / 255);
+				buf.setSample(x, y, 2, (col.getBlue()  * val) / 255);
+			}
+		}
+		return copy;
+	}
+
     public static interface Convolution {
 	public double cval(double td);
 	public double support();

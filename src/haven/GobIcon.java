@@ -56,6 +56,7 @@ public class GobIcon extends GAttrib {
 
     public static class Image {
 	public final Tex tex;
+	public final Tex graytex;
 	public Coord cc;
 	public boolean rot;
 	public double ao;
@@ -75,6 +76,7 @@ public class GobIcon extends GAttrib {
 		tex = new TexI(buf);
 	    }
 	    this.tex = tex;
+		this.graytex = new TexI(PUtils.monochromizeCopy(rimg.img, Color.WHITE));
 	    this.cc = tex.sz().div(2);
 	    byte[] data = rimg.kvdata.get("mm/rot");
 	    if(data != null) {
