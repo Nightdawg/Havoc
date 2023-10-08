@@ -136,7 +136,7 @@ public class GobIcon extends GAttrib {
                 Image img = cachegray.get(res);
                 if(img == null) {
                     Resource.Image rimg = res.get().layer(Resource.imgc);
-                    img = new Image(rimg, PUtils.monochromize(rimg.img, Color.WHITE));
+                    img = new Image(rimg, PUtils.monochromizeCopy(rimg.img, Color.WHITE));
                     cachegray.put(res, img);
                 }
                 this.imggray = img;
