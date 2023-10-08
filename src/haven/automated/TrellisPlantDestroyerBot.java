@@ -10,7 +10,7 @@ import java.util.Objects;
 
 import static haven.OCache.posres;
 
-public class TrellisDestroyer extends Window implements Runnable, AreaSelectCallback {
+public class TrellisPlantDestroyerBot extends Window implements Runnable, AreaSelectCallback {
     private final GameUI gui;
     private boolean stop;
     private boolean active = false;
@@ -19,21 +19,22 @@ public class TrellisDestroyer extends Window implements Runnable, AreaSelectCall
     private Coord se = null;
     Button startbutton = null;
 
-    public TrellisDestroyer(GameUI gui) {
-        super(new Coord(160, 50), "Trellis destroyer");
+    public TrellisPlantDestroyerBot(GameUI gui) {
+        super(new Coord(160, 50), "Trellis Plant Destroyer Bot", true);
         this.gui = gui;
         this.plantsToDestroy = new ArrayList<>();
 
-        add(new Button(60, "Area") {
+        Widget prev;
+        prev = add(new Button(100, "Select Area") {
             @Override
             public void click() {
                 gui.map.registerAreaSelect((AreaSelectCallback) this.parent);
                 gui.msg("Select are with trellises to destroy.");
                 gui.map.areaSelect = true;
             }
-        }, UI.scale(15, 15));
+        }, UI.scale(0, 10));
 
-        startbutton = add(new Button(60, "Start") {
+        startbutton = add(new Button(100, "Start") {
             @Override
             public void click() {
 
@@ -47,7 +48,8 @@ public class TrellisDestroyer extends Window implements Runnable, AreaSelectCall
                     this.change("Start");
                 }
             }
-        }, UI.scale(90, 15));
+        }, prev.pos("ur").adds(10, 0));
+        pack();
     }
 
     @Override
@@ -157,6 +159,10 @@ public class TrellisDestroyer extends Window implements Runnable, AreaSelectCall
         ui.gui.map.wdgmsg("click", Coord.z, ui.gui.map.player().rc.floor(posres), 1, 0);
         if (ui.gui.map.pfthread != null) {
             ui.gui.map.pfthread.interrupt();
+        }
+        if (gui.trellisPlantDestroyerBotThread != null) {
+            gui.trellisPlantDestroyerBotThread.interrupt();
+            gui.trellisPlantDestroyerBotThread = null;
         }
         this.destroy();
     }

@@ -128,6 +128,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public FishingBot fishingBot;
 	public Thread fishingThread;
 
+	public TrellisPlantDestroyerBot trellisPlantDestroyerBot;
+	public Thread trellisPlantDestroyerBotThread;
 	public OreCounter oreCounter;
 	public Thread oreCounterThread;
 	public Thread coracleScriptThread;
