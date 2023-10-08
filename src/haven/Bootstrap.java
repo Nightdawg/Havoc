@@ -135,7 +135,7 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
     }
 
 	public static byte[] gettoken(String user, String hostname) {
-		return AccountList.getToken(user, hostname);
+		return null;
 	}
 
 	public static void rottokens(String user, String hostname, boolean creat, boolean rm) {

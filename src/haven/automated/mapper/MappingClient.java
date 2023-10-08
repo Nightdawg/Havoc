@@ -54,7 +54,7 @@ public class MappingClient {
     public static MappingClient getInstance() {
 	synchronized (MappingClient.class) {
 	    if(INSTANCE == null) {
-		throw new IllegalStateException("MappingClient should be initialized first!");
+		return null;
 	    }
 	    return INSTANCE;
 	}

@@ -361,6 +361,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/Bots/TurnipBot");
 		makeLocal("paginae/nightdawg/Bots/TarKilnEmptierBot");
 		makeLocal("paginae/nightdawg/Bots/FishingBot");
+		makeLocal("paginae/nightdawg/Bots/TrellisPlantDestroyerBot");
 
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleAnimalDangerRadii");
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleCritterCircleAuras");
@@ -677,6 +678,20 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 						gui.fishingBot.reqdestroy();
 						gui.fishingBot = null;
 						gui.fishingThread = null;
+					}
+				}
+			} else if (ad[2].equals("TrellisPlantDestroyerBot")) {
+				if (gui.trellisPlantDestroyerBot == null && gui.trellisPlantDestroyerBotThread == null) {
+					gui.trellisPlantDestroyerBot = new TrellisPlantDestroyerBot(gui);
+					gui.add(gui.trellisPlantDestroyerBot, new Coord(gui.sz.x/2 - gui.trellisPlantDestroyerBot.sz.x/2, gui.sz.y/2 - gui.trellisPlantDestroyerBot.sz.y/2 - 200));
+					gui.trellisPlantDestroyerBotThread = new Thread(gui.trellisPlantDestroyerBot, "trellisPlantDestroyerBot");
+					gui.trellisPlantDestroyerBotThread.start();
+				} else {
+					if (gui.trellisPlantDestroyerBot != null) {
+						gui.trellisPlantDestroyerBot.stop();
+						gui.trellisPlantDestroyerBot.reqdestroy();
+						gui.trellisPlantDestroyerBot = null;
+						gui.trellisPlantDestroyerBotThread = null;
 					}
 				}
 			}

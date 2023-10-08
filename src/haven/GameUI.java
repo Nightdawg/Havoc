@@ -128,6 +128,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public FishingBot fishingBot;
 	public Thread fishingThread;
 
+	public TrellisPlantDestroyerBot trellisPlantDestroyerBot;
+	public Thread trellisPlantDestroyerBotThread;
 	public OreCounter oreCounter;
 	public Thread oreCounterThread;
 	public Thread coracleScriptThread;
@@ -875,10 +877,12 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		MapFile file;
 		try {
 		    file = MapFile.load(mapstore, mapfilename());
-			if(OptWnd.mapUploadBoolean) {
+			if(OptWnd.mapUploadBoolean && MappingClient.getInstance() != null) {
 				MappingClient.getInstance().ProcessMap(file, (m) -> {
-					if(m instanceof MapFile.PMarker && OptWnd.markerUploadBoolean) {
-						return ((MapFile.PMarker)m).color.equals(new Color(255, 115, 0, 255));
+					if(m instanceof MapFile.PMarker) {
+						Color markerColor = ((MapFile.PMarker)m).color;
+						Boolean isColorEnabled = OptWnd.colorCheckboxesMap.get(markerColor);
+						return isColorEnabled != null && isColorEnabled;
 					}
 					return false;
 				});

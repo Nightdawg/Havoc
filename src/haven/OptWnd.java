@@ -40,8 +40,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
 public class OptWnd extends Window {
@@ -1328,6 +1327,7 @@ public class OptWnd extends Window {
 	public static CheckBox tileSmoothingCheckBox;
 	public static CheckBox tileTransitionsCheckBox;
 	public static CheckBox flatCaveWallsCheckBox;
+	public static HSlider treesScaleSlider;
 	public class NDWorldGraphicsSettingsPanel extends Panel {
 		public NDWorldGraphicsSettingsPanel(Panel back) {
 			Widget prev;
@@ -1440,6 +1440,24 @@ public class OptWnd extends Window {
 						ui.sess.glob.map.invalidateAll();
 				}
 			}, prev.pos("bl").adds(0, 2));
+
+
+			prev = add(new Label("Trees Scale (Requires Reload):"), prev.pos("bl").adds(0, 10).x(0));
+			prev = add(treesScaleSlider = new HSlider(UI.scale(200), 10, 100, Utils.getprefi("treesScale", 100)) {
+				protected void attach(UI ui) {
+					super.attach(ui);
+					val = Utils.getprefi("treesScale", 100);
+				}
+				public void changed() {
+					Utils.setprefi("treesScale", val);
+				}
+			}, prev.pos("bl").adds(0, 6));
+
+			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				treesScaleSlider.val = 100;
+				Utils.setprefi("treesScale", 100);
+			}), prev.pos("bl").adds(210, -20));
+			prev.tooltip = RichText.render("Reset to default");
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForGraphicsSettingsStuff();
@@ -3409,10 +3427,14 @@ public class OptWnd extends Window {
 	public static CheckBox enableMapUploaderCheckbox;
 	public static boolean mapUploadBoolean = Utils.getprefb("enableMapUploader", false);
 	public static CheckBox enableLocationTrackingCheckbox;
-	public static boolean markerUploadBoolean = Utils.getprefb("enableMarkerUpload", false);
-	public static CheckBox enableMarkerUploadCheckbox;
 	public static boolean trackingEnableBoolean = Utils.getprefb("enableLocationTracking", false);
+	public static Map<Color, Boolean> colorCheckboxesMap = new HashMap<>();
 
+	static {
+		for (Color color : BuddyWnd.gc) {
+			colorCheckboxesMap.put(color, Utils.getprefb("enableMarkerUpload" + color.getRGB(), false));
+		}
+	}
 
 	public class NDWebMapIntegrationSettingsPanel extends Panel {
 		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
@@ -3441,15 +3463,6 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 8).x(12));
 
-			prev = add(enableMarkerUploadCheckbox = new CheckBox("Enable Markers Upload"){
-				{a = markerUploadBoolean;}
-				public void set(boolean val) {
-					Utils.setprefb("enableMarkerUpload", val);
-					markerUploadBoolean = val;
-					a = val;
-				}
-			}, prev.pos("bl").adds(0, 4));
-
 			prev = add(enableLocationTrackingCheckbox = new CheckBox("Enable Location Tracking"){
 				{a = trackingEnableBoolean;}
 				public void set(boolean val) {
@@ -3459,7 +3472,31 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 4));
 
+			prev = add(new Label("Markers to upload:"), prev.pos("bl").adds(0, 4));
 
+			for (Map.Entry<Color, Boolean> entry : colorCheckboxesMap.entrySet()) {
+				Color color = entry.getKey();
+				boolean isChecked = entry.getValue();
+
+				CheckBox colorCheckbox = new CheckBox(""){
+					{a = isChecked;}
+					@Override
+					public void draw(GOut g) {
+						g.chcolor(color);
+						g.frect(Coord.z.add(0, (sz.y - box.sz().y) / 2), box.sz());
+						g.chcolor();
+						if(state())
+							g.image(mark, Coord.z.add(0, (sz.y - mark.sz().y) / 2));
+					}
+
+					public void set(boolean val) {
+						Utils.setprefb("enableMarkerUpload" + color.getRGB(), val);
+						colorCheckboxesMap.put(color, val);
+						a = val;
+					}
+				};
+				prev = add(colorCheckbox, prev.pos("ur").adds(10, 0));
+			}
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 16).x(UI.scale(62)));
 
@@ -3762,7 +3799,8 @@ public class OptWnd extends Window {
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{Your Action Bar Keybinds are not affected by this setting.}", UI.scale(300));
 		enableMineSweeperCheckBox.tooltip = RichText.render("Enabling this will cause cave dust tiles to show the number of potential cave-ins surrounding them, just like in Minesweeper." +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{If a cave-in has been mined out, the tiles surrounding it will still drop cave dust, and they will still show a number on the ground. The cave dust tiles are pre-generated with the world. That's just how Loftar coded it.}" +
-				"\n$col[218,163,0]{Note:} $col[185,185,185]{You can still pick up the cave dust item off the ground. The numbers are affected only by the duration of the falling dust particles effect (aka dust rain), which can be set below}", UI.scale(300));
+				"\n$col[218,163,0]{Note:} $col[185,185,185]{You can still pick up the cave dust item off the ground. The numbers are affected only by the duration of the falling dust particles effect (aka dust rain), which can be set below}" +
+				"\n\n$col[200,0,0]{NOTE:} $col[185,185,185]{There's a bug with the falling dust particles, that we can't really \"fix\". If you mine them out on a level, the same particles can also show up on different levels or the overworld. If you want them to vanish, you can just relog, but they will despawn from their original location too.}", UI.scale(300));
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){
