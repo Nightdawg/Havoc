@@ -32,7 +32,7 @@ public class CookingRecipes extends Window {
         this.show = false;
         this.query = "";
         this.page = 1;
-        add(new TextEntry(700, query) {
+        add(new TextEntry(UI.scale(700), query) {
             @Override
             protected void changed() {
                 setQuery(this.buf.line());
@@ -280,34 +280,34 @@ public class CookingRecipes extends Window {
     public void draw(GOut g) {
         super.draw(g);
         g.chcolor(new Color(255, 255, 180, 120));
-        g.frect(new Coord(35, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(212, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(262, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(312, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(362, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(412, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(462, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(512, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(562, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(612, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(662, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(1000, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(1065, 73), UI.scale(new Coord(1, 620)));
-        g.frect(new Coord(1115, 73), UI.scale(new Coord(1, 620)));
+        g.frect(UI.scale(35, 73), UI.scale(1, 620));
+        g.frect(UI.scale(212, 73), UI.scale(1, 620));
+        g.frect(UI.scale(262, 73), UI.scale(1, 620));
+        g.frect(UI.scale(312, 73), UI.scale(1, 620));
+        g.frect(UI.scale(362, 73), UI.scale(1, 620));
+        g.frect(UI.scale(412, 73), UI.scale(1, 620));
+        g.frect(UI.scale(462, 73), UI.scale(1, 620));
+        g.frect(UI.scale(512, 73), UI.scale(1, 620));
+        g.frect(UI.scale(562, 73), UI.scale(1, 620));
+        g.frect(UI.scale(612, 73), UI.scale(1, 620));
+        g.frect(UI.scale(662, 73), UI.scale(1, 620));
+        g.frect(UI.scale(1000, 73), UI.scale(1, 620));
+        g.frect(UI.scale(1065, 73), UI.scale(1, 620));
+        g.frect(UI.scale(1115, 73), UI.scale(1, 620));
 
 
-        g.frect(new Coord(35, 73), UI.scale(new Coord(1080, 1)));
-        g.frect(new Coord(35, 93), UI.scale(new Coord(1080, 1)));
-        g.frect(new Coord(35, 152), UI.scale(new Coord(1080, 1)));
-        g.frect(new Coord(35, 213), UI.scale(new Coord(1080, 1)));
-        g.frect(new Coord(35, 273), UI.scale(new Coord(1080, 1)));
-        g.frect(new Coord(35, 333), UI.scale(new Coord(1080, 1)));
-        g.frect(new Coord(35, 393), UI.scale(new Coord(1080, 1)));
-        g.frect(new Coord(35, 453), UI.scale(new Coord(1080, 1)));
-        g.frect(new Coord(35, 513), UI.scale(new Coord(1080, 1)));
-        g.frect(new Coord(35, 573), UI.scale(new Coord(1080, 1)));
-        g.frect(new Coord(35, 633), UI.scale(new Coord(1080, 1)));
-        g.frect(new Coord(35, 693), UI.scale(new Coord(1080, 1)));
+        g.frect(UI.scale(35, 73), UI.scale(1080, 1));
+        g.frect(UI.scale(35, 93), UI.scale(1080, 1));
+        g.frect(UI.scale(35, 152), UI.scale(1080, 1));
+        g.frect(UI.scale(35, 213), UI.scale(1080, 1));
+        g.frect(UI.scale(35, 273), UI.scale(1080, 1));
+        g.frect(UI.scale(35, 333), UI.scale(1080, 1));
+        g.frect(UI.scale(35, 393), UI.scale(1080, 1));
+        g.frect(UI.scale(35, 453), UI.scale(1080, 1));
+        g.frect(UI.scale(35, 513), UI.scale(1080, 1));
+        g.frect(UI.scale(35, 573), UI.scale(1080, 1));
+        g.frect(UI.scale(35, 633), UI.scale(1080, 1));
+        g.frect(UI.scale(35, 693), UI.scale(1080, 1));
 
 
         g.chcolor(new Color(255, 255, 255, 255));
