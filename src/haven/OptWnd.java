@@ -1327,6 +1327,7 @@ public class OptWnd extends Window {
 	public static CheckBox tileSmoothingCheckBox;
 	public static CheckBox tileTransitionsCheckBox;
 	public static CheckBox flatCaveWallsCheckBox;
+	public static HSlider treesScaleSlider;
 	public class NDWorldGraphicsSettingsPanel extends Panel {
 		public NDWorldGraphicsSettingsPanel(Panel back) {
 			Widget prev;
@@ -1439,6 +1440,24 @@ public class OptWnd extends Window {
 						ui.sess.glob.map.invalidateAll();
 				}
 			}, prev.pos("bl").adds(0, 2));
+
+
+			prev = add(new Label("Trees Scale (Requires Reload):"), prev.pos("bl").adds(0, 10).x(0));
+			prev = add(treesScaleSlider = new HSlider(UI.scale(200), 10, 100, Utils.getprefi("treesScale", 100)) {
+				protected void attach(UI ui) {
+					super.attach(ui);
+					val = Utils.getprefi("treesScale", 100);
+				}
+				public void changed() {
+					Utils.setprefi("treesScale", val);
+				}
+			}, prev.pos("bl").adds(0, 6));
+
+			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				treesScaleSlider.val = 100;
+				Utils.setprefi("treesScale", 100);
+			}), prev.pos("bl").adds(210, -20));
+			prev.tooltip = RichText.render("Reset to default");
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForGraphicsSettingsStuff();
