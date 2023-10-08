@@ -1,6 +1,7 @@
 package haven;
 
 import haven.render.*;
+import haven.res.lib.tree.TreeScale;
 
 import java.awt.*;
 import java.util.List;
@@ -114,15 +115,25 @@ public class CollisionBox extends SlottedNode implements Rendered {
 	}
 
 	private static Model getModel(Gob gob) {
-		if(gob.getres() != null){
-		}
-		Model model;
-
+		Model model = null;
 		Coord bboxa = new Coord(0,0);
 		Coord bboxb = new Coord(0,0);
 		Resource res = getResource(gob);
+		TreeScale treeScale = null;
+		float boxScale = 1.0f;
+		boolean growingTreeOrBush = false;
+		if ((res.name.startsWith("gfx/terobjs/trees") && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk")) || res.name.startsWith("gfx/terobjs/bushes")) {
+			treeScale = gob.getattr(TreeScale.class);
+			if (treeScale != null) {
+				if (treeScale.scale != 1.0f) {
+					boxScale = 1f / treeScale.scale;
+					growingTreeOrBush = true;
+				}
+			}
+		}
 		synchronized (MODEL_CACHE) {
-			model = MODEL_CACHE.get(res);
+			if (!growingTreeOrBush)
+				model = MODEL_CACHE.get(res);
 			if(model == null) {
 				List<List<Coord3f>> polygons = new LinkedList<>();
 
@@ -130,10 +141,10 @@ public class CollisionBox extends SlottedNode implements Rendered {
 				if(negs != null) {
 					for (Resource.Neg neg : negs) {
 						List<Coord3f> box = new LinkedList<>();
-						box.add(new Coord3f(neg.ac.x, -neg.ac.y, Z));
-						box.add(new Coord3f(neg.bc.x, -neg.ac.y, Z));
-						box.add(new Coord3f(neg.bc.x, -neg.bc.y, Z));
-						box.add(new Coord3f(neg.ac.x, -neg.bc.y, Z));
+						box.add(new Coord3f(neg.ac.x*boxScale, -neg.ac.y*boxScale, Z));
+						box.add(new Coord3f(neg.bc.x*boxScale, -neg.ac.y*boxScale, Z));
+						box.add(new Coord3f(neg.bc.x*boxScale, -neg.bc.y*boxScale, Z));
+						box.add(new Coord3f(neg.ac.x*boxScale, -neg.bc.y*boxScale, Z));
 
 						bboxa.x = neg.ac.x;
 						bboxa.y = neg.ac.y;
@@ -206,7 +217,8 @@ public class CollisionBox extends SlottedNode implements Rendered {
 						VertexArray va = new VertexArray(LAYOUT, vbo);
 						model = new Model(Model.Mode.LINES, va, null);
 						model.bbox = new Model.BoundingBox(bboxa, bboxb);
-						MODEL_CACHE.put(res, model);
+						if (!growingTreeOrBush)
+							MODEL_CACHE.put(res, model);
 					}
 				}
 				if(!polygons.isEmpty()) {
@@ -222,7 +234,8 @@ public class CollisionBox extends SlottedNode implements Rendered {
 
 					model = new Model(Model.Mode.LINES, va, null);
 					model.bbox = new Model.BoundingBox(bboxa, bboxb);
-					MODEL_CACHE.put(res, model);
+					if (!growingTreeOrBush)
+						MODEL_CACHE.put(res, model);
 				}
 			}
 		}
