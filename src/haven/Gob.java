@@ -2550,6 +2550,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					float scale = treeScale.originalScale;
 					delattr(TreeScale.class);
 					setattr(new TreeScale(this, (OptWnd.treesScaleSlider.val/100f) * scale, scale));
+					drawableUpdated();
 				}
 			}
 		}
