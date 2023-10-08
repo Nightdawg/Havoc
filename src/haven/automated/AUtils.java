@@ -345,13 +345,31 @@ public class AUtils {
         try {
             Coord playerCoord = gui.map.player().rc.floor(tilesz);
             MCache.Grid grid = gui.ui.sess.glob.map.getgrid(playerCoord.div(cmaps));
-            float height = 0;
-            for (float z : grid.z) {
-                height = height + z;
+            float wholeGridHeight = 0;
+            float[] quarterHeights = new float[4];
+            int gridSize = 100;
+            int halfGridSize = gridSize / 2;
+            for (int i = 0; i < gridSize; i++) {
+                for (int j = 0; j < gridSize; j++) {
+                    wholeGridHeight += grid.z[i * gridSize + j];
+                    int quarterIndex;
+                    if(i < halfGridSize) {
+                        quarterIndex = (j < halfGridSize) ? 0 : 1;
+                    } else {
+                        quarterIndex = (j < halfGridSize) ? 2 : 3;
+                    }
+                    quarterHeights[quarterIndex] += grid.z[i * gridSize + j];
+                }
             }
-            gui.msg("Current grid height is: " + height / 10000);
+            String[] quarterNames = {"N-W", "N-E", "S-W", "S-E"};
+            StringBuilder message = new StringBuilder("Whole grid average height is: " + wholeGridHeight / 10000 + ", ");
+            for (int i = 0; i < 4; i++) {
+                message.append("\n").append(quarterNames[i]).append(" quarter average height is: ").append(quarterHeights[i] / 2500).append(", ");
+            }
+            gui.msg(message.toString());
         } catch (Loading ignored) {}
     }
+
 
     public static ArrayList<Gob> getGobs(String name, GameUI gui) {
         ArrayList<Gob> gobs = new ArrayList<>();
