@@ -24,7 +24,7 @@ public class OceanScoutBot extends Window implements Runnable {
     private boolean active = false;
 
     public OceanScoutBot(GameUI gui) {
-        super(UI.scale(new Coord(274, 96)), "Ocean Scouting Bot");
+        super(UI.scale(UI.scale(274, 96)), "Ocean Scouting Bot");
         this.gui = gui;
         checkClock = 0;
         stop = false;

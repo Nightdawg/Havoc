@@ -16,7 +16,7 @@ public class TarKilnCleanerBot extends Window implements Runnable {
     private boolean active;
 
     public TarKilnCleanerBot(GameUI gui) {
-        super(new Coord(150, 50), "Tar Kiln Emptier");
+        super(UI.scale(150, 50), "Tar Kiln Emptier");
         this.gui = gui;
         stop = false;
         active = false;
@@ -33,7 +33,7 @@ public class TarKilnCleanerBot extends Window implements Runnable {
             }
         };
 
-        add(activeBox, new Coord(40, 15));
+        add(activeBox, UI.scale(40, 15));
     }
 
     @Override

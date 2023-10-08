@@ -20,12 +20,12 @@ public class TrellisPlantDestroyerBot extends Window implements Runnable, AreaSe
     Button startbutton = null;
 
     public TrellisPlantDestroyerBot(GameUI gui) {
-        super(new Coord(160, 50), "Trellis Plant Destroyer Bot", true);
+        super(UI.scale(160, 50), "Trellis Plant Destroyer Bot", true);
         this.gui = gui;
         this.plantsToDestroy = new ArrayList<>();
 
         Widget prev;
-        prev = add(new Button(100, "Select Area") {
+        prev = add(new Button(UI.scale(100), "Select Area") {
             @Override
             public void click() {
                 gui.map.registerAreaSelect((AreaSelectCallback) this.parent);
@@ -34,7 +34,7 @@ public class TrellisPlantDestroyerBot extends Window implements Runnable, AreaSe
             }
         }, UI.scale(0, 10));
 
-        startbutton = add(new Button(100, "Start") {
+        startbutton = add(new Button(UI.scale(100), "Start") {
             @Override
             public void click() {
 

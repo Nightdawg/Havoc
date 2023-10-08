@@ -32,13 +32,13 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
     private int stage;
 
     public TurnipBot(GameUI gui) {
-        super(new Coord(300, 200), "TurnipFarmer");
+        super(UI.scale((250), 130), "TurnipFarmer");
         this.gui = gui;
         this.fields = new ArrayList<>();
         currentField = 0;
         stage = 0;
 
-        add(new Button(60, "Field") {
+        add(new Button(UI.scale(60), "Field") {
             @Override
             public void click() {
                 selectGranary = false;
@@ -48,7 +48,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             }
         }, UI.scale(15, 15));
 
-        add(new Button(60, "Granary") {
+        add(new Button(UI.scale(60), "Granary") {
             @Override
             public void click() {
                 selectGranary = true;
@@ -58,7 +58,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
             }
         }, UI.scale(80, 15));
 
-        add(new Button(50, "Reset") {
+        add(new Button(UI.scale(50), "Reset") {
             @Override
             public void click() {
                 fields.clear();
@@ -88,7 +88,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
                 harvest = val;
                 a = val;
             }
-        }, UI.scale(70, 80));
+        }, UI.scale(30, 80));
 
         add(new CheckBox("Plant") {
             {
@@ -99,11 +99,11 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
                 plant = val;
                 a = val;
             }
-        }, UI.scale(140, 80));
+        }, UI.scale(100, 80));
 
 
 
-        startButton = add(new Button(50, "Start") {
+        startButton = add(new Button(UI.scale(50), "Start") {
             @Override
             public void click() {
                 if (fields.size() > 0 && granary != null) {
@@ -117,7 +117,7 @@ public class TurnipBot extends Window implements Runnable, AreaSelectCallback {
                     gui.error("Need to select at least one field and granary.");
                 }
             }
-        }, UI.scale(150, 115));
+        }, UI.scale(160, 80));
 
     }
 

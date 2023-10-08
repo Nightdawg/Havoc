@@ -19,13 +19,13 @@ public class FishingBot extends Window implements Runnable {
     private Coord fishingDir;
 
     public FishingBot(GameUI gui) {
-        super(new Coord(120, 140), "FishingBot");
+        super(UI.scale(120, 140), "FishingBot");
         this.gui = gui;
         this.stop = false;
         this.active = false;
         fishingDir = new Coord(0, -44);
 
-        startButton = add(new Button(50, "Start") {
+        startButton = add(new Button(UI.scale(50), "Start") {
             @Override
             public void click() {
               active = !active;
@@ -37,37 +37,37 @@ public class FishingBot extends Window implements Runnable {
             }
         }, UI.scale(30, 100));
 
-        Button northDirection = new Button(25, "N") {
+        Button northDirection = new Button(UI.scale(25), "N") {
             @Override
             public void click() {
                 changeDirection(1);
             }
         };
-        add(northDirection, new Coord(45, 10));
-        Button eastDirection = new Button(25, "E") {
+        add(northDirection, UI.scale(45, 10));
+        Button eastDirection = new Button(UI.scale(25), "E") {
             @Override
             public void click() {
                 changeDirection(2);
             }
         };
-        add(eastDirection, new Coord(75, 35));
-        Button southDirection = new Button(25, "S") {
+        add(eastDirection, UI.scale(75, 35));
+        Button southDirection = new Button(UI.scale(25), "S") {
             @Override
             public void click() {
                 changeDirection(3);
             }
         };
-        add(southDirection, new Coord(45, 60));
-        Button westDirection = new Button(25, "W") {
+        add(southDirection, UI.scale(45, 60));
+        Button westDirection = new Button(UI.scale(25), "W") {
             @Override
             public void click() {
                 changeDirection(4);
             }
         };
-        add(westDirection, new Coord(15, 35));
+        add(westDirection, UI.scale(15, 35));
 
         fishingDirLabel = new Label("N");
-        add(fishingDirLabel, new Coord(52, 38));
+        add(fishingDirLabel, UI.scale(52, 38));
         fishingDirLabel.tooltip = RichText.render("Choose water direction. 4 Tiles in front of player.", UI.scale(300));
     }
 

@@ -25,7 +25,7 @@ public class CleanupBot extends Window implements Runnable {
 
 
     public CleanupBot(GameUI gui) {
-        super(new Coord(220, 105), "Cleanup Bot");
+        super(UI.scale(220, 105), "Cleanup Bot");
         this.gui = gui;
         stop = false;
         chopBushes = false;
@@ -44,7 +44,7 @@ public class CleanupBot extends Window implements Runnable {
                 a = val;
             }
         };
-        add(bushcheckBox, new Coord(10, 10));
+        add(bushcheckBox, UI.scale(10, 10));
         treecheckBox = new CheckBox("Trees") {
             {
                 a = chopTrees;
@@ -55,7 +55,7 @@ public class CleanupBot extends Window implements Runnable {
                 a = val;
             }
         };
-        add(treecheckBox, new Coord(10, 30));
+        add(treecheckBox, UI.scale(10, 30));
         rockcheckBox = new CheckBox("Rocks") {
             {
                 a = chipRocks;
@@ -66,7 +66,7 @@ public class CleanupBot extends Window implements Runnable {
                 a = val;
             }
         };
-        add(rockcheckBox, new Coord(10, 50));
+        add(rockcheckBox, UI.scale(10, 50));
         stumpcheckBox = new CheckBox("Stumps") {
             {
                 a = destroyStumps;
@@ -77,7 +77,7 @@ public class CleanupBot extends Window implements Runnable {
                 a = val;
             }
         };
-        add(stumpcheckBox, new Coord(10, 70));
+        add(stumpcheckBox, UI.scale(10, 70));
 
         soilcheckBox = new CheckBox("Soil") {
             {
@@ -90,9 +90,9 @@ public class CleanupBot extends Window implements Runnable {
             }
         };
 
-        add(soilcheckBox, new Coord(90, 10));
+        add(soilcheckBox, UI.scale(90, 10));
 
-        activeButton = new Button(50, "Start") {
+        activeButton = new Button(UI.scale(50), "Start") {
             @Override
             public void click() {
                 active = !active;
@@ -104,7 +104,7 @@ public class CleanupBot extends Window implements Runnable {
                 }
             }
         };
-        add(activeButton, new Coord(120, 70));
+        add(activeButton, UI.scale(120, 70));
     }
 
     @Override

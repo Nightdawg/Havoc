@@ -32,7 +32,7 @@ public class TunnelerBot extends Window implements Runnable {
     private Coord currentAnchorColumn;
 
     public TunnelerBot(GameUI gui) {
-        super(new Coord(120, 185), "Auto Tunneler");
+        super(UI.scale(120, 185), "Auto Tunneler");
         this.gui = gui;
         stop = false;
         map = gui.map.glob.map;
@@ -40,37 +40,37 @@ public class TunnelerBot extends Window implements Runnable {
         stage = 0;
         autoMineActive = false;
 
-        Button northDirection = new Button(25, "N") {
+        Button northDirection = new Button(UI.scale(25), "N") {
             @Override
             public void click() {
                 changeDirection(1);
             }
         };
-        add(northDirection, new Coord(45, 10));
-        Button eastDirection = new Button(25, "E") {
+        add(northDirection, UI.scale(45, 10));
+        Button eastDirection = new Button(UI.scale(25), "E") {
             @Override
             public void click() {
                 changeDirection(2);
             }
         };
-        add(eastDirection, new Coord(75, 35));
-        Button southDirection = new Button(25, "S") {
+        add(eastDirection, UI.scale(75, 35));
+        Button southDirection = new Button(UI.scale(25), "S") {
             @Override
             public void click() {
                 changeDirection(3);
             }
         };
-        add(southDirection, new Coord(45, 60));
-        Button westDirection = new Button(25, "W") {
+        add(southDirection, UI.scale(45, 60));
+        Button westDirection = new Button(UI.scale(25), "W") {
             @Override
             public void click() {
                 changeDirection(4);
             }
         };
-        add(westDirection, new Coord(15, 35));
+        add(westDirection, UI.scale(15, 35));
 
         miningDirectionLabel = new Label("N");
-        add(miningDirectionLabel, new Coord(52, 38));
+        add(miningDirectionLabel, UI.scale(52, 38));
         miningDirectionLabel.tooltip = RichText.render("Choose mining direction N-E-S-W (on map)", UI.scale(300));
 
         mineToTheLeftCheckbox = new CheckBox("Left") {
@@ -84,7 +84,7 @@ public class TunnelerBot extends Window implements Runnable {
                 resetParams();
             }
         };
-        add(mineToTheLeftCheckbox, new Coord(15, 95));
+        add(mineToTheLeftCheckbox, UI.scale(15, 95));
         mineToTheLeftCheckbox.tooltip = RichText.render("Mine left branch near every column.\nIf disabled but other option (right) is\nenabled still need to mine 1 tile this way.", UI.scale(300));
 
         mineToTheRightCheckbox = new CheckBox("Right") {
@@ -98,7 +98,7 @@ public class TunnelerBot extends Window implements Runnable {
                 resetParams();
             }
         };
-        add(mineToTheRightCheckbox, new Coord(60, 95));
+        add(mineToTheRightCheckbox, UI.scale(60, 95));
         mineToTheRightCheckbox.tooltip = RichText.render("Mine right branch near every column.", UI.scale(300));
 
         CheckBox roadBox = new CheckBox("Autoroad") {
@@ -111,9 +111,9 @@ public class TunnelerBot extends Window implements Runnable {
                 a = val;
             }
         };
-        add(roadBox, new Coord(15, 125));
+        add(roadBox, UI.scale(15, 125));
 
-        mineButton = new Button(100, "Start Mining") {
+        mineButton = new Button(UI.scale(100), "Start Mining") {
             @Override
             public void click() {
                 autoMineActive = !autoMineActive;
@@ -124,7 +124,7 @@ public class TunnelerBot extends Window implements Runnable {
                 }
             }
         };
-        add(mineButton, new Coord(10, 145));
+        add(mineButton, UI.scale(10, 145));
     }
 
     @Override
