@@ -1442,7 +1442,7 @@ public class OptWnd extends Window {
 			}, prev.pos("bl").adds(0, 2));
 
 
-			prev = add(new Label("Trees Scale (Requires Reload):"), prev.pos("bl").adds(0, 10).x(0));
+			prev = add(new Label("Trees Scale:"), prev.pos("bl").adds(0, 10).x(0));
 			prev = add(treesScaleSlider = new HSlider(UI.scale(200), 10, 100, Utils.getprefi("treesScale", 100)) {
 				protected void attach(UI ui) {
 					super.attach(ui);
@@ -1450,6 +1450,9 @@ public class OptWnd extends Window {
 				}
 				public void changed() {
 					Utils.setprefi("treesScale", val);
+					if (ui != null && ui.gui != null) {
+						ui.sess.glob.oc.gobAction(Gob::reloadTreeScale);
+					}
 				}
 			}, prev.pos("bl").adds(0, 6));
 

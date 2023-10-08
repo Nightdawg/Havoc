@@ -14,12 +14,20 @@ import java.util.*;
 @haven.FromResource(name = "lib/tree", version = 14)
 public class TreeScale extends GAttrib implements Gob.SetupMod {
     public final float scale;
+    public float originalScale = 1.0f;
     public final Location mod;
 
     public TreeScale(Gob gob, float scale) {
 	super(gob);
 	this.scale = scale;
 	this.mod = Tree.mkscale(scale);
+    }
+
+    public TreeScale(Gob gob, float scale, float originalScale) {
+        super(gob);
+        this.scale = scale;
+        this.originalScale = originalScale;
+        this.mod = Tree.mkscale(scale);
     }
 
     public Pipe.Op placestate() {

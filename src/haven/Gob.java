@@ -31,6 +31,7 @@ import haven.automated.mapper.MappingClient;
 import haven.render.*;
 import haven.render.gl.GLObject;
 import haven.res.gfx.fx.msrad.MSRad;
+import haven.res.lib.tree.TreeScale;
 import haven.sprites.*;
 
 import javax.sound.sampled.AudioFormat;
@@ -2537,6 +2538,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (Gob.listHighlighted.contains(id)) {
 			Gob.listHighlighted.remove(id);
 			delattr(GobPermanentHighlight.class);
+		}
+	}
+
+	public void reloadTreeScale(){
+		TreeScale treeScale = null;
+		if (getres() != null) {
+			if ((getres().name.startsWith("gfx/terobjs/trees") && !getres().name.endsWith("log") && !getres().name.endsWith("oldtrunk")) || getres().name.startsWith("gfx/terobjs/bushes")) {
+				treeScale = getattr(TreeScale.class);
+				if (treeScale != null) {
+					float scale = treeScale.originalScale;
+					delattr(TreeScale.class);
+					setattr(new TreeScale(this, (OptWnd.treesScaleSlider.val/100f) * scale, scale));
+				}
+			}
 		}
 	}
 }
