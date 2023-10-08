@@ -156,8 +156,6 @@ public abstract class SListWidget<I, W extends Widget> extends Widget {
 			int len = this.text.charat(sz.x - tx - foundry().strsize("...").x);
 			this.text = foundry().render(text.substring(0, len) + "...");
 		    }
-		}
-		if (this.textTex == null) {
 			textTex = PUtils.strokeTex(this.text);
 		}
 		g.image(this.textTex, Coord.of(tx, (sz.y - this.textTex.sz().y) / 2));
