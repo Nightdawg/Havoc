@@ -158,7 +158,7 @@ public abstract class SListWidget<I, W extends Widget> extends Widget {
 		    }
 			textTex = PUtils.strokeTex(this.text);
 		}
-		g.image(this.textTex, Coord.of(tx, (sz.y - this.textTex.sz().y) / 2));
+		g.image(this.textTex, Coord.of(tx, (sz.y - this.textTex.sz().y) / 2 - UI.scale(2)));
 	    } catch(Loading l) {
 		Tex missing = foundry().render("...").tex();
 		g.image(missing, Coord.of(sz.y + UI.scale(5), (sz.y - missing.sz().y) / 2));
