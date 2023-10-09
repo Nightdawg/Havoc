@@ -299,7 +299,7 @@ public class MiniMap extends Widget {
 	}
 
 	public void draw(GOut g, DisplayIcon disp) {
-		Tex icontex = disp.gob != null && !gob.getres().name.equals("gfx/borka/body") && disp.gob.knocked == Boolean.TRUE ? img.graytex : img.tex;
+		Tex icontex = disp.gob != null && gob.getres() != null && !gob.getres().name.equals("gfx/borka/body") && disp.gob.knocked == Boolean.TRUE ? img.graytex : img.tex;
 	    if(col != null)
 		g.chcolor(col);
 	    else
