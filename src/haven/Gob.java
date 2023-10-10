@@ -31,6 +31,7 @@ import haven.automated.mapper.MappingClient;
 import haven.render.*;
 import haven.render.gl.GLObject;
 import haven.res.gfx.fx.msrad.MSRad;
+import haven.res.lib.svaj.GobSvaj;
 import haven.res.lib.tree.TreeScale;
 import haven.sprites.*;
 
@@ -2550,6 +2551,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					delattr(TreeScale.class);
 					setattr(new TreeScale(this, (OptWnd.treesAndBushesScaleSlider.val/100f) * scale, scale));
 					drawableUpdated();
+				}
+			}
+		}
+	}
+
+	public void reloadTreeSwaying(){
+		GobSvaj gobSvaj = null;
+		if (getres() != null) {
+			if ((getres().name.startsWith("gfx/terobjs/trees") && !getres().name.endsWith("log") && !getres().name.endsWith("oldtrunk")) || getres().name.startsWith("gfx/terobjs/bushes")) {
+				gobSvaj = getattr(GobSvaj.class);
+				if (gobSvaj != null && (OptWnd.disableTreeAndBushSwayingCheckBox.a)) {
+					delattr(GobSvaj.class);
+				} else if (!OptWnd.disableTreeAndBushSwayingCheckBox.a) {
+					setattr(new GobSvaj(this));
 				}
 			}
 		}

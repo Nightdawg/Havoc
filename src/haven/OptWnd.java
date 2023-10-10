@@ -1328,6 +1328,7 @@ public class OptWnd extends Window {
 	public static CheckBox tileTransitionsCheckBox;
 	public static CheckBox flatCaveWallsCheckBox;
 	public static HSlider treesAndBushesScaleSlider;
+	public static CheckBox disableTreeAndBushSwayingCheckBox;
 	public class NDWorldGraphicsSettingsPanel extends Panel {
 		public NDWorldGraphicsSettingsPanel(Panel back) {
 			Widget prev;
@@ -1456,7 +1457,7 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 6));
 
-			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+			add(new Button(UI.scale(70), "Reset", false).action(() -> {
 				treesAndBushesScaleSlider.val = 100;
 				if (ui != null && ui.gui != null) {
 					ui.sess.glob.oc.gobAction(Gob::reloadTreeScale);
@@ -1464,6 +1465,16 @@ public class OptWnd extends Window {
 				Utils.setprefi("treesAndBushesScale", 100);
 			}), prev.pos("bl").adds(210, -20));
 			prev.tooltip = RichText.render("Reset to default");
+
+			prev = add(disableTreeAndBushSwayingCheckBox = new CheckBox("Disable Tree & Bush Swaying"){
+				{a = Utils.getprefb("disableTreeAndBushSwaying", false);}
+				public void set(boolean val) {
+					Utils.setprefb("disableTreeAndBushSwaying", val);
+					a = val;
+					if (ui != null && ui.gui != null)
+						ui.sess.glob.oc.gobAction(Gob::reloadTreeSwaying);
+				}
+			}, prev.pos("bl").adds(12, 2));
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForGraphicsSettingsStuff();
@@ -3874,6 +3885,7 @@ public class OptWnd extends Window {
 		tileSmoothingCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		showMineSupportRadiiCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		showMineSupportSafeTilesCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
+		disableTreeAndBushSwayingCheckBox.tooltip = RichText.render("This can improve your the FPS.", UI.scale(300));
 	}
 
 	private void setTooltipsForHidingSettingsStuff(){
