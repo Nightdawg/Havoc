@@ -427,52 +427,52 @@ public class RenderTree implements RenderList.Adapter, Disposable {
 	    return(parent);
 	}
 
-	public TreeSlot add(Node n, Pipe.Op state) {
-	    try(Locked lk = tree.lock()) {
-		if((parent != null) && (pidx < 0))
-		    throw(new SlotRemoved("adding " + String.valueOf(n), this));
-		TreeSlot ch = new TreeSlot(tree, this, n);
-		ch.cstate = state;
-		addch(ch);
-		synchronized(tree.clients) {
-		    ListIterator<Client<?>> it = tree.clients.listIterator();
-		    try {
-			while(it.hasNext()) {
-			    Client<?> cl = it.next();
-			    cl.added(ch);
+		public TreeSlot add(Node n, Pipe.Op state) {
+			try (Locked lk = tree.lock()) {
+				if ((parent != null) && (pidx < 0))
+					throw (new SlotRemoved("adding " + String.valueOf(n), this));
+				TreeSlot ch = new TreeSlot(tree, this, n);
+				ch.cstate = state;
+				addch(ch);
+				synchronized (tree.clients) {
+					ListIterator<Client<?>> it = tree.clients.listIterator();
+					try {
+						while (it.hasNext()) {
+							Client<?> cl = it.next();
+							cl.added(ch);
+						}
+					} catch (RuntimeException e) {
+						try {
+							removech(ch);
+							it.previous();
+							while (it.hasPrevious()) {
+								Client<?> cl = it.previous();
+								cl.removed(ch);
+							}
+						} catch (RuntimeException e2) {
+							Error err = new Error("Unexpected non-local exit", e2);
+							err.addSuppressed(e);
+							throw (err);
+						}
+						throw (e);
+					}
+				}
+				if (n != null) {
+					try {
+						n.added(ch);
+					} catch (RuntimeException e) {
+						try {
+							ch.remove();
+						} catch (Error e2) {
+							e2.addSuppressed(e);
+							throw (e2);
+						}
+						throw (e);
+					}
+				}
+				return (ch);
 			}
-		    } catch(RuntimeException e) {
-			try {
-			    removech(ch);
-			    it.previous();
-			    while(it.hasPrevious()) {
-				Client<?> cl = it.previous();
-				cl.removed(ch);
-			    }
-			} catch(RuntimeException e2) {
-			    Error err = new Error("Unexpected non-local exit", e2);
-			    err.addSuppressed(e);
-			    throw(err);
-			}
-			throw(e);
-		    }
 		}
-		if(n != null) {
-		    try {
-			n.added(ch);
-		    } catch(RuntimeException e) {
-			try {
-			    ch.remove();
-			} catch(Error e2) {
-			    e2.addSuppressed(e);
-			    throw(e2);
-			}
-			throw(e);
-		    }
-		}
-		return(ch);
-	    }
-	}
 
 	public void clear() {
 	    try(Locked lk = tree.lock()) {

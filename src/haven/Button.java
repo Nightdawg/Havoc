@@ -39,6 +39,14 @@ public class Button extends SIWidget {
     public static final BufferedImage dt = Resource.loadsimg("gfx/hud/buttons/tbtn/dtex");
     public static final BufferedImage ut = Resource.loadsimg("gfx/hud/buttons/tbtn/utex");
     public static final BufferedImage bm = Resource.loadsimg("gfx/hud/buttons/tbtn/mid");
+
+	public static final BufferedImage blSimple = Resource.loadsimg("gfx/hud/buttons/simplified/left");
+	public static final BufferedImage brSimple = Resource.loadsimg("gfx/hud/buttons/simplified/right");
+	public static final BufferedImage btSimple = Resource.loadsimg("gfx/hud/buttons/simplified/top");
+	public static final BufferedImage bbSimple = Resource.loadsimg("gfx/hud/buttons/simplified/bottom");
+	public static final BufferedImage dtSimple = Resource.loadsimg("gfx/hud/buttons/simplified/dtex");
+	public static final BufferedImage utSimple = Resource.loadsimg("gfx/hud/buttons/simplified/utex");
+	public static final BufferedImage bmSimple = Resource.loadsimg("gfx/hud/buttons/simplified/mid");
     public static final int hs = bl.getHeight(), hl = bm.getHeight();
     public static final Resource click = Loading.waitfor(Resource.local().load("sfx/hud/btn"));
     public static final Audio.Clip clbtdown = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "down");
@@ -49,7 +57,7 @@ public class Button extends SIWidget {
     public BufferedImage cont;
     public Runnable action = null;
     static Text.Foundry tf = new Text.Foundry(Text.serif.deriveFont(Font.BOLD, UI.scale(12f))).aa(true);
-    static Text.Furnace nf = new PUtils.BlurFurn(new PUtils.TexFurn(tf, Window.ctex), 1, 1, new Color(80, 40, 0));
+    static Text.Furnace nf = new PUtils.BlurFurn(new PUtils.TexFurn(tf, Window.ctex), 1, 1,  Window.useAlternativeUi ? new Color(33, 29, 25) : new Color(80, 40, 0));
     private boolean a = false, dis = false;
     private UI.Grab d = null;
 	
@@ -123,19 +131,19 @@ public class Button extends SIWidget {
 	Graphics g = img.getGraphics();
 	int yo = lg?((hl - hs) / 2):0;
 
-	g.drawImage(a?dt:ut, UI.scale(4), yo + UI.scale(4), sz.x - UI.scale(8), hs - UI.scale(8), null);
+	g.drawImage(Window.useAlternativeUi ? a?dtSimple:utSimple : a?dt:ut, UI.scale(4), yo + UI.scale(4), sz.x - UI.scale(8), hs - UI.scale(8), null);
 
 	Coord tc = sz.sub(Utils.imgsz(cont)).div(2);
 	if(a)
 	    tc = tc.add(UI.scale(1), UI.scale(1));
 	g.drawImage(cont, tc.x, tc.y, null);
 
-	g.drawImage(bl, 0, yo, null);
-	g.drawImage(br, sz.x - br.getWidth(), yo, null);
-	g.drawImage(bt, bl.getWidth(), yo, sz.x - bl.getWidth() - br.getWidth(), bt.getHeight(), null);
-	g.drawImage(bb, bl.getWidth(), yo + hs - bb.getHeight(), sz.x - bl.getWidth() - br.getWidth(), bb.getHeight(), null);
+	g.drawImage(Window.useAlternativeUi ? blSimple : bl, 0, yo, null);
+	g.drawImage(Window.useAlternativeUi ? brSimple : br, sz.x - br.getWidth(), yo, null);
+	g.drawImage(Window.useAlternativeUi ? btSimple : bt, bl.getWidth(), yo, sz.x - bl.getWidth() - br.getWidth(), bt.getHeight(), null);
+	g.drawImage(Window.useAlternativeUi ? bbSimple : bb, bl.getWidth(), yo + hs - bb.getHeight(), sz.x - bl.getWidth() - br.getWidth(), bb.getHeight(), null);
 	if(lg)
-	    g.drawImage(bm, (sz.x - bm.getWidth()) / 2, 0, null);
+	    g.drawImage(Window.useAlternativeUi ? bmSimple : bm, (sz.x - bm.getWidth()) / 2, 0, null);
 
 	g.dispose();
 
