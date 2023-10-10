@@ -1146,6 +1146,12 @@ public class OptWnd extends Window {
 			Widget cont = scroll.cont;
 			Widget prev;
 			int y = 0;
+			y = cont.adda(new Label(""), 0, y, 0, 0.0).pos("bl").adds(0, 5).y;
+			Label topNote = new Label("Don't use the same keys on multiple Keybinds!");
+			topNote.setcolor(Color.RED);
+			y = cont.adda(topNote, cont.sz.x / 2, y, 0.5, 0.0).pos("bl").adds(0, 5).y;
+			y = cont.adda(new Label("If you do that, only one of them will work. God knows which."), cont.sz.x / 2, y, 0.5, 0.0).pos("bl").adds(0, 5).y;
+			y = cont.adda(new Label(""), 0, y, 0, 0.0).pos("bl").adds(0, 5).y;
 			y = cont.adda(new Label("Main menu"), cont.sz.x / 2, y, 0.5, 0.0).pos("bl").adds(0, 5).y;
 			y = addbtn(cont, "Inventory", GameUI.kb_inv, y);
 			y = addbtn(cont, "Equipment", GameUI.kb_equ, y);
