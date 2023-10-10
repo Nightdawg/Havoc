@@ -224,7 +224,7 @@ public class Window extends Widget implements DTarget {
 		if(useAlternativeUi) {
 			for(bgc.y = ca.ul.y; bgc.y < ca.br.y; bgc.y += bg.sz().y) {
 				for(bgc.x = ca.ul.x; bgc.x < ca.br.x; bgc.x += bg.sz().x)
-					g.image(backgroundBlack, bgc, ca.ul, ca.br);
+					g.image(backgroundBlack, new Coord(bgc.x-2, bgc.y-2), new Coord(ca.ul.x, ca.ul.y), new Coord(ca.br.x+2, ca.br.y+2));
 			}
 		} else {
 			for(bgc.y = ca.ul.y; bgc.y < ca.br.y; bgc.y += bg.sz().y) {
