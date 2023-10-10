@@ -26,7 +26,7 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import static haven.PUtils.*;
 
@@ -53,7 +53,7 @@ public class Window extends Widget implements DTarget {
     public static final Coord dlmrgn = UI.scale(23, 14); // ND: Changed from (23, 14). It's the margins iirc
     public static final Coord dsmrgn = UI.scale(9, 9);
     public static final BufferedImage ctex = Resource.loadimg("gfx/hud/fonttex");
-    public static final Text.Furnace cf = new Text.Imager(new PUtils.TexFurn(new Text.Foundry(Text.fraktur, 15).aa(true), ctex)) {
+    public static final Text.Furnace cf = new Text.Imager(new PUtils.TexFurn(new Text.Foundry(Text.sans, 15).aa(true), ctex)) {
 	    protected BufferedImage proc(Text text) {
 		// return(rasterimg(blurmask2(text.img.getRaster(), 1, 1, Color.BLACK)));
 		return(rasterimg(blurmask2(text.img.getRaster(), UI.rscale(0.75), UI.rscale(1.0), Color.BLACK)));
@@ -82,6 +82,12 @@ public class Window extends Widget implements DTarget {
     private Coord doff;
     public boolean decohide = false;
     public boolean large = false;
+
+	//Alternative UI
+	public static boolean useAlternativeUi = Utils.getprefb("useAlternativeUiTheme", false);
+	public static final Tex backgroundBlack = Resource.loadtex("gfx/hud/wnd/simplified/bg");
+	public static final Tex bottomRightSimplified = Resource.loadtex("gfx/hud/wnd/simplified/br");
+	public static final Tex topLeftSimplified = Resource.loadtex("gfx/hud/wnd/simplified/cl");
 
     @RName("wnd")
     public static class $_ implements Factory {
@@ -214,17 +220,24 @@ public class Window extends Widget implements DTarget {
 	}
 
 	protected void drawbg(GOut g) {
-	    Coord bgc = new Coord();
-	    for(bgc.y = ca.ul.y; bgc.y < ca.br.y; bgc.y += bg.sz().y) {
-		for(bgc.x = ca.ul.x; bgc.x < ca.br.x; bgc.x += bg.sz().x)
-		    g.image(bg, bgc, ca.ul, ca.br);
-	    }
-	    bgc.x = ca.ul.x;
-	    for(bgc.y = ca.ul.y; bgc.y < ca.br.y; bgc.y += bgl.sz().y)
-		g.image(bgl, bgc, ca.ul, ca.br);
-	    bgc.x = ca.br.x - bgr.sz().x;
-	    for(bgc.y = ca.ul.y; bgc.y < ca.br.y; bgc.y += bgr.sz().y)
-		g.image(bgr, bgc, ca.ul, ca.br);
+		Coord bgc = new Coord();
+		if(useAlternativeUi) {
+			for(bgc.y = ca.ul.y; bgc.y < ca.br.y; bgc.y += bg.sz().y) {
+				for(bgc.x = ca.ul.x; bgc.x < ca.br.x; bgc.x += bg.sz().x)
+					g.image(backgroundBlack, bgc, ca.ul, ca.br);
+			}
+		} else {
+			for(bgc.y = ca.ul.y; bgc.y < ca.br.y; bgc.y += bg.sz().y) {
+				for(bgc.x = ca.ul.x; bgc.x < ca.br.x; bgc.x += bg.sz().x)
+					g.image(bg, bgc, ca.ul, ca.br);
+			}
+			bgc.x = ca.ul.x;
+			for(bgc.y = ca.ul.y; bgc.y < ca.br.y; bgc.y += bgl.sz().y)
+				g.image(bgl, bgc, ca.ul, ca.br);
+			bgc.x = ca.br.x - bgr.sz().x;
+			for(bgc.y = ca.ul.y; bgc.y < ca.br.y; bgc.y += bgr.sz().y)
+				g.image(bgr, bgc, ca.ul, ca.br);
+		}
 	}
 
 	protected void drawframe(GOut g) {
@@ -241,7 +254,11 @@ public class Window extends Widget implements DTarget {
 	    if(dragsize)
 		g.image(sizer, ca.br.sub(sizer.sz()));
 	    Coord mdo, cbr;
-	    g.image(cl, Coord.z);
+		if(useAlternativeUi){
+			g.image(topLeftSimplified, Coord.z);
+		} else {
+			g.image(cl, Coord.z);
+		}
 	    mdo = Coord.of(cl.sz().x, 0);
 	    cbr = mdo.add(cmw, cm.sz().y);
 	    for(int x = 0; x < cmw; x += cm.sz().x)
@@ -273,7 +290,12 @@ public class Window extends Widget implements DTarget {
 	    cbr = Coord.of(sz.x - br.sz().x, sz.y);
 	    for(; mdo.x < cbr.x; mdo.x += bm.sz().x)
 		g.image(bm, mdo, Coord.z, cbr);
-	    g.image(br, sz.sub(br.sz()));
+		if(useAlternativeUi){
+			g.image(bottomRightSimplified, sz.sub(br.sz()));
+		} else {
+			g.image(br, sz.sub(br.sz()));
+		}
+
 	}
 
 	public void draw(GOut g) {

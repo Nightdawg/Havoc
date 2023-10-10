@@ -500,6 +500,7 @@ public class OptWnd extends Window {
 	private CheckBox enableCornerFPSCheckBox;
 	public static CheckBox enableAdvancedMouseInfoCheckBox;
 	private CheckBox enableWrongResCheckBox;
+	private CheckBox useAlternativeUi;
 	public static CheckBox enableDragWindowsInWhenResizingCheckBox;
 	public static CheckBox enableSnapWindowsBackInsideCheckBox;
 	private Label interfaceScaleLabel;
@@ -637,6 +638,14 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, topRightColumn.pos("bl").adds(0, 2));
+		topRightColumn = add(useAlternativeUi = new CheckBox("Use alternative UI theme"){
+			{a = (Utils.getprefb("useAlternativeUiTheme", false));}
+			public void set(boolean val) {
+				Window.useAlternativeUi = val;
+				Utils.setprefb("useAlternativeUiTheme", val);
+				a = val;
+			}
+		}, topRightColumn.pos("bl").adds(0, 10));
 
 		prev = add(new Label("Advanced Interface Settings"), prev.pos("bl").adds(0, 18).x(146));
 		Widget leftColumn;
@@ -3771,6 +3780,7 @@ public class OptWnd extends Window {
 		enableCornerFPSCheckBox.tooltip = RichText.render("Enabling this will display the current FPS in the top-right corner of the screen.", UI.scale(300));
 		enableAdvancedMouseInfoCheckBox.tooltip = RichText.render("Holding Ctrl+Shift will show the Resource Path of the object or tile you are mousing over. Enabling this option will show additional information.\n$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", UI.scale(300));
 		enableWrongResCheckBox.tooltip = RichText.render("$col[185,185,185]{Unless you're a client dev, you don't really need to enable this option.}", UI.scale(300));
+		useAlternativeUi.tooltip = RichText.render("$col[185,185,185]{Use alternative, simplified UI theme, Buttons might bug a bit, so recommending game restart.}", UI.scale(300));
 		enableDragWindowsInWhenResizingCheckBox.tooltip = RichText.render("Enabling this will force ALL Windows to be dragged back inside the Game Window, whenever you resize it.\n$col[218,163,0]{Note:} $col[185,185,185]{By default, windows will remain in the same spot when you resize your Game Window, even if they're outside of it.", UI.scale(300));
 		enableSnapWindowsBackInsideCheckBox.tooltip = RichText.render("Enabling this cause most windows to be fully snapped back into your Game's Window.\nBy default, when you try to drag a window outside of your Game Window, it will only pop 25% of it back in.\n$col[185,185,185]{Large windows like the Cattle Roster or Cook Book are not affected by this setting. The 25% rule always applies to them.}", UI.scale(300));
 		interfaceScaleLabel.tooltip = RichText.render("$col[218,163,0]{Warning:} This setting is by no means perfect, and it can mess up many things." +
