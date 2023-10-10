@@ -18,7 +18,7 @@ public class OreCounter extends Window implements Runnable {
     private OreList oreList;
 
     public OreCounter(GameUI gui) {
-        super(new Coord(200, 20), "Ore & Rock Counter");
+        super(UI.scale(200, 35), "Ore & Rock Counter");
         this.gui = gui;
         this.stop = false;
         this.oreList = new OreList(250, 20);
@@ -59,7 +59,11 @@ public class OreCounter extends Window implements Runnable {
                     oreList.addItem(new Ore(finalRocks.getKey().toUpperCase(), finalRocks.getValue(), false));
                 }
             }
-            this.resize(170, 20 + oreList.listOres() * 20);
+            if(oreList.listOres() == 0){
+            this.resize(UI.scale(200), UI.scale(35));
+            } else  {
+                pack();
+            }
             sleep(5000);
         }
     }
@@ -156,11 +160,11 @@ public class OreCounter extends Window implements Runnable {
         private Label countLbl;
 
         public Ore(String name, int count, boolean ore) {
-            nameLbl = new Label(name, 100);
+            nameLbl = new Label(name);
             if(ore){
                 nameLbl.setcolor(Color.YELLOW);
             }
-            countLbl = new Label(String.valueOf(count), 100);
+            countLbl = new Label(String.valueOf(count));
             if(count>50 && ore){
                 countLbl.setcolor(Color.RED);
             }
