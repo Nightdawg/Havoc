@@ -2559,7 +2559,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void reloadTreeSwaying(){
 		GobSvaj gobSvaj = null;
 		if (getres() != null) {
-			if ((getres().name.startsWith("gfx/terobjs/trees") && !getres().name.endsWith("log") && !getres().name.endsWith("oldtrunk")) || getres().name.startsWith("gfx/terobjs/bushes")) {
+			if ((getres().name.startsWith("gfx/terobjs/trees") && !getres().name.endsWith("log") && !getres().name.endsWith("oldtrunk") && !getres().name.endsWith("trombonechantrelle") && !getres().name.endsWith("towercap")) || getres().name.startsWith("gfx/terobjs/bushes")) {
 				gobSvaj = getattr(GobSvaj.class);
 				if (gobSvaj != null && (OptWnd.disableTreeAndBushSwayingCheckBox.a)) {
 					delattr(GobSvaj.class);

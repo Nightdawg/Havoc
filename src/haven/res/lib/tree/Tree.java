@@ -102,7 +102,8 @@ public class Tree extends Sprite {
 	    Gob gob = (Gob)owner;
 	    gob.setattr(new TreeRotation(gob, rndrot(gob)));
 		if (!OptWnd.disableTreeAndBushSwayingCheckBox.a)
-	   		gob.setattr(new GobSvaj(gob));
+			if (!res.name.endsWith("trombonechantrelle") && !res.name.endsWith("towercap"))
+	   			gob.setattr(new GobSvaj(gob));
 //	    if(fscale != 1.0f)
 		gob.setattr(new TreeScale(gob, (OptWnd.treesAndBushesScaleSlider.val/100f) * fscale, fscale));
 	}
