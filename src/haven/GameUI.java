@@ -2281,10 +2281,11 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				if (act == null) {
 					GameUI.this.wdgmsg("belt", slot, 1, ui.modflags());
 				} else {
-					if (res.name.startsWith("paginae/nightdawg"))
+					if (res.name.startsWith("paginae/nightdawg")) {
 						ui.gui.menu.use(act.ad);
-					else
-						ui.gui.act(act.ad);
+					} else {
+						keyact(slot);
+					}
 				}
 			} catch (Exception e) {
 			}
