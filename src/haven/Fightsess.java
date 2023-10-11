@@ -55,11 +55,11 @@ public class Fightsess extends Widget {
 	public static final Text.Foundry ipAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 14);
 	public static final Text.Foundry openingAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 10);
 	public static final Text.Foundry cleaveAdditionalFont = new Text.Foundry(Text.dfont.deriveFont(Font.BOLD), 10);
-	public static HashSet<String> maneuvers =  new HashSet<>(Arrays.asList(
+	public static final HashSet<String> maneuvers =  new HashSet<>(Arrays.asList(
 			"paginae/atk/toarms", "paginae/atk/shield", "paginae/atk/parry",
 			"paginae/atk/oakstance", "paginae/atk/dorg", "paginae/atk/chinup",
 			"paginae/atk/bloodlust", "paginae/atk/combmed"));
-	public static HashMap<String, Long> nonAttackDefences = new HashMap<String, Long>()
+	public static final HashMap<String, Long> nonAttackDefences = new HashMap<String, Long>()
 	{{
 		put("paginae/atk/regain", 2100L);
 		put("paginae/atk/zigzag", 3000L);
@@ -78,7 +78,7 @@ public class Fightsess extends Widget {
 	// The server doesn't send you a decimal cooldown, and each move and melee attack seems to have absolutely no pattern for those ranges.
 	// What, you're using a b12? Well 125% attack speed means there are more cooldown ranges too, cause fuck you lmao. Same for cutblade.
 	// I'm not bothering with the pickaxe. What moron would bring a pickaxe to combat anyway?
-	public static HashMap<String, Double> meleeAttackMoves = new HashMap<String, Double>()
+	public static final HashMap<String, Double> meleeAttackMoves = new HashMap<String, Double>()
 	{{
 		put("paginae/atk/cleave", 80D);
 		put("paginae/atk/chop", 40D);
@@ -90,7 +90,7 @@ public class Fightsess extends Widget {
 //		put("paginae/atk/sos", 50D); // ND: Storm of Swords attacks multiple targets.
 	}};
 
-	public static HashMap<String, Double> unarmedAttackMoves = new HashMap<String, Double>()
+	public static final HashMap<String, Double> unarmedAttackMoves = new HashMap<String, Double>()
 	{{
 		put("paginae/atk/flex", 30D);
 		put("paginae/atk/gojug", 40D); // ND: Jugular tooltip says cooldown is 45, but it's actually 40. SMH.
@@ -107,7 +107,7 @@ public class Fightsess extends Widget {
 		put("paginae/atk/takedown", 50D);
 		put("paginae/atk/uppercut", 30D);
 	}};
-	public static HashMap<Double, HashMap<Double, ArrayList<Double>>> attackCooldownNumbers = new HashMap<Double, HashMap<Double, ArrayList<Double>>>(){{
+	public static final HashMap<Double, HashMap<Double, ArrayList<Double>>> attackCooldownNumbers = new HashMap<Double, HashMap<Double, ArrayList<Double>>>(){{
 		put(20D, new HashMap<Double, ArrayList<Double>>(){{
 			put (18D, new ArrayList<Double>(){{add(0D);add(0.579D);}});
 			put (19D, new ArrayList<Double>(){{add(0.580D);add(0.837D);}});
@@ -215,7 +215,7 @@ public class Fightsess extends Widget {
 		}});
 	}};
 
-	public static HashMap<String, HashMap<Double, ArrayList<Double>>> b12AttackCooldownNumbers = new HashMap<String, HashMap<Double, ArrayList<Double>>>(){{
+	public static final HashMap<String, HashMap<Double, ArrayList<Double>>> b12AttackCooldownNumbers = new HashMap<String, HashMap<Double, ArrayList<Double>>>(){{
 		put("paginae/atk/barrage", new HashMap<Double, ArrayList<Double>>(){{
 			put (23D, new ArrayList<Double>(){{add(0D);add(0.648D);}});
 			put (24D, new ArrayList<Double>(){{add(0.649D);add(0.868D);}});
@@ -285,7 +285,7 @@ public class Fightsess extends Widget {
 		}});
 	}};
 
-	public static HashMap<String, HashMap<Double, ArrayList<Double>>> cutbladeAttackCooldownNumbers = new HashMap<String, HashMap<Double, ArrayList<Double>>>(){{
+	public static final HashMap<String, HashMap<Double, ArrayList<Double>>> cutbladeAttackCooldownNumbers = new HashMap<String, HashMap<Double, ArrayList<Double>>>(){{
 		put("paginae/atk/barrage", new HashMap<Double, ArrayList<Double>>(){{
 			put (22D, new ArrayList<Double>(){{add(0D);add(0.636D);}});
 			put (23D, new ArrayList<Double>(){{add(0.637D);add(0.862D);}});
