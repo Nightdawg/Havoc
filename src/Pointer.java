@@ -7,7 +7,7 @@ import static java.lang.Math.*;
 /* >wdg: Pointer */
 @haven.FromResource(name = "ui/locptr", version = 20)
 public class Pointer extends Widget {
-    public static final BaseColor col = new BaseColor(new Color(241, 227, 157, 255));
+//    public static final BaseColor col = new BaseColor(new Color(241, 227, 157, 255));
     public Indir<Resource> icon;
     public Coord2d tc;
     public Coord lc;
@@ -61,7 +61,7 @@ public class Pointer extends Widget {
 		Coord coord1 = bc.add(Coord.sc(a + Math.PI / 12, -35));
 		Coord coord2 = bc.add(Coord.sc(a - Math.PI / 12, -35));
 
-		gOut.usestate(Pointer.col);
+//		gOut.usestate(Pointer.col);
 		gOut.drawp(Model.Mode.TRIANGLES, new float[] {
 				bc.x, bc.y,
 				coord1.x, coord1.y,
@@ -72,8 +72,9 @@ public class Pointer extends Widget {
 				if (this.licon == null) {
 					this.licon = ((this.icon.get()).layer(Resource.imgc)).tex();
 				}
-				Coord bcc = bc.add(Coord.sc(a, -30));
+				Coord bcc = bc.add(Coord.sc(a, -UI.scale(30)));
 				gOut.aimage(this.licon, bcc, 0.5, 0.5);
+				gOut.aimage(Text.renderstroked(dist + "", Color.WHITE, Color.BLACK, Text.num12boldFnd).tex(), bcc, 0.5, 0.5);
 			}
 			catch (Loading localLoading) {
 				//Ignore it
@@ -102,7 +103,7 @@ public class Pointer extends Widget {
 		final Coord add = sc.add(hsz);
 
 		// gl.glEnable(GL2.GL_POLYGON_SMOOTH); XXXRENDER
-		g.usestate(col);
+//		g.usestate(col);
 		g.drawp(Model.Mode.TRIANGLES, new float[] {
 				add.x, add.y, add.x + norm.x - norm.y / 3, add.y + norm.y + norm.x / 3, add.x + norm.x + norm.y / 3, add.y + norm.y - norm.x / 3
 		});
@@ -113,6 +114,7 @@ public class Pointer extends Widget {
 					licon = icon.get().layer(Resource.imgc).tex();
 				Coord bcc = add.add(norm);
 				g.aimage(licon, bcc, 0.5, 0.5);
+				g.aimage(Text.renderstroked(dist + "", Color.WHITE, Color.BLACK, Text.num12boldFnd).tex(), bcc, 0.5, 0.5);
 			} catch(Loading l) {
 			}
 		}
@@ -139,6 +141,13 @@ public class Pointer extends Widget {
 		}
 		if (sl != null) {
 			final Double angle = ui.gui.map.screenangle(gobrc, true);
+			Gob me = this.ui.gui.map.player();
+			if (me != null) {
+				int cdist = (int) (Math.ceil(me.rc.dist(tc) / 11.0));
+				if (cdist != dist) {
+					dist = cdist;
+				}
+			}
 			if(!angle.equals(Double.NaN)) {
 				drawarrow(g, ui.gui.map.screenangle(gobrc, true));
 			} else {
@@ -188,10 +197,6 @@ public class Pointer extends Widget {
 		if((lc != null) && (lc.dist(c) < 20) && this.ui.gui.map.player() != null) {
 			if (tooltip instanceof Widget.KeyboundTip) {
 				try {
-					Gob me = this.ui.gui.map.player();
-					int cdist = (int) (Math.ceil(me.rc.dist(tc) / 11.0));
-					if (cdist != dist) {
-						dist = cdist;
 						if (tt != null && tt.tex() != null)
 							tt.tex().dispose();
 						if (dist > 990) {
@@ -200,9 +205,6 @@ public class Pointer extends Widget {
 							return tt = Text.render("> " + ((Widget.KeyboundTip)tooltip).base + " <" + " | Distance: " + dist + " tiles");
 						}
 
-					} else {
-						return tt;
-					}
 				} catch (NullPointerException e) {}
 			}
 			return (tooltip);
