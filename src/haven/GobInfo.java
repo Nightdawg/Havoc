@@ -6,7 +6,7 @@ import haven.render.RenderTree;
 
 public abstract class GobInfo extends GAttrib implements RenderTree.Node, PView.Render2D {
     protected Tex tex;
-    private Coord3f pos = new Coord3f(0, 0, 1);
+    public Coord3f pos = new Coord3f(0, 0, 1);
     protected final Object texLock = new Object();
     protected Pair<Double, Double> center = new Pair<>(0.5, 1.0);
     protected boolean dirty = true;
