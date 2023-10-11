@@ -1148,7 +1148,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			IMeter.Meter hp = getmeter("hp", 0);
 			if (hp != null) {
 				Coord msz = UI.scale(new Coord(150, 20));
-				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(40));
+				Coord sc = new Coord(x0 - msz.x/2,  y0 + UI.scale(44));
 				drawHealthMeterBar(g, hp, sc, msz);
 			}
 		}
