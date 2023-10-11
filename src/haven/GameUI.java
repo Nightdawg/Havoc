@@ -884,7 +884,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 						Boolean isColorEnabled = OptWnd.colorCheckboxesMap.get(markerColor);
 						return isColorEnabled != null && isColorEnabled;
 					}
-					return false;
+					return true;
 				});
 			}
 
