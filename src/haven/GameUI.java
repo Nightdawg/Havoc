@@ -142,6 +142,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public Thread interactWithNearestObjectThread;
 	public Thread destroyNearestTrellisPlantScriptThread;
 	public TileHighlight.TileHighlightCFG tileHighlight;
+	public CombatDistanceTool combatDistanceTool;
+	public Thread combatDistanceToolThread;
 
 	public static boolean showUI = true;
 

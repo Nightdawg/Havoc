@@ -390,6 +390,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/RefillWaterContainers");
 		makeLocal("paginae/nightdawg/OtherTools/HarvestNearestDreamcatcher");
 		makeLocal("paginae/nightdawg/OtherTools/DestroyNearestTrellisPlantScript");
+		makeLocal("paginae/nightdawg/OtherTools/CombatDistanceTool");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -815,6 +816,20 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.destroyNearestTrellisPlantScriptThread = null;
 					gui.destroyNearestTrellisPlantScriptThread = new Thread(new DestroyNearestTrellisPlantScript(gui), "DestroyNearestTrellisPlantScript");
 					gui.destroyNearestTrellisPlantScriptThread.start();
+				}
+			} else if (ad[2].equals("CombatDistanceTool")) {
+				if (gui.combatDistanceTool == null && gui.combatDistanceToolThread == null) {
+					gui.combatDistanceTool = new CombatDistanceTool(gui);
+					gui.add(gui.combatDistanceTool, new Coord(gui.sz.x/2 - gui.combatDistanceTool.sz.x/2, gui.sz.y/2 - gui.combatDistanceTool.sz.y/2 - 200));
+					gui.combatDistanceToolThread = new Thread(gui.combatDistanceTool, "CombatDistanceTool");
+					gui.combatDistanceToolThread.start();
+				} else {
+					if (gui.combatDistanceTool != null) {
+						gui.combatDistanceTool.stop();
+						gui.combatDistanceTool.reqdestroy();
+						gui.combatDistanceTool = null;
+						gui.combatDistanceToolThread = null;
+					}
 				}
 			}
 		}

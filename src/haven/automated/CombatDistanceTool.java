@@ -21,28 +21,32 @@ public class CombatDistanceTool extends Window implements Runnable {
     }
 
     public CombatDistanceTool(GameUI gui) {
-        super(new Coord(180, 60), "Combat Distancing");
+        super(new Coord(180, 60), "Combat Distancing Tool", true);
         this.gui = gui;
         this.stop = false;
         this.value = "";
 
-        currentDistanceLabel = new Label("Current dist: No target");
-        add(currentDistanceLabel, new Coord(15, 40));
+        Widget prev;
 
-        add(new TextEntry(100, value) {
+        prev = add(new Label ("Set Distance:"), 0, 6);
+
+        prev = add(new TextEntry(UI.scale(100), value) {
             @Override
             protected void changed() {
                 setValue(this.buf.line());
             }
-        }, UI.scale(15, 10));
+        }, prev.pos("ur").adds(2, 0));
 
-        add(new Button(UI.scale(40), "Go") {
+        prev = add(new Button(UI.scale(40), "Go") {
             @Override
             public void click() {
                 moveToDistance();
             }
-        }, UI.scale(122, 8));
+        }, prev.pos("ur").adds(4, -2));
 
+        currentDistanceLabel = new Label("Current dist: No target");
+        add(currentDistanceLabel, UI.scale(new Coord(0, 40)));
+        pack();
     }
 
     @Override
