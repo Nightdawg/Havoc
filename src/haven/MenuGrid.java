@@ -503,7 +503,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
     }
 
     private PagButton curttp = null;
-    private boolean curttl = false;
+//    private boolean curttl = false;
     private Tex curtt = null;
     private double hoverstart;
     public Object tooltip(Coord c, Widget prev) {
@@ -512,20 +512,20 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	if(pag != null) {
 	    if(prev != this)
 		hoverstart = now;
-	    boolean ttl = (now - hoverstart) > 0.5;
-	    if((pag != curttp) || (ttl != curttl)) {
+//	    boolean ttl = (now - hoverstart) > 0.5;
+	    if((pag != curttp) /*|| (ttl != curttl)*/) {
 		try {
-		    BufferedImage ti = pag.rendertt(ttl);
+		    BufferedImage ti = pag.rendertt(true);
 		    curtt = (ti == null) ? null : new TexI(ti);
 		} catch(Loading l) {
 		    return("...");
 		}
 		curttp = pag;
-		curttl = ttl;
+//		curttl = ttl;
 	    }
 	    return(curtt);
 	} else {
-	    hoverstart = now;
+//	    hoverstart = now;
 	    return(null);
 	}
     }
