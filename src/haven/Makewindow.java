@@ -264,32 +264,32 @@ public class Makewindow extends Widget {
 	    spec.draw(g);
 	}
 
-	private double hoverstart;
+//	private double hoverstart;
 	Indir<Object> stip, ltip;
 	public Object tooltip(Coord c, Widget prev) {
 	    double now = Utils.rtime();
-	    if(prev == this) {
-	    } else if(prev instanceof SpecWidget) {
-		double ps = ((SpecWidget)prev).hoverstart;
-		hoverstart = (now - ps < 1.0) ? now : ps;
-	    } else {
-		hoverstart = now;
-	    }
-	    if(now - hoverstart >= 1.0) {
-		if(stip == null) {
-		    BufferedImage tip = spec.shorttip();
-		    Tex tt = (tip == null) ? null : new TexI(tip);
-		    stip = () -> tt;
-		}
-		return(stip);
-	    } else {
+//	    if(prev == this) {
+//	    } else if(prev instanceof SpecWidget) {
+//		double ps = ((SpecWidget)prev).hoverstart;
+//		hoverstart = (now - ps < 1.0) ? now : ps;
+//	    } else {
+//		hoverstart = now;
+//	    }
+//	    if(now - hoverstart >= 1.0) {
+//		if(stip == null) {
+//		    BufferedImage tip = spec.shorttip();
+//		    Tex tt = (tip == null) ? null : new TexI(tip);
+//		    stip = () -> tt;
+//		}
+//		return(stip);
+//	    } else {
 		if(ltip == null) {
 		    BufferedImage tip = spec.longtip();
 		    Tex tt = (tip == null) ? null : new TexI(tip);
 		    ltip = () -> tt;
 		}
 		return(ltip);
-	    }
+//	    }
 	}
 
 	public void tick(double dt) {
