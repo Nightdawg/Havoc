@@ -439,12 +439,10 @@ public class CharWnd extends Window {
 	public final Color bg;
 		public final Resource res;
 	private double lvlt = 0.0;
-	private Tex ct;
+//	private Tex ct;
 	private int cbv = -1, ccv = -1;
-	private Tex buffedTex = null;
-	private Tex debuffedTex = null;
-	private Tex baseTex = null;
-	private boolean requiresUpdate = true;
+	private Tex totalStatTex = null;
+	private Tex baseStatTex = null;
 
 	private Attr(Glob glob, String attr, Color bg) {
 	    super(new Coord(attrw, attrf.height() + UI.scale(2)));
@@ -459,21 +457,24 @@ public class CharWnd extends Window {
 	public void tick(double dt) {
 	    if((attr.base != cbv) || (attr.comp != ccv)) {
 		cbv = attr.base; ccv = attr.comp;
-		Color c = Color.WHITE;
+//		Color c = Color.WHITE;
 		if(ccv > cbv) {
-		    c = buff;
+//		    c = buff;
 		    tooltip = Text.render(String.format("%d + %d", cbv, ccv - cbv));
+			totalStatTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), buff));
 		} else if(ccv < cbv) {
-		    c = debuff;
+//		    c = debuff;
 		    tooltip = Text.render(String.format("%d - %d", cbv, cbv - ccv));
+			totalStatTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), debuff));
 		} else {
 		    tooltip = null;
+			totalStatTex = null;
 		}
-		ct = PUtils.strokeTex(attrf.render(Integer.toString(ccv), c));
+//		ct = PUtils.strokeTex(attrf.render(Integer.toString(ccv), c));
+		baseStatTex = PUtils.strokeTex(attrf.render(Integer.toString(cbv), Color.WHITE));
 	    }
 	    if((lvlt > 0.0) && ((lvlt -= dt) < 0))
 		lvlt = 0.0;
-		requiresUpdate = true;
 	}
 
 	public void draw(GOut g) {
@@ -488,21 +489,10 @@ public class CharWnd extends Window {
 	    g.aimage(rnm, cn.add(img.sz().x + margin2, 1), 0, 0.6);
 //	    if(ct != null)
 //		g.aimage(ct.tex(), cn.add(sz.x - UI.scale(7), 1), 1, 0.5);
-		cbv = attr.base;
-		ccv = attr.comp;
-		if (ccv > cbv) {
-			if (requiresUpdate)
-				buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), buff));
-			g.aimage(buffedTex, cn.add(sz.x - UI.scale(7), 1), 1, 0.6);
-		} else if (ccv < cbv) {
-			if (requiresUpdate)
-				debuffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), debuff));
-			g.aimage(debuffedTex, cn.add(sz.x - UI.scale(7), 1), 1, 0.6);
-		}
-		if (requiresUpdate)
-			baseTex = PUtils.strokeTex(attrf.render(Integer.toString(cbv), Color.WHITE));
-		g.aimage(baseTex, cn.add(sz.x - UI.scale(60), 1), 1, 0.6);
-		requiresUpdate = false;
+		if (totalStatTex != null)
+			g.aimage(totalStatTex, cn.add(sz.x - UI.scale(7), 1), 1, 0.6);
+		if (baseStatTex != null)
+			g.aimage(baseStatTex, cn.add(sz.x - UI.scale(60), 1), 1, 0.6);
 	}
 
 	public void lvlup() {
@@ -519,13 +509,10 @@ public class CharWnd extends Window {
 	public final Resource res;
 	public int tbv, tcv;
 	public long cost;
-	private Tex ct;
+//	private Tex ct;
 	private int cbv, ccv;
 	private Tex baseTex = null;
 	private Tex buffedTex = null;
-	private Tex buffedTex2 = null;
-	private Tex debuffedTex = null;
-	private boolean requiresUpdate = true;
 
 	private SAttr(Glob glob, String attr, Color bg) {
 	    super(new Coord(attrw, attrf.height() + UI.scale(2)));
@@ -552,34 +539,46 @@ public class CharWnd extends Window {
 		return PUtils.strokeTex(attrf.render(t));
 	}
 
-
 		public void tick(double dt) {
 			if ((attr.base != cbv) || (attr.comp != ccv)) {
+				System.out.println("test");
 				cbv = attr.base;
-			}
-			if (attr.comp != ccv) {
 				ccv = attr.comp;
 				if (tbv <= cbv) {
 					tbv = cbv;
 					tcv = ccv;
 					updcost();
 				}
-				Color c = Color.WHITE;
+//				Color c = Color.WHITE;
 				if (ccv > cbv) {
-					c = buff;
+					if (tbv > cbv) {
+						buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv + (tbv - cbv)), tbuff));
+					} else {
+						buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), buff));
+					}
+//					c = buff;
 					tooltip = Text.render(String.format("%d + %d", cbv, ccv - cbv));
 				} else if (ccv < cbv) {
-					c = debuff;
+					if (tbv > cbv) {
+						buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv + (tbv - cbv)), tbuff));
+					} else {
+						buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), debuff));
+					}
+//					c = debuff;
 					tooltip = Text.render(String.format("%d - %d", cbv, cbv - ccv));
 				} else {
 					tooltip = null;
 				}
-				if (tcv > ccv)
-					c = tbuff;
-				ct = PUtils.strokeTex(attrf.render(Integer.toString(tcv), c));
-				cbv = tcv;
+//				if (tcv > ccv)
+//					c = tbuff;
+				if (tbv > cbv) {
+					baseTex = PUtils.strokeTex(attrf.render(Integer.toString(tbv), tbuff));
+				} else {
+					baseTex = PUtils.strokeTex(attrf.render(Integer.toString(cbv), Color.WHITE));
+				}
+//				ct = PUtils.strokeTex(attrf.render(Integer.toString(tcv), c));
+//				cbv = tcv;
 			}
-			requiresUpdate = true;
 			updcost();
 		}
 
@@ -591,38 +590,9 @@ public class CharWnd extends Window {
 	    Coord cn = new Coord(0, sz.y / 2);
 	    g.aimage(img, cn.add(5, 0), 0, 0.5);
 	    g.aimage(rnm, cn.add(img.sz().x + margin2, 1), 0, 0.6);
-		cbv = attr.base;
-		ccv = attr.comp;
-		if (ccv > cbv) {
-			if (tbv > cbv) {
-				if (requiresUpdate)
-					buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv + (tbv - cbv)), tbuff));
-			} else {
-				if (requiresUpdate)
-					buffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), buff));
-			}
-			g.aimage(buffedTex, cn.add(sz.x - UI.scale(35), 1), 1, 0.6);
-		} else if (ccv < cbv) {
-			if (tbv > cbv) {
-				if (requiresUpdate)
-					buffedTex2 = PUtils.strokeTex(attrf.render(Integer.toString(ccv + (tbv - cbv)), tbuff));
-				g.aimage(buffedTex2, cn.add(sz.x - UI.scale(35), 1), 1, 0.6);
-			} else {
-				if (requiresUpdate)
-					debuffedTex = PUtils.strokeTex(attrf.render(Integer.toString(ccv), debuff));
-				g.aimage(debuffedTex, cn.add(sz.x - UI.scale(35), 1), 1, 0.6);
-			}
-		}
 
-		if (tbv > cbv) {
-			if (requiresUpdate)
-				baseTex = PUtils.strokeTex(attrf.render(Integer.toString(tbv), tbuff));
-		} else {
-			if (requiresUpdate)
-				baseTex = PUtils.strokeTex(attrf.render(Integer.toString(cbv), Color.WHITE));
-		}
-		g.aimage(baseTex, cn.add(sz.x - UI.scale(85), 1), 1, 0.6);
-		requiresUpdate = false;
+		if (buffedTex != null) g.aimage(buffedTex, cn.add(sz.x - UI.scale(35), 1), 1, 0.6);
+		if (baseTex != null) g.aimage(baseTex, cn.add(sz.x - UI.scale(85), 1), 1, 0.6);
 	}
 
 	private void updcost() {
