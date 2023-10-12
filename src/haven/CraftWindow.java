@@ -6,16 +6,16 @@ import java.util.Map;
 
 public class CraftWindow extends Window {
 	private static final IBox frame = new IBox("gfx/hud/tab", "tl", "tr", "bl", "br", "extvl", "extvr", "extht", "exthb");
-	private final TabStrip tabStrip;
-	private final Map<MenuGrid.Pagina, TabStrip.Button> tabs = new HashMap<MenuGrid.Pagina, TabStrip.Button>();
+	private final TabStrip<MenuGrid.Pagina> tabStrip;
+	private final Map<MenuGrid.Pagina, TabStrip.Button<MenuGrid.Pagina>> tabs = new HashMap<MenuGrid.Pagina, TabStrip.Button<MenuGrid.Pagina>>();
 	public Makewindow makeWidget;
 	private MenuGrid.Pagina lastAction;
 
 	public CraftWindow() {
 		super(Coord.z, "Crafting");
-		tabStrip = add(new TabStrip() {
-			protected void selected(Button button) {
-				for (Map.Entry<MenuGrid.Pagina, Button> entry : tabs.entrySet()) {
+		tabStrip = add(new TabStrip<MenuGrid.Pagina>() {
+			protected void selected(Button<MenuGrid.Pagina> button) {
+				for (Map.Entry<MenuGrid.Pagina, Button<MenuGrid.Pagina>> entry : tabs.entrySet()) {
 					MenuGrid.Pagina pagina = entry.getKey();
 					if (entry.getValue().equals(button) && pagina != lastAction) {
 						ui.gui.wdgmsg("act", (Object[])pagina.act().ad);
@@ -41,7 +41,7 @@ public class CraftWindow extends Window {
 
 	@Override
 	public void wdgmsg(Widget sender, String msg, Object... args) {
-		if((sender == this) && (msg == "close")) {
+		if((sender == this) && (msg.equals("close"))) {
 			hide();
 		} else {
 			super.wdgmsg(sender, msg, args);
@@ -102,14 +102,15 @@ public class CraftWindow extends Window {
 
 	private void addTab(MenuGrid.Pagina pagina) {
 		if (tabs.containsKey(pagina)) {
-			TabStrip.Button old = tabs.get(pagina);
+			TabStrip.Button<MenuGrid.Pagina> old = tabs.get(pagina);
 			tabStrip.remove(old);
 		}
 		Tex icon = new TexI(PUtils.convolvedown(lastAction.res.get().layer(Resource.imgc).img, UI.scale(new Coord(26, 26)), CharWnd.iconfilter));
 		String text = "";
 //		if (text.length() > 12)
 //			text = text.substring(0, 12 - 2) + "..";
-		TabStrip.Button added = tabStrip.insert(0, icon, text, lastAction.act().name);
+		TabStrip.Button<MenuGrid.Pagina> added = tabStrip.insert(0, icon, text, pagina);
+		added.tag = pagina;
 		tabStrip.select(added);
 		if (tabStrip.getButtonCount() > 12) {
 			removeTab(tabStrip.getButtonCount() - 1);
@@ -118,7 +119,7 @@ public class CraftWindow extends Window {
 	}
 
 	private void removeTab(int index) {
-		TabStrip.Button removed = tabStrip.remove(index);
+		TabStrip.Button<MenuGrid.Pagina> removed = tabStrip.remove(index);
 		tabs.values().remove(removed);
 	}
 }

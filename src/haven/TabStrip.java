@@ -3,6 +3,7 @@ package haven;
 import rx.functions.Action1;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -46,6 +47,20 @@ public class TabStrip<T> extends Widget {
 	updateLayout();
 	return button;
     }
+
+	public Button<T> insert(int index, Tex image, String text, MenuGrid.Pagina pagina) {
+		final Button<T> button = add(new Button<T>(image, text, pagina) {
+			public void click() {
+				select(this);
+			}
+		});
+		if (selectedColor != null) {
+			button.bg = selectedColor;
+		}
+		buttons.add(index, button);
+		updateLayout();
+		return button;
+	}
 
     void setSelectedColor(Color c) {
 	selectedColor = c;
@@ -145,6 +160,8 @@ public class TabStrip<T> extends Widget {
 	private Color bg = new Color(0, 0, 0, 128);
 	private Tex image;
 	private Text text;
+	private MenuGrid.Pagina pagina = null;
+	private Tex tooltipTexture = null;
 	private boolean active;
 	public T tag;
 
@@ -158,6 +175,11 @@ public class TabStrip<T> extends Widget {
 	    int h = Math.max(this.text.sz().y, imgsz().y) + padding.y * 2;
 	    resize(w, h);
 	}
+
+		Button(Tex image, String text, MenuGrid.Pagina pagina) {
+			this(image, text);
+			this.pagina = pagina;
+		}
     
 	private Coord imgsz() { return image != null ? image.sz() : Coord.z; }
 	
@@ -187,6 +209,31 @@ public class TabStrip<T> extends Widget {
 	void setActive(boolean value) {
 	    this.active = value;
 	}
+
+	@Override
+	public Object tooltip(Coord c, Widget prev) {
+		Object tt = super.tooltip(c, prev);
+		if (tt != null) {
+			return tt;
+		} else {
+			if (pagina != null) {
+				try {
+					if (tooltipTexture != null) {
+						return tooltipTexture;
+					} else {
+						BufferedImage bi = pagina.button().rendertt(true);
+						if (bi != null) return (tooltipTexture = new TexI(bi));
+						else return ("...");
+					}
+				} catch (Loading e) {
+					return ("...");
+				}
+			} else {
+				return text;
+			}
+		}
+	}
+
     }
 
     public enum Orientation {
