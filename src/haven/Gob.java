@@ -147,6 +147,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				}
 				initiateAnimalOverlays();
 			}
+			toggleSpeedBuffAuras();
 		}
 	}
 
@@ -2330,6 +2331,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 	}
 
+	public void toggleSpeedBuffAuras() {
+		if (getres() != null) {
+			String resourceName = getres().name;
+			if (resourceName.equals("gfx/terobjs/boostspeed"))
+				setCircleOl(AuraCircleSprite.white, OptWnd.toggleSpeedBoostAurasCheckBox.a, 6f);
+		}
+	}
+
 
 	public void setCritterAura(boolean on, boolean rabbit) {
 		if (rabbit) {
@@ -2368,6 +2377,22 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				}
 			}
 			customRadiusOverlay = new Overlay(this, new AuraCircleSprite(this, col));
+			synchronized (ols) {
+				addol(customRadiusOverlay);
+			}
+		} else if (customRadiusOverlay != null) {
+			removeOl(customRadiusOverlay);
+			customRadiusOverlay = null;
+		}
+	}
+	private void setCircleOl(Color col, boolean on, float size) {
+		if (on) {
+			for (Overlay ol : ols) {
+				if (ol.spr instanceof AuraCircleSprite) {
+					return;
+				}
+			}
+			customRadiusOverlay = new Overlay(this, new AuraCircleSprite(this, col, size));
 			synchronized (ols) {
 				addol(customRadiusOverlay);
 			}

@@ -525,6 +525,7 @@ public class OptWnd extends Window {
 	public static CheckBox toggleGobCollisionBoxesDisplayCheckBox;
 	public static CheckBox toggleBeastDangerRadiiCheckBox;
 	public static CheckBox toggleCritterAurasCheckBox;
+	public static CheckBox toggleSpeedBoostAurasCheckBox;
 	private CheckBox alwaysOpenBeltCheckBox;
 	private CheckBox showQuickSlotsBar;
 	public static CheckBox showContainerFullnessCheckBox;
@@ -1028,6 +1029,18 @@ public class OptWnd extends Window {
 					ui.gui.optionInfoMsg("Critter Circle Auras are now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgGray));
 				}
 
+			}
+		}, rightColumn.pos("bl").adds(0, 2));
+
+		rightColumn = add(toggleSpeedBoostAurasCheckBox = new CheckBox("Show Speed Boost Circle Auras"){
+			{a = (Utils.getprefb("SpeedBoostAuras", true));}
+			public void set(boolean val) {
+				Utils.setprefb("SpeedBoostAuras", val);
+				a = val;
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::toggleSpeedBuffAuras);
+					ui.gui.optionInfoMsg("Speed Boost Circle Auras are now " + (val ? "SHOWN" : "HIDDEN") + "!", (val ? msgGreen : msgGray));
+				}
 			}
 		}, rightColumn.pos("bl").adds(0, 2));
 
