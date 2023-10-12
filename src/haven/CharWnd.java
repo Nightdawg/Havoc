@@ -541,7 +541,6 @@ public class CharWnd extends Window {
 
 		public void tick(double dt) {
 			if ((attr.base != cbv) || (attr.comp != ccv)) {
-				System.out.println("test");
 				cbv = attr.base;
 				ccv = attr.comp;
 				if (tbv <= cbv) {

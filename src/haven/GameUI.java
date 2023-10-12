@@ -144,6 +144,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public TileHighlight.TileHighlightCFG tileHighlight;
 	public CombatDistanceTool combatDistanceTool;
 	public Thread combatDistanceToolThread;
+	public PanicButtonWindow panicButtonWindow;
 
 	public static boolean showUI = true;
 

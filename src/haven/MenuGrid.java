@@ -833,7 +833,13 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					}
 				}
 			} else if (ad[2].equals("PanicButton")) {
-
+				if(gui.panicButtonWindow != null){
+					gui.panicButtonWindow.reqdestroy();
+					gui.panicButtonWindow = null;
+				} else {
+					gui.panicButtonWindow = new PanicButtonWindow(gui);
+					gui.add(gui.panicButtonWindow, new Coord(gui.sz.x/2 - gui.panicButtonWindow.sz.x/2, gui.sz.y/2 - gui.panicButtonWindow.sz.y/2 - 300));
+				}
 			}
 		}
 	}

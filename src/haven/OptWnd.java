@@ -3474,7 +3474,7 @@ public class OptWnd extends Window {
 	public static CheckBox enableLocationTrackingCheckbox;
 	public static boolean trackingEnableBoolean = Utils.getprefb("enableLocationTracking", false);
 	public static Map<Color, Boolean> colorCheckboxesMap = new HashMap<>();
-	public static TextEntry panicButtonDiscordTokenTextEntry;
+	public static TextEntry panicButtonApiTokenTextEntry;
 	public static TextEntry panicButtonDiscordChannelIDTextEntry;
 	public static TextEntry panicButtonDiscordMessageTextEntry;
 	public static TextEntry panicButtonYourNicknameTextEntry;
@@ -3551,29 +3551,55 @@ public class OptWnd extends Window {
 
 			prev = add(new Label("Panic Button Integration"), prev.pos("bl").adds(0, 20).x(100));
 
-			prev = add(new Label("Discord Token:"), prev.pos("bl").adds(0, 16).x(0));
-			prev = add(panicButtonDiscordTokenTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonDiscordToken", "")), prev.pos("ur").adds(0, -2).x(UI.scale(104)));
+			prev = add(new Label("Api Token:"), prev.pos("bl").adds(0, 16).x(0));
+			prev = add(panicButtonApiTokenTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonApiToken", "")){
+				protected void changed() {
+					Utils.setpref("panicButtonApiToken", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(104)));
 
 			prev = add(new Label("Discord Channel ID:"), prev.pos("bl").adds(0, 12).x(0));
-			prev = add(panicButtonDiscordChannelIDTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonDiscordChannelID", "")), prev.pos("ur").adds(0, -2).x(UI.scale(104)));
+			prev = add(panicButtonDiscordChannelIDTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonDiscordChannelID", "")){
+				protected void changed() {
+					Utils.setpref("panicButtonDiscordChannelID", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(104)));
 
-			RichText discordMessageTooltip = RichText.render("This is the message that will be sent in the discord text channel, along with the Nickname you set below.", UI.scale(300));
+			RichText discordMessageTooltip = RichText.render("This is the message that will be sent in the discord text channel and/or village, along with the Nickname you set below.", UI.scale(300));
 			prev = add(new Label("Discord Message:"), prev.pos("bl").adds(0, 12).x(0));
 			prev.tooltip = discordMessageTooltip;
-			prev = add(panicButtonDiscordMessageTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonDiscordMessage", "@here Help! I'm being chased! (Panic Button)")), prev.pos("ur").adds(0, -2).x(UI.scale(104)));
+			prev = add(panicButtonDiscordMessageTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonDiscordMessage", "@here Help! I'm being chased! (Panic Button)")){
+				protected void changed() {
+					Utils.setpref("panicButtonDiscordMessage", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(104)));
 			prev.tooltip = discordMessageTooltip;
 
 			RichText yourNameTooltip = RichText.render("This is the nickname that will be included in the discord message, to know who's asking for help.\n$col[185,185,185]{You can set this to your discord name, or something.}", UI.scale(300));
 			prev = add(new Label("Your Nickname:"), prev.pos("bl").adds(0, 12).x(0));
 			prev.tooltip = yourNameTooltip;
-			prev = add(panicButtonYourNicknameTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonNickname", "NightdawgFanboy69")), prev.pos("ur").adds(0, -2).x(UI.scale(104)));
+			prev = add(panicButtonYourNicknameTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonNickname", "NightdawgFanboy69")){
+				protected void changed() {
+					Utils.setpref("panicButtonNickname", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(104)));
 			prev.tooltip = yourNameTooltip;
 
 			RichText villageNameTooltip = RichText.render("This is the In-Game Village Name.\n$col[185,185,185]{This is needed to send the message in the village chat.}", UI.scale(300));
 			prev = add(new Label("Village Name:"), prev.pos("bl").adds(0, 12).x(0));
 			prev.tooltip = villageNameTooltip;
-			prev = add(panicButtonVillageNameTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonVillageName", "Ex: London Mandem")), prev.pos("ur").adds(0, -2).x(UI.scale(104)));
+			prev = add(panicButtonVillageNameTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonVillageName", "Ex: London Mandem")){
+				protected void changed() {
+					Utils.setpref("panicButtonVillageName", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(0, -2).x(UI.scale(104)));
 			prev.tooltip = villageNameTooltip;
+
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 30).x(UI.scale(62)));
 
