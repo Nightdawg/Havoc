@@ -1092,7 +1092,7 @@ public class OptWnd extends Window {
 				if (ui != null && ui.gui != null)
 					ui.sess.glob.oc.gobAction(Gob::settingUpdateWorkstationStage);
 			}
-		}, rightColumn.pos("bl").adds(-34, 12));
+		}, rightColumn.pos("bl").adds(-36, 12));
 		add(new Label("Show:"), rightColumn.pos("bl").adds(0, 2));
 		rightColumn = add(showWorkstationStageRedCheckBox = new CheckBox("Finished"){
 			{a = (Utils.getprefb("showWorkstationStageRed", true));}
