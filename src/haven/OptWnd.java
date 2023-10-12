@@ -3474,6 +3474,11 @@ public class OptWnd extends Window {
 	public static CheckBox enableLocationTrackingCheckbox;
 	public static boolean trackingEnableBoolean = Utils.getprefb("enableLocationTracking", false);
 	public static Map<Color, Boolean> colorCheckboxesMap = new HashMap<>();
+	public static TextEntry panicButtonDiscordTokenTextEntry;
+	public static TextEntry panicButtonDiscordChannelIDTextEntry;
+	public static TextEntry panicButtonDiscordMessageTextEntry;
+	public static TextEntry panicButtonYourNicknameTextEntry;
+	public static TextEntry panicButtonVillageNameTextEntry;
 
 	static {
 		for (Color color : BuddyWnd.gc) {
@@ -3481,7 +3486,7 @@ public class OptWnd extends Window {
 		}
 	}
 
-	public class NDWebMapIntegrationSettingsPanel extends Panel {
+	public class NDServerIntegrationSettingsPanel extends Panel {
 		private int addbtn(Widget cont, String nm, KeyBinding cmd, int y) {
 			return (cont.addhl(new Coord(0, y), cont.sz.x,
 					new Label(nm), new SetButton(UI.scale(140), cmd))
@@ -3489,9 +3494,10 @@ public class OptWnd extends Window {
 		}
 
 
-		public NDWebMapIntegrationSettingsPanel(Panel back) {
+		public NDServerIntegrationSettingsPanel(Panel back) {
 			Widget prev;
-			prev = add(new Label("Web Map Endpoint:"), 0, 6);
+			prev = add(new Label("Web Map Integration"), 110, 8);
+			prev = add(new Label("Web Map Endpoint:"), prev.pos("bl").adds(0, 16).x(0));
 			prev = add(webmapEndpointTextEntry = new TextEntry(UI.scale(220), mapClientEndpoint){
 				protected void changed() {
 					Utils.setpref("webMapEndpoint", this.buf.line());
@@ -3543,7 +3549,33 @@ public class OptWnd extends Window {
 				prev = add(colorCheckbox, prev.pos("ur").adds(10, 0));
 			}
 
-			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 16).x(UI.scale(62)));
+			prev = add(new Label("Panic Button Integration"), prev.pos("bl").adds(0, 20).x(100));
+
+			prev = add(new Label("Discord Token:"), prev.pos("bl").adds(0, 16).x(0));
+			prev = add(panicButtonDiscordTokenTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonDiscordToken", "")), prev.pos("ur").adds(0, -2).x(UI.scale(104)));
+
+			prev = add(new Label("Discord Channel ID:"), prev.pos("bl").adds(0, 12).x(0));
+			prev = add(panicButtonDiscordChannelIDTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonDiscordChannelID", "")), prev.pos("ur").adds(0, -2).x(UI.scale(104)));
+
+			RichText discordMessageTooltip = RichText.render("This is the message that will be sent in the discord text channel, along with the Nickname you set below.", UI.scale(300));
+			prev = add(new Label("Discord Message:"), prev.pos("bl").adds(0, 12).x(0));
+			prev.tooltip = discordMessageTooltip;
+			prev = add(panicButtonDiscordMessageTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonDiscordMessage", "@here Help! I'm being chased! (Panic Button)")), prev.pos("ur").adds(0, -2).x(UI.scale(104)));
+			prev.tooltip = discordMessageTooltip;
+
+			RichText yourNameTooltip = RichText.render("This is the nickname that will be included in the discord message, to know who's asking for help.\n$col[185,185,185]{You can set this to your discord name, or something.}", UI.scale(300));
+			prev = add(new Label("Your Nickname:"), prev.pos("bl").adds(0, 12).x(0));
+			prev.tooltip = yourNameTooltip;
+			prev = add(panicButtonYourNicknameTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonNickname", "NightdawgFanboy69")), prev.pos("ur").adds(0, -2).x(UI.scale(104)));
+			prev.tooltip = yourNameTooltip;
+
+			RichText villageNameTooltip = RichText.render("This is the In-Game Village Name.\n$col[185,185,185]{This is needed to send the message in the village chat.}", UI.scale(300));
+			prev = add(new Label("Village Name:"), prev.pos("bl").adds(0, 12).x(0));
+			prev.tooltip = villageNameTooltip;
+			prev = add(panicButtonVillageNameTextEntry = new TextEntry(UI.scale(220), Utils.getpref("panicButtonVillageName", "Ex: London Mandem")), prev.pos("ur").adds(0, -2).x(UI.scale(104)));
+			prev.tooltip = villageNameTooltip;
+
+			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 30).x(UI.scale(62)));
 
 			pack();
 		}
@@ -3715,7 +3747,7 @@ public class OptWnd extends Window {
 		Panel dropsettings = add(new NDAutoDropSettingsPanel(advancedSettings));
 		Panel alarmsettings = add(new NDAlarmsAndSoundsSettingsPanel(advancedSettings));
 		Panel colorsettings = add(new NDColorSettingsPanel(advancedSettings));
-		Panel webmapsettings = add(new NDWebMapIntegrationSettingsPanel(advancedSettings));
+		Panel serverintegrationsettings = add(new NDServerIntegrationSettingsPanel(advancedSettings));
 
 
 		int y2 = UI.scale(6);
@@ -3732,7 +3764,7 @@ public class OptWnd extends Window {
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Alarms & Sounds Settings", -1, alarmsettings, "Alarms & Sounds Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Color Settings", -1, colorsettings, "Color Settings"), 0, y2).pos("bl").adds(0, 5).y;
-		y2 = advancedSettings.add(new PButton(UI.scale(200), "Web Map Integration Settings", -1, webmapsettings, "Web Map Integration Settings"), 0, y2).pos("bl").adds(0, 25).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Server Integration Settings", -1, serverintegrationsettings, "Server Integration Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Back", 27, main, "Options            "), 0, y2).pos("bl").adds(0, 5).y;
 		this.advancedSettings.pack();
