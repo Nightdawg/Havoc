@@ -6,6 +6,7 @@ import java.util.*;
 public class AccountList extends Widget {
     public static final LinkedHashMap<String, String> accountmap = new LinkedHashMap<>();
     private static final Coord SZ = UI.scale(240, 30);
+    private static final Coord SZ2 = UI.scale(240, 36);
     static AES aes = new AES();
 
 //    static {
@@ -92,7 +93,7 @@ public class AccountList extends Widget {
         aes.initFromStrings("wBCp/zPaHn+iQSYOl1hixA==", "nRcpTpDouSq60iRT");
         loadAccounts();
         this.height = height;
-        this.sz = new Coord(SZ.x, SZ.y * height);
+        this.sz = new Coord(SZ2.x, SZ2.y * height);
         y = 0;
 
         for (Map.Entry<String, String> entry : accountmap.entrySet()) {
