@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 /* >tt: Quality */
-@haven.FromResource(name = "ui/tt/q/quality", version = 25)
+@haven.FromResource(name = "ui/tt/q/quality", version = 26)
 public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
     public static final BufferedImage qualityWorkaround = Resource.remote().loadwait("ui/tt/q/quality").layer(Resource.imgc, 0).scaled();
     public static Color BG = new Color(0, 0, 0, 200);

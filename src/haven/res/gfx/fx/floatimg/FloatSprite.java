@@ -4,8 +4,11 @@ package haven.res.gfx.fx.floatimg;
 import haven.*;
 import haven.render.*;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.image.BufferedImage;
+import static haven.PUtils.*;
 
-@haven.FromResource(name = "gfx/fx/floatimg", version = 3)
+@haven.FromResource(name = "gfx/fx/floatimg", version = 4)
 public class FloatSprite extends Sprite implements PView.Render2D {
     public final double tm;
     final Tex tex;
@@ -20,7 +23,7 @@ public class FloatSprite extends Sprite implements PView.Render2D {
 	super(owner, res);
 	this.tex = tex;
 	this.tm = tm;
-	this.sy = place((Gob)owner, (int)(tex.sz().y*0.9));
+	this.sy = place(owner.context(Gob.class), (int)(tex.sz().y*0.9));
     }
     
     private static int place(Gob gob, int h) {
