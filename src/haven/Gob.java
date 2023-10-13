@@ -760,8 +760,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	if(!playerAlarmPlayed) {
 		if (isMe == null)
 			isMe();
+		initPlayerName();
 		if(isMe != null && itsLoftar != null) {
-			initPlayerName();
 			if (!itsLoftar){
 				playPlayerAlarm();
 				playerAlarmPlayed = true;
