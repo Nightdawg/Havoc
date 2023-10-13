@@ -10,7 +10,7 @@ import haven.MenuGrid.Pagina;
 import haven.res.gfx.fx.bprad.*;
 
 /* >spr: MSRad */
-@haven.FromResource(name = "gfx/fx/msrad", version = 14)
+@haven.FromResource(name = "gfx/fx/msrad", version = 15)
 public class MSRad extends Sprite {
     public static boolean show = Utils.getprefb("showMineSupportRadii", false);
     public static Collection<MSRad> current = new WeakList<>();

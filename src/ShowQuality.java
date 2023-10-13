@@ -6,7 +6,7 @@ import haven.res.ui.tt.q.quality.*;
 import haven.MenuGrid.Pagina;
 
 /* >pagina: ShowQuality$Fac */
-@haven.FromResource(name = "ui/tt/q/qtoggle", version = 5)
+@haven.FromResource(name = "ui/tt/q/qtoggle", version = 6)
 public class ShowQuality extends MenuGrid.PagButton {
     public ShowQuality(Pagina pag) {
 	super(pag);
@@ -14,8 +14,7 @@ public class ShowQuality extends MenuGrid.PagButton {
 
     public static class Fac implements Factory {
 	public MenuGrid.PagButton make(Pagina pag) {
-	    //return(new ShowQuality(pag));
-        return(new ShowQuality(pag));
+	    return(new ShowQuality(pag));
 	}
     }
 

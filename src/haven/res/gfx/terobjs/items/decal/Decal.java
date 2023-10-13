@@ -11,26 +11,26 @@ import java.util.function.*;
 import java.awt.image.BufferedImage;
 
 /* >spr: Decal */
-@haven.FromResource(name = "gfx/terobjs/items/decal", version = 3)
+@haven.FromResource(name = "gfx/terobjs/items/decal", version = 4)
 public class Decal implements Sprite.Factory {
     public Sprite create(Sprite.Owner owner, Resource res, Message sdt) {
 	Supplier<Pipe.Op> eq = null;
-	if(owner instanceof Gob) {
-	    Gob gob = (Gob)owner;
+	Gob gob = owner.ocontext(Gob.class).orElse(null);
+	if(gob != null) {
 	    Resource ores = gob.getres();
 	    if(ores != null) {
 		Skeleton.BoneOffset bo = ores.layer(Skeleton.BoneOffset.class, "decal");
 		if(bo != null)
-		    eq = bo.forpose(Skeleton.getpose(gob));
+		    eq = bo.from(Skeleton.getpose(gob));
 	    }
 	}
 	Material base = res.layer(Material.Res.class, 16).get();
 	RenderTree.Node proj = res.layer(FastMesh.MeshRes.class, 0).m;
 	Coord3f pc;
 	if(sdt.eom()) {
-		pc = Coord3f.o;
+	    pc = Coord3f.o;
 	} else {
-		pc = new Coord3f((float)(sdt.float16() * MCache.tilesz.x), -(float)(sdt.float16() * MCache.tilesz.y), 0);
+	    pc = new Coord3f((float)(sdt.float16() * MCache.tilesz.x), -(float)(sdt.float16() * MCache.tilesz.y), 0);
 	}
 	var ownerres = owner.getres();
 	if (ownerres != null && ownerres.name.equals("gfx/terobjs/cupboard")) {

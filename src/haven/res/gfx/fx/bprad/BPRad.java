@@ -7,11 +7,11 @@ import haven.render.Model.Indices;
 import java.nio.*;
 import java.awt.Color;
 
-/* >spr: AnimalDangerRadiiSprite */
-@haven.FromResource(name = "gfx/fx/bprad", version = 8)
+/* >spr: BPRad */
+@haven.FromResource(name = "gfx/fx/bprad", version = 9)
 public class BPRad extends Sprite {
-    static final Pipe.Op smat = Pipe.Op.compose(new BaseColor(new java.awt.Color(0, 121, 12, 128)), Clickable.No);
-    static final Pipe.Op emat = Pipe.Op.compose(new BaseColor(new java.awt.Color(0, 0, 0, 140)), new States.LineWidth(4), Clickable.No);
+	static final Pipe.Op smat = Pipe.Op.compose(new BaseColor(new java.awt.Color(0, 121, 12, 128)), Clickable.No);
+	static final Pipe.Op emat = Pipe.Op.compose(new BaseColor(new java.awt.Color(0, 0, 0, 140)), new States.LineWidth(4), Clickable.No);final Gob gob = owner.context(Gob.class);
     final VertexBuf.VertexData posa;
     final VertexBuf vbuf;
     final Model smod, emod;
@@ -81,7 +81,7 @@ public class BPRad extends Sprite {
     }
 
     public void gtick(Render g) {
-	Coord2d cc = ((Gob)owner).rc;
+	Coord2d cc = gob.rc;
 	if((lc == null) || !lc.equals(cc)) {
 	    setz(g, owner.context(Glob.class), cc);
 	    lc = cc;
