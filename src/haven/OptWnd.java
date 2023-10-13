@@ -1224,6 +1224,7 @@ public class OptWnd extends Window {
 					"\n$col[218,163,0]{Case 2:} $col[185,185,185]{If you are in combat with Animals, it will try to attack the closest not-already-aggroed player or animal. Once this happens, you're back to Case 1.}" +
 					"\n$col[218,163,0]{Case 3:} $col[185,185,185]{If you are not in combat, it will attack your last target or just the nearest Player or Animal.}" +
 					"\n\n$col[218,163,0]{Note:} $col[185,185,185]{Party members will never be attacked by this button. Village or Realm members will not be attacked unless you have them marked as $col[185,0,0]{Red} in your Kin List.}", new Color(255, 0, 0,255), GameUI.kb_aggroNearestTargetButton, y+6);
+			y = addbtnImproved(cont, "Aggro all Non-Friendly players.", "", new Color(255, 0, 0,255), GameUI.kb_aggroAllNonFriendlyPlayers, y);
 			y = addbtnImproved(cont, "Re-Aggro Last Target", "", new Color(255, 68, 0,255), GameUI.kb_aggroLastTarget, y);
 			y = addbtnImproved(cont, "Peace Current Target", "", new Color(0, 255, 34,255), GameUI.kb_peaceCurrentTarget, y);
 
