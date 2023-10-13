@@ -3,6 +3,7 @@
 /out
 /local-config.properties
 /local-boot.properties
+/build.properties
 *~
 /alarms/settings/yourSavedConfig
 savedTokens

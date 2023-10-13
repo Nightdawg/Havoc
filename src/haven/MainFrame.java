@@ -470,8 +470,10 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 		Thread.setDefaultUncaughtExceptionHandler(new CrashLogger());
 	/* Set up the error handler as early as humanly possible. */
 	ThreadGroup g = new ThreadGroup("Haven main group");
-	String ed;
-	if(!(ed = Utils.getprop("haven.errorurl", "")).equals("")) {
+	String ed = Utils.getprop("haven.errorurl", "");
+	if(ed.equals("stderr")) {
+	    g = new haven.error.SimpleHandler("Haven main group", true);
+	} else if(!ed.equals("")) {
 	    try {
 		final haven.error.ErrorHandler hg = new haven.error.ErrorHandler(new java.net.URL(ed));
 		hg.sethandler(new haven.error.ErrorGui(null) {
