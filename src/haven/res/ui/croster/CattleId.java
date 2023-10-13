@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 @haven.FromResource(name = "ui/croster", version = 74)
 public class CattleId extends GAttrib implements RenderTree.Node, PView.Render2D {
     public final long id;
+	public static final Text.Foundry nfnd = new Text.Foundry(Text.dfont, 12);
 
     public CattleId(Gob gob, long id) {
 	super(gob);
@@ -61,7 +62,7 @@ public class CattleId extends GAttrib implements RenderTree.Node, PView.Render2D
 	    String name = (entry != null) ? entry.name : null;
 	    if((name != null) && ((rnm == null) || !name.equals(lnm) || (grp != lgrp))) {
 		Color col = BuddyWnd.gc[grp];
-		rnm = new TexI(Utils.outline2(Text.render(name, col).img, Utils.contrast(col)));
+		rnm = new TexI(Utils.outline2(nfnd.renderstroked(name, col, Color.BLACK).img, Color.BLACK, true));
 		lnm = name;
 		lgrp = grp;
 	    }
