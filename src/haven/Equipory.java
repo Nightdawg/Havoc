@@ -154,7 +154,7 @@ public class Equipory extends Widget implements DTarget {
 					new Thread(new YoinkGoodStuffFromKnockedEnemy(enemyEquipory, ui.gui), "DropItemsFromEnemy").start();
 				}
 			};
-			button.c = new Coord(74, 0);
+			button.c = UI.scale(74, 0);
 			add(button);
 			Button button2 = new Button(btnw, "Drop") {
 				@Override
@@ -163,7 +163,7 @@ public class Equipory extends Widget implements DTarget {
 				}
 			};
 
-			button2.c = new Coord(170, 0);
+			button2.c = UI.scale(170, 0);
 			add(button2);
 		}
 	}

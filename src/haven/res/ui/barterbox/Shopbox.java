@@ -24,14 +24,14 @@ public class Shopbox extends Widget implements SpriteOwner, Owner {
     public static final Text any = Text.render("Any");
     public static final Text qlbl = Text.render("Quality:");
     public static final Tex bg = Resource.loadtex("ui/shopbox");
-    public static final Coord itemc = new Coord(5, 5);
-    public static final Coord buyc = new Coord(5, 43);
-    public static final Coord buy100c = new Coord(5, 66);
-    public static final Coord pricec = new Coord(200, 5);
-    public static final Coord qualc = (new Coord(200, 5)).add(Inventory.invsq.sz()).add(40, 0);
-    public static final Coord cbtnc = new Coord(200, 66);
-    public static final Coord spipec = new Coord(85, 66);
-    public static final Coord bpipec = new Coord(280, 66);
+    public static final Coord itemc = UI.scale(5, 5);
+    public static final Coord buyc = UI.scale(5, 43);
+    public static final Coord buy100c = UI.scale(5, 66);
+    public static final Coord pricec = UI.scale(200, 5);
+    public static final Coord qualc = (UI.scale(220, 5)).add(Inventory.invsq.sz()).add(40, 0);
+    public static final Coord cbtnc = UI.scale(200, 66);
+    public static final Coord spipec = UI.scale(85, 66);
+    public static final Coord bpipec = UI.scale(280, 66);
     public ResData res;
     public Spec price;
     public Text num;
@@ -64,14 +64,14 @@ public class Shopbox extends Widget implements SpriteOwner, Owner {
     public Shopbox(boolean var1) {
         super(bg.sz());
         if (this.admin = var1) {
-            this.spipe = (Button)this.add(new Button(75, "Connect"), spipec);
-            this.bpipe = (Button)this.add(new Button(75, "Connect"), bpipec);
-            this.cbtn = (Button)this.add(new Button(75, "Change"), cbtnc);
-            this.pnume = (TextEntry)this.adda(new TextEntry(30, ""), pricec.add(Inventory.invsq.sz()).add(5, 0), 0.0D, 1.0D);
+            this.spipe = (Button)this.add(new Button(UI.scale(75), "Connect"), spipec);
+            this.bpipe = (Button)this.add(new Button(UI.scale(75), "Connect"), bpipec);
+            this.cbtn = (Button)this.add(new Button(UI.scale(75), "Change"), cbtnc);
+            this.pnume = (TextEntry)this.adda(new TextEntry(UI.scale(30), ""), pricec.add(Inventory.invsq.sz()).add(5, 0), 0.0D, 1.0D);
             this.pnume.canactivate = true;
             this.pnume.dshow = true;
-            this.adda(new Label("Quality:"), qualc.add(0, 0), 0.0D, 1.0D);
-            this.pqe = (TextEntry)this.adda(new TextEntry(40, ""), qualc.add(40, 0), 0.0D, 1.0D);
+            this.adda(new Label("ql:"), qualc.add(0, 0), 0.0D, 1.0D);
+            this.pqe = (TextEntry)this.adda(new TextEntry(UI.scale(40), ""), qualc.add(40, 0), 0.0D, 1.0D);
             this.pqe.canactivate = true;
             this.pqe.dshow = true;
         }
@@ -174,7 +174,7 @@ public class Shopbox extends Widget implements SpriteOwner, Owner {
                     BufferedImage var4 = ItemInfo.longtip(this.info());
                     Pagina var5 = ((Resource) var3.res.get()).layer(Resource.pagina);
                     if (var5 != null) {
-                        var4 = ItemInfo.catimgs(0, new BufferedImage[]{var4, RichText.render("\n" + var5.text, 200, new Object[0]).img});
+                        var4 = ItemInfo.catimgs(0, new BufferedImage[]{var4, RichText.render("\n" + var5.text, UI.scale(200), new Object[0]).img});
                     }
 
                     this.longtip = new TexI(var4);
@@ -271,10 +271,10 @@ public class Shopbox extends Widget implements SpriteOwner, Owner {
         boolean var1 = this.price != null && this.pnum > 0;
         if (var1) {
             if (this.bbtn == null) {
-                this.bbtn = this.add(new Button(75, "Buy"), buyc);
+                this.bbtn = this.add(new Button(UI.scale(75), "Buy"), buyc);
             }
             if (this.b100btn == null) {
-                this.b100btn = this.add(new Button(75, "Buy 10"), buy100c);
+                this.b100btn = this.add(new Button(UI.scale(75), "Buy 10"), buy100c);
             }
         } else if (!var1) {
             if (bbtn != null) {
