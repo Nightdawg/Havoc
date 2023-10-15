@@ -30,6 +30,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.IntStream;
 
@@ -74,6 +78,9 @@ public class CharWnd extends Window {
     private final Tabs.Tab sattr, fgt;
     private final Coord studyc;
     private long scost; // ND: Made this long so it doesn't flip over when adding way too many points for the memes
+
+	private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+	private Future<?> equiporyFuture;
 
     public static class FoodMeter extends Widget {
 	public static final Tex frame =  Resource.loadtex("gfx/hud/chr/foodm"); // ND: The size of this image affects everything on the left side lmao
@@ -2003,6 +2010,10 @@ public class CharWnd extends Window {
 			    }
 			}
 			CharWnd.this.wdgmsg("sattr", args.toArray(new Object[0]));
+			if (equiporyFuture != null)
+				equiporyFuture.cancel(true);
+			// ND: Hopefully 500ms is enough
+			equiporyFuture = executor.scheduleWithFixedDelay(this::resetEquiporyBottomText, 500, 5000, TimeUnit.MILLISECONDS);
 	    }), bframe.pos("ibr").subs(5, 5), 1.0, 1.0);
 	    sattr.adda(new Button(UI.scale(75), "Reset").action(() -> {
 			for (SAttr attr : skill)
@@ -2480,5 +2491,12 @@ public class CharWnd extends Window {
 			a = val;
 		}
 	};
+
+	public void resetEquiporyBottomText() {
+		if (ui != null && ui.gui != null && ui.gui.getequipory() != null){
+			ui.gui.getequipory().updateBottomText = true;
+		}
+		equiporyFuture.cancel(true);
+	}
 
 }
