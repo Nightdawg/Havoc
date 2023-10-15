@@ -2201,6 +2201,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"gfx/kritter/stalagoomba/stalagoomba",
 			"gfx/kritter/toad/toad",
 			"gfx/kritter/waterstrider/waterstrider",
+			"gfx/kritter/woodgrouse/woodgrouse-f", // ND: Only female can be chased, males will fight you
 			"gfx/kritter/woodworm/woodworm",
 			"gfx/kritter/whirlingsnowflake/whirlingsnowflake",
 
