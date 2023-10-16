@@ -1515,7 +1515,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 		if(status.updated(StatusType.drawable)) {
 			if (virtual){
-				for(Overlay ol : ols) {
+				for (int i = 0; i < ols.size(); i++) {
+					Overlay ol = (Overlay) ols.toArray()[i];
 					if (ol.res != null && ol.res.get().name.equals("gfx/fx/death")){
 						setSomethingJustDiedStatus();
 					}
