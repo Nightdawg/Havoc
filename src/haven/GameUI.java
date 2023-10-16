@@ -423,7 +423,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	}
 	histbelt = new CraftHistoryBelt(Utils.getprefb("histbelt_vertical", true));
 	add(histbelt, Utils.getprefc("histbelt_c", UI.scale(new Coord(70, 200))));
-	if (!Utils.getprefb("showCraftHistoryBar", true)) {
+	if (!Utils.getprefb("showCraftHistoryBar", false)) {
 		histbelt.hide();
 	}
     }

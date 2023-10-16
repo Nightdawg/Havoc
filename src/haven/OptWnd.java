@@ -671,7 +671,7 @@ public class OptWnd extends Window {
 		}, leftColumn.pos("bl").adds(0, 2));
 
 		leftColumn = add(showCraftHistoryBar = new CheckBox("Enable Craft History Widget"){
-			{a = (Utils.getprefb("showCraftHistoryBar", true));}
+			{a = (Utils.getprefb("showCraftHistoryBar", false));}
 			public void set(boolean val) {
 				Utils.setprefb("showCraftHistoryBar", val);
 				a = val;
