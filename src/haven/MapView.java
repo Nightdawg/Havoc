@@ -2546,16 +2546,19 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 							}
 						}
 					} else {
-						MCache map = ui.sess.glob.map;
-						int t = map.gettile(mc.floor(tilesz));
-						Resource res = map.tilesetr(t);
-						if (res != null) {
-							if (OptWnd.enableAdvancedMouseInfoCheckBox.a)
-								tooltip = RichText.render("Tile Resource Path: " + "$col[255,200,0]{" + res.name + "}" +
-									" \nMC: " + mc.floor(), UI.scale(400));
-							else
-								tooltip = RichText.render("Tile Resource Path: " + "$col[255,200,0]{" + res.name + "}", UI.scale(400));
-							return;
+						try {
+							MCache map = ui.sess.glob.map;
+							int t = map.gettile(mc.floor(tilesz));
+							Resource res = map.tilesetr(t);
+							if (res != null) {
+								if (OptWnd.enableAdvancedMouseInfoCheckBox.a)
+									tooltip = RichText.render("Tile Resource Path: " + "$col[255,200,0]{" + res.name + "}" +
+											" \nMC: " + mc.floor(), UI.scale(400));
+								else
+									tooltip = RichText.render("Tile Resource Path: " + "$col[255,200,0]{" + res.name + "}", UI.scale(400));
+								return;
+							}
+						} catch (Loading ignored){
 						}
 					}
 					tooltip = null;
