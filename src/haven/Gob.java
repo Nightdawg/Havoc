@@ -2376,7 +2376,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 //					return;
 //				}
 //			}
-			System.out.println("test");
 			if (customRadiusOverlay != null) {
 				removeOl(customRadiusOverlay);
 				customRadiusOverlay = null;
