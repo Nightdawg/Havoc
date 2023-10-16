@@ -51,6 +51,7 @@ public class MenuSearch extends Window {
 //			if(psel) {
 //			    if(now - lastcl < 0.5)
 				menu.use(item.btn, new MenuGrid.Interaction(1, ui.modflags()), false);
+				setfocus(ui.gui.portrait); // ND: do this to defocus the stupid search box after you select something
 //			}
 //			lastcl = now;
 			return(true);
