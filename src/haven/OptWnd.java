@@ -528,6 +528,7 @@ public class OptWnd extends Window {
 	public static CheckBox toggleSpeedBoostAurasCheckBox;
 	private CheckBox alwaysOpenBeltCheckBox;
 	private CheckBox showQuickSlotsBar;
+	private CheckBox showCraftHistoryBar;
 	public static CheckBox showContainerFullnessCheckBox;
 	public static CheckBox showContainerFullnessRedCheckBox;
 	public static CheckBox showContainerFullnessYellowCheckBox;
@@ -665,6 +666,17 @@ public class OptWnd extends Window {
 				a = val;
 				if (ui != null && ui.gui != null && ui.gui.quickslots != null){
 					ui.gui.quickslots.show(val);
+				}
+			}
+		}, leftColumn.pos("bl").adds(0, 2));
+
+		leftColumn = add(showCraftHistoryBar = new CheckBox("Enable Craft History Widget"){
+			{a = (Utils.getprefb("showCraftHistoryBar", true));}
+			public void set(boolean val) {
+				Utils.setprefb("showCraftHistoryBar", val);
+				a = val;
+				if (ui != null && ui.gui != null && ui.gui.histbelt != null){
+					ui.gui.histbelt.show(val);
 				}
 			}
 		}, leftColumn.pos("bl").adds(0, 2));

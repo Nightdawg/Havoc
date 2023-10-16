@@ -577,6 +577,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 				use(ad);
 			}
 			if (ad.length > 0 && (ad[0].equals("craft") || ad[0].equals("bp"))) {
+				ui.gui.histbelt.push(r.pag);
 				if((ad[0].equals("craft")))
 					ui.gui.makewnd.setLastAction(r.pag);
 			}
