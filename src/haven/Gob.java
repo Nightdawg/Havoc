@@ -1631,19 +1631,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 						ArrayList<RenderTree.Slot> tmpSlots = new ArrayList<>(d.slots);
 						try {
 							glob.loader.defer(() -> RUtils.multiremSafe(tmpSlots), null);
-						} catch (RenderTree.SlotRemoved e) {
-							// ND: I have no clue what causes this, and what happens if we just ignore it?
-							// I crashed once when I was just walking around Menillos' base, never happened before
-							e.printStackTrace();
+						} catch (Exception ignored) {
 						}
 					}
 				} else {
 					ArrayList<RenderTree.Slot> tmpSlots = new ArrayList<>(slots);
 					try {
 						glob.loader.defer(() -> RUtils.multiadd(tmpSlots, d), null);
-					} catch (RenderTree.SlotRemoved e) {
-						// ND: I have no clue what causes this, and what happens if we just ignore it?
-						e.printStackTrace();
+					} catch (Exception ignored) {
 					}
 				}
 			}
