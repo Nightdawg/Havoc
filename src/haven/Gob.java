@@ -2335,16 +2335,16 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (getres() != null) {
 			String resourceName = getres().name;
 			if (resourceName.equals("gfx/terobjs/boostspeed"))
-				setCircleOl(AuraCircleSprite.white, OptWnd.toggleSpeedBoostAurasCheckBox.a, 6f);
+				setCircleOl(AuraCircleSprite.speedbuffAuraColor, OptWnd.toggleSpeedBoostAurasCheckBox.a, 6f);
 		}
 	}
 
 
 	public void setCritterAura(boolean on, boolean rabbit) {
 		if (rabbit) {
-			setCircleOl(AuraCircleSprite.gren, on);
+			setCircleOl(AuraCircleSprite.rabbitAuraColor, on);
 		} else {
-			setCircleOl(AuraCircleSprite.purp, on);
+			setCircleOl(AuraCircleSprite.genericCritterAuraColor, on);
 		}
 	}
 
@@ -2371,10 +2371,15 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void setCircleOl(Color col, boolean on) {
 		if (on) {
-			for (Overlay ol : ols) {
-				if (ol.spr instanceof AuraCircleSprite) {
-					return;
-				}
+//			for (Overlay ol : ols) {
+//				if (ol.spr instanceof AuraCircleSprite) {
+//					return;
+//				}
+//			}
+			System.out.println("test");
+			if (customRadiusOverlay != null) {
+				removeOl(customRadiusOverlay);
+				customRadiusOverlay = null;
 			}
 			customRadiusOverlay = new Overlay(this, new AuraCircleSprite(this, col));
 			synchronized (ols) {
@@ -2387,10 +2392,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 	private void setCircleOl(Color col, boolean on, float size) {
 		if (on) {
-			for (Overlay ol : ols) {
-				if (ol.spr instanceof AuraCircleSprite) {
-					return;
-				}
+//			for (Overlay ol : ols) {
+//				if (ol.spr instanceof AuraCircleSprite) {
+//					return;
+//				}
+//			}
+			if (customRadiusOverlay != null) {
+				removeOl(customRadiusOverlay);
+				customRadiusOverlay = null;
 			}
 			customRadiusOverlay = new Overlay(this, new AuraCircleSprite(this, col, size));
 			synchronized (ols) {

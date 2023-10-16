@@ -29,6 +29,7 @@ package haven;
 import haven.render.*;
 import haven.res.gfx.fx.msrad.MSRad;
 import haven.sprites.AggroCircleSprite;
+import haven.sprites.AuraCircleSprite;
 import haven.sprites.ChaseVectorSprite;
 import haven.sprites.CurrentTargetSprite;
 
@@ -3050,6 +3051,12 @@ public class OptWnd extends Window {
 	public static String[] openVisitorGateInCombatColorSetting = Utils.getprefsa("openVisitorGateInCombat" + "_colorSetting", new String[]{"255", "150", "0", "100"});
 	public static ColorOptionWidget passableGateCombatColorOptionWidget;
 	public static String[] passableGateCombatColorSetting = Utils.getprefsa("passableGate" + "_colorSetting", new String[]{"0", "217", "30", "100"});
+	public static ColorOptionWidget genericCritterAuraColorOptionWidget;
+	public static String[] genericCritterAuraColorSetting = Utils.getprefsa("genericCritterAura" + "_colorSetting", new String[]{"193", "0", "255", "140"});
+	public static ColorOptionWidget rabbitAuraColorOptionWidget;
+	public static String[] rabbitAuraColorSetting = Utils.getprefsa("rabbitAura" + "_colorSetting", new String[]{"88", "255", "0", "140"});
+	public static ColorOptionWidget speedbuffAuraColorOptionWidget;
+	public static String[] speedbuffAuraColorSetting = Utils.getprefsa("speedbuffAura" + "_colorSetting", new String[]{"255", "255", "255", "140"});
 	public static ColorOptionWidget objectPingColorOptionWidget;
 	public static String[] objectPingColorSetting = Utils.getprefsa("objectPing" + "_colorSetting", new String[]{"255", "183", "0", "255"});
 	public static ColorOptionWidget partyObjectPingColorOptionWidget;
@@ -3330,6 +3337,68 @@ public class OptWnd extends Window {
 				if (ui != null && ui.gui != null) {
 					ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
 					ui.sess.glob.oc.gobAction(Gob::collisionBoxUpdated); // ND: Gotta update collision boxes too, cause the gate colors depend on this setting
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+
+
+
+			leftColumn = add(new Label("Aura Circles"), leftColumn.pos("bl").adds(0, 12).x(UI.scale(126)));
+			leftColumn = add(genericCritterAuraColorOptionWidget = new ColorOptionWidget("Generic Critter Aura:", "genericCritterAura", 246,
+					Integer.parseInt(genericCritterAuraColorSetting[0]), Integer.parseInt(genericCritterAuraColorSetting[1]),
+					Integer.parseInt(genericCritterAuraColorSetting[2]), Integer.parseInt(genericCritterAuraColorSetting[3]), (Color col) -> {
+				AuraCircleSprite.genericCritterAuraColor = genericCritterAuraColorOptionWidget.currentColor;
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::toggleCritterAuras);
+				}
+			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("genericCritterAura" + "_colorSetting", new String[]{"193", "0", "255", "140"});
+				genericCritterAuraColorOptionWidget.cb.colorChooser.setColor(genericCritterAuraColorOptionWidget.currentColor = new Color(193, 0, 255, 140));
+				AuraCircleSprite.genericCritterAuraColor = genericCritterAuraColorOptionWidget.currentColor;
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::toggleCritterAuras);
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+
+
+			leftColumn = add(rabbitAuraColorOptionWidget = new ColorOptionWidget("Rabbit/Bunny Aura:", "rabbitAura", 246,
+					Integer.parseInt(rabbitAuraColorSetting[0]), Integer.parseInt(rabbitAuraColorSetting[1]),
+					Integer.parseInt(rabbitAuraColorSetting[2]), Integer.parseInt(rabbitAuraColorSetting[3]), (Color col) -> {
+				AuraCircleSprite.rabbitAuraColor = rabbitAuraColorOptionWidget.currentColor;
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::toggleCritterAuras);
+				}
+			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("rabbitAura" + "_colorSetting", new String[]{"88", "255", "0", "140"});
+				rabbitAuraColorOptionWidget.cb.colorChooser.setColor(rabbitAuraColorOptionWidget.currentColor = new Color(88, 255, 0, 140));
+				AuraCircleSprite.rabbitAuraColor = rabbitAuraColorOptionWidget.currentColor;
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::toggleCritterAuras);
+				}
+			}), leftColumn.pos("ur").adds(30, 0));
+			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
+
+
+			leftColumn = add(speedbuffAuraColorOptionWidget = new ColorOptionWidget("Speed Buff Aura:", "speedbuffAura", 246,
+					Integer.parseInt(speedbuffAuraColorSetting[0]), Integer.parseInt(speedbuffAuraColorSetting[1]),
+					Integer.parseInt(speedbuffAuraColorSetting[2]), Integer.parseInt(speedbuffAuraColorSetting[3]), (Color col) -> {
+				AuraCircleSprite.speedbuffAuraColor = speedbuffAuraColorOptionWidget.currentColor;
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::toggleSpeedBuffAuras);
+				}
+			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
+
+			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("speedbuffAura" + "_colorSetting", new String[]{"255", "255", "255", "140"});
+				speedbuffAuraColorOptionWidget.cb.colorChooser.setColor(speedbuffAuraColorOptionWidget.currentColor = new Color(255, 255, 255, 140));
+				AuraCircleSprite.speedbuffAuraColor = speedbuffAuraColorOptionWidget.currentColor;
+				if (ui != null && ui.gui != null) {
+					ui.sess.glob.oc.gobAction(Gob::toggleSpeedBuffAuras);
 				}
 			}), leftColumn.pos("ur").adds(30, 0));
 			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
