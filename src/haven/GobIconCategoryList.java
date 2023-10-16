@@ -134,6 +134,7 @@ public class GobIconCategoryList extends Listbox<GobIconCategoryList.GobCategory
 		"/invobjs/champignon-small",
 		"/invobjs/clay-gray",
 		"/invobjs/clay-cave",
+		"customMapIcons/caveclaypuddle",
 		"/invobjs/whirlingsnowflake",
 		"/invobjs/small/yulestar",
 		"/invobjs/small/yulelights",

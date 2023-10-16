@@ -48,6 +48,8 @@ public class CustomMapIcons {
 		put("gfx/terobjs/trees/oldtrunk", "customMapIcons/mirkwoodlog");
 
 		put ("gfx/kritter/midgeswarm/midgeswarm", "customMapIcons/midgeswarm");
+
+		put("gfx/terobjs/map/cavepuddle", "customMapIcons/caveclaypuddle");
 	}};
     
     public static boolean process(GobIcon icon) {
