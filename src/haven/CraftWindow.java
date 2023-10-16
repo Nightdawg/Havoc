@@ -82,15 +82,15 @@ public class CraftWindow extends Window {
 		super.resize(sz.add(5, 5));
 	}
 
-	public boolean globtype(char ch, KeyEvent ev) {
-		if(visible && ev.getKeyCode() == KeyEvent.VK_TAB && tabStrip.getButtonCount() > 0) {
-			int nextIndex = (tabStrip.getSelectedButtonIndex() + 1) % tabStrip.getButtonCount();
-			tabStrip.select(nextIndex);
-			if(hasfocus)
-				return true;
-		}
-		return super.globtype(ch, ev);
-	}
+//	public boolean globtype(char ch, KeyEvent ev) {
+//		if(visible && ev.getKeyCode() == KeyEvent.VK_TAB && tabStrip.getButtonCount() > 0) {
+//			int nextIndex = (tabStrip.getSelectedButtonIndex() + 1) % tabStrip.getButtonCount();
+//			tabStrip.select(nextIndex);
+//			if(hasfocus)
+//				return true;
+//		}
+//		return super.globtype(ch, ev);
+//	}
 
 	@Override
 	public void hide() {
