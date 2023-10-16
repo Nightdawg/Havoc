@@ -396,7 +396,7 @@ public class PUtils {
 				buf.setSample(x, y, 2, (col.getBlue()  * val) / 255);
 			}
 		}
-		return PUtils.uiscale(copy, sz);
+		return copy;
 	}
 
     public static interface Convolution {
