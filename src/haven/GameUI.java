@@ -463,13 +463,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				srchwnd = new MenuSearch(menu);
 				fitwdg(GameUI.this.add(srchwnd, Utils.getprefc("wndc-srch", new Coord(200, 200))));
 			} else {
-				if(!srchwnd.hasfocus) {
-					this.setfocus(srchwnd);
-				} else {
-					Utils.setprefc("wndc-srch",srchwnd.c); // ND: Add this to save the search window location
-					ui.destroy(srchwnd);
-					srchwnd = null;
-				}
+				Utils.setprefc("wndc-srch",srchwnd.c); // ND: Add this to save the search window location
+				ui.destroy(srchwnd);
+				srchwnd = null;
 			}
 		});
 		brpanel.add(new MenuCheckBox("lbtn-map", kb_map, "Map"), bg.c).state(() -> wndstate(mapfile)).click(() -> {
