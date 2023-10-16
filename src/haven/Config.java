@@ -40,7 +40,7 @@ import java.io.*;
 import java.nio.file.*;
 
 public class Config {
-	public static final String clientVersion = "v1.0.6";
+	public static final String clientVersion = "v1.0.7";
 	public static String webClientVersion = "";
 	public static final File HOMEDIR = new File("").getAbsoluteFile();
     public static final Properties jarprops = getjarprops();
