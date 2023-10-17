@@ -10,7 +10,7 @@ import static haven.PUtils.*;
 
 @haven.FromResource(name = "gfx/fx/floatimg", version = 4)
 public class FloatText extends FloatSprite {
-    public static final Text.Foundry fnd = new Text.Foundry(Text.sans.deriveFont(Font.BOLD, UI.scale(12f))).aa(true);
+    public static final Text.Foundry fnd = new Text.Foundry(Text.sans, 12);
 
     public static BufferedImage render(String str, Color col) {
 	Color col2 = Utils.contrast(col);
@@ -18,7 +18,7 @@ public class FloatText extends FloatSprite {
     }
 
     public FloatText(Owner owner, Resource res, String str, Color col) {
-	super(owner, res, new TexI(Utils.outline2(fnd.render(str, col).img, Color.BLACK,true)), 2);
+	super(owner, res, new TexI(Utils.outline2(fnd.renderstroked(str, col, Color.BLACK).img, Color.BLACK,true)), 2);
     }
 }
 
