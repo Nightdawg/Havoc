@@ -142,7 +142,7 @@ public class StudyInventory extends Inventory {
             if (ci != null && ((WItem) w).itemmeter.get() > 0.99) {
                 Resource.Tooltip tt = item.resource().layer(Resource.Tooltip.class);
                 if (tt != null)
-                    ui.gui.syslog.append("Gained" + ci.exp + " LP (" + tt.t + ")", Color.LIGHT_GRAY);
+                    ui.gui.syslog.append("Gained " + ci.exp + " LP (" + tt.t + ")", Color.LIGHT_GRAY);
 
                 if (OptWnd.playSoundOnFinishedCurioCheckBox.a){
                     double now = System.currentTimeMillis();
