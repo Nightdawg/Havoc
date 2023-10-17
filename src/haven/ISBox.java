@@ -123,7 +123,7 @@ public class ISBox extends Widget implements DTarget {
             }
         }
         if (button == 1) {
-            System.out.println("clicking stockpile take with mods: " + ui.modflags());
+//            System.out.println("clicking stockpile take with mods: " + ui.modflags());
             if (ui.modshift ^ ui.modctrl) {           //SHIFT or CTRL means pull
                 int dir = ui.modctrl ? -1 : 1;        //CTRL means pull out, SHIFT pull in
                 int all = (dir > 0) ? av - rem : rem; //count depends on direction
