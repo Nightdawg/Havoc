@@ -29,6 +29,7 @@ package haven;
 import haven.automated.DropItemsFromKnockedEnemy;
 import haven.automated.YoinkGoodStuffFromKnockedEnemy;
 import haven.res.ui.tt.armor.Armor;
+import haven.res.ui.tt.wear.Wear;
 
 import java.awt.*;
 import java.util.*;
@@ -375,11 +376,22 @@ public class Equipory extends Widget implements DTarget {
 					}
 					for (int i = 0; i < slots.length; i++) {
 						WItem itm = slots[i];
+						boolean isBroken = false;
 						if (itm != null) {
 							for (ItemInfo info : itm.item.info()) {
+								if (info instanceof Wear) {
+									if (((Wear) info).m-((Wear) info).d == 0)
+										isBroken = true;
+									break;
+								}
+							}
+
+							for (ItemInfo info : itm.item.info()) {
 								if (info instanceof Armor) {
-									aHard += ((Armor) info).hard;
-									aSoft += ((Armor) info).soft;
+									if (!isBroken){
+										aHard += ((Armor) info).hard;
+										aSoft += ((Armor) info).soft;
+									}
 									break;
 								}
 							}
