@@ -42,6 +42,18 @@ public class CookingRecipes extends Window {
                 }
             }
         }, UI.scale(10, 5));
+        Label help = new Label("?");
+        help.tooltip = RichText.render("$col[255,213,0]{How to input code?}" +
+                "\n-All conditions should be split with semicolon ';'"+
+                "\n-Example fep flat condition: str1>10, agi2<20, int2>=10" +
+                "\n-Example fep/total condition: str1>10%, agi2<20%, int2>=10%" +
+                "\n-Include ingredient: from:troll, from:morels, from:cachalot"+
+                "\n-Exclude ingredient: -from:troll, -from:morels, -from:cachalot" +
+                "\n-Food name: name:autumn, name:pan roasted, name:cheese" +
+                "\n-Sorting by fep: sort:str1, sort:agi2, sort:int1" +
+                "\nExample query: \n-name:autumn;str2>20;str2>50%;-from:fairy;from:cacha;sort:str2", UI.scale(300));
+        help.setcolor(new Color(0, 248, 255, 255));
+        add(help, UI.scale(-1, 5));
         add(new Button(UI.scale(30), "<<") {
             @Override
             public void click() {
