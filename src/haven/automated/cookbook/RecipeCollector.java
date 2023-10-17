@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -52,17 +54,22 @@ public class RecipeCollector implements Runnable {
             if (foodInfo != null) {
                 QBuff qBuff = ItemInfo.find(QBuff.class, infoList);
                 double quality = qBuff != null ? qBuff.q : 10.0;
-                double multiplier = Math.sqrt(quality / 10.0);
+
+                BigDecimal qualityDecimal = BigDecimal.valueOf(quality);
+                BigDecimal multiplierDecimal = BigDecimal.valueOf(Math.sqrt(qualityDecimal.divide(BigDecimal.valueOf(10.0), 10, RoundingMode.HALF_UP).doubleValue()));
 
                 ParsedFoodInfo parsedFoodInfo = new ParsedFoodInfo();
                 parsedFoodInfo.resourceName = resName;
-                parsedFoodInfo.energy = (int) (Math.round(foodInfo.end * 100));
-                parsedFoodInfo.hunger = round3Dig(foodInfo.glut * 1000);
+                parsedFoodInfo.energy = (int) Math.round(foodInfo.end * 100);
+                parsedFoodInfo.hunger = BigDecimal.valueOf(foodInfo.glut).multiply(BigDecimal.valueOf(1000)).setScale(3, RoundingMode.HALF_UP).doubleValue();
 
-                double totalFep = 0.0;
+
+                BigDecimal totalFepDecimal = BigDecimal.ZERO;
                 for (int i = 0; i < foodInfo.evs.length; i++) {
-                    double value = round3Dig(foodInfo.evs[i].a / multiplier);
-                    totalFep += value;
+                    BigDecimal valueDecimal = BigDecimal.valueOf(foodInfo.evs[i].a).divide(multiplierDecimal, 10, RoundingMode.HALF_UP).setScale(3, RoundingMode.HALF_UP);
+                    double value = valueDecimal.doubleValue();
+
+                    totalFepDecimal = totalFepDecimal.add(valueDecimal);
 
                     switch (foodInfo.evs[i].ev.nm) {
                         case "Strength +1" -> parsedFoodInfo.str1 = value;
@@ -88,7 +95,7 @@ public class RecipeCollector implements Runnable {
                         }
                     }
                 }
-                parsedFoodInfo.totalFep = round3Dig(totalFep);
+                parsedFoodInfo.totalFep = totalFepDecimal.setScale(3, RoundingMode.HALF_UP).doubleValue();
                 for (ItemInfo info : infoList) {
                     if (info instanceof ItemInfo.AdHoc) {
                         String text = ((ItemInfo.AdHoc) info).str.text;
@@ -299,10 +306,6 @@ public class RecipeCollector implements Runnable {
                         .collect(Collectors.joining(","));
         byte[] hash = digest.digest(inputData.getBytes(StandardCharsets.UTF_8));
         return Base64.getEncoder().encodeToString(hash);
-    }
-
-    private static double round3Dig(double value) {
-        return Math.round(value * 1000.0) / 1000.0;
     }
 
     public static void createDatabaseIfNotExist() throws SQLException {
