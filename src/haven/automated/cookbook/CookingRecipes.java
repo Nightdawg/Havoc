@@ -152,7 +152,7 @@ public class CookingRecipes extends Window {
                     sql.append("food.name like '%");
                     sql.append(condition.substring(5));
                     sql.append("%'");
-                } else if (Pattern.matches("^(str1|str2|agi1|agi2|int1|int2|con1|con2|per1|per2|cha1|cha2|dex1|dex2|wil1|wil2|psy1|psy2)([<>]=?)(100%|[1-9][0-9]?%|[1-9][0-9]{0,2}|1000)$", condition)) {
+                } else if (Pattern.matches("^(str1|str2|agi1|agi2|int1|int2|con1|con2|per1|per2|cha1|cha2|dex1|dex2|wil1|wil2|psy1|psy2)([<>]=?)(100%|[1-9][0-9]?%|[0-9]{1,3}|1000)$", condition)) {
                     if (!whereClauseAdded) {
                         sql.append(" WHERE ");
                         whereClauseAdded = true;
