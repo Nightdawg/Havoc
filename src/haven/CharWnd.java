@@ -504,7 +504,18 @@ public class CharWnd extends Window {
 
 	public void lvlup() {
 	    lvlt = 1.0;
+		if (equiporyFuture != null)
+			equiporyFuture.cancel(true);
+		// ND: Hopefully 500ms is enough
+		equiporyFuture = executor.scheduleWithFixedDelay(this::resetEquiporyBottomText, 500, 5000, TimeUnit.MILLISECONDS);
 	}
+
+		public void resetEquiporyBottomText() {
+			if (ui != null && ui.gui != null && ui.gui.getequipory() != null){
+				ui.gui.getequipory().updateBottomText = true;
+			}
+			equiporyFuture.cancel(true);
+		}
     }
 
     public class SAttr extends Widget {
