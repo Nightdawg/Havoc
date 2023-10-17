@@ -139,7 +139,7 @@ public class ISlots extends ItemInfo.Tip implements GItem.NumberInfo {
 		return(s.size());
 	}
 
-	public static final Color avail = new Color(128, 192, 255);
+	public static final Color avail = new Color(0, 169, 224);
 	public Color numcolor() {
 		return((left > 0) ? avail : Color.WHITE);
 	}
