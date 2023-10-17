@@ -57,6 +57,10 @@ public class OCache implements Iterable<Gob> {
     public static final int OD_END = 255;
     public static final int[] compodmap = {OD_REM, OD_RESATTR, OD_FOLLOW, OD_MOVE, OD_RES, OD_LINBEG, OD_LINSTEP, OD_HOMING};
     public static final Coord2d posres = Coord2d.of(0x1.0p-10, 0x1.0p-10).mul(11, 11);
+
+	private static final List<Runnable> deferredActions = new ArrayList<>();
+	public static final Resource resoCave = Resource.remote().loadwait("gfx/hud/mmap/cave", 2);
+	public static final Resource resoTarpit = Resource.remote().loadwait("gfx/terobjs/mm/tarpit", 2);
     /* XXX: Use weak refs */
     private Collection<Collection<Gob>> local = new LinkedList<Collection<Gob>>();
     private HashMultiMap<Long, Gob> objs = new HashMultiMap<Long, Gob>();
@@ -92,6 +96,7 @@ public class OCache implements Iterable<Gob> {
     }
 
     public void add(Gob ob) {
+		addTarPitsAndCaves(ob);
 	synchronized(ob) {
 	    Collection<ChangeCallback> cbs;
 	    synchronized(this) {
@@ -102,6 +107,40 @@ public class OCache implements Iterable<Gob> {
 		cb.added(ob);
 	}
     }
+
+	public static void addDeferredAction(Runnable action) {
+		deferredActions.add(action);
+	}
+
+	private void addTarPitsAndCaves(Gob ob) {
+		try {
+			Resource res = ob.getres();
+			if (res != null) {
+				Runnable action = null;
+				if (res.name.contains("ridges/cavein") || res.name.contains("ridges/caveout")) {
+					action = () -> glob.sess.ui.gui.mapfile.markobj(ob.id, ob.id, () -> resoCave, "Cave");
+				} else if (res.name.contains("terobjs/wonders/tarpit")) {
+					action = () -> glob.sess.ui.gui.mapfile.markobj(ob.id, ob.id, () -> resoTarpit, "Tar Pit");
+				}
+
+				if (action != null) {
+					if (glob.sess.ui.gui != null) {
+						action.run();
+					} else {
+						OCache.addDeferredAction(action);
+					}
+				}
+			}
+		} catch (Exception ignored) {
+		}
+	}
+
+	public static void runDeferredActions() {
+		for (Runnable action : deferredActions) {
+			action.run();
+		}
+		deferredActions.clear();
+	}
 
     public void remove(Gob ob) {
 	Gob old;

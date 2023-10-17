@@ -156,7 +156,13 @@ public class MappingClient {
 		    MarkerData md = iterator.next();
 		    try {
 			Coord mgc = new Coord(Math.floorDiv(md.m.tc.x, 100), Math.floorDiv(md.m.tc.y, 100));
-			long gridId = md.indirGrid.get().id;
+			long gridId;
+			try {
+				gridId = md.indirGrid.get().id;
+			} catch (Exception e) {
+				iterator.remove();
+				continue;
+			}
 			JSONObject o = new JSONObject();
 			o.put("name", md.m.nm);
 			o.put("gridID", String.valueOf(gridId));

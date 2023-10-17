@@ -426,6 +426,9 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	if (!Utils.getprefb("showCraftHistoryBar", false)) {
 		histbelt.hide();
 	}
+	try {
+		OCache.runDeferredActions();
+	} catch (Exception ignored){}
     }
 
     protected void attached() {
