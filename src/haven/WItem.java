@@ -219,7 +219,7 @@ public class WItem extends Widget implements DTarget {
 				delayCounter = 0;
 				colorValue = colorValue == 255 ? 0 : 255;
 			}
-			if(item.getres().name.toLowerCase().contains(ItemSearcher.itemHighlighted.toLowerCase())) {
+			if(item.getname().toLowerCase().contains(ItemSearcher.itemHighlighted.toLowerCase())) {
 				g.usestate(new ColorMask(new Color(colorValue, colorValue, colorValue, colorValue)));
 			}
 		} else {
