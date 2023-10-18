@@ -7,8 +7,8 @@ public class CraftHistoryBelt extends Widget {
     private MenuGrid.Pagina[] belt = new MenuGrid.Pagina[SIZE];
     private UI.Grab dragging;
     private Coord dc;
-    private static final Coord vsz = new Coord(34, 290);
-    private static final Coord hsz = new Coord(290, 34);
+    private static final Coord vsz = UI.scale(34, 290);
+    private static final Coord hsz = UI.scale(290, 34);
     private boolean vertical;
 
     public CraftHistoryBelt(boolean vertical) {
