@@ -29,11 +29,14 @@ public class AutoFlowerRepeater implements Runnable{
         items = iterateThroughItems(name);
     }
 
-    public List<GItem> iterateThroughItems(String name){
+    public List<GItem> iterateThroughItems(String name) {
         List<GItem> items = new ArrayList<>();
-        for(WItem item : gui.maininv.getAllItems()){
-            if(item.item != null && item.item.getres() != null && item.item.getres().name.equals(name)){
-                items.add(item.item);
+        for (WItem item : gui.maininv.getAllItems()) {
+            try {
+                if (item.item != null && item.item.getres() != null && item.item.getres().name.equals(name)) {
+                    items.add(item.item);
+                }
+            } catch (Loading ignored) {
             }
         }
         return items;
