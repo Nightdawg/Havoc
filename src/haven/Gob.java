@@ -44,10 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -62,7 +59,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     public long id;
     public boolean removed = false;
     public final Glob glob;
-    public Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
+    public ConcurrentHashMap<Class<? extends GAttrib>, GAttrib> attr = new ConcurrentHashMap<>();
     public final Collection<Overlay> ols = new ArrayList<Overlay>();
 	public Collection<Overlay> tempOls = new ArrayList<Overlay>();
     public final Collection<RenderTree.Slot> slots = new ArrayList<>(1);
@@ -2460,7 +2457,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			@Override
 			public void run(){
 				boolean imDead = true;
-				ArrayList<Map.Entry<Class<? extends GAttrib>, GAttrib>> gAttribs = new ArrayList<Map.Entry<Class<? extends GAttrib>, GAttrib>>(hearthling.attr.entrySet());
+				ArrayList<Map.Entry<Class<? extends GAttrib>, GAttrib>> gAttribs = new ArrayList<>(hearthling.attr.entrySet());
 				for (int i = 0; i < gAttribs.size(); i++) {
 					Map.Entry<Class<? extends GAttrib>, GAttrib> entry = gAttribs.get(i);
 					GAttrib g = entry.getValue();
