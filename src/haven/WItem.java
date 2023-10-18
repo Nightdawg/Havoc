@@ -47,6 +47,8 @@ public class WItem extends Widget implements DTarget {
 	private static final Color quantityColor = new Color(255, 255, 255, 255);
 	public static final Coord TEXT_PADD_BOT = new Coord(1, 2);
 	private boolean holdingShift = false;
+	private short delayCounter = 0;
+	private int colorValue = 90;
 
     public WItem(GItem item) {
 	super(sqsz);
@@ -211,8 +213,20 @@ public class WItem extends Widget implements DTarget {
 	if(spr != null) {
 	    Coord sz = spr.sz();
 	    g.defstate();
-	    if(olcol.get() != null)
-		g.usestate(new ColorMask(olcol.get()));
+		if(ItemSearcher.itemHighlighted.length() > 1){
+			delayCounter++;
+			if(delayCounter>40){
+				delayCounter = 0;
+				colorValue = colorValue == 255 ? 0 : 255;
+			}
+			if(item.getres().name.toLowerCase().contains(ItemSearcher.itemHighlighted.toLowerCase())) {
+				g.usestate(new ColorMask(new Color(colorValue, colorValue, colorValue, colorValue)));
+			}
+		} else {
+			if(olcol.get() != null){
+				g.usestate(new ColorMask(olcol.get()));
+			}
+		}
 	    drawmain(g, spr);
 	    g.defstate();
 		drawDurabilityBars(g, sz);

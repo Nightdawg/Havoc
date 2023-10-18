@@ -843,8 +843,14 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.add(gui.panicButtonWindow, new Coord(gui.sz.x/2 - gui.panicButtonWindow.sz.x/2, gui.sz.y/2 - gui.panicButtonWindow.sz.y/2 - 300));
 				}
 			} else if (ad[2].equals("InventorySearcher")) {
-				// Do stuff here
-
+				if(gui.itemSearcher != null){
+					gui.itemSearcher.reqdestroy();
+					gui.itemSearcher = null;
+					ItemSearcher.itemHighlighted = "";
+				} else {
+					gui.itemSearcher = new ItemSearcher();
+					gui.add(gui.itemSearcher, new Coord(gui.sz.x/2 - gui.itemSearcher.sz.x/2, gui.sz.y/2 - gui.itemSearcher.sz.y/2 - 300));
+				}
 			}
 		}
 	}
