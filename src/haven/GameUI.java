@@ -2572,6 +2572,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 				System.err.println("Failed to parse ping value: " + matchedPing);
 			}
 		}
-		return null;
+		return 100;
 	}
 }

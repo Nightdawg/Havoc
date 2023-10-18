@@ -20,10 +20,10 @@ public class AutoFlowerRepeater implements Runnable{
     public AutoFlowerRepeater(GameUI gui, String name) {
         scheduler.schedule(() -> {
             stop = true;
-
             }, 2000, TimeUnit.MILLISECONDS);
         this.gui = gui;
-        this.ping = GameUI.getPingValue() != null ? GameUI.getPingValue() + 20 : 100;
+        Integer ping = GameUI.getPingValue();
+        this.ping = ping != null ? ping + 20 : 100;
         option = "";
         this.name = name;
         items = iterateThroughItems(name);
