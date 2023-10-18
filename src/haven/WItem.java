@@ -33,7 +33,7 @@ import java.util.List;
 
 import haven.ItemInfo.AttrCache;
 import haven.automated.AutoFlowerRepeater;
-import haven.automated.HarvestNearestDreamcatcher;
+import haven.automated.ItemSearcher;
 import haven.resutil.Curiosity;
 
 import static haven.Inventory.sqsz;
