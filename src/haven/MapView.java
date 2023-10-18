@@ -773,7 +773,9 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 	this.glob = glob;
 	this.cc = cc;
 	this.plgob = plgob;
-	glob.oc.getgob(plgob).delattr(KinInfo.class); // ND: This is only needed for Valhalla. That's the only time plgob seems to change while you're playing. I guess it will work anytime anyway.
+	try {
+		glob.oc.getgob(plgob).delattr(KinInfo.class); // ND: This is only needed for Valhalla. That's the only time plgob seems to change while you're playing. I guess it will work anytime anyway.
+	} catch (NullPointerException ignored){}
 	basic.add(new Outlines(false));
 	basic.add(this.gobs = new Gobs());
 	basic.add(this.terrain = new Terrain());
@@ -2283,7 +2285,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 		GameUI gui = ui.gui;
 		// reset alt so we could walk with alt+lmb while having item on the cursor
 		int modflags = ui.modflags();
-		if (gui.vhand != null && clickb == 1)
+		if (gui != null && gui.vhand != null && clickb == 1)
 			modflags = modflags & ~4;
 
 	    Object[] args = {pc, mc.floor(posres), clickb, modflags};
