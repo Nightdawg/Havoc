@@ -39,18 +39,22 @@ import haven.render.TextureCube.CubeImage;
 import haven.render.sl.ShaderMacro;
 
 public class RUtils {
-    public static Collection<Slot> multiadd(Collection<Slot> slots, Node node) {
-	Collection<Slot> added = new ArrayList<>(slots.size());
-	try {
-	    for(Slot slot : slots)
-		added.add(slot.add(node));
-	} catch(RuntimeException e) {
-	    for(Slot slot : added)
-		slot.remove();
-	    throw(e);
+	public static Collection<Slot> multiadd(Collection<Slot> slots, Node node) {
+		Collection<Slot> added = new ArrayList<>(slots.size());
+		try {
+			for (Slot slot : slots)
+				added.add(slot.add(node));
+		} catch (RenderTree.SlotRemoved e) {
+			for (Slot slot : added)
+				slot.remove();
+			System.out.println("Encountered SlotRemoved exception: " + e.getMessage());
+		} catch (RuntimeException e) {
+			for (Slot slot : added)
+				slot.remove();
+			throw(e);
+		}
+		return(added);
 	}
-	return(added);
-    }
 
     public static void multirem(Collection<Slot> slots) {
 	if(slots == null)

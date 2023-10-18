@@ -536,8 +536,9 @@ public class RenderTree implements RenderList.Adapter, Disposable {
 		    synchronized(tree.clients) {
 			tree.clients.forEach(cl -> cl.removed(this));
 		    }
-		} catch(RuntimeException e) {
-		    throw(new Error("Unexpected non-local exit", e));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw (new Error("Unexpected non-local exit", e));
 		}
 	    }
 	}
