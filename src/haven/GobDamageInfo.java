@@ -104,11 +104,15 @@ public class GobDamageInfo extends GobInfo {
     }
 
     public static void clearAllDamage(GameUI gui) {
-        ArrayList<Long> gobIds = new ArrayList<>(gobDamage.keySet());
-        for (Long id : gobIds) {
-            if(id == null) {continue;}
-            clearDamage(gui.ui.sess.glob.oc.getgob(id), id);
-        }
+        try {
+            ArrayList<Long> gobIds = new ArrayList<>(gobDamage.keySet());
+            for (Long id : gobIds) {
+                if (id == null) {
+                    continue;
+                }
+                clearDamage(gui.ui.sess.glob.oc.getgob(id), id);
+            }
+        } catch (ArrayIndexOutOfBoundsException ignored){}
     }
 
     private static class DamageVO {
