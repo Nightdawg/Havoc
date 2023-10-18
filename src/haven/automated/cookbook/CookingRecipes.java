@@ -159,9 +159,19 @@ public class CookingRecipes extends Window {
                     } else {
                         sql.append(" AND ");
                     }
+
                     String stat = condition.substring(0, 4);
-                    String operator = condition.substring(4, 5);
-                    String value = condition.substring(5);
+                    String operator;
+                    String value;
+
+                    if (condition.substring(4, 6).equals("<=") || condition.substring(4, 6).equals(">=")) {
+                        operator = condition.substring(4, 6);
+                        value = condition.substring(6);
+                    } else {
+                        operator = condition.substring(4, 5);
+                        value = condition.substring(5);
+                    }
+
                     if (value.endsWith("%")) {
                         String valueNum = value.replace("%", "");
                         Double totalFep = (Double.parseDouble(valueNum) / 10);
