@@ -116,8 +116,11 @@ public class StudyInventory extends Inventory {
                         for (int cx = x; cx < x + clearx; cx++) {
                             for (int cy = y; cy < y + cleary; cy++) {
                                 int ci = cy * 4 + cx;
+                                try {
                                 hist[ci] = null;
                                 histtex[ci] = null;
+                                } catch (ArrayIndexOutOfBoundsException ignored) {
+                                }
                             }
                         }
 
