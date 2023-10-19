@@ -95,6 +95,7 @@ public class Curiosity extends ItemInfo.Tip implements GItem.ColorInfo {
 			buf.append(String.format("Remaining: $col[255,224,192]{%s}\n", remaining));
 		}
 		buf.append(String.format("LP/H: $col[192,255,255]{%d}\n", this.lph));
+		buf.append(String.format("LP/H/Weight: $col[192,255,255]{%d}\n", lph(this.lph / mw)));
 		if(mw > 0)
 			buf.append(String.format("Mental weight: $col[255,192,255]{%d}\n", mw));
 		if(enc > 0)
