@@ -1930,6 +1930,7 @@ public class Resource implements Serializable {
 					"customMapIcons/woodenplow",
 					"customMapIcons/wreckingball",
 					"customMapIcons/caveclaypuddle",
+					"customMapIcons/gem",
 
 					"gfx/tiles/notile"
 			);
