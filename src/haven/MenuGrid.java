@@ -848,7 +848,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.itemSearcher = null;
 					ItemSearcher.itemHighlighted = "";
 				} else {
-					gui.itemSearcher = new ItemSearcher();
+					gui.itemSearcher = new ItemSearcher(gui);
 					gui.add(gui.itemSearcher, new Coord(gui.sz.x/2 - gui.itemSearcher.sz.x/2, gui.sz.y/2 - gui.itemSearcher.sz.y/2 - 300));
 				}
 			}
