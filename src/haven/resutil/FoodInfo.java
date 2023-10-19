@@ -82,14 +82,28 @@ public class FoodInfo extends ItemInfo.Tip {
 	boolean matchFound = false;
 	double efficiency = 100;
 	boolean calculateEfficiency = ui != null && ui.modshift;
+	ItemInfo.InfoTip tip = null;
 	if (ui != null)
-		for (CharWnd.Constipations.El el : ui.gui.chrwdg.cons.els) {
-			if (el.t.res.get().name.equals(((GItem) this.owner).resname())) {
-				Color c = (el.a > 1.0)? CharWnd.Constipations.buffed:Utils.blendcol(CharWnd.Constipations.none, CharWnd.Constipations.full, el.a);
-				efficiency = 100 * (1.0 - el.a);
-				head = String.format("\nFood Efficiency: $col["+ c.getRed() +","+ c.getGreen() +","+ c.getBlue() +"]{%s%%}", Utils.odformat2(efficiency, 2));
-				matchFound = true;
-				break;
+		if(ui.lasttip instanceof ItemInfo.InfoTip)
+			tip = (ItemInfo.InfoTip)ui.lasttip;
+		FoodInfo finf;
+		try {
+			finf = (tip == null)?null:ItemInfo.find(FoodInfo.class, tip.info());
+		} catch(Loading l) {
+			finf = null;
+		}
+		if(finf != null) {
+			for(int i = 0; i < ui.gui.chrwdg.cons.els.size(); i++) {
+				CharWnd.Constipations.El el = ui.gui.chrwdg.cons.els.get(i);
+				for(int o = 0; o < finf.types.length; o++) {
+					if(finf.types[o] == i) {
+						Color c = (el.a > 1.0)? CharWnd.Constipations.buffed:Utils.blendcol(CharWnd.Constipations.none, CharWnd.Constipations.full, el.a);
+						efficiency = 100 * (1.0 - el.a);
+						head = String.format("\nFood Efficiency: $col["+ c.getRed() +","+ c.getGreen() +","+ c.getBlue() +"]{%s%%}", Utils.odformat2(calculateEfficiency ? efficiency : 100, 2));
+						matchFound = true;
+						break;
+					}
+				}
 			}
 		}
 	if (!matchFound && ui != null)
