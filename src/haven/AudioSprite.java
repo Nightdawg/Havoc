@@ -73,6 +73,8 @@ public class AudioSprite {
 			stream = new Audio.VolAdjust(stream, OptWnd.clapSoundVolumeSlider.val/100d);
 		else if (res.name.equals("sfx/terobjs/quern"))
 			stream = new Audio.VolAdjust(stream, OptWnd.quernSoundVolumeSlider.val/100d);
+		else if (res.name.equals("sfx/squeak"))
+			stream = new Audio.VolAdjust(stream, OptWnd.squeakSoundVolumeSlider.val/100d);
 	    this.clip = new ActAudio.PosClip(new Audio.Monitor(stream) {
 		    protected void eof() {
 			super.eof();
