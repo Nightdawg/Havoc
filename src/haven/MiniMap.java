@@ -60,6 +60,7 @@ public class MiniMap extends Widget {
     protected Area dgext, dtext;
     protected Segment dseg;
 	public float zoomMomentum = 0;
+	private boolean allowZooming = false;
     public int dlvl;
     protected Location dloc;
 	private String biome;
@@ -223,31 +224,33 @@ public class MiniMap extends Widget {
 	}
 
 	icons = findicons(icons);
+
 	if (GLPanel.Loop.bgmode) {
 			zoomMomentum = 0.0f;
-		} else if (Math.abs(zoomMomentum) > 0.15) {
-			double delta = dt*zoomMomentum*(zoomlevel/6f);
-			int nextdlvl = Math.max(Integer.highestOneBit((int)(zoomlevel+delta)),1);
-			if (zoomMomentum > 0 && nextdlvl > dlvl && !allowzoomout()) {
-				//zoomlevel = zoomlevel*0.98f; // ND: I wonder why matias did it like this, I don't think this is necessary
-				zoomMomentum = 0;
-			} else {
-				zoomlevel += delta;
-				zoomMomentum *= 1-(5*dt);
-			}
-		}
-
-		if (zoomlevel <= 0.1f) { // ND: I had to change this from 0. I don't remember it bugging out in matias' client, but I could zoom in infinitely in mine, like it never reached 0, ever. 0.1 seems perfect
-			zoomlevel = 0.1f;
+	} else if (Math.abs(zoomMomentum) > 0.15) {
+		double delta = dt*zoomMomentum*(zoomlevel/6f);
+		int nextdlvl = Math.max(Integer.highestOneBit((int)(zoomlevel+delta)),1);
+		if (zoomMomentum > 0 && nextdlvl > dlvl && !allowzoomout()) {
+			//zoomlevel = zoomlevel*0.98f; // ND: I wonder why matias did it like this, I don't think this is necessary
 			zoomMomentum = 0;
-		}
-		ticksprites(dt);
-		Coord mc = rootxlate(ui.mc);
-		if(mc.isect(Coord.z, sz)) {
-			setBiome(xlate(mc));
 		} else {
-			setBiome(null);
+			zoomlevel += delta;
+			zoomMomentum *= 1-(5*dt);
 		}
+	}
+
+	if (zoomlevel <= 0.1f) { // ND: I had to change this from 0. I don't remember it bugging out in matias' client, but I could zoom in infinitely in mine, like it never reached 0, ever. 0.1 seems perfect
+		zoomlevel = 0.1f;
+		zoomMomentum = 0;
+	}
+	ticksprites(dt);
+	Coord mc = rootxlate(ui.mc);
+	if(mc.isect(Coord.z, sz)) {
+		setBiome(xlate(mc));
+	} else {
+		setBiome(null);
+	}
+	allowZooming = true;
     }
 
 
@@ -581,6 +584,7 @@ public class MiniMap extends Widget {
 			dlvl = calcDrawLevel();
 			dgext = next;
 			dtext = Area.sized(next.ul.mul(zmaps), next.sz().mul(zmaps));
+			zoomMomentum = 0;
 		}
 
 		dloc = loc;
@@ -923,7 +927,10 @@ public class MiniMap extends Widget {
     }
 
     public boolean mousewheel(Coord c, int amount) {
-		zoomMomentum += 1.5*Math.signum(amount);
+		if (allowZooming){
+			zoomMomentum += 1.5*Math.signum(amount);
+			allowZooming = false;
+		}
 	return(true);
     }
 
