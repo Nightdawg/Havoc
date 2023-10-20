@@ -295,7 +295,7 @@ public class MiniMap extends Widget {
 	}
 
 	public void dispupdate() {
-	    if((this.rc == null) || (sessloc == null) || (dloc == null) || (dloc.seg != sessloc.seg))
+	    if((this.rc == null) || (sessloc == null) || (dloc == null) /*|| (dloc.seg != sessloc.seg)*/)
 		this.sc = null;
 	    else
 		this.sc = p2c(this.rc);
@@ -687,7 +687,7 @@ public class MiniMap extends Widget {
     }
 
     public void drawicons(GOut g) {
-	if((sessloc == null) || (dloc.seg != sessloc.seg))
+	if((sessloc == null) /*|| (dloc.seg != sessloc.seg)*/)
 	    return;
 	for(DisplayIcon disp : icons) {
 	    if((disp.sc == null) || filter(disp))
