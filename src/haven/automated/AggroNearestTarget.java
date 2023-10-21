@@ -12,11 +12,9 @@ import static haven.automated.AUtils.attackGob;
 
 public class AggroNearestTarget implements Runnable {
     private final GameUI gui;
-    private final long gobid;
 
-    public AggroNearestTarget(GameUI gui, long gobid) {
+    public AggroNearestTarget(GameUI gui) {
         this.gui = gui;
-        this.gobid = gobid;
     }
 
     @Override
@@ -37,21 +35,17 @@ public class AggroNearestTarget implements Runnable {
                 if (!aggrodplayers.isEmpty()) {
                     attackNearestNonAttackedPlayer(allAttackableMap, aggrodplayers, player);
                     return;
+                } else if (attackClosestAttackablePlayer()){
+                    return;
                 } else {
                     attackNearestNonAttackedAnimal(fightgobs, allAttackableMap, player);
                     return;
                 }
             } else {//If we are not in a fight:
-                //see if we can attack last fought target
-                Gob lastattacked = gui.map.glob.oc.getgob(gobid);
-                if (lastattacked != null && lastattacked.knocked != null && !lastattacked.knocked && !isPlayer(lastattacked)) {
-                    attackGob(gui, lastattacked);
-                    return;
-                } else {
                     //Otherwise just attack closest attackable object
                     attackClosestAttackable();
                     return;
-                }
+
             }
         }
     }
@@ -86,7 +80,7 @@ public class AggroNearestTarget implements Runnable {
     private void attackNearestNonAttackedPlayer(HashMap<Long, Gob> allAttackableMap, HashSet<Long> aggrodplayers, Gob player) {
         Gob closestEnemy = null;
         for (Gob gob : allAttackableMap.values()) {
-            //if gob is an enemy player and not alreayd aggroed
+            //if gob is an enemy player and not already aggroed
             if (isPlayer(gob) && !aggrodplayers.contains(gob.id) && !gob.isFriend()) {
                 if (closestEnemy == null || gob.rc.dist(player.rc) < closestEnemy.rc.dist(player.rc)) {
                     closestEnemy = gob;
@@ -98,6 +92,31 @@ public class AggroNearestTarget implements Runnable {
             AUtils.attackGob(gui, closestEnemy);
             return;
         }
+    }
+
+    private boolean attackClosestAttackablePlayer() {
+        Gob player = gui.map.player();
+        if (player == null)
+            return false;
+        HashMap<Long, Gob> allAttackableMap = AUtils.getAllAttackablePlayersMap(gui);
+
+        Gob closestEnemy = null;
+        for (Gob gob : allAttackableMap.values()) {
+            if (isPlayer(gob) && gob.isFriend()) {
+                continue;
+            }
+            //if gob is an enemy player and not already aggroed
+            if ((closestEnemy == null || gob.rc.dist(player.rc) < closestEnemy.rc.dist(player.rc))
+                    && (gob.knocked == null || (gob.knocked != null && !gob.knocked))) { // ND: Retarded workaround that I need to add, just like in Gob.java
+                closestEnemy = gob;
+            }
+        }
+
+        if (closestEnemy != null) {
+            AUtils.attackGob(gui, closestEnemy);
+            return true;
+        }
+        return false;
     }
 
     private void attackClosestAttackable() {
@@ -120,7 +139,7 @@ public class AggroNearestTarget implements Runnable {
                     }
                 }
             }
-            //if gob is an enemy player and not alreayd aggroed
+            //if gob is an enemy player and not already aggroed
             if ((closestEnemy == null || gob.rc.dist(player.rc) < closestEnemy.rc.dist(player.rc))
                     && (gob.knocked == null || (gob.knocked != null && !gob.knocked))) { // ND: Retarded workaround that I need to add, just like in Gob.java
                 closestEnemy = gob;

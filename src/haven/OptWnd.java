@@ -1257,9 +1257,11 @@ public class OptWnd extends Window {
 			y = addbtnImproved(cont, "Switch to nearest target", "This only switches to the nearest target you are currently engaged in combat with.", Color.WHITE, Fightsess.kb_nearestTarget, y);
 			y = addbtnImproved(cont, "Aggro Nearest Player/Animal", "Selects the nearest Player or Animal to attack, based on your situation:" +
 					"\n\n$col[218,163,0]{Case 1:} $col[185,185,185]{If you are in combat with Players, it will only attack other not-already-aggroed players.}" +
-					"\n$col[218,163,0]{Case 2:} $col[185,185,185]{If you are in combat with Animals, it will try to attack the closest not-already-aggroed player or animal. Once this happens, you're back to Case 1.}" +
-					"\n$col[218,163,0]{Case 3:} $col[185,185,185]{If you are not in combat, it will attack your last target or just the nearest Player or Animal.}" +
+					"\n$col[218,163,0]{Case 2:} $col[185,185,185]{If you are in combat with Animals, it will try to attack the closest not-already-aggroed player. If none is found, try to attack the closest animal. Once this happens, you're back to Case 1.}" +
 					"\n\n$col[218,163,0]{Note:} $col[185,185,185]{Party members will never be attacked by this button. Village or Realm members will not be attacked unless you have them marked as $col[185,0,0]{Red} in your Kin List.}", new Color(255, 0, 0,255), GameUI.kb_aggroNearestTargetButton, y+6);
+			y = addbtnImproved(cont, "Aggro Nearest Player", "Selects the nearest non-aggroed Player to attack.", new Color(255, 0, 0,255), GameUI.kb_aggroNearestPlayerButton, y+6);
+
+			//
 			y = addbtnImproved(cont, "Aggro all Non-Friendly players.", "", new Color(255, 0, 0,255), GameUI.kb_aggroAllNonFriendlyPlayers, y);
 			y = addbtnImproved(cont, "Re-Aggro Last Target", "", new Color(255, 68, 0,255), GameUI.kb_aggroLastTarget, y);
 			y = addbtnImproved(cont, "Peace Current Target", "", new Color(0, 255, 34,255), GameUI.kb_peaceCurrentTarget, y);

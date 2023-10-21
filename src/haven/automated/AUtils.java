@@ -539,6 +539,25 @@ public class AUtils {
         return gobs;
     }
 
+    public static HashMap<Long, Gob> getAllAttackablePlayersMap(GameUI gui) {
+        HashMap<Long, Gob> gobs = new HashMap<>();
+        if (gui.map.plgob == -1) {
+            return gobs;
+        }
+        synchronized (gui.map.glob.oc) {
+            for (Gob gob : gui.map.glob.oc) {
+                if (gob.getres() != null && gob.getres().name != null){
+                    if (gob.id != gui.map.plgob) {
+                        if (gob.getres().name.equals("gfx/borka/body")){
+                            gobs.put(gob.id, gob);
+                        }
+                    }
+                }
+            }
+        }
+        return gobs;
+    }
+
     public static List<WItem> getAllItemsFromAllInventoriesAndStacksExcludeBeltAndKeyring(GameUI gui){
         List<WItem> items = new ArrayList<>();
         List<Inventory> allInventories = gui.getAllInventories();
