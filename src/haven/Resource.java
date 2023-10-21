@@ -1900,6 +1900,7 @@ public class Resource implements Serializable {
 	public static boolean showResourceConsolePrints = Utils.getprefb("showResourceConsolePrints", false);
 	private static final List<String> ignoreResVersionWarningList = // ND: Used to prevent the console from printing stuff like: "Wrong res version (1 != 65535) customMapIcons/dugout(v65535)"
 			Arrays.asList(
+					"customMapIcons/arrow",
 					"customMapIcons/bram",
 					"customMapIcons/burrow",
 					"customMapIcons/cart",
