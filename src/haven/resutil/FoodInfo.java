@@ -111,7 +111,6 @@ public class FoodInfo extends ItemInfo.Tip {
 	else if (ui == null)
 		head = "";
 	head += String.format("\nEnergy: $col[128,128,255]{%s%%}  |  Hunger: $col[255,192,128]{%s\u2030}", Utils.odformat2(end * 100, 2), Utils.odformat2(calculateEfficiency ? (glut * 1000 * (efficiency/100)) : (glut * 1000), 2));
-	head += String.format("\nEnergy/Hunger: $col[128,128,255]{%s}", Utils.odformat2((end * 100) / (glut * 1000), 2));
 	double totalFeps = 0;
 	for (int i = 0; i < evs.length; i++) {
 		totalFeps += evs[i].a;
