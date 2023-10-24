@@ -773,10 +773,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	if (getattr(Moving.class) instanceof Following){
 		Following following = (Following) getattr(Moving.class);
 		occupiedGobID = following.tgt;
-		if (glob.oc.getgob(occupiedGobID) != null){
-			synchronized (glob.oc.getgob(occupiedGobID).occupants) {
-				if (!glob.oc.getgob(occupiedGobID).occupants.contains(this)) {
-					glob.oc.getgob(occupiedGobID).occupants.add(this);
+		if (occupiedGobID != null) {
+			Gob OccupiedGob = glob.oc.getgob(occupiedGobID);
+			if (OccupiedGob != null) {
+				synchronized (OccupiedGob.occupants) {
+					if (!OccupiedGob.occupants.contains(this)) {
+						OccupiedGob.occupants.add(this);
+					}
 				}
 			}
 		}
@@ -1007,9 +1010,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 		if(ac == Moving.class && a == null) {
 			if (occupiedGobID != null){
-				if (glob.oc.getgob(occupiedGobID) != null){
-					synchronized (glob.oc.getgob(occupiedGobID).occupants) {
-						glob.oc.getgob(occupiedGobID).occupants.remove(this);
+				Gob OccupiedGob = glob.oc.getgob(occupiedGobID);
+				if (OccupiedGob != null){
+					synchronized (OccupiedGob.occupants) {
+						OccupiedGob.occupants.remove(this);
 					}
 					occupiedGobID = null;
 				}
