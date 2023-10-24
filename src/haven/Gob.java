@@ -104,6 +104,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public Boolean imInCoracle = false;
 	public Boolean imDrinking = false;
 	private Boolean itsLoftar = null;
+	private long lastKnockSoundtime = 0;
 
 	/**
 	 * This method is run after all gob attributes has been loaded first time
@@ -2456,65 +2457,71 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		timer.schedule(new TimerTask(){
 			@Override
 			public void run(){
-				boolean imDead = true;
-				ArrayList<Map.Entry<Class<? extends GAttrib>, GAttrib>> gAttribs = new ArrayList<>(hearthling.attr.entrySet());
-				for (int i = 0; i < gAttribs.size(); i++) {
-					Map.Entry<Class<? extends GAttrib>, GAttrib> entry = gAttribs.get(i);
-					GAttrib g = entry.getValue();
-					if (g instanceof Drawable) {
-						if (g instanceof Composite) {
-							Composite c = (Composite) g;
-							if (c.comp.cequ.size() > 0) {
-								for (Composited.ED item : c.comp.cequ) {
-									if (item.res.res.get().basename().equals("knockchirp")) {
-										imDead = false;
-										break;
+				long now = System.currentTimeMillis();
+				// ND: Should only allow this sound to play again after 45 seconds. If you loot someone, their body sometimes does the KO animation again.
+				// So check if at least 45 seconds passed. Tt takes about 50ish seconds for a hearthling to get up after being knocked anyway. They can port or log out after 25-30ish seconds.
+				if ((now - lastKnockSoundtime) > 45000) {
+					boolean imDead = true;
+					ArrayList<Map.Entry<Class<? extends GAttrib>, GAttrib>> gAttribs = new ArrayList<>(hearthling.attr.entrySet());
+					for (int i = 0; i < gAttribs.size(); i++) {
+						Map.Entry<Class<? extends GAttrib>, GAttrib> entry = gAttribs.get(i);
+						GAttrib g = entry.getValue();
+						if (g instanceof Drawable) {
+							if (g instanceof Composite) {
+								Composite c = (Composite) g;
+								if (c.comp.cequ.size() > 0) {
+									for (Composited.ED item : c.comp.cequ) {
+										if (item.res.res.get().basename().equals("knockchirp")) {
+											imDead = false;
+											break;
+										}
 									}
 								}
 							}
 						}
 					}
-				}
-				if (poses.contains("knock") || poses.contains("drowned")) {
-					if (!imDead) {
-						File file = new File("res/sfx/PlayerKnockedOut.wav");
-						if (file.exists()) {
-							try {
-								AudioInputStream in = AudioSystem.getAudioInputStream(file);
-								AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
-								AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
-								Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
-								((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, 1));
-							} catch (UnsupportedAudioFileException e) {
-								e.printStackTrace();
-							} catch (IOException e) {
-								e.printStackTrace();
+					if (poses.contains("knock") || poses.contains("drowned")) {
+						if (!imDead) {
+							File file = new File("res/sfx/PlayerKnockedOut.wav");
+							if (file.exists()) {
+								try {
+									AudioInputStream in = AudioSystem.getAudioInputStream(file);
+									AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+									AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+									Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+									((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, 1));
+								} catch (UnsupportedAudioFileException e) {
+									e.printStackTrace();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
 							}
-						}
-					} else {
-						isDeadPlayer = true;
-						File file = null;
-						if (malePlayer){
-							file = new File("res/sfx/MalePlayerKilled.wav");
-						} else if (femalePlayer) {
-							file = new File("res/sfx/FemalePlayerKilled.wav");
-						}
-						if (file != null && file.exists() && somethingJustDied) {
-							try {
-								AudioInputStream in = AudioSystem.getAudioInputStream(file);
-								AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
-								AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
-								Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
-								((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, 1));
-							} catch (UnsupportedAudioFileException e) {
-								e.printStackTrace();
-							} catch (IOException e) {
-								e.printStackTrace();
+						} else {
+							isDeadPlayer = true;
+							File file = null;
+							if (malePlayer) {
+								file = new File("res/sfx/MalePlayerKilled.wav");
+							} else if (femalePlayer) {
+								file = new File("res/sfx/FemalePlayerKilled.wav");
+							}
+							if (file != null && file.exists() && somethingJustDied) {
+								try {
+									AudioInputStream in = AudioSystem.getAudioInputStream(file);
+									AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+									AudioInputStream pcmStream = AudioSystem.getAudioInputStream(tgtFormat, in);
+									Audio.CS klippi = new Audio.PCMClip(pcmStream, 2, 2);
+									((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, 1));
+								} catch (UnsupportedAudioFileException e) {
+									e.printStackTrace();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
 							}
 						}
 					}
+					timer.cancel();
+					lastKnockSoundtime = now;
 				}
-				timer.cancel();
 			}
 		}, 100);
 	}
