@@ -73,7 +73,7 @@ public class CombatDistanceTool extends Window implements Runnable {
         try {
             double distance = Double.parseDouble(value);
             Gob enemy = getEnemy();
-            if(enemy != null){
+            if(enemy != null && gui.map.player() != null){
                 double angle = enemy.rc.angle(gui.map.player().rc);
                 gui.map.wdgmsg("click", Coord.z, getNewCoord(enemy, distance, angle).floor(posres), 1, 0);
             } else {
