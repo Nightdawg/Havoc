@@ -105,7 +105,7 @@ public class CombatDistanceTool extends Window implements Runnable {
     private double getDistance(long gobId) {
         synchronized (gui.map.glob.oc) {
             for (Gob gob : gui.map.glob.oc) {
-                if (gob.id == gobId) {
+                if (gob.id == gobId && gui.map.player() != null) {
                     return gob.rc.dist(gui.map.player().rc);
                 }
             }
