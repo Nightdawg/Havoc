@@ -1235,7 +1235,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    return(new GobIcon.Settings());
 	try {
 	    try(StreamMessage fp = new StreamMessage(ResCache.global.fetch(iconconfname("-2")))) {
-		return(GobIcon.Settings.load(fp, ui));
+		return(GobIcon.Settings.load(fp));
 	    }
 	} catch(java.io.FileNotFoundException e) {
 	} catch(Exception e) {
@@ -1243,7 +1243,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	}
 	try {
 	    try(StreamMessage fp = new StreamMessage(ResCache.global.fetch(iconconfname("")))) {
-		return(GobIcon.Settings.loadold(fp));
+		return(GobIcon.Settings.loadold(fp, ui));
 	    }
 	} catch(java.io.FileNotFoundException e) {
 	} catch(Exception e) {
