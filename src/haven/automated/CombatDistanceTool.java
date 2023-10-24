@@ -79,6 +79,7 @@ public class CombatDistanceTool extends Window implements Runnable {
             } else {
                 gui.msg("No visible target.");
             }
+            setfocus(ui.gui.portrait); // ND: do this to defocus the text entry box after you click on "Go"
         } catch(NumberFormatException e) {
             gui.error("Wrong distance format. Use ##.###");
         }
