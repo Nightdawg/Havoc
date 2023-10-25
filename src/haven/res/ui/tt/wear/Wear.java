@@ -14,7 +14,7 @@ public class Wear extends ItemInfo.Tip {
 	super(owner);
 	this.d = d;
 	this.m = m;
-    this.percentage = Math.ceil(((m-d)/(m/100d)));
+    this.percentage = ((m-d)/(m/100d));
     }
 
     public static ItemInfo mkinfo(Owner owner, Object... args) {
