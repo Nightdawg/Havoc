@@ -53,6 +53,8 @@ public class CustomMapIcons {
 
 		put("gfx/terobjs/items/gems/gemstone", "customMapIcons/gem");
 		put("gfx/terobjs/items/arrow", "customMapIcons/arrow");
+		put("gfx/terobjs/road/milestone-wood-e", "customMapIcons/roadsign");
+		put("gfx/terobjs/road/milestone-stone-e", "customMapIcons/milestone");
 	}};
     
     public static boolean process(GobIcon icon) {
