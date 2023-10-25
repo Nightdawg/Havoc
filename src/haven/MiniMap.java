@@ -65,6 +65,7 @@ public class MiniMap extends Widget {
     protected Location dloc;
 	private String biome;
 	private Tex biometex;
+	private final Tex invalidMapWarningTex = Text.renderstroked("Warning: Map using workaround", Color.RED, Color.BLACK).tex();
 	public static boolean showMapViewRange = Utils.getprefb("showMapViewRange", true);
 	public static boolean showMapGridLines = Utils.getprefb("showMapGridLines", false);
 	public static boolean highlightMapTiles = Utils.getprefb("highlightMapTiles", false);
@@ -298,7 +299,7 @@ public class MiniMap extends Widget {
 	}
 
 	public void dispupdate() {
-	    if((this.rc == null) || (sessloc == null) || (dloc == null) || (dloc.seg != sessloc.seg))
+	    if((this.rc == null) || (sessloc == null) || (dloc == null) /*|| (dloc.seg != sessloc.seg)*/)
 		this.sc = null;
 	    else
 		this.sc = p2c(this.rc);
@@ -690,7 +691,7 @@ public class MiniMap extends Widget {
     }
 
     public void drawicons(GOut g) {
-	if((sessloc == null) || (dloc.seg != sessloc.seg))
+	if((sessloc == null) /*|| (dloc.seg != sessloc.seg)*/)
 	    return;
 	for(DisplayIcon disp : icons) {
 	    if((disp.sc == null) || filter(disp))
@@ -760,6 +761,7 @@ public class MiniMap extends Widget {
 	drawparty(g);
 	drawbiome(g);
 	drawsprites(g);
+	drawInvalidWarning(g);
     }
 
     public void draw(GOut g) {
@@ -769,6 +771,7 @@ public class MiniMap extends Widget {
 	redisplay(loc);
 	remparty();
 	drawparts(g);
+
     }
 
     private static boolean hascomplete(DisplayGrid[] disp, Area dext, Coord c) {
@@ -1083,6 +1086,20 @@ public class MiniMap extends Widget {
 			g.frect(mid.sub(2 + tsz.x /2, 0), tsz.add(4, 2));
 			g.chcolor();
 			g.aimage(biometex, mid, 0.5f, 0);
+		}
+	}
+
+	void drawInvalidWarning(GOut g) {
+		if (dloc.seg != sessloc.seg){
+			if (invalidMapWarningTex != null) {
+				Coord tsz = invalidMapWarningTex.sz();
+				Coord mid = new Coord(g.sz().x / 2, UI.scale(16));
+				g.chcolor(BIOME_BG);
+				g.frect(mid.sub(2 + tsz.x /2, 0), tsz.add(4, 2));
+				g.chcolor();
+				g.aimage(invalidMapWarningTex, mid, 0.5f, 0);
+			}
+
 		}
 	}
 
