@@ -395,6 +395,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/CombatDistanceTool");
 		makeLocal("paginae/nightdawg/OtherTools/PanicButton");
 		makeLocal("paginae/nightdawg/OtherTools/InventorySearcher");
+		makeLocal("paginae/nightdawg/OtherTools/ObjectSearcher");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -857,6 +858,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.itemSearcher = new ItemSearcher(gui);
 					gui.add(gui.itemSearcher, new Coord(gui.sz.x/2 - gui.itemSearcher.sz.x/2, gui.sz.y/2 - gui.itemSearcher.sz.y/2 - 300));
 				}
+			} else if (ad[2].equals("ObjectSearcher")) {
+				// Do stuff for gob searcher here
 			}
 		}
 	}
