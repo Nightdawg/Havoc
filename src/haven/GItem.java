@@ -29,6 +29,7 @@ package haven;
 import haven.automated.helpers.FarmingStatic;
 import haven.automated.cookbook.RecipeCollector;
 import haven.res.ui.tt.q.qbuff.QBuff;
+import haven.res.ui.tt.q.quality.Quality;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -632,12 +633,16 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 			this.wdgmsg("drop", Coord.z);
 		}
 		if (curs != null && curs.name.equals("gfx/hud/curs/mine")) {
+//			double quality = 0.0;
+//			if(this.rawinfo != null){
+//				quality = this.info().stream().filter(info -> info instanceof Quality).mapToDouble(info -> ((Quality) info).q).findFirst().orElse(0.0);
+//			}
 			if (OptWnd.toggleDropItemsCheckBox.a && (
 					(OptWnd.dropStoneCheckbox.a && Config.mineablesStone.contains(name)) ||
 					(OptWnd.dropOreCheckbox.a && Config.mineablesOre.contains(name)) ||
 					(OptWnd.dropPreciousOreCheckbox.a && Config.mineablesOrePrecious.contains(name)) ||
 					(OptWnd.dropMinedCuriosCheckbox.a && Config.mineablesCurios.contains(name)) ||
-					(OptWnd.dropQuarryartzCheckbox.a && "quarryquartz".equals((name)))))
+					(OptWnd.dropQuarryartzCheckbox.a && "quarryquartz".equals(name) )))
 			{
 				this.wdgmsg("drop", Coord.z);
 			}
