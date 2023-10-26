@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.automated.GobSearcher;
+import haven.automated.ItemSearcher;
 import haven.automated.helpers.HitBoxes;
 import haven.automated.mapper.MappingClient;
 import haven.render.*;
@@ -76,6 +78,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private GobQualityInfo qualityInfo;
 	private final List<Overlay> dols = new ArrayList<>();
 	private Overlay customRadiusOverlay;
+	private Overlay customSearchOverlay;
 	private Overlay customOverlay;
 	private Overlay gobChaseVector = null;
 	public Boolean knocked = null;  // knocked will be null if pose update request hasn't been received yet
@@ -113,6 +116,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void init(boolean throwLoading) {
 		Resource res = getres();
 		if (res != null) {
+			setGobSearchOverlay();
 			setHighlightedObjects();
 			initiateSupportOverlays();
 			toggleMineLadderRadius();
@@ -1699,6 +1703,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 	}
 
+	public void setGobSearchOverlay() {
+		if (getres() != null) {
+			String resourceName = getres().basename().replace("stockpile","");
+			setSearchOl(resourceName.toLowerCase().contains(GobSearcher.gobHighlighted.toLowerCase()) && GobSearcher.gobHighlighted.length() > 2);
+		}
+	}
+
 	public void updateResPeekDependantHighlights(MessageBuf sdt) {
 		updateContainerHighlight(sdt);
 		updateLeathertubsHighlight(sdt);
@@ -2371,13 +2382,25 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 	}
 
+	private void setSearchOl(boolean on) {
+		if (on) {
+			for (Overlay ol : ols) {
+				if (ol.spr instanceof GobSearchHighlight) {
+					return;
+				}
+			}
+			customSearchOverlay = new Overlay(this, new GobSearchHighlight(this, null));
+			synchronized (ols) {
+				addol(customSearchOverlay);
+			}
+		} else if (customSearchOverlay != null) {
+			removeOl(customSearchOverlay);
+			customSearchOverlay = null;
+		}
+	}
+
 	private void setCircleOl(Color col, boolean on) {
 		if (on) {
-//			for (Overlay ol : ols) {
-//				if (ol.spr instanceof AuraCircleSprite) {
-//					return;
-//				}
-//			}
 			if (customRadiusOverlay != null) {
 				removeOl(customRadiusOverlay);
 				customRadiusOverlay = null;
