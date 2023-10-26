@@ -129,7 +129,6 @@ public class CombatDistanceTool extends Window implements Runnable {
     }
 
     public void stop() {
-        ui.root.wdgmsg("gk", 27);
         if (gui.map.pfthread != null) {
             gui.map.pfthread.interrupt();
         }
