@@ -1778,15 +1778,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
 		} else if (kb_buttonForTesting.key().match(ev)) {
-			if(gobSearcher != null){
-				GobSearcher.gobHighlighted = "";
-				gobSearcher.updateOverlays();
-				gobSearcher.reqdestroy();
-				gobSearcher = null;
-			} else {
-				gobSearcher = new GobSearcher(this);
-				add(gobSearcher, new Coord(sz.x/2 - gobSearcher.sz.x/2, sz.y/2 - gobSearcher.sz.y/2 - 300));
-			}
+
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);

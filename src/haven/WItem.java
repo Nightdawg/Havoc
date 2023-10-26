@@ -213,14 +213,31 @@ public class WItem extends Widget implements DTarget {
 	if(spr != null) {
 	    Coord sz = spr.sz();
 	    g.defstate();
-		if(ItemSearcher.itemHighlighted.length() > 1){
-			delayCounter++;
-			if(delayCounter>40){
-				delayCounter = 0;
-				colorValue = colorValue == 255 ? 0 : 255;
-			}
-			if(item.getname().toLowerCase().contains(ItemSearcher.itemHighlighted.toLowerCase())) {
-				g.usestate(new ColorMask(new Color(colorValue, colorValue, colorValue, colorValue)));
+		String itemName = item.getname().toLowerCase();
+		String searchKeyword = ItemSearcher.itemHighlighted.toLowerCase();
+		if (searchKeyword.length() > 1) {
+			if (searchKeyword.contains("|")) {
+				String[] keywords = searchKeyword.split("\\|");
+				boolean matchFound = Arrays.stream(keywords)
+						.map(String::trim)
+						.anyMatch(keyword -> itemName.contains(keyword) && keyword.length() > 2);
+				if (matchFound) {
+					delayCounter++;
+					if (delayCounter > 40) {
+						delayCounter = 0;
+						colorValue = colorValue == 255 ? 0 : 255;
+					}
+					g.usestate(new ColorMask(new Color(colorValue, colorValue, colorValue, colorValue)));
+				}
+			} else {
+				if (itemName.contains(searchKeyword) && searchKeyword.length() > 2) {
+					delayCounter++;
+					if (delayCounter > 40) {
+						delayCounter = 0;
+						colorValue = colorValue == 255 ? 0 : 255;
+					}
+					g.usestate(new ColorMask(new Color(colorValue, colorValue, colorValue, colorValue)));
+				}
 			}
 		} else {
 			if(olcol.get() != null){

@@ -1706,7 +1706,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void setGobSearchOverlay() {
 		if (getres() != null) {
 			String resourceName = getres().basename().replace("stockpile","");
-			setSearchOl(resourceName.toLowerCase().contains(GobSearcher.gobHighlighted.toLowerCase()) && GobSearcher.gobHighlighted.length() > 2);
+			resourceName = resourceName.toLowerCase();
+			String searchKeyword = GobSearcher.gobHighlighted.toLowerCase();
+			boolean result;
+			if (searchKeyword.contains("|")) {
+				String[] keywords = searchKeyword.split("\\|");
+				String finalResourceName = resourceName;
+				result = Arrays.stream(keywords)
+						.anyMatch(keyword -> finalResourceName.contains(keyword) && keyword.length() > 2);
+			} else {
+				result = resourceName.contains(searchKeyword) && searchKeyword.length() > 2;
+			}
+
+			setSearchOl(result);
 		}
 	}
 

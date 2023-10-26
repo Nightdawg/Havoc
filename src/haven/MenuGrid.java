@@ -859,7 +859,15 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.add(gui.itemSearcher, new Coord(gui.sz.x/2 - gui.itemSearcher.sz.x/2, gui.sz.y/2 - gui.itemSearcher.sz.y/2 - 300));
 				}
 			} else if (ad[2].equals("ObjectSearcher")) {
-				// Do stuff for gob searcher here
+				if(gui.gobSearcher != null){
+					GobSearcher.gobHighlighted = "";
+					gui.gobSearcher.updateOverlays();
+					gui.gobSearcher.reqdestroy();
+					gui.gobSearcher = null;
+				} else {
+					gui.gobSearcher = new GobSearcher(gui);
+					gui.add(gui.gobSearcher, new Coord(gui.sz.x/2 - gui.gobSearcher.sz.x/2, gui.sz.y/2 - gui.gobSearcher.sz.y/2 - 300));
+				}
 			}
 		}
 	}
