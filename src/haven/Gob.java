@@ -2557,10 +2557,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 								}
 							}
 						}
+						lastKnockSoundtime = now;
 					}
-					timer.cancel();
-					lastKnockSoundtime = now;
 				}
+				timer.cancel();
 			}
 		}, 100);
 	}
