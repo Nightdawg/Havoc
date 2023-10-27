@@ -190,7 +190,6 @@ public class MappingClient {
 	    try {
 		scheduler.execute(new MarkerUpdate(new JSONArray(loadedMarkers.toArray())));
 	    } catch (Exception ex) {
-		System.out.println(ex);
 	    }
 	}
     }
