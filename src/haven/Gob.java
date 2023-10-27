@@ -27,7 +27,6 @@
 package haven;
 
 import haven.automated.GobSearcher;
-import haven.automated.ItemSearcher;
 import haven.automated.helpers.HitBoxes;
 import haven.automated.mapper.MappingClient;
 import haven.render.*;
@@ -109,6 +108,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private Boolean itsLoftar = null;
 	private long lastKnockSoundtime = 0;
 
+	//some fps increasing features
+	private final Set<String> animatedGobs = new HashSet<>(Arrays.asList("dreca", "pow", "kiln", "cauldron", "beehive", "stockpile-trash"));
+	private static boolean disableThisGobAnimations = false;
+	public static boolean disableGlobalGobAnimations = Utils.getprefb("disableSomeGobAnimations", false);
+	public static boolean disableScentSmoke = Utils.getprefb("disableScentSmoke", false);
+	public static boolean disableIndustrialSmoke = Utils.getprefb("disableIndustrialSmoke", false);
+
 	/**
 	 * This method is run after all gob attributes has been loaded first time
 	 * throwloading=true causes the loader/thread that ran the init to try again
@@ -116,6 +122,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void init(boolean throwLoading) {
 		Resource res = getres();
 		if (res != null) {
+			String resName = res.basename();
+			for (String substring : animatedGobs) {
+				if (resName.contains(substring)) {
+					disableThisGobAnimations = true;
+					break;
+				}
+			}
 			setGobSearchOverlay();
 			setHighlightedObjects();
 			initiateSupportOverlays();
@@ -733,8 +746,16 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
     public void ctick(double dt) {
 	Map<Class<? extends GAttrib>, GAttrib> attr = cloneattrs();
-	for(GAttrib a : attr.values())
-	    a.ctick(dt);
+	for(GAttrib a : attr.values()){
+		if(a instanceof ResDrawable){
+			if(!disableThisGobAnimations || !disableGlobalGobAnimations){
+				a.ctick(dt);
+			}
+		} else {
+			a.ctick(dt);
+		}
+
+	}
 	for(Iterator<Overlay> i = ols.iterator(); i.hasNext();) {
 	    Overlay ol = i.next();
 	    if(ol.slots == null) {
@@ -838,6 +859,16 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     }
 
     public void addol(Overlay ol, boolean async) {
+		if(disableScentSmoke && getres() != null && getres().name.equals("gfx/terobjs/clue")){
+			if(ol.res != null && ol.res.get() != null && ol.res.get().name.contains("ismoke")){
+				return;
+			}
+		}
+		if(disableIndustrialSmoke && getres() != null && !getres().name.equals("gfx/terobjs/clue")){
+			if(ol.res != null && ol.res.get() != null && ol.res.get().name.contains("ismoke")){
+				return;
+			}
+		}
 	if(async) {
 	    defer(() -> addol(ol, false));
 	    return;
