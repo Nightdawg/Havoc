@@ -161,6 +161,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			if (s.contains("knock") || s.contains("dead") || s.contains("waterdead")) {
 				knocked = true;
 				break;
+			} else {
+				knocked = false;
 			}
 			if (s.contains("mannequin")){
 				isMannequin = true;
