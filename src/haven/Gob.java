@@ -110,7 +110,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	//some fps increasing features
 	private final Set<String> animatedGobs = new HashSet<>(Arrays.asList("dreca", "pow", "kiln", "cauldron", "beehive", "stockpile-trash"));
-	private static boolean disableThisGobAnimations = false;
+	private boolean disableThisGobAnimations = false;
 	public static boolean disableGlobalGobAnimations = Utils.getprefb("disableSomeGobAnimations", false);
 	public static boolean disableScentSmoke = Utils.getprefb("disableScentSmoke", false);
 	public static boolean disableIndustrialSmoke = Utils.getprefb("disableIndustrialSmoke", false);
