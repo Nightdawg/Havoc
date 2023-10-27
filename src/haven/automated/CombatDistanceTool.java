@@ -121,14 +121,18 @@ public class CombatDistanceTool extends Window implements Runnable {
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args) {
         if ((sender == this) && (Objects.equals(msg, "close"))) {
-            stop = true;
-            stop();
-            reqdestroy();
+            if (gui.combatDistanceTool != null) {
+                gui.combatDistanceTool.stop();
+                gui.combatDistanceTool.reqdestroy();
+                gui.combatDistanceTool = null;
+                gui.combatDistanceToolThread = null;
+            }
         } else
             super.wdgmsg(sender, msg, args);
     }
 
     public void stop() {
+        stop = true;
         if (gui.map.pfthread != null) {
             gui.map.pfthread.interrupt();
         }
