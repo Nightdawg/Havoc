@@ -49,6 +49,7 @@ public class WItem extends Widget implements DTarget {
 	private boolean holdingShift = false;
 	private short delayCounter = 0;
 	private int colorValue = 90;
+	private Boolean isOnHerbTable = null;
 
     public WItem(GItem item) {
 	super(sqsz);
@@ -206,6 +207,8 @@ public class WItem extends Widget implements DTarget {
 	    resize(sz);
 	    lspr = spr;
 	}
+	if (isOnHerbTable == null)
+		isOnHerbTable = parentWindow() != null && parentWindow().cap.equals("Herbalist Table");
     }
 
     public void draw(GOut g) {
@@ -271,7 +274,10 @@ public class WItem extends Widget implements DTarget {
 		} catch (Exception e) {
 		}
 		drawnum(g, sz);
-		drawmeter(g, sz);
+		if (isOnHerbTable != null && isOnHerbTable)
+			drawCircleProgress(g, sz);
+		else
+			drawmeter(g, sz);
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
 	}
@@ -320,6 +326,19 @@ public class WItem extends Widget implements DTarget {
 				g.chcolor();
 				g.aimage(studyTime, new Coord(sz.x / 2, sz.y), 0.5, 0.9);
 			}
+		}
+	}
+
+	private void drawCircleProgress(GOut g, Coord sz) {
+		double meter = meter();
+		if(meter > 0) {
+			g.chcolor(255, 255, 255, 64);
+			Coord half = sz.div(2);
+			g.prect(half, half.inv(), half, meter * Math.PI * 2);
+			g.chcolor();
+			Tex tex = Text.renderstroked(String.format("%d%%", Math.round(100 * meter))).tex();
+			g.aimage(tex, sz.div(2), 0.5, 0.5);
+			tex.dispose();
 		}
 	}
 
@@ -460,5 +479,15 @@ public class WItem extends Widget implements DTarget {
 		Resource res = Resource.remote().load(resname).get();
 		BufferedImage bufferedimage = res.layer(Resource.imgc).img;
 		g.image(bufferedimage, new Coord(UI.scale(offset), sz.y-UI.scale(16)), new Coord(UI.scale(16),UI.scale(16)));
+	}
+
+	public Window parentWindow() {
+		Widget parent = this.parent;
+		while (parent != null) {
+			if (parent instanceof Window)
+				return (Window) parent;
+			parent = parent.parent;
+		}
+		return null;
 	}
 }
