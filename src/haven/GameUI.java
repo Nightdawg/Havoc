@@ -2309,7 +2309,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 					if (res.name.startsWith("paginae/nightdawg")) {
 						ui.gui.menu.use(act.ad);
 					} else {
-						keyact(slot);
+						act(slot, new MenuGrid.Interaction(1, ui.modflags()));
 					}
 				}
 			} catch (Exception e) {
