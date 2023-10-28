@@ -84,7 +84,11 @@ public class PointerTriangulation extends Window {
 
     public void saveCheckpoint() {
         try {
-            Coord2d playerCoord = gui.map.player().rc;
+            Gob player = gui.map.player();
+            if(player == null){
+                return;
+            }
+            Coord2d playerCoord = player.rc;
             Coord initialCoord = playerCoord.floor(MCache.tilesz);
             MCache.Grid grid = ui.sess.glob.map.getgrid(initialCoord.div(cmaps));
             MapFile.GridInfo info = ui.gui.mapfile.file.gridinfo.get(grid.id);
@@ -92,9 +96,7 @@ public class PointerTriangulation extends Window {
             double xValue = Math.floor((playerCoord.x - (grid.gc.x * 1100)) * 100) / 100;
             double yValue = Math.floor((playerCoord.y - (grid.gc.y * 1100)) * 100) / 100;
             lines.add(new LineData(segment, grid.id, new Coord2d(xValue, yValue), pointerAngle));
-        } catch (Loading e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
     }
 
     private static class LineData {
