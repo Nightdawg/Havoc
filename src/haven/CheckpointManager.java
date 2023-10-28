@@ -542,7 +542,7 @@ public class CheckpointManager extends Window implements Runnable {
                         tryToMove(posres);
                         notMovingCounter = 0;
                     }
-                    if (notMovingCounter == 10) {
+                    if (notMovingCounter == 30) {
                         gui.ui.error("Queued Movement PAUSED: I'm stuck!!!");
                         File file = new File("res/sfx/ImStuck.wav");
                         if (file.exists()) {
