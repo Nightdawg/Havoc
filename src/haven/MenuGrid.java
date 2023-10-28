@@ -34,6 +34,7 @@ import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
 import haven.automated.*;
 import haven.automated.cookbook.CookingRecipes;
+import haven.sprites.ClueSprite;
 
 import java.util.*;
 
@@ -870,8 +871,13 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.add(gui.gobSearcher, new Coord(gui.sz.x/2 - gui.gobSearcher.sz.x/2, gui.sz.y/2 - gui.gobSearcher.sz.y/2 - 300));
 				}
 			} else if (ad[2].equals("QuestgiverTriangulation")) {
-				// Do questgiver triangulation here
-
+				if(gui.pointerTriangulation != null){
+					gui.pointerTriangulation.reqdestroy();
+					gui.pointerTriangulation = null;
+				} else {
+					gui.pointerTriangulation = new PointerTriangulation(gui);
+					gui.add(gui.pointerTriangulation, new Coord(gui.sz.x/2 - gui.pointerTriangulation.sz.x/2, gui.sz.y/2 - gui.pointerTriangulation.sz.y/2 - 300));
+				}
 			}
 		}
 	}
