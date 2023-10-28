@@ -564,9 +564,6 @@ public class OptWnd extends Window {
 	public static CheckBox showWorkstationStageGrayCheckBox;
 	public static CheckBox displayGatePassabilityBoxesCheckBox;
 	public static CheckBox highlightCliffsCheckBox;
-	public static CheckBox disableScentSmoke;
-	public static CheckBox disableIndustrialSmoke;
-	public static CheckBox disableSomeGobAnimations;
 	public static CheckBox showMineSupportRadiiCheckBox;
 	public static CheckBox showMineSupportSafeTilesCheckBox;
 	public static CheckBox showBeeSkepsRadiiCheckBox;
@@ -1029,56 +1026,6 @@ public class OptWnd extends Window {
 
 			}
 		}, leftColumn.pos("bl").adds(0, 12));
-		leftColumn = add(disableSomeGobAnimations = new CheckBox("Disable Gob Animations"){
-			{a = (Utils.getprefb("disableSomeGobAnimations", false));}
-			public void set(boolean val) {
-				Utils.setprefb("disableSomeGobAnimations", val);
-				a = val;
-				Gob.disableGlobalGobAnimations = val;
-			}
-		}, leftColumn.pos("bl").adds(0, 2));
-		leftColumn = add(disableIndustrialSmoke = new CheckBox("Disable Industrial Smoke"){
-			{a = (Utils.getprefb("disableIndustrialSmoke", false));}
-			public void set(boolean val) {
-				Utils.setprefb("disableIndustrialSmoke", val);
-				Gob.disableIndustrialSmoke = val;
-				a = val;
-				synchronized (ui.sess.glob.oc){
-					for(Gob gob : ui.sess.glob.oc){
-						if(gob.getres() != null && !gob.getres().name.equals("gfx/terobjs/clue")){
-							synchronized (gob.ols){
-								for(Gob.Overlay ol : gob.ols){
-									if(ol.res != null && ol.res.get() != null && ol.res.get().name.contains("ismoke")){
-										gob.removeOl(ol);
-									}
-								}
-							}
-							gob.ols.clear();
-						}
-					}
-				}
-			}
-		}, leftColumn.pos("bl").adds(0, 2));
-		leftColumn = add(disableScentSmoke = new CheckBox("Disable Scent Smoke"){
-			{a = (Utils.getprefb("disableScentSmoke", false));}
-			public void set(boolean val) {
-				Utils.setprefb("disableScentSmoke", val);
-				Gob.disableScentSmoke = val;
-				a = val;
-				synchronized (ui.sess.glob.oc){
-					for(Gob gob : ui.sess.glob.oc){
-						if(gob.getres() != null && gob.getres().name.equals("gfx/terobjs/clue")){
-							synchronized (gob.ols){
-								for(Gob.Overlay ol : gob.ols){
-									gob.removeOl(ol);
-								}
-							}
-							gob.ols.clear();
-						}
-					}
-				}
-			}
-		}, leftColumn.pos("bl").adds(0, 2));
 
 		rightColumn = add(toggleGobCollisionBoxesDisplayCheckBox = new CheckBox("Show Object Collision Boxes"){
 			{a = (Utils.getprefb("gobCollisionBoxesDisplayToggle", false));}
@@ -1445,6 +1392,9 @@ public class OptWnd extends Window {
 	public static CheckBox flatCaveWallsCheckBox;
 	public static HSlider treesAndBushesScaleSlider;
 	public static CheckBox disableTreeAndBushSwayingCheckBox;
+	public static CheckBox disableScentSmoke;
+	public static CheckBox disableIndustrialSmoke;
+	public static CheckBox disableSomeGobAnimations;
 	public class NDWorldGraphicsSettingsPanel extends Panel {
 		public NDWorldGraphicsSettingsPanel(Panel back) {
 			Widget prev;
@@ -1591,6 +1541,57 @@ public class OptWnd extends Window {
 						ui.sess.glob.oc.gobAction(Gob::reloadTreeSwaying);
 				}
 			}, prev.pos("bl").adds(12, 2));
+
+			prev = add(disableSomeGobAnimations = new CheckBox("Disable Gob Animations"){
+				{a = (Utils.getprefb("disableSomeGobAnimations", false));}
+				public void set(boolean val) {
+					Utils.setprefb("disableSomeGobAnimations", val);
+					a = val;
+					Gob.disableGlobalGobAnimations = val;
+				}
+			}, prev.pos("bl").adds(12, 2));
+			prev = add(disableIndustrialSmoke = new CheckBox("Disable Industrial Smoke (Requires Reload)"){
+				{a = (Utils.getprefb("disableIndustrialSmoke", false));}
+				public void set(boolean val) {
+					Utils.setprefb("disableIndustrialSmoke", val);
+					Gob.disableIndustrialSmoke = val;
+					a = val;
+					synchronized (ui.sess.glob.oc){
+						for(Gob gob : ui.sess.glob.oc){
+							if(gob.getres() != null && !gob.getres().name.equals("gfx/terobjs/clue")){
+								synchronized (gob.ols){
+									for(Gob.Overlay ol : gob.ols){
+										if(ol.res != null && ol.res.get() != null && ol.res.get().name.contains("ismoke")){
+											gob.removeOl(ol);
+										}
+									}
+								}
+								gob.ols.clear();
+							}
+						}
+					}
+				}
+			}, prev.pos("bl").adds(0, 2));
+			prev = add(disableScentSmoke = new CheckBox("Disable Scent Smoke (Requires Reload)"){
+				{a = (Utils.getprefb("disableScentSmoke", false));}
+				public void set(boolean val) {
+					Utils.setprefb("disableScentSmoke", val);
+					Gob.disableScentSmoke = val;
+					a = val;
+					synchronized (ui.sess.glob.oc){
+						for(Gob gob : ui.sess.glob.oc){
+							if(gob.getres() != null && gob.getres().name.equals("gfx/terobjs/clue")){
+								synchronized (gob.ols){
+									for(Gob.Overlay ol : gob.ols){
+										gob.removeOl(ol);
+									}
+								}
+								gob.ols.clear();
+							}
+						}
+					}
+				}
+			}, prev.pos("bl").adds(0, 2));
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(40)));
 			setTooltipsForGraphicsSettingsStuff();
@@ -4046,9 +4047,6 @@ public class OptWnd extends Window {
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		highlightCliffsCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{The Highlight Color can be changed in the Color Settings.}" +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
-		disableSomeGobAnimations.tooltip = RichText.render("Stop certain animations: Fire, trash stockpile, beehive. Should improve FPS a bit when seeing a lot of those.", UI.scale(300));
-		disableIndustrialSmoke.tooltip = RichText.render("Disable smelter, tarkiln and few more smoke animations. To show again need to either relog or just walk outside viewing distance.", UI.scale(300));
-		disableScentSmoke.tooltip = RichText.render("Disable scent smoke animations. To show again need to either relog or just walk outside viewing distance.", UI.scale(300));
 		objectPermanentHighlightingCheckBox.tooltip = RichText.render("Enabling this setting will allow you to highlight objects by using Alt + Middle Click (Mouse Scroll Click)." +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{Objects remain highlighted until you completely restart your client, even if you switch characters or accounts. " +
 				"\nIf you want to reset the highlighted objects without restarting the client, you can disable and re-enable this setting.}", UI.scale(320));
@@ -4132,6 +4130,9 @@ public class OptWnd extends Window {
 		showMineSupportRadiiCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		showMineSupportSafeTilesCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}", UI.scale(320));
 		disableTreeAndBushSwayingCheckBox.tooltip = RichText.render("This can improve your the FPS.", UI.scale(300));
+		disableSomeGobAnimations.tooltip = RichText.render("Stop certain animations: Fire, trash stockpile, beehive. Should improve FPS a bit when seeing a lot of those.", UI.scale(300));
+		disableIndustrialSmoke.tooltip = RichText.render("Disable smelter, tarkiln and few more smoke animations. To show again need to either relog or just walk outside viewing distance.", UI.scale(300));
+		disableScentSmoke.tooltip = RichText.render("Disable scent smoke animations. To show again need to either relog or just walk outside viewing distance.", UI.scale(300));
 	}
 
 	private void setTooltipsForHidingSettingsStuff(){
