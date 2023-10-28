@@ -219,8 +219,8 @@ public class WItem extends Widget implements DTarget {
 		String itemName = item.getname().toLowerCase();
 		String searchKeyword = ItemSearcher.itemHighlighted.toLowerCase();
 		if (searchKeyword.length() > 1) {
-			if (searchKeyword.contains("|")) {
-				String[] keywords = searchKeyword.split("\\|");
+			if (searchKeyword.contains("||")) {
+				String[] keywords = searchKeyword.split("\\|\\|");
 				boolean matchFound = Arrays.stream(keywords)
 						.map(String::trim)
 						.anyMatch(keyword -> itemName.contains(keyword) && keyword.length() > 2);
