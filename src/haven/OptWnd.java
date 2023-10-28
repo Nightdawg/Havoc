@@ -1549,7 +1549,7 @@ public class OptWnd extends Window {
 					a = val;
 					Gob.disableGlobalGobAnimations = val;
 				}
-			}, prev.pos("bl").adds(12, 2));
+			}, prev.pos("bl").adds(0, 12));
 			prev = add(disableIndustrialSmoke = new CheckBox("Disable Industrial Smoke (Requires Reload)"){
 				{a = (Utils.getprefb("disableIndustrialSmoke", false));}
 				public void set(boolean val) {
