@@ -398,7 +398,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/InventorySearcher");
 		makeLocal("paginae/nightdawg/OtherTools/ObjectSearcher");
 		makeLocal("paginae/nightdawg/OtherTools/QuestgiverTriangulation");
-		makeLocal("paginae/nightdawg/OtherTools/Timers");
+//		makeLocal("paginae/nightdawg/OtherTools/Timers");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -879,9 +879,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.pointerTriangulation = new PointerTriangulation(gui);
 					gui.add(gui.pointerTriangulation, new Coord(gui.sz.x/2 - gui.pointerTriangulation.sz.x/2, gui.sz.y/2 - gui.pointerTriangulation.sz.y/2 - 300));
 				}
-			} else if (ad[2].equals("Timers")) {
-				// Timers
 			}
+//			else if (ad[2].equals("Timers")) {
+//				// Timers
+//			}
 		}
 	}
 
