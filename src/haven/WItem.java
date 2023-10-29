@@ -49,7 +49,7 @@ public class WItem extends Widget implements DTarget {
 	private boolean holdingShift = false;
 	private short delayCounter = 0;
 	private int colorValue = 90;
-	private Boolean isOnHerbTable = null;
+	private Boolean isNotInStudy = null;
 
     public WItem(GItem item) {
 	super(sqsz);
@@ -207,8 +207,8 @@ public class WItem extends Widget implements DTarget {
 	    resize(sz);
 	    lspr = spr;
 	}
-	if (isOnHerbTable == null)
-		isOnHerbTable = parentWindow() != null && parentWindow().cap.equals("Herbalist Table");
+	if (isNotInStudy == null)
+		isNotInStudy = parentWindow() != null && !parentWindow().cap.equals("Character Sheet");
     }
 
     public void draw(GOut g) {
@@ -274,7 +274,7 @@ public class WItem extends Widget implements DTarget {
 		} catch (Exception e) {
 		}
 		drawnum(g, sz);
-		if (isOnHerbTable != null && isOnHerbTable)
+		if (isNotInStudy != null && isNotInStudy)
 			drawCircleProgress(g, sz);
 		else
 			drawmeter(g, sz);
