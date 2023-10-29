@@ -26,6 +26,8 @@
 
 package haven;
 
+import java.util.Arrays;
+
 public class HelpWnd extends Window {
     public static final RichText.Foundry fnd;
     public Indir<Resource> res;
@@ -56,7 +58,7 @@ public class HelpWnd extends Window {
 	    try {
 		text.settext(res.get().flayer(Resource.pagina).text);
 		showing = res;
-	    } catch(Loading e) {}
+	    } catch(Loading e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 	}
     }
 }

@@ -24,6 +24,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import haven.Config;
+import haven.CrashLogger;
+import haven.MainFrame;
+
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -327,7 +332,8 @@ public class XML {
                 if (value.toString().equals(string)) {
                     return value;
                 }
-            }  catch (Exception ignoreAlso) {
+            }  catch (Exception e) {
+                CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
             }
         }
         return string;

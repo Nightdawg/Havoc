@@ -117,7 +117,8 @@ public class Config {
 		if(file.exists() && file.canRead()) {
 			try {
 				inputStream = new FileInputStream(file);
-			} catch (FileNotFoundException ignored) {
+			} catch (FileNotFoundException e) {
+				CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
 			}
 		}
 		return inputStream;
@@ -136,7 +137,7 @@ public class Config {
 				return Utils.stream2str(inputStream);
 			} catch (Exception ignore) {
 			} finally {
-				try {inputStream.close();} catch (IOException ignored) {}
+				try {inputStream.close();} catch (IOException e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 			}
 		}
 		return null;
@@ -151,7 +152,7 @@ public class Config {
 				//noinspection ResultOfMethodCallIgnored
 				new File(parent).mkdirs();
 				exists = file.createNewFile();
-			} catch (IOException ignored) {}
+			} catch (IOException e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 		}
 		if(exists && file.canWrite()) {
 			try (FileOutputStream fos = new FileOutputStream(file);

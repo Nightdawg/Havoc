@@ -200,11 +200,11 @@ public class Inventory extends Widget implements DTarget {
 						if(child.resname().equals(name) && ((spr == child.spr()) || (spr != null && spr.same(child.spr())))) {
 							items.add(wItem);
 						}
-					} catch (Loading e) {}
+					} catch (Loading e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 				}
 			}
 			Collections.sort(items, ascending ? ITEM_COMPARATOR_ASC : ITEM_COMPARATOR_DESC);
-		} catch (Loading e) { }
+		} catch (Loading e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 		return items;
 	}
 

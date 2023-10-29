@@ -43,7 +43,7 @@ public class GobIconCategoryList extends Listbox<GobIconCategoryList.GobCategory
 	    if(icon.tname != null) {
 		g.aimage(icon.tname.tex(), new Coord(elh + UI.scale(5), elh / 2), 0.0, 0.5);
 	    }
-	} catch (Loading ignored) {}
+	} catch (Loading e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
     }
     
     public boolean mousedown(Coord c, int button) {

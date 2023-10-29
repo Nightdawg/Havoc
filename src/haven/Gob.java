@@ -188,7 +188,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			try {
 				removeOl(customRadiusOverlay);
 				customRadiusOverlay = null;
-			} catch (Exception np){
+			} catch (Exception e){
+				CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
 			}
 		} else {
 			knocked = false;
@@ -914,7 +915,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				}
 				updateOverlayDependantHighlights();
 			}
-		} catch (Loading ignored) {}
+		} catch (Loading e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 	}
 
 	private void olRemoved() {

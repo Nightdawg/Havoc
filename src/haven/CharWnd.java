@@ -872,7 +872,7 @@ public class CharWnd extends Window {
 			Gob.batsFearMe = true;
 			ui.sess.glob.oc.gobAction(Gob::toggleBeastDangerRadii);
 		}
-		} catch (Exception ignored){}
+		} catch (Exception e){CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 	}
 
 	public String rendertext() {

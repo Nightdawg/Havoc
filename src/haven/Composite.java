@@ -107,14 +107,16 @@ public class Composite extends Drawable implements EquipTarget {
 	    try {
 		comp.chmod(nmod);
 		nmod = null;
-	    } catch(Loading l) {
+	    } catch(Loading e) {
+			CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
 	    }
 	}
 	if(nequ != null) {
 	    try {
 		comp.chequ(nequ);
 		nequ = null;
-	    } catch(Loading l) {
+	    } catch(Loading e) {
+			CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
 	    }
 	}
     }

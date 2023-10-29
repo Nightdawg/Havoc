@@ -12,7 +12,7 @@ import org.json.JSONObject;
 public class CrashLogger implements Thread.UncaughtExceptionHandler {
     private static final int CRASH_EXIT_CODE = 1337;
 
-    private static final Set<String> EXCLUDED_THREADS = new HashSet<>(
+    public static final Set<String> EXCLUDED_THREADS = new HashSet<>(
             Arrays.asList(
                     "Add12Coal",
                     "Add9Coal",
@@ -57,7 +57,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
 
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException ignored) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 
             System.exit(CRASH_EXIT_CODE);
         }
@@ -69,7 +69,11 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         return stringWriter.toString();
     }
 
-    private void logCrash(Thread t, String stackTrace) {
+    public static void logCrash(String stackTrace) {
+        logCrash(null, stackTrace);
+    }
+
+    private static void logCrash(Thread t, String stackTrace) {
         File logDir = new File("Logs");
         if (!logDir.exists()) {
             logDir.mkdir();
@@ -79,14 +83,16 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         File logFile = new File(logDir, logFilename);
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(logFile))) {
-            writer.println("Crash in thread: " + t.getName());
+            if (t != null) {
+                writer.println("Crash in thread: " + t.getName());
+            }
             writer.println(stackTrace);
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
     }
 
-    public void reportCrash(String username, String version, String log, boolean mainThread) {
+    public static void reportCrash(String username, String version, String log, boolean mainThread) {
         JSONObject jsonPayload = new JSONObject();
         jsonPayload.put("username", username);
         jsonPayload.put("version", version);

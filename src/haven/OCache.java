@@ -131,7 +131,8 @@ public class OCache implements Iterable<Gob> {
 					}
 				}
 			}
-		} catch (Exception ignored) {
+		} catch (Exception e) {
+			CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
 		}
 	}
 
@@ -432,6 +433,7 @@ public class OCache implements Iterable<Gob> {
 					gob.init(false);
 				}
 			} catch (Exception e) {
+				CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
 //				System.out.println("Exception initializing gob " + gob.id);
 //				e.printStackTrace();
 			}

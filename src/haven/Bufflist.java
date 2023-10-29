@@ -106,7 +106,8 @@ public class Bufflist extends Widget {
 					Resource res = buff.res.get();
 					if (res.basename().equals(name))
 						return buff;
-				} catch (Loading l) {
+				} catch (Loading e) {
+					CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
 				}
 			}
 		}

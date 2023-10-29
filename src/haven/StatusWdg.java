@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -48,7 +49,8 @@ public class StatusWdg extends Widget {
         final List<String> lines = new ArrayList<>();
         try (BufferedReader standardOutput = new BufferedReader(new InputStreamReader(new ProcessBuilder(command).start().getInputStream()))) {
             lines.addAll(standardOutput.lines().collect(Collectors.toList()));
-        } catch (IOException ignore) {
+        } catch (IOException e) {
+            CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
         }
 
         StringBuilder output = new StringBuilder();
@@ -81,7 +83,7 @@ public class StatusWdg extends Widget {
         try {
             updatepingtime();
             updatePlayers();
-        } catch (Exception ignored) {}
+        } catch (Exception e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
     }
 
     @Override

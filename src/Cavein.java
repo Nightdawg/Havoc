@@ -74,7 +74,9 @@ public class Cavein extends Sprite implements Sprite.CDel, PView.Render2D {
 				Coord3f sc3f = ownerGob.getc();
 				Coord sc = mapView.screenxf(sc3f).round2();
 				g.aimage(numberTex, sc, 0.5, 0.5);
-			} catch (Loading ignored) {}
+			} catch (Loading e) {
+				CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+			}
 		}
 	}
 

@@ -1,6 +1,8 @@
 /* Preprocessed source code */
 import haven.*;
 
+import java.util.Arrays;
+
 /* >wdg: ExpWnd */
 @haven.FromResource(name = "ui/expwnd", version = 22)
 public class ExpWnd extends Window {
@@ -40,6 +42,7 @@ public class ExpWnd extends Window {
 		cap = (tt == null)?null:(tt.t);
 		text = exp.get().layer(Resource.pagina).text;
 	    } catch(Loading e) {
+			CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
 		return;
 	    }
 	    if(cap != null)

@@ -369,7 +369,8 @@ public class FlowerMenu extends Widget {
 					}
 				}
 			}
-		} catch (Exception ignored) {
+		} catch (Exception e) {
+			CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
 		}
 	}
 

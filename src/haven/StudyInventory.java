@@ -5,6 +5,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.awt.*;
 import java.io.File;
+import java.util.Arrays;
 
 public class StudyInventory extends Inventory {
     private Tex[] histtex = null;
@@ -59,7 +60,8 @@ public class StudyInventory extends Inventory {
                         int y = i / 4 * Inventory.sqsz.y + 1;
                         int x = i % 4 * Inventory.sqsz.x + 1;
                         g.image(tex, new Coord(x, y));
-                    } catch (Resource.LoadException le) {
+                    } catch (Resource.LoadException e) {
+                        CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
                     }
                 }
             }
@@ -119,14 +121,16 @@ public class StudyInventory extends Inventory {
                                 try {
                                 hist[ci] = null;
                                 histtex[ci] = null;
-                                } catch (ArrayIndexOutOfBoundsException ignored) {
+                                } catch (ArrayIndexOutOfBoundsException e) {
+                                    CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
                                 }
                             }
                         }
 
                         hist[i] = res.name;
                         histtex[i] = res.layer(Resource.imgc).tex();
-                    } catch (Loading l) {
+                    } catch (Loading e) {
+                        CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
                     }
                 }
                 Utils.setprefsa("studyhist_" + chrid, hist);
@@ -160,7 +164,8 @@ public class StudyInventory extends Inventory {
                                 ((Audio.Mixer) Audio.player.stream).add(new Audio.VolAdjust(klippi, 0.8));
                                 lastCurioAlertPlayed = System.currentTimeMillis();
                             }
-                        } catch (Exception ignored) {
+                        } catch (Exception e) {
+                            CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
                         }
                     }
                 }
@@ -175,7 +180,8 @@ public class StudyInventory extends Inventory {
                     }
                 }
             }
-        } catch (Loading l) {
+        } catch (Loading e) {
+            CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
         }
 
     }
@@ -220,6 +226,7 @@ public class StudyInventory extends Inventory {
                 }
             }
         } catch (Exception e) { // ignored
+            CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
         }
         return false;
     }

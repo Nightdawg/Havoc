@@ -4,6 +4,8 @@ import haven.render.*;
 import haven.sprites.ClueSprite;
 
 import java.nio.*;
+import java.util.Arrays;
+
 import static java.lang.Math.*;
 
 /* >spr: DowseFx */
@@ -68,7 +70,7 @@ public class DowseFx extends Sprite {
 	float locoffsetZ = 0;
 	try {
 		locoffsetZ = startZ-gobowner.getc().z;
-	} catch (Loading e) {};
+	} catch (Loading e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));};
 	ByteBuffer buf = ByteBuffer.allocate(128);
 	buf.order(ByteOrder.nativeOrder());
 	byte alpha;

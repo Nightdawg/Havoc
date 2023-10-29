@@ -24,6 +24,10 @@ package org.json;
  SOFTWARE.
  */
 
+import haven.Config;
+import haven.CrashLogger;
+import haven.MainFrame;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -31,15 +35,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.*;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.ResourceBundle;
-import java.util.Set;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external
@@ -175,7 +172,8 @@ public class JSONObject {
         for (int i = 0; i < names.length; i += 1) {
             try {
                 this.putOnce(names[i], jo.opt(names[i]));
-            } catch (Exception ignore) {
+            } catch (Exception e) {
+                CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
             }
         }
     }
@@ -304,7 +302,8 @@ public class JSONObject {
             String name = names[i];
             try {
                 this.putOpt(name, c.getField(name).get(object));
-            } catch (Exception ignore) {
+            } catch (Exception e) {
+                CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
             }
         }
     }

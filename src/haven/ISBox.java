@@ -96,7 +96,7 @@ public class ISBox extends Widget implements DTarget {
             Tex t = res.get().flayer(Resource.imgc).tex();
             Coord dc = new Coord(UI.scale(6), (bg.sz().y / 2) - (t.sz().y / 2));
             g.image(t, dc);
-        } catch(Loading e) {}
+        } catch(Loading e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
         g.image(label.tex(), new Coord(UI.scale(40), (bg.sz().y / 2) - (label.tex().sz().y / 2)));
     super.draw(g);
     }
@@ -105,7 +105,7 @@ public class ISBox extends Widget implements DTarget {
 	try {
 	    if(res.get().layer(Resource.tooltip) != null)
 		return(res.get().layer(Resource.tooltip).t);
-	} catch(Loading e) {}
+	} catch(Loading e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 	return(null);
     }
     
@@ -178,7 +178,8 @@ public class ISBox extends Widget implements DTarget {
             } else {
                 try {
                     amount = Integer.parseInt(value.text());
-                } catch (Exception ignored) {
+                } catch (Exception e) {
+                    CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
                 }
             }
             if (amount > rem) {

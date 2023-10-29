@@ -237,7 +237,7 @@ public class Avaview extends PView {
 		    np.set(nposesold ? 0 : 0.2f);
 		    lposes = nposes;
 		    nposes = null;
-		} catch(Loading e) {}
+		} catch(Loading e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 	    }
 	}
     }
@@ -266,6 +266,7 @@ public class Avaview extends PView {
 		}
 	    }
 	} catch(Loading e) {
+		CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
 	}
 	if(!drawn) {
 	    try {

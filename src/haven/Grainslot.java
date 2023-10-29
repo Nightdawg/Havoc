@@ -70,7 +70,8 @@ public class Grainslot extends Widget implements DTarget, ItemInfo.Owner {
 		if(iconc == null)
 		    iconc = icon.get().layer(Resource.imgc).tex();
 		g.image(iconc, new Coord(ic + 1, ic + 1));
-	    } catch(Loading l) {
+	    } catch(Loading e) {
+			CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
 	    }
 	}
 	super.draw(g);

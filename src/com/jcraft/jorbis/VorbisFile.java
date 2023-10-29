@@ -28,9 +28,13 @@
 package com.jcraft.jorbis;
 
 import com.jcraft.jogg.*;
+import haven.Config;
+import haven.CrashLogger;
+import haven.MainFrame;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class VorbisFile{
   static final int CHUNKSIZE=8500;
@@ -633,6 +637,7 @@ public class VorbisFile{
         }
       }
       catch(Exception e){
+        CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
       }
       return 0;
     }
@@ -656,6 +661,7 @@ public class VorbisFile{
       }
     }
     catch(Exception e){
+      CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
     }
     return 0;
   }

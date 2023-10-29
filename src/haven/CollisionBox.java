@@ -73,7 +73,7 @@ public class CollisionBox extends SlottedNode implements Rendered {
 					model = m;
 					slots.forEach(RenderTree.Slot::update);
 				}
-			}catch (Loading ignored) {}
+			}catch (Loading e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 			if(newState != state) {
 				state = newState;
 				for (RenderTree.Slot slot : slots) {
@@ -98,7 +98,7 @@ public class CollisionBox extends SlottedNode implements Rendered {
 							if (oname.equals("visflag"))
 								issaVisitorGate = true;
 						}
-					} catch (NullPointerException ignored) {}
+					} catch (NullPointerException e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 					if(state == 1) { // gate is open
 						return true;
 					}
@@ -110,7 +110,7 @@ public class CollisionBox extends SlottedNode implements Rendered {
 					return true;
 				}
 			}
-		} catch (Loading ignored) {}
+		} catch (Loading e) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
 		return false;
 	}
 
