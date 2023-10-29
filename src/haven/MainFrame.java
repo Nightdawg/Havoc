@@ -183,17 +183,16 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 	setIconImage(icon);
     }
 
-    private UIPanel renderer() {
-	String id = renderer.get();
-	switch(id) {
-	case "jogl":
-	    return(new JOGLPanel());
-	case "lwjgl":
-	    return(new LWJGLPanel());
-	default:
-	    throw(new RuntimeException("invalid renderer specified in haven.renderer: " + id));
-	}
-    }
+
+		private UIPanel renderer() {
+			boolean enableExperimentalRender = Utils.getprefb("enableExperimentalRender", false);
+			String rendererType = enableExperimentalRender ? "lwjgl" : "jogl";
+			return switch (rendererType) {
+				case "jogl" -> new JOGLPanel();
+				case "lwjgl" -> new LWJGLPanel();
+				default -> throw new RuntimeException("Invalid renderer specified: " + rendererType);
+			};
+		}
 
     public MainFrame(Coord isz) {
 	super("Haven & Hearth");
