@@ -59,8 +59,8 @@ public class OCache implements Iterable<Gob> {
     public static final Coord2d posres = Coord2d.of(0x1.0p-10, 0x1.0p-10).mul(11, 11);
 
 	private static final List<Runnable> deferredActions = new ArrayList<>();
-	public static final Resource resoCave = Resource.remote().loadwait("gfx/hud/mmap/cave", 2);
-	public static final Resource resoTarpit = Resource.remote().loadwait("gfx/terobjs/mm/tarpit", 2);
+	public static final Resource resoCave = Resource.remote().loadwait("gfx/hud/mmap/cave");
+	public static final Resource resoTarpit = Resource.remote().loadwait("gfx/terobjs/mm/tarpit");
     /* XXX: Use weak refs */
     private Collection<Collection<Gob>> local = new LinkedList<Collection<Gob>>();
     private HashMultiMap<Long, Gob> objs = new HashMultiMap<Long, Gob>();
