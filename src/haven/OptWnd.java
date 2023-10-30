@@ -2309,10 +2309,15 @@ public class OptWnd extends Window {
 	//DropSettings
 	public static CheckBox toggleDropItemsCheckBox;
 	public static CheckBox dropStoneCheckbox;
+	public static TextEntry dropStoneQualityTextEntry;
 	public static CheckBox dropOreCheckbox;
+	public static TextEntry dropOreQualityTextEntry;
 	public static CheckBox dropPreciousOreCheckbox;
+	public static TextEntry dropPreciousOreQualityTextEntry;
 	public static CheckBox dropMinedCuriosCheckbox;
+	public static TextEntry dropMinedCuriosQualityTextEntry;
 	public static CheckBox dropQuarryartzCheckbox;
+	public static TextEntry dropQuarryartzQualityTextEntry;
 
 	public class NDAutoDropSettingsPanel extends Panel {
 
@@ -2335,14 +2340,27 @@ public class OptWnd extends Window {
 					a = val;
 				}
 			}, prev.pos("bl").adds(12, 10));
-
+			add(new Label("Q <"), prev.pos("ur").adds(0, 0).x(UI.scale(134)));
+			add(dropStoneQualityTextEntry = new TextEntry(UI.scale(36), Utils.getpref("dropStoneQuality", "30")){
+				protected void changed() {
+					Utils.setpref("dropStoneQuality", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6, -2).x(UI.scale(156)));
 			prev = add(dropOreCheckbox = new CheckBox("Mined Ore"){
 				{a = Utils.getprefb("dropOre", false);}
 				public void set(boolean val) {
 					Utils.setprefb("dropOre", val);
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 2));
+			}, prev.pos("bl").adds(0, 4));
+			add(new Label("Q <"), prev.pos("ur").adds(0, 0).x(UI.scale(134)));
+			add(dropOreQualityTextEntry = new TextEntry(UI.scale(36), Utils.getpref("dropOreQuality", "30")){
+				protected void changed() {
+					Utils.setpref("dropOreQuality", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6, -2).x(UI.scale(156)));
 
 			prev = add(dropPreciousOreCheckbox = new CheckBox("Mined Precious Ore"){
 				{a = Utils.getprefb("dropPreciousOre", false);}
@@ -2350,7 +2368,14 @@ public class OptWnd extends Window {
 					Utils.setprefb("dropPreciousOre", val);
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 2));
+			}, prev.pos("bl").adds(0, 4));
+			add(new Label("Q <"), prev.pos("ur").adds(0, 0).x(UI.scale(134)));
+			add(dropPreciousOreQualityTextEntry = new TextEntry(UI.scale(36), Utils.getpref("dropPreciousOreQuality", "30")){
+				protected void changed() {
+					Utils.setpref("dropPreciousOreQuality", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6, -2).x(UI.scale(156)));
 
 			prev = add(dropMinedCuriosCheckbox = new CheckBox("Mined Curios"){
 				{a = Utils.getprefb("dropMinedCurios", false);}
@@ -2358,7 +2383,14 @@ public class OptWnd extends Window {
 					Utils.setprefb("dropMinedCurios", val);
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 2));
+			}, prev.pos("bl").adds(0, 4));
+			add(new Label("Q <"), prev.pos("ur").adds(0, 0).x(UI.scale(134)));
+			add(dropMinedCuriosQualityTextEntry = new TextEntry(UI.scale(36), Utils.getpref("dropMinedCuriosQuality", "30")){
+				protected void changed() {
+					Utils.setpref("dropMinedCuriosQuality", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6, -2).x(UI.scale(156)));
 
 			prev = add(dropQuarryartzCheckbox = new CheckBox("Quarryartz"){
 				{a = Utils.getprefb("dropQuarryartz", false);}
@@ -2366,7 +2398,14 @@ public class OptWnd extends Window {
 					Utils.setprefb("dropQuarryartz", val);
 					a = val;
 				}
-			}, prev.pos("bl").adds(0, 2));
+			}, prev.pos("bl").adds(0, 4));
+			add(new Label("Q <"), prev.pos("ur").adds(0, 0).x(UI.scale(134)));
+			add(dropQuarryartzQualityTextEntry = new TextEntry(UI.scale(36), Utils.getpref("dropQuarryartzQuality", "30")){
+				protected void changed() {
+					Utils.setpref("dropQuarryartzQuality", this.buf.line());
+					super.changed();
+				}
+			}, prev.pos("ur").adds(6, -2).x(UI.scale(156)));
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(0));
 			pack();
 		}

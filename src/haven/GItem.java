@@ -633,19 +633,27 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 			this.wdgmsg("drop", Coord.z);
 		}
 		if (curs != null && curs.name.equals("gfx/hud/curs/mine")) {
-//			double quality = 0.0;
-//			if(this.rawinfo != null){
-//				quality = this.info().stream().filter(info -> info instanceof Quality).mapToDouble(info -> ((Quality) info).q).findFirst().orElse(0.0);
-//			}
+			double quality = 0.0;
+			if(this.rawinfo != null){
+				quality = this.info().stream().filter(info -> info instanceof Quality).mapToDouble(info -> ((Quality) info).q).findFirst().orElse(0.0);
+			}
 			if (OptWnd.toggleDropItemsCheckBox.a && (
-					(OptWnd.dropStoneCheckbox.a && Config.mineablesStone.contains(name)) ||
-					(OptWnd.dropOreCheckbox.a && Config.mineablesOre.contains(name)) ||
-					(OptWnd.dropPreciousOreCheckbox.a && Config.mineablesOrePrecious.contains(name)) ||
-					(OptWnd.dropMinedCuriosCheckbox.a && Config.mineablesCurios.contains(name)) ||
-					(OptWnd.dropQuarryartzCheckbox.a && "quarryquartz".equals(name) )))
+					(OptWnd.dropStoneCheckbox.a && Config.mineablesStone.contains(name) && getDropQualitySetting(OptWnd.dropStoneQualityTextEntry) > quality) ||
+					(OptWnd.dropOreCheckbox.a && Config.mineablesOre.contains(name) && getDropQualitySetting(OptWnd.dropOreQualityTextEntry) > quality) ||
+					(OptWnd.dropPreciousOreCheckbox.a && Config.mineablesOrePrecious.contains(name) && getDropQualitySetting(OptWnd.dropPreciousOreQualityTextEntry) > quality) ||
+					(OptWnd.dropMinedCuriosCheckbox.a && Config.mineablesCurios.contains(name) && getDropQualitySetting(OptWnd.dropMinedCuriosQualityTextEntry) > quality) ||
+					(OptWnd.dropQuarryartzCheckbox.a && "quarryquartz".equals(name) && getDropQualitySetting(OptWnd.dropQuarryartzQualityTextEntry) > quality)))
 			{
 				this.wdgmsg("drop", Coord.z);
 			}
+		}
+	}
+
+	private int getDropQualitySetting(TextEntry textEntry){
+		try {
+			return Integer.parseInt(textEntry.text());
+		} catch (NumberFormatException ex){
+			return 0;
 		}
 	}
 }
