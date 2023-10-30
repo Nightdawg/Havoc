@@ -196,7 +196,7 @@ public class TileHighlight {
 //			add("gfx/tiles/paving/zincspar");
 //		}});
 	}};
-	public static List<String> savedHighlightedMapTiles = new ArrayList<String>(Arrays.asList(Utils.getprefsa("savedHighlightedMapTiles", new String[0])));
+	public static List<String> savedHighlightedMapTiles = new ArrayList<String>(Arrays.asList(Utils.getprefsa("savedHighlightedMapTiles_2", new String[0])));
     
     public static boolean isHighlighted(String name) {
 	synchronized (highlight) {
@@ -208,12 +208,13 @@ public class TileHighlight {
 	synchronized (highlight) {
 	    if(highlight.contains(name)) {
 		unhighlight(name);
-		savedHighlightedMapTiles.add(name);
+		savedHighlightedMapTiles.remove(name);
 	    } else {
 		highlight(name);
-		savedHighlightedMapTiles.remove(name);
+		savedHighlightedMapTiles.add(name);
 	    }
 	}
+		Utils.setprefsa("savedHighlightedMapTiles_2", savedHighlightedMapTiles.toArray(new String[0]));
     }
     
     public static void highlight(String name) {
@@ -316,15 +317,17 @@ public class TileHighlight {
 		@Override
 		public void changed(boolean val) {
 		    list.filtered.forEach(item -> {
-			if(val) {
-			    highlight(item.res);
-				savedHighlightedMapTiles.add(item.res);
-			} else {
-			    unhighlight(item.res);
-				savedHighlightedMapTiles.remove(item.res);
-			}
+				synchronized (highlight) {
+					if (val) {
+						highlight(item.res);
+						savedHighlightedMapTiles.add(item.res);
+					} else {
+						unhighlight(item.res);
+						savedHighlightedMapTiles.remove(item.res);
+					}
+				}
 		    });
-			Utils.setprefsa("savedHighlightedMapTiles", savedHighlightedMapTiles.toArray(new String[0]));
+			Utils.setprefsa("savedHighlightedMapTiles_2", savedHighlightedMapTiles.toArray(new String[0]));
 		}
 	    }, UI.scale(135, 0));
 	    h += UI.scale(5);
@@ -344,6 +347,7 @@ public class TileHighlight {
 				unhighlight(item.res);
 			}
 		});
+		updateAllCheckbox();
 	}
 	
 	private void updateFilter(String text) {
@@ -406,7 +410,7 @@ public class TileHighlight {
 		if(ev.getKeyCode() == java.awt.event.KeyEvent.VK_SPACE) {
 		    if(sel != null) {
 			toggle(sel.res);
-			Utils.setprefsa("savedHighlightedMapTiles", savedHighlightedMapTiles.toArray(new String[0]));
+			Utils.setprefsa("savedHighlightedMapTiles_2", savedHighlightedMapTiles.toArray(new String[0]));
 			updateAllCheckbox();
 		    }
 		    return (true);
@@ -433,7 +437,7 @@ public class TileHighlight {
 		    TileItem item = listitem(idx);
 		    if(ic.x < showc.x + CheckBox.sbox.sz().x) {
 			toggle(item.res);
-			Utils.setprefsa("savedHighlightedMapTiles", savedHighlightedMapTiles.toArray(new String[0]));
+			Utils.setprefsa("savedHighlightedMapTiles_2", savedHighlightedMapTiles.toArray(new String[0]));
 			updateAllCheckbox();
 			return (true);
 		    }
