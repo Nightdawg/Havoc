@@ -94,17 +94,22 @@ public class OCache implements Iterable<Gob> {
 	cbs.remove(cb);
     }
 
-    public void add(Gob ob) {
-	synchronized(ob) {
-	    Collection<ChangeCallback> cbs;
-	    synchronized(this) {
-		cbs = new ArrayList<>(this.cbs);
-		objs.put(ob.id, ob);
-	    }
-	    for(ChangeCallback cb : cbs)
-		cb.added(ob);
+	public void add(Gob ob) {
+		if (OptWnd.removeCrop && OptWnd.toggleGobHidingCheckBox.a) {
+			if (ob.getres() != null && ob.getres().name.startsWith("gfx/terobjs/plants") && !ob.getres().name.endsWith("trellis")) {
+				return;
+			}
+		}
+		synchronized (ob) {
+			Collection<ChangeCallback> cbs;
+			synchronized (this) {
+				cbs = new ArrayList<>(this.cbs);
+				objs.put(ob.id, ob);
+			}
+			for (ChangeCallback cb : cbs)
+				cb.added(ob);
+		}
 	}
-    }
 
 
     public void remove(Gob ob) {

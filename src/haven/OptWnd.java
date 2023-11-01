@@ -682,7 +682,7 @@ public class OptWnd extends Window {
 				a = val;
 			}
 		}, topRightColumn.pos("bl").adds(0, 10));
-		topRightColumn = add(disableMapTileTransition = new CheckBox("Disable Map Transition (req. Restart)"){
+		topRightColumn = add(disableMapTileTransition = new CheckBox("Disable Map Transition (req. Reload)"){
 			{a = (Utils.getprefb("disableMapTileTransition", false));}
 			public void set(boolean val) {
 				Utils.setprefb("disableMapTileTransition", val);
@@ -2167,7 +2167,8 @@ public class OptWnd extends Window {
 	public static CheckBox hideTreeLogsCheckbox;
 	public static CheckBox hideWallsCheckbox;
 	public static CheckBox hideHousesCheckbox;
-	public static CheckBox hideCropsCheckbox;
+	public static boolean removeCrop = Utils.getprefb("removeCrops", false);
+	public static CheckBox removeCropsCheckbox;
 	public static CheckBox hideStockpilesCheckbox;
 	public static ColorOptionWidget hiddenObjectsColorOptionWidget;
 	public static String[] hiddenObjectsColorSetting = Utils.getprefsa("hitboxFilled" + "_colorSetting", new String[]{"0", "225", "255", "200"});
@@ -2309,18 +2310,14 @@ public class OptWnd extends Window {
 					}
 				}
 			}, prev.pos("bl").adds(0, 2));
-			prev = add(hideCropsCheckbox = new CheckBox("Crops"){
-				{a = Utils.getprefb("hideCrops", false);}
+			prev = add(removeCropsCheckbox = new CheckBox("Crops (req. Reload)"){
+				{a = Utils.getprefb("removeCrops", false);}
 				public void set(boolean val) {
-					Utils.setprefb("hideCrops", val);
+					Utils.setprefb("removeCrops", val);
 					a = val;
-					if (ui != null && ui.gui != null) {
-						ui.sess.glob.oc.gobAction(Gob::hidingBoxUpdated);
-						ui.sess.glob.oc.gobAction(Gob::growthInfoUpdated);
-						ui.gui.map.updatePlobDrawable();
-					}
 				}
 			}, prev.pos("bl").adds(0, 2));
+			removeCropsCheckbox.tooltip = RichText.render("Completely remove crops. Should improve fps. (Need Reload).", UI.scale(300));
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(57)));
 			setTooltipsForHidingSettingsStuff();
 			pack();

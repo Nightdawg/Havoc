@@ -1655,9 +1655,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			} else if (OptWnd.hideHousesCheckbox.a && Arrays.asList(HIDINGHOUSES).contains(res.name)) {
 				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = true;
-			} else if (OptWnd.hideCropsCheckbox.a && res.name.startsWith("gfx/terobjs/plants") && !res.name.endsWith("trellis")) {
-				doHide = OptWnd.toggleGobHidingCheckBox.a;
-				doShowHidingBox = true;
 			} else if (OptWnd.hideStockpilesCheckbox.a && res.name.startsWith("gfx/terobjs/stockpile")) {
 				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = true;

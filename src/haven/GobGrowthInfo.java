@@ -45,7 +45,7 @@ public class GobGrowthInfo extends GobInfo {
     private BufferedImage growth() {
 	Text.Line line = null;
 	Resource res = gob.getres();
-	if(isSpriteKind(gob, "GrowingPlant", "TrellisPlant") && !(OptWnd.toggleGobHidingCheckBox.a && OptWnd.hideCropsCheckbox.a)) {
+	if(isSpriteKind(gob, "GrowingPlant", "TrellisPlant") && !(OptWnd.toggleGobHidingCheckBox.a && OptWnd.removeCropsCheckbox.a)) {
 	    int maxStage = 0;
 	    for (FastMesh.MeshRes layer : gob.getres().layers(FastMesh.MeshRes.class)) {
 		if(layer.id / 10 > maxStage) {
