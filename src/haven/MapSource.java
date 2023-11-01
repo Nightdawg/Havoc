@@ -30,10 +30,11 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 public interface MapSource {
-    public int gettile(Coord tc);
-    public double getfz(Coord tc);
-    public Tileset tileset(int t);
-    public Tiler tiler(int t);
+
+    int gettile(Coord tc);
+    double getfz(Coord tc);
+    Tileset tileset(int t);
+    Tiler tiler(int t);
 
     static BufferedImage tileimg(MapSource m, BufferedImage[] texes, int t) {
 	BufferedImage img = texes[t];
@@ -89,6 +90,7 @@ public interface MapSource {
 		}
 	    }
 	}
+	if(!OptWnd.disableMapTileTransition.a)
 	for(c.y = 0; c.y < sz.y; c.y++) {
 	    for(c.x = 0; c.x < sz.x; c.x++) {
 		int t = m.gettile(a.ul.add(c));
