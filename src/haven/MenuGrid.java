@@ -399,6 +399,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/ObjectSearcher");
 		makeLocal("paginae/nightdawg/OtherTools/QuestgiverTriangulation");
 //		makeLocal("paginae/nightdawg/OtherTools/Timers");
+		makeLocal("paginae/nightdawg/OtherTools/QuestHelper");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -883,6 +884,9 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 //			else if (ad[2].equals("Timers")) {
 //				// Timers
 //			}
+			else if (ad[2].equals("QuestHelper")) {
+
+			}
 		}
 	}
 
