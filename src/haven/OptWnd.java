@@ -1023,7 +1023,11 @@ public class OptWnd extends Window {
 			public void set(boolean val) {
 				Utils.setprefb("highlightCliffs", val);
 				a = val;
-
+				if (ui.sess != null)
+					ui.sess.glob.map.invalidateAll();
+				if (ui != null && ui.gui != null) {
+					ui.gui.optionInfoMsg("Cliff Highlighting is now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
+				}
 			}
 		}, leftColumn.pos("bl").adds(0, 12));
 
