@@ -889,19 +889,22 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	addol(new Overlay(this, -1, res, sdt));
     }
 
-    public Overlay findol(int id) {
-	for(Overlay ol : ols) {
-	    if(ol.id == id)
-		return(ol);
-	}
-	synchronized (dols) {
-		for(Overlay ol : dols) {
-			if(ol.id == id)
-				return ol;
+	public Overlay findol(int id) {
+		synchronized (ols) {
+			for (Overlay ol : ols) {
+				if (ol.id == id) {
+					return (ol);
+				}
+			}
 		}
+		synchronized (dols) {
+			for (Overlay ol : dols) {
+				if (ol.id == id)
+					return ol;
+			}
+		}
+		return (null);
 	}
-	return(null);
-    }
 
 	private void overlayAdded(Overlay item) {
 		try {
