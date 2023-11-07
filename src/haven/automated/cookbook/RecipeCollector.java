@@ -200,7 +200,7 @@ public class RecipeCollector implements Runnable {
             HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("x-security-token", "63b510b2f610d4b6a8e6b03c2c");
+            connection.setRequestProperty("x-security-token", "96Jgf8H185h0iam54jFjg5JfsgG");
             connection.setDoOutput(true);
 
             try (OutputStream os = connection.getOutputStream()) {
