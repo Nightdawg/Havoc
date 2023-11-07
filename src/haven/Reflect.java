@@ -10,7 +10,7 @@ public class Reflect {
             Field f = getField(obj, name);
             v = f.get(obj);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+            CrashLogger.logCrash(e);
         }
         return v;
     }
@@ -21,7 +21,7 @@ public class Reflect {
             Field f = getField(obj, name);
             v = f.getInt(obj);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+            CrashLogger.logCrash(e);
         }
         return v;
     }
@@ -32,7 +32,7 @@ public class Reflect {
             Field f = getField(obj, name);
             v = f.getDouble(obj);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+            CrashLogger.logCrash(e);
         }
         return v;
     }
@@ -67,7 +67,7 @@ public class Reflect {
             getField(obj, name);
             return true;
         } catch (NoSuchFieldException e) {
-            CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+            CrashLogger.logCrash(e);
         }
         return false;
     }
@@ -83,7 +83,7 @@ public class Reflect {
         try {
             return c.getInterfaces();
         } catch (Exception e) {
-            CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+            CrashLogger.logCrash(e);
         }
         return new Class[0];
     }
@@ -111,7 +111,7 @@ public class Reflect {
         try {
             return o.getClass().getDeclaredMethod(method, types).invoke(o, args);
         } catch (Exception e) {
-            CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+            CrashLogger.logCrash(e);
         }
         return null;
     }

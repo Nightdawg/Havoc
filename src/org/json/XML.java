@@ -333,7 +333,7 @@ public class XML {
                     return value;
                 }
             }  catch (Exception e) {
-                CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+                CrashLogger.logCrash(e);
             }
         }
         return string;

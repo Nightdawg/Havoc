@@ -57,7 +57,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
 
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) {CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
+            } catch (InterruptedException ignored) {CrashLogger.logCrash(e);}
 
             System.exit(CRASH_EXIT_CODE);
         }
@@ -68,8 +68,11 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
         throwable.printStackTrace(new PrintWriter(stringWriter));
         return stringWriter.toString();
     }
-
-    public static void logCrash(String stackTrace) {
+    
+    public static void logCrash(Throwable throwable) {
+        StringWriter stringWriter = new StringWriter();
+        throwable.printStackTrace(new PrintWriter(stringWriter));
+        String stackTrace = stringWriter.toString();
         logCrash(null, stackTrace);
     }
 
@@ -79,18 +82,20 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
             logDir.mkdir();
         }
 
-        String logFilename = String.format("crash_log_%tF_%<tH%<tM%<tS.txt", System.currentTimeMillis());
+        String logFilename = String.format("crash_log_%tF.txt", System.currentTimeMillis());
         File logFile = new File(logDir, logFilename);
-
-        try (PrintWriter writer = new PrintWriter(new FileOutputStream(logFile))) {
+        try (PrintWriter writer = new PrintWriter(new FileOutputStream(logFile, true))) {
+            writer.println("Timestamp: " + String.format("%tc", System.currentTimeMillis()));
             if (t != null) {
                 writer.println("Crash in thread: " + t.getName());
             }
             writer.println(stackTrace);
+            writer.println();
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
     }
+
 
     public static void reportCrash(String username, String version, String log, boolean mainThread) {
         JSONObject jsonPayload = new JSONObject();

@@ -108,7 +108,7 @@ public class Composite extends Drawable implements EquipTarget {
 		comp.chmod(nmod);
 		nmod = null;
 	    } catch(Loading e) {
-			CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+			CrashLogger.logCrash(e);
 	    }
 	}
 	if(nequ != null) {
@@ -116,7 +116,7 @@ public class Composite extends Drawable implements EquipTarget {
 		comp.chequ(nequ);
 		nequ = null;
 	    } catch(Loading e) {
-			CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+			CrashLogger.logCrash(e);
 	    }
 	}
     }

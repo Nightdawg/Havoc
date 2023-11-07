@@ -256,7 +256,7 @@ public class Equipory extends Widget implements DTarget {
 					Gob.batsLeaveMeAlone = true;
 					ui.sess.glob.oc.gobAction(Gob::toggleBeastDangerRadii);
 				}
-			} catch (Exception e){CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));}
+			} catch (Exception e){CrashLogger.logCrash(e);}
 		} else {
 			super.addchild(child, args);
 		}

@@ -173,7 +173,7 @@ public class JSONObject {
             try {
                 this.putOnce(names[i], jo.opt(names[i]));
             } catch (Exception e) {
-                CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+                CrashLogger.logCrash(e);
             }
         }
     }
@@ -303,7 +303,7 @@ public class JSONObject {
             try {
                 this.putOpt(name, c.getField(name).get(object));
             } catch (Exception e) {
-                CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+                CrashLogger.logCrash(e);
             }
         }
     }

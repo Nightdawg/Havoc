@@ -637,7 +637,7 @@ public class VorbisFile{
         }
       }
       catch(Exception e){
-        CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+        CrashLogger.logCrash(e);
       }
       return 0;
     }
@@ -661,7 +661,7 @@ public class VorbisFile{
       }
     }
     catch(Exception e){
-      CrashLogger.logCrash(Arrays.toString(e.getStackTrace()));
+      CrashLogger.logCrash(e);
     }
     return 0;
   }
