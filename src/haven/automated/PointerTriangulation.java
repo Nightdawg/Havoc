@@ -70,7 +70,7 @@ public class PointerTriangulation extends Window {
                     double calcX = gridCoords.x - curGridCoords.x;
                     double calcY = gridCoords.y - curGridCoords.y;
                     Coord2d firstCoord = new Coord2d(calcX * 1100 + grid.gc.x * 1100 + lineData.initCoords.x, calcY * 1100 + grid.gc.y * 1100 + lineData.initCoords.y);
-                    gui.mapfile.view.addSprite(new ClueSprite(firstCoord, lineData.angle, lineData.angle));
+                    gui.mapfile.view.addSprite(new ClueSprite(firstCoord, lineData.angle, lineData.angle, 1, 10000));
 
                 } else {
                     gui.error("You have to be in the same segment for each pointer");

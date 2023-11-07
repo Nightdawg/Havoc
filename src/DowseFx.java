@@ -40,7 +40,7 @@ public class DowseFx extends Sprite {
 	    this.a2 = a2;
 	}
 		try {
-			gobowner.glob.sess.ui.gui.mapfile.view.addSprite(new ClueSprite(gobowner.rc, a1, a2));
+			gobowner.glob.sess.ui.gui.mapfile.view.addSprite(new ClueSprite(gobowner.rc, a1, a2, 2, 500));
 		} catch (Exception e) {
 			System.out.println("failed to add clue sprite to map");
 		}
