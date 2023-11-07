@@ -251,99 +251,101 @@ public class MiningSafetyAssistant extends Window implements Runnable {
             if (counter == 0 && (stopMiningWhenOutsideSupport || stopMiningFifty || stopMiningTwentyFive)) {
                 supports = AUtils.getAllSupports(gui);
             }
-            if (stopMiningWhenOutsideSupport && (gui.map.player().getPoses().contains("pickan") || gui.map.player().getPoses().contains("gfx/borka/choppan"))) {
-                Gob player = gui.map.player();
-                Coord2d minedTile = new Coord2d(player.rc.x + (Math.cos(player.a) * 13.75), player.rc.y + Math.sin(player.a) * 13.75);
-                Set<Gob> gobsInRange = new HashSet<>();
-                for (Gob support : supports) {
-                    String res = support.getres().name;
-                    if (res.equals("gfx/terobjs/ladder") || res.equals("gfx/terobjs/minesupport")) {
-                        if (support.rc.dist(minedTile) <= 100) {
-                            gobsInRange.add(support);
-                        }
-                    } else if (res.equals("gfx/terobjs/column")) {
-                        if (support.rc.dist(minedTile) <= 125) {
-                            gobsInRange.add(support);
-                        }
-                    } else if (res.equals("gfx/terobjs/minebeam")) {
-                        if (support.rc.dist(minedTile) <= 150) {
-                            gobsInRange.add(support);
+            if(gui.map.player() != null){
+                if (stopMiningWhenOutsideSupport && (gui.map.player().getPoses().contains("pickan") || gui.map.player().getPoses().contains("gfx/borka/choppan"))) {
+                    Gob player = gui.map.player();
+                    Coord2d minedTile = new Coord2d(player.rc.x + (Math.cos(player.a) * 13.75), player.rc.y + Math.sin(player.a) * 13.75);
+                    Set<Gob> gobsInRange = new HashSet<>();
+                    for (Gob support : supports) {
+                        String res = support.getres().name;
+                        if (res.equals("gfx/terobjs/ladder") || res.equals("gfx/terobjs/minesupport")) {
+                            if (support.rc.dist(minedTile) <= 100) {
+                                gobsInRange.add(support);
+                            }
+                        } else if (res.equals("gfx/terobjs/column")) {
+                            if (support.rc.dist(minedTile) <= 125) {
+                                gobsInRange.add(support);
+                            }
+                        } else if (res.equals("gfx/terobjs/minebeam")) {
+                            if (support.rc.dist(minedTile) <= 150) {
+                                gobsInRange.add(support);
+                            }
                         }
                     }
-                }
-                if (gobsInRange.size() < 1) {
-                    ui.root.wdgmsg("gk", 27);
-                    gui.error("Trying to mine outside supports.");
-                }
-            }
-
-            if (stopMiningLooseRock && (gui.map.player().getPoses().contains("pickan") || gui.map.player().getPoses().contains("gfx/borka/choppan"))) {
-                Gob player = gui.map.player();
-                Coord2d minedTile = new Coord2d(player.rc.x + (Math.cos(player.a) * 13.75), player.rc.y + Math.sin(player.a) * 13.75);
-                if (counter == 0) {
-                    looseRocks = AUtils.getGobs("gfx/terobjs/looserock", gui);
-                }
-                for (Gob looseRock : looseRocks) {
-                    if (looseRock.rc.dist(minedTile) <= 125) {
-                        looseRock.highlight(Color.red);
+                    if (gobsInRange.size() < 1) {
                         ui.root.wdgmsg("gk", 27);
-                        gui.error("Loose rock is too close to mine safely.");
+                        gui.error("Trying to mine outside supports.");
                     }
                 }
-            }
 
-            if ((stopMiningFifty || stopMiningTwentyFive) && (gui.map.player().getPoses().contains("pickan") || gui.map.player().getPoses().contains("gfx/borka/choppan"))) {
-                Gob player = gui.map.player();
-                Coord2d minedTile = new Coord2d(player.rc.x + (Math.cos(player.a) * 13.75), player.rc.y + Math.sin(player.a) * 13.75);
-                for (Gob support : supports) {
-                    String res = support.getres().name;
-                    if (res.equals("gfx/terobjs/ladder") || res.equals("gfx/terobjs/minesupport")) {
-                        if (support.rc.dist(minedTile) <= 100) {
-                            if (support.getattr(GobHealth.class) != null) {
-                                System.out.println(support.getattr(GobHealth.class).hp);
-                                if (support.getattr(GobHealth.class).hp <= 0.5 && stopMiningFifty) {
-                                    ui.root.wdgmsg("gk", 27);
-                                    gui.error("Support nearby below 50%..");
-                                    support.highlight(Color.red);
-                                } else if (support.getattr(GobHealth.class).hp <= 0.25 && stopMiningTwentyFive) {
-                                    ui.root.wdgmsg("gk", 27);
-                                    gui.error("Support nearby below 25%..");
-                                    support.highlight(Color.red);
-                                }
-                            }
-                        }
-                    } else if (res.equals("gfx/terobjs/column")) {
-                        if (support.rc.dist(minedTile) <= 125) {
-                            if (support.getattr(GobHealth.class) != null) {
-                                System.out.println(support.getattr(GobHealth.class).hp);
-                                if (support.getattr(GobHealth.class).hp <= 0.5 && stopMiningFifty) {
-                                    ui.root.wdgmsg("gk", 27);
-                                    gui.error("Support nearby below 50%..");
-                                    support.highlight(Color.red);
-                                } else if (support.getattr(GobHealth.class).hp <= 0.25 && stopMiningTwentyFive) {
-                                    ui.root.wdgmsg("gk", 27);
-                                    gui.error("Support nearby below 25%..");
-                                    support.highlight(Color.red);
-                                }
-                            }
-                        }
-                    } else if (res.equals("gfx/terobjs/minebeam")) {
-                        if (support.rc.dist(minedTile) <= 150) {
-                            if (support.getattr(GobHealth.class) != null) {
-                                System.out.println(support.getattr(GobHealth.class).hp);
-                                if (support.getattr(GobHealth.class).hp <= 0.5 && stopMiningFifty) {
-                                    ui.root.wdgmsg("gk", 27);
-                                    gui.error("Support nearby below 50%..");
-                                    support.highlight(Color.red);
-                                } else if (support.getattr(GobHealth.class).hp <= 0.25 && stopMiningTwentyFive) {
-                                    ui.root.wdgmsg("gk", 27);
-                                    gui.error("Support nearby below 25%..");
-                                    support.highlight(Color.red);
-                                }
-                            }
+                if (stopMiningLooseRock && (gui.map.player().getPoses().contains("pickan") || gui.map.player().getPoses().contains("gfx/borka/choppan"))) {
+                    Gob player = gui.map.player();
+                    Coord2d minedTile = new Coord2d(player.rc.x + (Math.cos(player.a) * 13.75), player.rc.y + Math.sin(player.a) * 13.75);
+                    if (counter == 0) {
+                        looseRocks = AUtils.getGobs("gfx/terobjs/looserock", gui);
+                    }
+                    for (Gob looseRock : looseRocks) {
+                        if (looseRock.rc.dist(minedTile) <= 125) {
+                            looseRock.highlight(Color.red);
+                            ui.root.wdgmsg("gk", 27);
+                            gui.error("Loose rock is too close to mine safely.");
                         }
                     }
+                }
 
+                if ((stopMiningFifty || stopMiningTwentyFive) && (gui.map.player().getPoses().contains("pickan") || gui.map.player().getPoses().contains("gfx/borka/choppan"))) {
+                    Gob player = gui.map.player();
+                    Coord2d minedTile = new Coord2d(player.rc.x + (Math.cos(player.a) * 13.75), player.rc.y + Math.sin(player.a) * 13.75);
+                    for (Gob support : supports) {
+                        String res = support.getres().name;
+                        if (res.equals("gfx/terobjs/ladder") || res.equals("gfx/terobjs/minesupport")) {
+                            if (support.rc.dist(minedTile) <= 100) {
+                                if (support.getattr(GobHealth.class) != null) {
+                                    System.out.println(support.getattr(GobHealth.class).hp);
+                                    if (support.getattr(GobHealth.class).hp <= 0.5 && stopMiningFifty) {
+                                        ui.root.wdgmsg("gk", 27);
+                                        gui.error("Support nearby below 50%..");
+                                        support.highlight(Color.red);
+                                    } else if (support.getattr(GobHealth.class).hp <= 0.25 && stopMiningTwentyFive) {
+                                        ui.root.wdgmsg("gk", 27);
+                                        gui.error("Support nearby below 25%..");
+                                        support.highlight(Color.red);
+                                    }
+                                }
+                            }
+                        } else if (res.equals("gfx/terobjs/column")) {
+                            if (support.rc.dist(minedTile) <= 125) {
+                                if (support.getattr(GobHealth.class) != null) {
+                                    System.out.println(support.getattr(GobHealth.class).hp);
+                                    if (support.getattr(GobHealth.class).hp <= 0.5 && stopMiningFifty) {
+                                        ui.root.wdgmsg("gk", 27);
+                                        gui.error("Support nearby below 50%..");
+                                        support.highlight(Color.red);
+                                    } else if (support.getattr(GobHealth.class).hp <= 0.25 && stopMiningTwentyFive) {
+                                        ui.root.wdgmsg("gk", 27);
+                                        gui.error("Support nearby below 25%..");
+                                        support.highlight(Color.red);
+                                    }
+                                }
+                            }
+                        } else if (res.equals("gfx/terobjs/minebeam")) {
+                            if (support.rc.dist(minedTile) <= 150) {
+                                if (support.getattr(GobHealth.class) != null) {
+                                    System.out.println(support.getattr(GobHealth.class).hp);
+                                    if (support.getattr(GobHealth.class).hp <= 0.5 && stopMiningFifty) {
+                                        ui.root.wdgmsg("gk", 27);
+                                        gui.error("Support nearby below 50%..");
+                                        support.highlight(Color.red);
+                                    } else if (support.getattr(GobHealth.class).hp <= 0.25 && stopMiningTwentyFive) {
+                                        ui.root.wdgmsg("gk", 27);
+                                        gui.error("Support nearby below 25%..");
+                                        support.highlight(Color.red);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
                 }
             }
 
