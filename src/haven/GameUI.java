@@ -148,6 +148,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public ItemSearcher itemSearcher;
 	public GobSearcher gobSearcher;
 	public PointerTriangulation pointerTriangulation;
+	public QuestHelper questhelper;
 
 	public static boolean showUI = true;
 	public CraftHistoryBelt histbelt;
@@ -399,6 +400,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	opts.hide();
 	zerg = add(new Zergwnd(), Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
 	zerg.hide();
+
+	questhelper = new QuestHelper();
+	questhelper.hide();
+	add(questhelper, UI.scale(new Coord(187, 50)));
 	makewnd = add(new CraftWindow(), UI.scale(400, 200));
 	makewnd.hide();
 	quickslots = add(new QuickSlotsWdg(){

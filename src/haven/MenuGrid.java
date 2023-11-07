@@ -885,7 +885,13 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 //				// Timers
 //			}
 			else if (ad[2].equals("QuestHelper")) {
-
+				if(gui.questhelper.visible){
+					gui.questhelper.hide();
+					gui.questhelper.active = false;
+				} else {
+					gui.questhelper.show();
+					gui.questhelper.active = true;
+				}
 			}
 		}
 	}

@@ -1158,7 +1158,12 @@ public class CharWnd extends Window {
 		resize(parent.sz);
 	    }
 
-	    public String title() {
+		@Override
+		public int id() {
+			return id;
+		}
+
+		public String title() {
 		if(title != null)
 		    return(title);
 		return(res.get().flayer(Resource.tooltip).t);
@@ -1233,6 +1238,9 @@ public class CharWnd extends Window {
 			ncond.add(cond);
 		    }
 		    this.cond = ncond.toArray(new Condition[0]);
+			if(cqv != null && cqv.info != null){
+				ui.gui.questhelper.addConds(ncond,cqv.info.id());
+			}
 		    refresh();
 		    if(cqv != null)
 			cqv.update();
@@ -1265,6 +1273,7 @@ public class CharWnd extends Window {
 	    private double glowt = -1;
 
 	    public interface QVInfo {
+		public int id();
 		public String title();
 		public Condition[] conds();
 		public int done();
