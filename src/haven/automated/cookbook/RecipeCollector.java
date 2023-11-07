@@ -1,6 +1,9 @@
 package haven.automated.cookbook;
 
+import haven.Buff;
+import haven.GameUI;
 import haven.ItemInfo;
+import haven.Widget;
 import haven.res.ui.tt.q.qbuff.QBuff;
 import haven.resutil.FoodInfo;
 import org.json.JSONArray;
@@ -20,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class RecipeCollector implements Runnable {
+    private final GameUI gui;
     private static final String DATABASE = "jdbc:sqlite:food_recipes.db";
     private static Set<ParsedFoodInfo> queuedFood = ConcurrentHashMap.newKeySet();
     private final boolean run;
@@ -32,7 +36,8 @@ public class RecipeCollector implements Runnable {
         }
     }
 
-    public RecipeCollector() {
+    public RecipeCollector(GameUI gui) {
+        this.gui = gui;
         this.run = true;
     }
 
@@ -48,7 +53,21 @@ public class RecipeCollector implements Runnable {
         }
     }
 
-    public static void addFood(List<ItemInfo> infoList, String resName) {
+    public boolean checkForHempBuff(){
+        for(Widget buff : gui.buffs.children()){
+            if(buff instanceof Buff && ((Buff) buff).res != null){
+                if(((Buff) buff).res.get().name.equals("gfx/hud/buffs/ganja")){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void addFood(List<ItemInfo> infoList, String resName) {
+        if(checkForHempBuff()){
+            return;
+        }
         try {
             FoodInfo foodInfo = ItemInfo.find(FoodInfo.class, infoList);
             if (foodInfo != null) {

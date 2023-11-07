@@ -112,7 +112,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public Thread oceanScoutBotThread;
 	public TunnelerBot tunnelerBot;
 	public Thread tunnelerBotThread;
-	private RecipeCollector recipeCollector;
+	public RecipeCollector recipeCollector;
 	private Thread recipeCollectorThread;
 	public CookingRecipes cookbook;
 	public MiningSafetyAssistant miningSafetyAssistantWindow;
@@ -425,7 +425,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		quickslots.hide();
 	}
 	if(recipeCollector == null && recipeCollectorThread == null){
-		recipeCollector = new RecipeCollector();
+		recipeCollector = new RecipeCollector(this);
 		recipeCollectorThread = new Thread(recipeCollector, "RecipeCollectorThread");
 		recipeCollectorThread.start();
 	}
