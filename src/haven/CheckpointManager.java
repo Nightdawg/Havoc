@@ -56,7 +56,11 @@ public class CheckpointManager extends Window implements Runnable {
     public CheckpointManager(GameUI gui) {
         super(UI.scale(350, 200), "Queued Movement - Checkpoint Route");
         this.gui = gui;
-        this.lastPlayerCoord = gui.map.player().rc;
+        if(gui.map.player() != null){
+            this.lastPlayerCoord = gui.map.player().rc;
+        } else {
+            this.lastPlayerCoord = new Coord2d(0,0);
+        }
 
         add(new Label("Checkpoint"), UI.scale(20, 8));
         add(new Label("Coords"), UI.scale(106, 8));
@@ -70,7 +74,9 @@ public class CheckpointManager extends Window implements Runnable {
             public void click() {
                 if(!paused && checkpointList.items.size() > 1){
                     checkpointList.setCurrentIndex(0);
-                    addCoord(gui.map.player().rc);
+                    if(gui.map.player() != null){
+                        addCoord(gui.map.player().rc);
+                    }
                 }
                 paused = !paused;
                 this.change(paused ? "Start" : "Pause");
@@ -227,6 +233,9 @@ public class CheckpointManager extends Window implements Runnable {
     }
 
     private void launchRouteCheckpoints(int id){
+        if(gui.map.player() == null){
+            return;
+        }
         String selectSql = "SELECT * FROM routes WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DATABASE)) {
@@ -311,6 +320,9 @@ public class CheckpointManager extends Window implements Runnable {
     }
 
     private void fixSelectedRoute(int id){
+        if(gui.map.player() == null){
+            return;
+        }
         String selectSql = "SELECT id, initial_point FROM routes WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DATABASE)) {
@@ -532,7 +544,7 @@ public class CheckpointManager extends Window implements Runnable {
     @Override
     public void run() {
         while (!stop) {
-            if (!paused) {
+            if (!paused && gui.map.player() != null) {
                 if (checkpointList.listitems() > 0) {
                     Coord2d posres = Coord2d.of(0x1.0p-10, 0x1.0p-10).mul(11, 11);
                     if (gui.map.player().rc.equals(lastPlayerCoord)) {
@@ -649,6 +661,9 @@ public class CheckpointManager extends Window implements Runnable {
     }
 
     public double getWholeDistance() {
+        if(gui.map.player() == null){
+            return 0;
+        }
         double distance = 0;
         synchronized (checkpointList) {
             if (checkpointList.listitems() > 1) {
