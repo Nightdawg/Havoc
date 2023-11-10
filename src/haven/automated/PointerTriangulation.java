@@ -47,6 +47,9 @@ public class PointerTriangulation extends Window {
     }
 
     public void drawLines() {
+        if(gui.map.player() == null){
+            return;
+        }
         try {
             for (LineData lineData : lines) {
                 Coord playerCoord = ui.gui.map.player().rc.floor(tilesz);
@@ -83,6 +86,9 @@ public class PointerTriangulation extends Window {
     }
 
     public void saveCheckpoint() {
+        if(gui.map.player() == null){
+            return;
+        }
         try {
             Gob player = gui.map.player();
             if(player == null){
