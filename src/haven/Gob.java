@@ -61,9 +61,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     public boolean removed = false;
     public final Glob glob;
     public ConcurrentHashMap<Class<? extends GAttrib>, GAttrib> attr = new ConcurrentHashMap<>();
-    public final Collection<Overlay> ols = new ArrayList<Overlay>();
-	public Collection<Overlay> tempOls = new ArrayList<Overlay>();
-    public final Collection<RenderTree.Slot> slots = new ArrayList<>(1);
+	public final ConcurrentMap<Integer, Overlay> ols = new ConcurrentHashMap<>();
+	public final Collection<RenderTree.Slot> slots = new ArrayList<>(1);
     public int updateseq = 0;
     private final Collection<SetupMod> setupmods = new ArrayList<>();
     private final LinkedList<Runnable> deferred = new LinkedList<>();
@@ -411,7 +410,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			return;
 	    }
 	    remove0();
-	    gob.ols.remove(this);
+	    gob.ols.remove(this.id);
 		gob.olRemoved();
 	}
 
@@ -433,9 +432,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     }
 	public void removeOl(Overlay ol) {
 		if (ol != null) {
-			synchronized (ols) {
-				ol.remove();
-			}
+			ol.remove();
 		}
 	}
 
@@ -745,80 +742,81 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		}
 	}
 
-    public void ctick(double dt) {
-	Map<Class<? extends GAttrib>, GAttrib> attr = cloneattrs();
-	for(GAttrib a : attr.values()){
-		if(a instanceof ResDrawable){
-			if(!disableThisGobAnimations || !disableGlobalGobAnimations){
+	public void ctick(double dt) {
+		Map<Class<? extends GAttrib>, GAttrib> attr = cloneattrs();
+		for (GAttrib a : attr.values()) {
+			if (a instanceof ResDrawable) {
+				if (!disableThisGobAnimations || !disableGlobalGobAnimations) {
+					a.ctick(dt);
+				}
+			} else {
 				a.ctick(dt);
 			}
-		} else {
-			a.ctick(dt);
-		}
 
-	}
-	for(Iterator<Overlay> i = ols.iterator(); i.hasNext();) {
-	    Overlay ol = i.next();
-	    if(ol.slots == null) {
-		try {
-		    ol.init();
-		} catch(Loading e) {}
-	    } else {
-		boolean done = ol.spr.tick(dt);
-		if((!ol.delign || (ol.spr instanceof Sprite.CDel)) && done) {
-		    ol.remove0();
-		    i.remove();
 		}
-	    }
-	}
-	synchronized (dols) {
-		for (Iterator<Overlay> i = dols.iterator(); i.hasNext(); ) {
-			Overlay ol = i.next();
-			addol(ol);
-			i.remove();
-		}
-	}
-	updstate();
-	if(virtual && ols.isEmpty() && (getattr(Drawable.class) == null))
-	    glob.oc.remove(this);
-	if (itsLoftar == null)
-		checkIfItsLoftar();
-	if(!playerAlarmPlayed) {
-		if (isMe == null)
-			isMe();
-		initPlayerName();
-		if(isMe != null && itsLoftar != null) {
-			if (!itsLoftar){
-				playPlayerAlarm();
-				playerAlarmPlayed = true;
+		for (Overlay ol : ols.values()) {
+			if (ol.slots == null) {
+				try {
+					ol.init();
+				} catch (Loading e) {
+					CrashLogger.logCrash(e);
+				}
 			} else {
-//				playLoftarAlarm();
-				playerAlarmPlayed = true;
+				boolean done = ol.spr.tick(dt);
+				if ((!ol.delign || (ol.spr instanceof Sprite.CDel)) && done) {
+					ol.remove0();
+					ols.remove(ol.id);
+				}
 			}
 		}
-	}
-	updateState();
-	if (getattr(Moving.class) instanceof Following){
-		Following following = (Following) getattr(Moving.class);
-		occupiedGobID = following.tgt;
-		if (occupiedGobID != null) {
-			Gob OccupiedGob = glob.oc.getgob(occupiedGobID);
-			if (OccupiedGob != null) {
-				synchronized (OccupiedGob.occupants) {
-					if (!OccupiedGob.occupants.contains(this)) {
-						OccupiedGob.occupants.add(this);
+		synchronized (dols) {
+			for (Iterator<Overlay> i = dols.iterator(); i.hasNext(); ) {
+				Overlay ol = i.next();
+				addol(ol);
+				i.remove();
+			}
+		}
+		updstate();
+		if (virtual && ols.isEmpty() && (getattr(Drawable.class) == null))
+			glob.oc.remove(this);
+		if (itsLoftar == null)
+			checkIfItsLoftar();
+		if (!playerAlarmPlayed) {
+			if (isMe == null)
+				isMe();
+			initPlayerName();
+			if (isMe != null && itsLoftar != null) {
+				if (!itsLoftar) {
+					playPlayerAlarm();
+					playerAlarmPlayed = true;
+				} else {
+//				playLoftarAlarm();
+					playerAlarmPlayed = true;
+				}
+			}
+		}
+		updateState();
+		if (getattr(Moving.class) instanceof Following) {
+			Following following = (Following) getattr(Moving.class);
+			occupiedGobID = following.tgt;
+			if (occupiedGobID != null) {
+				Gob OccupiedGob = glob.oc.getgob(occupiedGobID);
+				if (OccupiedGob != null) {
+					synchronized (OccupiedGob.occupants) {
+						if (!OccupiedGob.occupants.contains(this)) {
+							OccupiedGob.occupants.add(this);
+						}
 					}
 				}
 			}
 		}
 	}
-    }
 
     public void gtick(Render g) {
 	Drawable d = getattr(Drawable.class);
 	if(d != null)
 	    d.gtick(g);
-	for(Overlay ol : ols) {
+	for(Overlay ol : ols.values()) {
 	    if(ol.spr != null)
 		ol.spr.gtick(g);
 	}
@@ -876,7 +874,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 	ol.init();
 	ol.add0();
-	ols.add(ol);
+	ols.put(ol.id, ol);
 	overlayAdded(ol);
     }
     public void addol(Overlay ol) {
@@ -890,13 +888,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     }
 
 	public Overlay findol(int id) {
-		synchronized (ols) {
-			for (Overlay ol : ols) {
-				if (ol.id == id) {
-					return (ol);
-				}
-			}
-		}
+		ols.get(id);
 		synchronized (dols) {
 			for (Overlay ol : dols) {
 				if (ol.id == id)
@@ -1189,9 +1181,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
     public void added(RenderTree.Slot slot) {
 	slot.ostate(curstate());
-	for(Overlay ol : ols) {
-	    if(ol.slots != null)
-		slot.add(ol);
+	for(Overlay ol : ols.values()) {
+	    if(ol.slots != null){
+			slot.add(ol);
+		}
 	}
 	Map<Class<? extends GAttrib>, GAttrib> attr = cloneattrs();
 	for(GAttrib a : attr.values()) {
@@ -1557,11 +1550,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			qualityInfo.clean();
 		}
 		if(status.updated(StatusType.drawable)) {
-			if (virtual){
-				for (int i = 0; i < ols.size(); i++) {
-					Overlay ol = (Overlay) ols.toArray()[i];
-					if (ol.res != null && ol.res.get().name.equals("gfx/fx/death")){
+			if (virtual) {
+				for (Overlay ol : ols.values()) {
+					if (ol.res != null && ol.res.get().name.equals("gfx/fx/death")) {
 						setSomethingJustDiedStatus();
+						break;
 					}
 				}
 				updateSupportOverlays();
@@ -1951,7 +1944,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			if (OptWnd.showWorkstationStageCheckBox.a){
 				boolean done = true;
 				boolean empty = true;
-				for (Overlay ol : ols) {
+				for (Overlay ol : ols.values()) {
 					try {
 						Indir<Resource> olires = ol.res;
 						if (olires != null) {
@@ -2413,15 +2406,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void setRadiusOl(float radius, Color col, boolean on) {
 		if (on) {
-			for (Overlay ol : ols) {
+			for (Overlay ol : ols.values()) {
 				if (ol.spr instanceof AnimalDangerRadiiSprite) {
 					return;
 				}
 			}
 			customRadiusOverlay = new Overlay(this, new AnimalDangerRadiiSprite(this, null, radius, col));
-			synchronized (ols) {
-				addol(customRadiusOverlay);
-			}
+			addol(customRadiusOverlay);
 		} else if (customRadiusOverlay != null) {
 			removeOl(customRadiusOverlay);
 			customRadiusOverlay = null;
@@ -2430,15 +2421,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	private void setSearchOl(boolean on) {
 		if (on) {
-			for (Overlay ol : ols) {
+			for (Overlay ol : ols.values()) {
 				if (ol.spr instanceof GobSearchHighlight) {
 					return;
 				}
 			}
 			customSearchOverlay = new Overlay(this, new GobSearchHighlight(this, null));
-			synchronized (ols) {
-				addol(customSearchOverlay);
-			}
+			addol(customSearchOverlay);
 		} else if (customSearchOverlay != null) {
 			removeOl(customSearchOverlay);
 			customSearchOverlay = null;
@@ -2452,9 +2441,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				customRadiusOverlay = null;
 			}
 			customRadiusOverlay = new Overlay(this, new AuraCircleSprite(this, col));
-			synchronized (ols) {
-				addol(customRadiusOverlay);
-			}
+			addol(customRadiusOverlay);
 		} else if (customRadiusOverlay != null) {
 			removeOl(customRadiusOverlay);
 			customRadiusOverlay = null;
@@ -2472,9 +2459,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				customRadiusOverlay = null;
 			}
 			customRadiusOverlay = new Overlay(this, new AuraCircleSprite(this, col, size));
-			synchronized (ols) {
-				addol(customRadiusOverlay);
-			}
+			addol(customRadiusOverlay);
 		} else if (customRadiusOverlay != null) {
 			removeOl(customRadiusOverlay);
 			customRadiusOverlay = null;
@@ -2483,15 +2468,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public void setMiningOl(boolean on, float angle, int size) {
 		if (on) {
-			for (Overlay ol : ols) {
+			for (Overlay ol : ols.values()) {
 				if (ol.spr instanceof SupportSprite) {
 					return;
 				}
 			}
 			customOverlay = new Overlay(this, new SupportSprite(this, angle, size));
-			synchronized (ols) {
-				addol(customOverlay);
-			}
+			addol(customOverlay);
 		} else if (customOverlay != null) {
 			removeOl(customOverlay);
 			customOverlay = null;
@@ -2511,16 +2494,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (OptWnd.flatWorldCheckBox.a && imOnLand){
 			if (this.archeryVector == null) {
 				archeryVector = new Overlay(this, new ArcheryVectorSprite(this, range));
-				synchronized (ols) {
-					addol(archeryVector);
-				}
+				addol(archeryVector);
 			}
 		}
 		if (this.archeryRadius == null) {
 			archeryRadius = new Overlay(this, new ArcheryRadiusSprite(this, range));
-			synchronized (ols) {
-				addol(archeryRadius);
-			}
+			addol(archeryRadius);
 		}
 	}
 

@@ -29,7 +29,7 @@ public class FloatSprite extends Sprite implements PView.Render2D {
     private static int place(Gob gob, int h) {
 	int y = 0;
 	trying: while(true) {
-	    for(Gob.Overlay ol : gob.ols) {
+	    for(Gob.Overlay ol : gob.ols.values()) {
 		if(ol.spr instanceof FloatSprite) {
 		    FloatSprite f = (FloatSprite)ol.spr;
 		    int y2 = f.cury();

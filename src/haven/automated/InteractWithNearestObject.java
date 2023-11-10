@@ -64,7 +64,7 @@ public class InteractWithNearestObject implements Runnable {
                     boolean isGate = gates.contains(res.basename());
                     try {
                         if (isGate) {
-                            for (Gob.Overlay ol : gob.ols) {
+                            for (Gob.Overlay ol : gob.ols.values()) {
                                 String oname = gui.map.glob.sess.getres(Utils.uint16d(ol.sdt.rbuf, 0)).get().basename();
                                 if (oname.equals("visflag"))
                                     isGate = false;

@@ -1580,13 +1580,11 @@ public class OptWnd extends Window {
 					synchronized (ui.sess.glob.oc){
 						for(Gob gob : ui.sess.glob.oc){
 							if(gob.getres() != null && !gob.getres().name.equals("gfx/terobjs/clue")){
-								synchronized (gob.ols){
-									for(Gob.Overlay ol : gob.ols){
+									for(Gob.Overlay ol : gob.ols.values()){
 										if(ol.res != null && ol.res.get() != null && ol.res.get().name.contains("ismoke")){
 											gob.removeOl(ol);
 										}
 									}
-								}
 								gob.ols.clear();
 							}
 						}
@@ -1602,10 +1600,8 @@ public class OptWnd extends Window {
 					synchronized (ui.sess.glob.oc){
 						for(Gob gob : ui.sess.glob.oc){
 							if(gob.getres() != null && gob.getres().name.equals("gfx/terobjs/clue")){
-								synchronized (gob.ols){
-									for(Gob.Overlay ol : gob.ols){
-										gob.removeOl(ol);
-									}
+								for(Gob.Overlay ol : gob.ols.values()){
+									gob.removeOl(ol);
 								}
 								gob.ols.clear();
 							}

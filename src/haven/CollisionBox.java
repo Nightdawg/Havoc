@@ -90,10 +90,10 @@ public class CollisionBox extends SlottedNode implements Rendered {
 
 			if(rd != null) {
 				int state = gob.sdt();
-				if(name.endsWith("gate") && name.startsWith("gfx/terobjs/arch")) {//gates
+				if(name.endsWith("gate") && name.startsWith("gfx/terobjs/arch")) {
 					issaGate = true;
 					try {
-						for (Gob.Overlay ol : gob.ols) {
+						for (Gob.Overlay ol : gob.ols.values()) {
 							String oname = gob.glob.sess.getres(Utils.uint16d(ol.sdt.rbuf, 0)).get().basename();
 							if (oname.equals("visflag"))
 								issaVisitorGate = true;
