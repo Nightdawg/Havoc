@@ -305,6 +305,9 @@ public class AUtils {
 
 
     public static boolean waitPf(GameUI gui) throws InterruptedException {
+        if(gui.map.pfthread == null){
+            return false;
+        }
         int time = 0;
         boolean moved = false;
         Thread.sleep(300);
