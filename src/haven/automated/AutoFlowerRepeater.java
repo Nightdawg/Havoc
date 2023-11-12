@@ -31,12 +31,25 @@ public class AutoFlowerRepeater implements Runnable{
 
     public List<GItem> iterateThroughItems(String name) {
         List<GItem> items = new ArrayList<>();
-        for (WItem item : gui.maininv.getAllItems()) {
-            try {
-                if (item.item != null && item.item.getres() != null && item.item.getres().name.equals(name)) {
-                    items.add(item.item);
+        if (OptWnd.autoFlowerUsesAllInventoriesCheckBox.a) {
+            for (Inventory inventory : gui.getAllInventories()){
+                for (WItem item : inventory.getAllItems()) {
+                    try {
+                        if (item.item != null && item.item.getres() != null && item.item.getres().name.equals(name)) {
+                            items.add(item.item);
+                        }
+                    } catch (Loading ignored) {
+                    }
                 }
-            } catch (Loading ignored) {
+            }
+        } else {
+            for (WItem item : gui.maininv.getAllItems()) {
+                try {
+                    if (item.item != null && item.item.getres() != null && item.item.getres().name.equals(name)) {
+                        items.add(item.item);
+                    }
+                } catch (Loading ignored) {
+                }
             }
         }
         return items;
