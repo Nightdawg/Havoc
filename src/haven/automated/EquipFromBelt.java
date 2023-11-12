@@ -314,9 +314,9 @@ public class EquipFromBelt implements Runnable {
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             }
             if (isSecondEquippedLeftHand){
-                switchItem(secondItemInBelt, equipory, 6, isNullFirst, belt);
+                switchItem(firstItemInBelt, equipory, 7, isNullFirst, belt);
             } else if (isSecondEquippedRightHand){
-                switchItem(firstItemInBelt, equipory, 7, isNullSecond, belt);
+                switchItem(firstItemInBelt, equipory, 6, isNullSecond, belt);
             }
         } else {
             if (firstItemInBelt.isEmpty()) {
