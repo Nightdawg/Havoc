@@ -890,11 +890,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     }
 
 	public Overlay findol(int id) {
+		List<Overlay> tempOls;
 		synchronized (ols) {
-			for (Overlay ol : ols) {
-				if (ol.id == id) {
-					return (ol);
-				}
+			tempOls = new ArrayList<>(ols);
+		}
+		for (Overlay ol : tempOls) {
+			if (ol.id == id) {
+				return ol;
 			}
 		}
 		synchronized (dols) {
@@ -903,7 +905,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 					return ol;
 			}
 		}
-		return (null);
+		return null;
 	}
 
 	private void overlayAdded(Overlay item) {
