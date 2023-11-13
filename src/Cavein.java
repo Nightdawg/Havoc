@@ -69,13 +69,15 @@ public class Cavein extends Sprite implements Sprite.CDel, PView.Render2D {
 
 	@Override
 	public void draw(GOut g, Pipe state) {
-		if (OptWnd.enableMineSweeperCheckBox.a && ownerGob != null && mapView != null){
-			try {
-				Coord3f sc3f = ownerGob.getc();
-				Coord sc = mapView.screenxf(sc3f).round2();
-				g.aimage(numberTex, sc, 0.5, 0.5);
-			} catch (Loading e) {
-				CrashLogger.logCrash(e);
+		if (OptWnd.flatWorldCheckBox.a) {
+			if (OptWnd.enableMineSweeperCheckBox.a && ownerGob != null && mapView != null){
+				try {
+					Coord3f sc3f = ownerGob.getc();
+					Coord sc = mapView.screenxf(sc3f).round2();
+					g.aimage(numberTex, sc, 0.5, 0.5);
+				} catch (Loading e) {
+					CrashLogger.logCrash(e);
+				}
 			}
 		}
 	}
