@@ -27,6 +27,7 @@
 package haven;
 
 import haven.map.PingSprite;
+import haven.res.ui.music.MusicWnd;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -1035,6 +1036,24 @@ public class ChatUI extends Widget {
 					} catch (Exception ignored){}
 					return false;
 				}
+			} else if (msg.startsWith("HFMPL@@@")) {
+				try {
+					final String hfmplayer = msg.substring("HFMPL@@@".length());
+					final String[] hfmargs = hfmplayer.split("\\|");
+					if (hfmargs.length > 2) {
+						ui.gui.error("Cannot understand hfmp synch message");
+					}
+					Arrays.stream(hfmargs).forEach(System.out::println);
+					final long timetoplay = Long.parseLong(hfmargs[0]);
+					final String track = hfmargs[1];
+					for (Widget w = ui.gui.lchild; w != null; w = w.prev) {
+						if (w instanceof MusicWnd) {
+							final MusicWnd musicWnd = (MusicWnd)w;
+							musicWnd.hafenMidiplayer.synchPlay(timetoplay, track);
+						}
+					}
+				}
+				catch (NumberFormatException ex2) {}
 			}
 			return true;
 		}
