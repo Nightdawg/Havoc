@@ -1133,7 +1133,7 @@ public class MiniMap extends Widget {
 					}
 				}
 			}
-			if(!newbiome.equals(biome)) {
+			if(newbiome != null && !newbiome.equals(biome)) {
 				biome = newbiome;
 				biometex = Text.renderstroked(prettybiome(biome)).tex();
 			}
