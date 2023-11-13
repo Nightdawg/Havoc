@@ -97,7 +97,7 @@ public class MusicWnd extends Window
 
 
 		};
-		add(partyButton, new Coord(UI.scale(410), sz.y-UI.scale(120)) );
+		add(partyButton, new Coord(UI.scale(440), sz.y-UI.scale(120)) );
 
 		HSlider tempoHSlider = new HSlider(UI.scale(200), 0, 20, 0) {
 			protected void attach(UI ui) {
