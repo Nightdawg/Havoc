@@ -69,7 +69,7 @@ public class ChaseVectorSprite extends Sprite implements PView.Render2D {
                                             }
                                         } else if (gob.getres().name.equals("gfx/terobjs/vehicle/snekkja")) {
                                             for (Gob occupant : gob.occupants) {
-                                                if (occupant.getPoses().contains("snekkjaman4")) {
+                                                if (occupant.getPoses().contains("snekkjaman0")) {
                                                     if (occupant.occupiedGobID == gob.id) {
                                                         gob = occupant;
                                                     }
