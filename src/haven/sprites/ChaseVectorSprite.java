@@ -84,8 +84,7 @@ public class ChaseVectorSprite extends Sprite implements PView.Render2D {
                                         }
                                     }
                                     Color chaserColor;
-                                    long plgobid = ui.gui.map.plgob;
-                                    if (plgobid != -1 && plgobid != gob.id) {
+                                    if (gob.isMe()) {
                                         chaserColor = MAINCOLOR;
                                     } else if (gob.isPartyMember() && !gob.isMe()) {
                                         chaserColor = FRIENDCOLOR;
