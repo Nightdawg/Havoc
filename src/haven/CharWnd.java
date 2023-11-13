@@ -584,6 +584,7 @@ public class CharWnd extends Window {
 //					c = debuff;
 					tooltip = Text.render(String.format("%d - %d", cbv, cbv - ccv));
 				} else {
+					buffedTex = null;
 					tooltip = null;
 				}
 //				if (tcv > ccv)
@@ -627,8 +628,8 @@ public class CharWnd extends Window {
 	}
 
 	public void reset() {
-		tbv = attr.base;
-		tcv = attr.comp;
+		tbv = 0;
+		tcv = 0;
 		cbv = ccv = 0;
 		updcost();
 	}
