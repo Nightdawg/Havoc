@@ -65,7 +65,8 @@ public class AggroNearestTarget implements Runnable {
                 }
             }
             if (!fightgobs.contains(gob.id)) {
-                if (closestEnemy == null || gob.rc.dist(player.rc) < closestEnemy.rc.dist(player.rc)) {
+                if ((closestEnemy == null || gob.rc.dist(player.rc) < closestEnemy.rc.dist(player.rc))
+                        && (gob.knocked == null || (gob.knocked != null && !gob.knocked))) { // ND: Retarded workaround that I need to add, just like in Gob.java
                     closestEnemy = gob;
                 }
             }
@@ -82,7 +83,8 @@ public class AggroNearestTarget implements Runnable {
         for (Gob gob : allAttackableMap.values()) {
             //if gob is an enemy player and not already aggroed
             if (isPlayer(gob) && !aggrodplayers.contains(gob.id) && !gob.isFriend()) {
-                if (closestEnemy == null || gob.rc.dist(player.rc) < closestEnemy.rc.dist(player.rc)) {
+                if ((closestEnemy == null || gob.rc.dist(player.rc) < closestEnemy.rc.dist(player.rc))
+                        && (gob.knocked == null || (gob.knocked != null && !gob.knocked))) { // ND: Retarded workaround that I need to add, just like in Gob.java
                     closestEnemy = gob;
                 }
             }
