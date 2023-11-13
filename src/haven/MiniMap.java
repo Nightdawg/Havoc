@@ -55,6 +55,8 @@ public class MiniMap extends Widget {
     protected Locator setloc;
     protected boolean follow;
     protected float zoomlevel = 1;
+	public float smallMapZoomLevel = 1;
+	public float bigMapZoomLevel = 1;
     protected DisplayGrid[] display;
 	public boolean compact;
     protected Area dgext, dtext;

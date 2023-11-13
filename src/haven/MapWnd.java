@@ -203,6 +203,16 @@ public class MapWnd extends Window implements Console.Directory {
 	    .state(this::compact).set(a -> {
 			savePos(a);
 		    compact(a);
+			if (view != null) {
+				view.compact = a;
+				if (a) {
+					view.bigMapZoomLevel = view.zoomlevel;
+					view.zoomlevel = view.smallMapZoomLevel;
+				} else {
+					view.smallMapZoomLevel = view.zoomlevel;
+					view.zoomlevel = view.bigMapZoomLevel;
+				}
+			}
 		})
 	    .settip("Compact mode").setgkey(kb_compact);
 	if(Utils.getprefb("prov-claimMapState", false)) overlays.add("realm");
