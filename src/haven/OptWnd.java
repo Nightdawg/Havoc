@@ -832,6 +832,8 @@ public class OptWnd extends Window {
 			{a = (Utils.getprefb("enableMineSweeper", true));}
 			public void set(boolean val) {
 				Utils.setprefb("enableMineSweeper", val);
+				if (ui != null && ui.gui != null)
+					ui.gui.optionInfoMsg("Mine Sweeper numbers are now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
 				if (ui != null && ui.gui != null && ui.gui.miningSafetyAssistantWindow != null)
 					ui.gui.miningSafetyAssistantWindow.enableMineSweeperCheckBox.a = val;
 				a = val;

@@ -381,6 +381,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleGateCombatPassability");
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleBeeSkepsRadii");
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleTroughsRadii");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleMineSweeper");
 
 		makeLocal("paginae/nightdawg/OtherTools/MiningSafetyAssistant");
 		makeLocal("paginae/nightdawg/OtherTools/CookBook");
@@ -741,6 +742,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 				OptWnd.showBeeSkepsRadiiCheckBox.set(!OptWnd.showBeeSkepsRadiiCheckBox.a);
 			} else if (ad[2].equals("TroughsRadii")) {
 				OptWnd.showFoodTroughsRadiiCheckBox.set(!OptWnd.showFoodTroughsRadiiCheckBox.a);
+			} else if (ad[2].equals("MineSweeper")) {
+				OptWnd.showFoodTroughsRadiiCheckBox.set(!OptWnd.enableMineSweeperCheckBox.a);
 			}
 		} else if (ad[1].equals("OtherTools")){
 			if (ad[2].equals("MiningSafetyAssistant")) {
