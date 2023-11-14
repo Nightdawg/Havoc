@@ -91,6 +91,22 @@ public class Utils {
 	}
     }
 
+    public static URI uri(String uri) {
+	try {
+	    return(new URI(uri));
+	} catch(URISyntaxException e) {
+	    throw(new IllegalArgumentException(uri, e));
+	}
+    }
+
+    public static URL url(String url) {
+	try {
+	    return(uri(url).toURL());
+	} catch(MalformedURLException e) {
+	    throw(new IllegalArgumentException(url, e));
+	}
+    }
+
     public static Path path(String path) {
 	if(path == null)
 	    return(null);
