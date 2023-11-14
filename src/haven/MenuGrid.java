@@ -743,7 +743,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 			} else if (ad[2].equals("TroughsRadii")) {
 				OptWnd.showFoodTroughsRadiiCheckBox.set(!OptWnd.showFoodTroughsRadiiCheckBox.a);
 			} else if (ad[2].equals("MineSweeper")) {
-				OptWnd.showFoodTroughsRadiiCheckBox.set(!OptWnd.enableMineSweeperCheckBox.a);
+				OptWnd.enableMineSweeperCheckBox.set(!OptWnd.enableMineSweeperCheckBox.a);
 			}
 		} else if (ad[1].equals("OtherTools")){
 			if (ad[2].equals("MiningSafetyAssistant")) {
