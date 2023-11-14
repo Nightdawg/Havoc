@@ -128,7 +128,7 @@ public class ChatUI extends Widget {
 			p = m2.end();
 			continue;
 		}
-		URL uri;
+		URI uri;
 		try {
 		    String su = text.substring(m.start(), m.end());
 		    if(su.indexOf(':') < 0)
