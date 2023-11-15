@@ -57,7 +57,7 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
 
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) {CrashLogger.logCrash(e);}
+            } catch (InterruptedException ignored) {}
 
             System.exit(CRASH_EXIT_CODE);
         }
@@ -70,10 +70,6 @@ public class CrashLogger implements Thread.UncaughtExceptionHandler {
     }
     
     public static void logCrash(Throwable throwable) {
-        StringWriter stringWriter = new StringWriter();
-        throwable.printStackTrace(new PrintWriter(stringWriter));
-        String stackTrace = stringWriter.toString();
-        logCrash(null, stackTrace);
     }
 
     private static void logCrash(Thread t, String stackTrace) {
