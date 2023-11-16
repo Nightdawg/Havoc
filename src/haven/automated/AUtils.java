@@ -490,6 +490,32 @@ public class AUtils {
         add("gfx/kritter/wolf/wolf");
         add("gfx/kritter/wolverine/wolverine");
         add("gfx/kritter/woodgrouse/woodgrouse-m");
+
+        add("gfx/kritter/ants/queenant");
+        add("gfx/kritter/ants/royalguardant");
+        add("gfx/kritter/ants/warriorant");
+        add("gfx/kritter/ants/redants");
+
+        add("gfx/kritter/beaver/beaverking");
+        add("gfx/kritter/beaver/oldbeaver");
+        add("gfx/kritter/beaver/grizzlybeaver");
+
+        add("gfx/kritter/bees/warriordrone");
+        add("gfx/kritter/bees/queenbee");
+        add("gfx/kritter/bees/sentinelbee");
+        add("gfx/kritter/bees/vulturebee");
+        add("gfx/kritter/bees/honeybee");
+        add("gfx/kritter/bees/beelarva");
+        add("gfx/kritter/wildbees/beeswarm");
+
+        add("gfx/kritter/bat/nightqueen");
+        add("gfx/kritter/bat/vampire");
+        add("gfx/kritter/bat/bloodstalker");
+        add("gfx/kritter/bat/denmother");
+        add("gfx/kritter/bat/fatbat");
+
+
+
     }
     };
     public static HashMap<Long, Gob> getAllAttackableMap(GameUI gui) {
