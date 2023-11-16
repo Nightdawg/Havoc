@@ -123,6 +123,7 @@ public class GobIconCategoryList extends Listbox<GobIconCategoryList.GobCategory
 		"customMapIcons/opiumdragon",
 		"customMapIcons/dryad",
 		"customMapIcons/treant",
+		"/invobjs/bullfinch",
 	};
 	
 	private static final String[] HERB_PATHS = {
