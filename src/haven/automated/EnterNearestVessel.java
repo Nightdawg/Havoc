@@ -86,5 +86,6 @@ public class EnterNearestVessel implements Runnable {
             gui.enterNearestVesselThread.interrupt();
             gui.enterNearestVesselThread = null;
         }
+        FlowerMenu.setNextSelection(null);
     }
 }
