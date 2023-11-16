@@ -36,36 +36,42 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
 
     public Tex overlay() {
         boolean irrelevantQuality = false; // ND: Use this to show the quality of some containers quality as "Empty", rather than their actual quality.
+        Color qualityColor;
+        if(OptWnd.enableCustomQualityColors.a){
+            qualityColor = findHighestTextEntryValueLessThanQ(q);
+        } else {
+            qualityColor = new Color(255,255,255,255);
+        }
         try {
             for (ItemInfo info : owner.info()) {
-                if (info instanceof Name){
-                    if (Arrays.stream(EMPTY_INDICATOR).anyMatch(((Name) info).str.text::contains)){
+                if (info instanceof Name) {
+                    if (Arrays.stream(EMPTY_INDICATOR).anyMatch(((Name) info).str.text::contains)) {
                         irrelevantQuality = true;
                     }
                 }
                 if (info instanceof Contents) {
                     for (ItemInfo info2 : ((Contents) info).sub) {
                         if (info2 instanceof QBuff) {
-                            if ((((Contents) info).content != null) && (((Contents) info).content.name != null)){
+                            if ((((Contents) info).content != null) && (((Contents) info).content.name != null)) {
                                 if (((Contents) info).content.name.equals("Water")) {
-                                    if(OptWnd.roundedQualityCheckBox.a)
-                                        return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(54, 175, 255, 255), true)))))
-                                                : (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(54, 175, 255, 255), true)));
+                                    if (OptWnd.roundedQualityCheckBox.a)
+                                        return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int) Math.round(((QBuff) info2).q), new Color(54, 175, 255, 255), true)))))
+                                                : (new TexI(GItem.NumberInfo.numrenderStroked((int) Math.round(((QBuff) info2).q), new Color(54, 175, 255, 255), true)));
                                     else
                                         return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(54, 175, 255, 255), true)))))
                                                 : (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(54, 175, 255, 255), true)));
                                 } else if (((Contents) info).content.name.equals("Tea")) {
-                                    if(OptWnd.roundedQualityCheckBox.a)
-                                        return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(83, 161, 0, 255), true)))))
-                                                : (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(83, 161, 0, 255), true)));
+                                    if (OptWnd.roundedQualityCheckBox.a)
+                                        return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int) Math.round(((QBuff) info2).q), new Color(83, 161, 0, 255), true)))))
+                                                : (new TexI(GItem.NumberInfo.numrenderStroked((int) Math.round(((QBuff) info2).q), new Color(83, 161, 0, 255), true)));
                                     else
                                         return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(83, 161, 0, 255), true)))))
                                                 : (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(83, 161, 0, 255), true)));
                                 }
                             }
-                            if(OptWnd.roundedQualityCheckBox.a)
-                                return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(255, 255, 255, 255), true)))))
-                                        : (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(((QBuff) info2).q), new Color(255, 255, 255, 255), true)));
+                            if (OptWnd.roundedQualityCheckBox.a)
+                                return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int) Math.round(((QBuff) info2).q), new Color(255, 255, 255, 255), true)))))
+                                        : (new TexI(GItem.NumberInfo.numrenderStroked((int) Math.round(((QBuff) info2).q), new Color(255, 255, 255, 255), true)));
                             else
                                 return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(255, 255, 255, 255), true)))))
                                         : (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(((QBuff) info2).q, new Color(255, 255, 255, 255), true)));
@@ -76,20 +82,47 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
         } catch (Exception ignored) {
         }
         if (!irrelevantQuality) {
-            if(OptWnd.roundedQualityCheckBox.a)
-                return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int)Math.round(q), new Color(255, 255, 255, 255), true)))))
-                        : (new TexI(GItem.NumberInfo.numrenderStroked((int)Math.round(q), new Color(255, 255, 255, 255), true)));
+            if (OptWnd.roundedQualityCheckBox.a)
+                return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStroked((int) Math.round(q), qualityColor, true))))) : (new TexI(GItem.NumberInfo.numrenderStroked((int) Math.round(q), qualityColor, true)));
             else
-                return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStrokedDecimal(q, new Color(255, 255, 255, 255), true)))))
-                        : (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(q, new Color(255, 255, 255, 255), true)));
+                return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.numrenderStrokedDecimal(q, qualityColor, true))))) : (new TexI(GItem.NumberInfo.numrenderStrokedDecimal(q, qualityColor, true)));
         } else {
-            return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.textrenderStroked("Empty", new Color(255, 78, 0, 255), true)))))
-                    : (new TexI(GItem.NumberInfo.textrenderStroked("Empty", new Color(255, 78, 0, 255), true)));
+            return OptWnd.showQualityBackgroundCheckBox.a ? (new TexI(ItemInfo.catimgsh(0, 0, BG, (GItem.NumberInfo.textrenderStroked("Empty", new Color(255, 78, 0, 255), true))))) : (new TexI(GItem.NumberInfo.textrenderStroked("Empty", new Color(255, 78, 0, 255), true)));
         }
     }
 
+    public Color findHighestTextEntryValueLessThanQ(double q) {
+        TextEntry[] textEntries = {OptWnd.firstQualityColorBorder, OptWnd.secondQualityColorBorder, OptWnd.thirdQualityColorBorder, OptWnd.fourthQualityColorBorder, OptWnd.fifthQualityColorBorder};
+        int highestValue = Integer.MIN_VALUE;
+        int indexOfHighest = -1;
+
+        for (int i = 0; i < textEntries.length; i++) {
+            try {
+                int value = Integer.parseInt(textEntries[i].text());
+                if (value < q && value > highestValue) {
+                    highestValue = value;
+                    indexOfHighest = i;
+                }
+            } catch (NumberFormatException ignored) {}
+        }
+
+        return switch (indexOfHighest) {
+            case 0 ->
+                    OptWnd.firstQualityColorOptionWidget.currentColor;
+            case 1 ->
+                    OptWnd.secondQualityColorOptionWidget.currentColor;
+            case 2 ->
+                    OptWnd.thirdQualityColorOptionWidget.currentColor;
+            case 3 ->
+                    OptWnd.fourthQualityColorOptionWidget.currentColor;
+            case 4 ->
+                    OptWnd.fifthQualityColorOptionWidget.currentColor;
+            default -> new Color(255, 255, 255, 255);
+        };
+    }
+
     public void drawoverlay(GOut g, Tex ol) {
-	if(OptWnd.toggleQualityDisplayCheckBox.a)
-	    g.aimage(ol, new Coord(g.sz().x, 0), 1, 0.2);
+        if (OptWnd.toggleQualityDisplayCheckBox.a)
+            g.aimage(ol, new Coord(g.sz().x, 0), 1, 0.2);
     }
 }

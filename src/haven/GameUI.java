@@ -1676,6 +1676,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public static KeyBinding kb_toggleMuteNonFriendly  = KeyBinding.get("toggleMuteNonFriendly",  KeyMatch.nil);
 
 	public static KeyBinding kb_toggleWalkWithPathfinder  = KeyBinding.get("toggleWalkWithPathfinder",  KeyMatch.nil);
+	public static KeyBinding kb_instantLogout  = KeyBinding.get("instantLogout",  KeyMatch.nil);
+
 
 	public static KeyBinding kb_buttonForTesting  = KeyBinding.get("testButton",  KeyMatch.nil);
 
@@ -1780,7 +1782,10 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 		} else if (kb_toggleWalkWithPathfinder.key().match(ev)) {
 			walkWithPathfinder = !walkWithPathfinder;
 			msg(walkWithPathfinder ? "Walking with pathfinder enabled" : "Walking with pathfinder disabled");
+		} else if (kb_instantLogout.key().match(ev)) {
+			ui.sess.close();
 		} else if (kb_buttonForTesting.key().match(ev)) {
+
 		} else if((key == 27) && (map != null) && !map.hasfocus) {
 			setfocus(map);
 		return(true);
