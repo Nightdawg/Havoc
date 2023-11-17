@@ -1767,6 +1767,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private void updateOverlayDependantHighlights() {
 		updateDryingFramesHighlight();
 		updateCheeseRacksHighlight();
+		updateGardenPotHighlight();
 	}
 
 	public void settingUpdateWorkstationStage() { // ND: Used to enable/disable showing the color stage through options window.
