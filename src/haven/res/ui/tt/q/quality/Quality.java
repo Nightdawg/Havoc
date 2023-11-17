@@ -92,7 +92,7 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
     }
 
     public Color findHighestTextEntryValueLessThanQ(double q) {
-        TextEntry[] textEntries = {OptWnd.firstQualityColorBorder, OptWnd.secondQualityColorBorder, OptWnd.thirdQualityColorBorder, OptWnd.fourthQualityColorBorder, OptWnd.fifthQualityColorBorder};
+        TextEntry[] textEntries = {OptWnd.firstQualityColorTextEntry, OptWnd.secondQualityColorTextEntry, OptWnd.thirdQualityColorTextEntry, OptWnd.fourthQualityColorTextEntry, OptWnd.fifthQualityColorTextEntry, OptWnd.sixthQualityColorTextEntry, OptWnd.seventhQualityColorTextEntry};
         int highestValue = Integer.MIN_VALUE;
         int indexOfHighest = -1;
 
@@ -117,6 +117,10 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
                     OptWnd.fourthQualityColorOptionWidget.currentColor;
             case 4 ->
                     OptWnd.fifthQualityColorOptionWidget.currentColor;
+            case 5 ->
+                    OptWnd.sixthQualityColorOptionWidget.currentColor;
+            case 6 ->
+                    OptWnd.seventhQualityColorOptionWidget.currentColor;
             default -> new Color(255, 255, 255, 255);
         };
     }

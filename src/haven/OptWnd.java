@@ -733,22 +733,7 @@ public class OptWnd extends Window {
 			{a = (Utils.getprefb("roundedQuality", true));}
 			public void set(boolean val) {
 				Utils.setprefb("roundedQuality", val);
-				if (ui != null && ui.gui != null) {
-					for (WItem item : ui.gui.getAllItemsFromAllInventoriesAndStacks()) {
-						item.reloadItemOls();
-					}
-					for (Widget window : ui.gui.getAllWindows()){
-						for (Widget w = window.lchild; w != null; w = w.prev) {
-							if (w instanceof Equipory) {
-								for (WItem equitem : ((Equipory) w).slots) {
-									if (equitem != null) {
-										equitem.reloadItemOls();
-									}
-								}
-							}
-						}
-					}
-				}
+				reloadAllItemOverlays();
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(16, 2));
@@ -757,22 +742,7 @@ public class OptWnd extends Window {
 			{a = (Utils.getprefb("showQualityBackground", false));}
 			public void set(boolean val) {
 				Utils.setprefb("showQualityBackground", val);
-				if (ui != null && ui.gui != null) {
-					for (WItem item : ui.gui.getAllItemsFromAllInventoriesAndStacks()) {
-						item.reloadItemOls();
-					}
-					for (Widget window : ui.gui.getAllWindows()){
-						for (Widget w = window.lchild; w != null; w = w.prev) {
-							if (w instanceof Equipory) {
-								for (WItem equitem : ((Equipory) w).slots) {
-									if (equitem != null) {
-										equitem.reloadItemOls();
-									}
-								}
-							}
-						}
-					}
-				}
+				reloadAllItemOverlays();
 				a = val;
 			}
 		}, leftColumn.pos("bl").adds(0, 2));
@@ -2338,117 +2308,167 @@ public class OptWnd extends Window {
 	}
 
 	public static CheckBox enableCustomQualityColors;
-	public static TextEntry firstQualityColorBorder;
-	public static String[] firstQualityColorSetting = Utils.getprefsa("firstQualityColorSetting_colorSetting", new String[]{"255", "255", "255", "255"});
+	public static TextEntry firstQualityColorTextEntry;
+	public static String[] firstQualityColorSetting = Utils.getprefsa("firstQualityColorSetting_colorSetting", new String[]{"255","0","0","255"});
 	public static ColorOptionWidget firstQualityColorOptionWidget;
-	public static TextEntry secondQualityColorBorder;
-	public static String[] secondQualityColorSetting = Utils.getprefsa("secondQualityColorSetting_colorSetting", new String[]{"255", "255", "255", "255"});
+	public static TextEntry secondQualityColorTextEntry;
+	public static String[] secondQualityColorSetting = Utils.getprefsa("secondQualityColorSetting_colorSetting", new String[]{"255","114","0","255"});
 	public static ColorOptionWidget secondQualityColorOptionWidget;
-	public static TextEntry thirdQualityColorBorder;
-	public static String[] thirdQualityColorSetting = Utils.getprefsa("thirdQualityColorSetting_colorSetting", new String[]{"255", "255", "255", "255"});
+	public static TextEntry thirdQualityColorTextEntry;
+	public static String[] thirdQualityColorSetting = Utils.getprefsa("thirdQualityColorSetting_colorSetting", new String[]{"165","0","255","255"});
 	public static ColorOptionWidget thirdQualityColorOptionWidget;
-	public static TextEntry fourthQualityColorBorder;
-	public static String[] fourthQualityColorSetting = Utils.getprefsa("fourthQualityColorSetting_colorSetting", new String[]{"255", "255", "255", "255"});
+	public static TextEntry fourthQualityColorTextEntry;
+	public static String[] fourthQualityColorSetting = Utils.getprefsa("fourthQualityColorSetting_colorSetting", new String[]{"0","131","255","255"});
 	public static ColorOptionWidget fourthQualityColorOptionWidget;
-	public static TextEntry fifthQualityColorBorder;
-	public static String[] fifthQualityColorSetting = Utils.getprefsa("fifthQualityColorSetting_colorSetting", new String[]{"255", "255", "255", "255"});
+	public static TextEntry fifthQualityColorTextEntry;
+	public static String[] fifthQualityColorSetting = Utils.getprefsa("fifthQualityColorSetting_colorSetting", new String[]{"0","214","10","255"});
 	public static ColorOptionWidget fifthQualityColorOptionWidget;
+	public static TextEntry sixthQualityColorTextEntry;
+	public static String[] sixthQualityColorSetting = Utils.getprefsa("sixthQualityColorSetting_colorSetting", new String[]{"255","255","255","255"});
+	public static ColorOptionWidget sixthQualityColorOptionWidget;
+	public static TextEntry seventhQualityColorTextEntry;
+	public static String[] seventhQualityColorSetting = Utils.getprefsa("seventhQualityColorSetting_colorSetting", new String[]{"180","180","180","255"});
+	public static ColorOptionWidget seventhQualityColorOptionWidget;
 
 	public class NDQualityColorsPanel extends Panel {
 
 		public NDQualityColorsPanel(Panel back) {
 			Widget prev;
 
-			prev = add(enableCustomQualityColors = new CheckBox("Use Custom Quality Colors (Need item reload)"){
+			prev = add(enableCustomQualityColors = new CheckBox("Enable Custom Quality Colors"){
 				{a = (Utils.getprefb("customQualityColors", false));}
 				public void set(boolean val) {
 					Utils.setprefb("customQualityColors", val);
+					reloadAllItemOverlays();
 					a = val;
 				}
 			}, 0, 10);
 
-			prev = add(firstQualityColorBorder = new TextEntry(UI.scale(60), Utils.getpref("firstQualityColorBorder", "0")){
+			prev = add(firstQualityColorTextEntry = new TextEntry(UI.scale(60), Utils.getpref("firstQualityColorBorder", "300")){
 				protected void changed() {
 					this.settext(this.text().replaceAll("[^\\d]", ""));
 					Utils.setpref("firstQualityColorBorder", this.buf.line());
+					reloadAllItemOverlays();
 					super.changed();
 				}
 			}, prev.pos("bl").adds(5, 10));
-			prev = add(secondQualityColorBorder = new TextEntry(UI.scale(60), Utils.getpref("secondQualityColorBorder", "0")){
+			prev = add(firstQualityColorOptionWidget = new ColorOptionWidget(" > Godlike Quality:", "firstQualityColors", 120, Integer.parseInt(firstQualityColorSetting[0]), Integer.parseInt(firstQualityColorSetting[1]), Integer.parseInt(firstQualityColorSetting[2]), Integer.parseInt(firstQualityColorSetting[3]), (Color col) -> {
+				firstQualityColorOptionWidget.cb.colorChooser.setColor(firstQualityColorOptionWidget.currentColor = col);
+				reloadAllItemOverlays();
+			}){}, prev.pos("ur").adds(5, -2));
+			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("firstQualityColorSetting_colorSetting", new String[]{"255","0","0","255"});
+				firstQualityColorOptionWidget.cb.colorChooser.setColor(firstQualityColorOptionWidget.currentColor = new Color(255, 0, 0, 255));
+				reloadAllItemOverlays();
+			}), prev.pos("ur").adds(30, 0));
+
+			prev = add(secondQualityColorTextEntry = new TextEntry(UI.scale(60), Utils.getpref("secondQualityColorBorder", "200")){
 				protected void changed() {
 					this.settext(this.text().replaceAll("[^\\d]", ""));
 					Utils.setpref("secondQualityColorBorder", this.buf.line());
+					reloadAllItemOverlays();
 					super.changed();
 				}
-			}, prev.pos("bl").adds(0, 17));
-			prev = add(thirdQualityColorBorder = new TextEntry(UI.scale(60), Utils.getpref("thirdQualityColorBorder", "0")){
+			}, prev.pos("bl").adds(0, 10).x(UI.scale(5)));
+			prev = add(secondQualityColorOptionWidget = new ColorOptionWidget(" > Legendary Quality:", "secondQualityColors", 120, Integer.parseInt(secondQualityColorSetting[0]), Integer.parseInt(secondQualityColorSetting[1]), Integer.parseInt(secondQualityColorSetting[2]), Integer.parseInt(secondQualityColorSetting[3]), (Color col) -> {
+				secondQualityColorOptionWidget.cb.colorChooser.setColor(secondQualityColorOptionWidget.currentColor = col);
+				reloadAllItemOverlays();
+			}){}, prev.pos("ur").adds(5, -2));
+			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("secondQualityColorSetting_colorSetting", new String[]{"255","114","0","255"});
+				secondQualityColorOptionWidget.cb.colorChooser.setColor(secondQualityColorOptionWidget.currentColor = new Color(255, 114, 0, 255));
+			}), prev.pos("ur").adds(30, 0));
+
+			prev = add(thirdQualityColorTextEntry = new TextEntry(UI.scale(60), Utils.getpref("thirdQualityColorBorder", "150")){
 				protected void changed() {
 					this.settext(this.text().replaceAll("[^\\d]", ""));
 					Utils.setpref("thirdQualityColorBorder", this.buf.line());
+					reloadAllItemOverlays();
 					super.changed();
 				}
-			}, prev.pos("bl").adds(0, 18));
-			prev = add(fourthQualityColorBorder = new TextEntry(UI.scale(60), Utils.getpref("fourthQualityColorBorder", "0")){
+			}, prev.pos("bl").adds(0, 10).x(UI.scale(5)));
+			prev = add(thirdQualityColorOptionWidget = new ColorOptionWidget(" > Epic Quality:", "thirdQualityColors", 120, Integer.parseInt(thirdQualityColorSetting[0]), Integer.parseInt(thirdQualityColorSetting[1]), Integer.parseInt(thirdQualityColorSetting[2]), Integer.parseInt(thirdQualityColorSetting[3]), (Color col) -> {
+				thirdQualityColorOptionWidget.cb.colorChooser.setColor(thirdQualityColorOptionWidget.currentColor = col);
+				reloadAllItemOverlays();
+			}){}, prev.pos("ur").adds(5, -2));
+			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("thirdQualityColorSetting_colorSetting", new String[]{"165","0","255","255"});
+				thirdQualityColorOptionWidget.cb.colorChooser.setColor(thirdQualityColorOptionWidget.currentColor = new Color(165, 0, 255, 255));
+				reloadAllItemOverlays();
+			}), prev.pos("ur").adds(30, 0));
+
+			prev = add(fourthQualityColorTextEntry = new TextEntry(UI.scale(60), Utils.getpref("fourthQualityColorBorder", "100")){
 				protected void changed() {
 					this.settext(this.text().replaceAll("[^\\d]", ""));
 					Utils.setpref("fourthQualityColorBorder", this.buf.line());
+					reloadAllItemOverlays();
 					super.changed();
 				}
-			}, prev.pos("bl").adds(0, 16));
-			prev = add(fifthQualityColorBorder = new TextEntry(UI.scale(60), Utils.getpref("fifthQualityColorBorder", "0")){
+			}, prev.pos("bl").adds(0, 10).x(UI.scale(5)));
+			prev = add(fourthQualityColorOptionWidget = new ColorOptionWidget(" > Rare Quality:", "fourthQualityColors", 120, Integer.parseInt(fourthQualityColorSetting[0]), Integer.parseInt(fourthQualityColorSetting[1]), Integer.parseInt(fourthQualityColorSetting[2]), Integer.parseInt(fourthQualityColorSetting[3]), (Color col) -> {
+				fourthQualityColorOptionWidget.cb.colorChooser.setColor(fourthQualityColorOptionWidget.currentColor = col);
+				reloadAllItemOverlays();
+			}){}, prev.pos("ur").adds(5, -2));
+			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("fourthQualityColorSetting_colorSetting", new String[]{"0","131","255","255"});
+				fourthQualityColorOptionWidget.cb.colorChooser.setColor(fourthQualityColorOptionWidget.currentColor = new Color(0, 131, 255, 255));
+				reloadAllItemOverlays();
+			}), prev.pos("ur").adds(30, 0));
+
+			prev = add(fifthQualityColorTextEntry = new TextEntry(UI.scale(60), Utils.getpref("fifthQualityColorBorder", "50")){
 				protected void changed() {
 					this.settext(this.text().replaceAll("[^\\d]", ""));
 					Utils.setpref("fifthQualityColorBorder", this.buf.line());
+					reloadAllItemOverlays();
 					super.changed();
 				}
-			}, prev.pos("bl").adds(0, 18));
-
-
-			prev = add(firstQualityColorOptionWidget = new ColorOptionWidget(" > Quality Color:", "firstQualityColors", 150, Integer.parseInt(firstQualityColorSetting[0]), Integer.parseInt(firstQualityColorSetting[1]), Integer.parseInt(firstQualityColorSetting[2]), Integer.parseInt(firstQualityColorSetting[3]), (Color col) -> {
-				firstQualityColorOptionWidget.cb.colorChooser.setColor(firstQualityColorOptionWidget.currentColor = col);
-			}){}, prev.pos("ur").adds(5, -152));
-
-			prev = add(secondQualityColorOptionWidget = new ColorOptionWidget(" > Quality Color:", "secondQualityColors", 150, Integer.parseInt(secondQualityColorSetting[0]), Integer.parseInt(secondQualityColorSetting[1]), Integer.parseInt(secondQualityColorSetting[2]), Integer.parseInt(secondQualityColorSetting[3]), (Color col) -> {
-				secondQualityColorOptionWidget.cb.colorChooser.setColor(secondQualityColorOptionWidget.currentColor = col);
-			}){}, prev.pos("bl").adds(0, 15));
-
-			prev = add(thirdQualityColorOptionWidget = new ColorOptionWidget(" > Quality Color:", "thirdQualityColors", 150, Integer.parseInt(thirdQualityColorSetting[0]), Integer.parseInt(thirdQualityColorSetting[1]), Integer.parseInt(thirdQualityColorSetting[2]), Integer.parseInt(thirdQualityColorSetting[3]), (Color col) -> {
-				thirdQualityColorOptionWidget.cb.colorChooser.setColor(thirdQualityColorOptionWidget.currentColor = col);
-			}){}, prev.pos("bl").adds(0, 15));
-
-			prev = add(fourthQualityColorOptionWidget = new ColorOptionWidget(" > Quality Color:", "fourthQualityColors", 150, Integer.parseInt(fourthQualityColorSetting[0]), Integer.parseInt(fourthQualityColorSetting[1]), Integer.parseInt(fourthQualityColorSetting[2]), Integer.parseInt(fourthQualityColorSetting[3]), (Color col) -> {
-				fourthQualityColorOptionWidget.cb.colorChooser.setColor(fourthQualityColorOptionWidget.currentColor = col);
-			}){}, prev.pos("bl").adds(0, 15));
-
-			prev = add(fifthQualityColorOptionWidget = new ColorOptionWidget(" > Quality Color:", "fifthQualityColors", 150, Integer.parseInt(fifthQualityColorSetting[0]), Integer.parseInt(fifthQualityColorSetting[1]), Integer.parseInt(fifthQualityColorSetting[2]), Integer.parseInt(fifthQualityColorSetting[3]), (Color col) -> {
+			}, prev.pos("bl").adds(0, 10).x(UI.scale(5)));
+			prev = add(fifthQualityColorOptionWidget = new ColorOptionWidget(" > Uncommon Quality:", "fifthQualityColors", 120, Integer.parseInt(fifthQualityColorSetting[0]), Integer.parseInt(fifthQualityColorSetting[1]), Integer.parseInt(fifthQualityColorSetting[2]), Integer.parseInt(fifthQualityColorSetting[3]), (Color col) -> {
 				fifthQualityColorOptionWidget.cb.colorChooser.setColor(fifthQualityColorOptionWidget.currentColor = col);
-			}){}, prev.pos("bl").adds(0, 15));
+				reloadAllItemOverlays();
+			}){}, prev.pos("ur").adds(5, -2));
+			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
+				Utils.setprefsa("fifthQualityColorSetting_colorSetting", new String[]{"0","214","10","255"});
+				fifthQualityColorOptionWidget.cb.colorChooser.setColor(fifthQualityColorOptionWidget.currentColor = new Color(0, 214, 10, 255));
+				reloadAllItemOverlays();
+			}), prev.pos("ur").adds(30, 0));
 
 
+			prev = add(sixthQualityColorTextEntry = new TextEntry(UI.scale(60), Utils.getpref("sixthQualityColorBorder", "10")){
+				protected void changed() {
+					this.settext(this.text().replaceAll("[^\\d]", ""));
+					Utils.setpref("sixthQualityColorBorder", this.buf.line());
+					reloadAllItemOverlays();
+					super.changed();
+				}
+			}, prev.pos("bl").adds(0, 10).x(UI.scale(5)));
+			prev = add(sixthQualityColorOptionWidget = new ColorOptionWidget(" > Common Quality:", "sixthQualityColors", 120, Integer.parseInt(sixthQualityColorSetting[0]), Integer.parseInt(sixthQualityColorSetting[1]), Integer.parseInt(sixthQualityColorSetting[2]), Integer.parseInt(sixthQualityColorSetting[3]), (Color col) -> {
+				sixthQualityColorOptionWidget.cb.colorChooser.setColor(sixthQualityColorOptionWidget.currentColor = col);
+				reloadAllItemOverlays();
+			}){}, prev.pos("ur").adds(5, -2));
 			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
-				Utils.setprefsa("firstQualityColorSetting_colorSetting", new String[]{"255", "255", "255", "255"});
-				firstQualityColorOptionWidget.cb.colorChooser.setColor(firstQualityColorOptionWidget.currentColor = new Color(255, 255, 255, 255));
-			}), prev.pos("ur").adds(30, -149));
+				Utils.setprefsa("sixthQualityColorSetting_colorSetting", new String[]{"255","255","255","255"});
+				sixthQualityColorOptionWidget.cb.colorChooser.setColor(sixthQualityColorOptionWidget.currentColor = new Color(255, 255, 255, 255));
+				reloadAllItemOverlays();
+			}), prev.pos("ur").adds(30, 0));
 
+			prev = add(seventhQualityColorTextEntry = new TextEntry(UI.scale(60), Utils.getpref("seventhQualityColorBorder", "1")){
+				protected void changed() {
+					this.settext(this.text().replaceAll("[^\\d]", ""));
+					Utils.setpref("seventhQualityColorBorder", this.buf.line());
+					reloadAllItemOverlays();
+					super.changed();
+				}
+			}, prev.pos("bl").adds(0, 10).x(UI.scale(5)));
+			prev = add(seventhQualityColorOptionWidget = new ColorOptionWidget(" > Junk Quality:", "seventhQualityColors", 120, Integer.parseInt(seventhQualityColorSetting[0]), Integer.parseInt(seventhQualityColorSetting[1]), Integer.parseInt(seventhQualityColorSetting[2]), Integer.parseInt(seventhQualityColorSetting[3]), (Color col) -> {
+				seventhQualityColorOptionWidget.cb.colorChooser.setColor(seventhQualityColorOptionWidget.currentColor = col);
+				reloadAllItemOverlays();
+			}){}, prev.pos("ur").adds(5, -2));
 			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
-				Utils.setprefsa("secondQualityColorSetting_colorSetting", new String[]{"255", "255", "255", "255"});
-				secondQualityColorOptionWidget.cb.colorChooser.setColor(secondQualityColorOptionWidget.currentColor = new Color(255, 255, 255, 255));
-			}), prev.pos("bl").adds(0, 13));
-
-			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
-				Utils.setprefsa("thirdQualityColorSetting_colorSetting", new String[]{"255", "255", "255", "255"});
-				thirdQualityColorOptionWidget.cb.colorChooser.setColor(thirdQualityColorOptionWidget.currentColor = new Color(255, 255, 255, 255));
-			}), prev.pos("bl").adds(0, 13));
-			
-			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
-				Utils.setprefsa("fourthQualityColorSetting_colorSetting", new String[]{"255", "225", "255", "255"});
-				fourthQualityColorOptionWidget.cb.colorChooser.setColor(fourthQualityColorOptionWidget.currentColor = new Color(255, 255, 255, 255));
-			}), prev.pos("bl").adds(0, 13));
-			
-			prev = add(new Button(UI.scale(70), "Reset", false).action(() -> {
-				Utils.setprefsa("fifthQualityColorSetting_colorSetting", new String[]{"255", "225", "255", "255"});
-				fifthQualityColorOptionWidget.cb.colorChooser.setColor(fifthQualityColorOptionWidget.currentColor = new Color(255, 255, 255, 255));
-			}), prev.pos("bl").adds(0, 13));
+				Utils.setprefsa("seventhQualityColorSetting_colorSetting", new String[]{"180","180","180","255"});
+				seventhQualityColorOptionWidget.cb.colorChooser.setColor(sixthQualityColorOptionWidget.currentColor = new Color(180, 180, 180, 255));
+				reloadAllItemOverlays();
+			}), prev.pos("ur").adds(30, 0));
 
 
 			add(new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18).x(UI.scale(57)));
@@ -4133,11 +4153,11 @@ public class OptWnd extends Window {
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Combat Settings", -1, combatsettings, "Combat Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Hiding Settings", -1, hidingsettings, "Hiding Settings"), 0, y2).pos("bl").adds(0, 5).y;
-		y2 = advancedSettings.add(new PButton(UI.scale(200), "Quality Color Settings", -1, qualityColorSettings, "Quality Color Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Mining Auto-Drop Settings", -1, dropsettings, "Mining Auto-Drop Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Alarms & Sounds Settings", -1, alarmsettings, "Alarms & Sounds Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Color Settings", -1, colorsettings, "Color Settings"), 0, y2).pos("bl").adds(0, 5).y;
+		y2 = advancedSettings.add(new PButton(UI.scale(200), "Quality Colors Settings", -1, qualityColorSettings, "Quality Colors Settings"), 0, y2).pos("bl").adds(0, 5).y;
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Server Integration Settings", -1, serverintegrationsettings, "Server Integration Settings"), 0, y2).pos("bl").adds(0, 25).y;
 
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Back", 27, main, "Options            "), 0, y2).pos("bl").adds(0, 5).y;
@@ -4376,4 +4396,23 @@ public class OptWnd extends Window {
 	chpanel(main);
 	super.show();
     }
+
+	public void reloadAllItemOverlays(){ // ND: Used to reload the quality overlay for all items, for quality rounding or quality colors
+		if (ui != null && ui.gui != null) {
+			for (WItem item : ui.gui.getAllItemsFromAllInventoriesAndStacks()) {
+				item.reloadItemOls();
+			}
+			for (Widget window : ui.gui.getAllWindows()){
+				for (Widget w = window.lchild; w != null; w = w.prev) {
+					if (w instanceof Equipory) {
+						for (WItem equitem : ((Equipory) w).slots) {
+							if (equitem != null) {
+								equitem.reloadItemOls();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
