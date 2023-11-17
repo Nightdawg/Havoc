@@ -708,7 +708,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 
 		private void chfield(float nf) {
 			tfield = nf;
-			tfield = Math.max(Math.min(tfield, sz.x * (float)Math.sqrt(2) / 2f), 50); // ND: changed "8f" to "2f" to increase the zoom out distance limit
+			tfield = Math.max(Math.min(tfield, sz.x * (float)Math.sqrt(2) / 2f), 10); // ND: changed "8f" to "2f" to increase the zoom out distance limit
 			if(tfield > 100)
 				release();
 			publicOrthoCamDist = tfield;
