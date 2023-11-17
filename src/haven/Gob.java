@@ -2028,13 +2028,17 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 	private void setGardenPotHighlight(MessageBuf sdt){
 		int peekrbuf = sdt.peekrbuf(0);
-		if (ols.size() == 2) {
+		int olsSize = ols.size();
+		if(collisionBox != null)
+			olsSize = olsSize - 1;
+
+		if (olsSize == 2) {
 			if (OptWnd.showWorkstationStageRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 			else delattr(GobStateHighlight.class);
-		} else if (ols.size() == 1) {
+		} else if (olsSize == 1) {
 			if (OptWnd.showWorkstationStageYellowCheckBox.a) setGobStateHighlight(GobStateHighlight.State.YELLOW);
 			else delattr(GobStateHighlight.class);
-		} else if (ols.size() == 0) {
+		} else if (olsSize == 0) {
 			if (peekrbuf == 3) {
 				if (OptWnd.showWorkstationStageGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 				else delattr(GobStateHighlight.class);
