@@ -2514,6 +2514,7 @@ public class OptWnd extends Window {
 			add(dropStoneQualityTextEntry = new TextEntry(UI.scale(36), Utils.getpref("dropStoneQuality", "30")){
 				protected void changed() {
 					Utils.setpref("dropStoneQuality", this.buf.line());
+					this.settext(this.text().replaceAll("[^\\d]", ""));
 					super.changed();
 				}
 			}, prev.pos("ur").adds(6, -2).x(UI.scale(156)));
@@ -2528,6 +2529,7 @@ public class OptWnd extends Window {
 			add(dropOreQualityTextEntry = new TextEntry(UI.scale(36), Utils.getpref("dropOreQuality", "30")){
 				protected void changed() {
 					Utils.setpref("dropOreQuality", this.buf.line());
+					this.settext(this.text().replaceAll("[^\\d]", ""));
 					super.changed();
 				}
 			}, prev.pos("ur").adds(6, -2).x(UI.scale(156)));
@@ -2543,6 +2545,7 @@ public class OptWnd extends Window {
 			add(dropPreciousOreQualityTextEntry = new TextEntry(UI.scale(36), Utils.getpref("dropPreciousOreQuality", "30")){
 				protected void changed() {
 					Utils.setpref("dropPreciousOreQuality", this.buf.line());
+					this.settext(this.text().replaceAll("[^\\d]", ""));
 					super.changed();
 				}
 			}, prev.pos("ur").adds(6, -2).x(UI.scale(156)));
@@ -2558,6 +2561,7 @@ public class OptWnd extends Window {
 			add(dropMinedCuriosQualityTextEntry = new TextEntry(UI.scale(36), Utils.getpref("dropMinedCuriosQuality", "30")){
 				protected void changed() {
 					Utils.setpref("dropMinedCuriosQuality", this.buf.line());
+					this.settext(this.text().replaceAll("[^\\d]", ""));
 					super.changed();
 				}
 			}, prev.pos("ur").adds(6, -2).x(UI.scale(156)));
@@ -2573,6 +2577,7 @@ public class OptWnd extends Window {
 			add(dropQuarryartzQualityTextEntry = new TextEntry(UI.scale(36), Utils.getpref("dropQuarryartzQuality", "30")){
 				protected void changed() {
 					Utils.setpref("dropQuarryartzQuality", this.buf.line());
+					this.settext(this.text().replaceAll("[^\\d]", ""));
 					super.changed();
 				}
 			}, prev.pos("ur").adds(6, -2).x(UI.scale(156)));
