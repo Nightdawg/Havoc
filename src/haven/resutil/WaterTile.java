@@ -127,7 +127,8 @@ public class WaterTile extends Tiler {
 			int O = fs.o(x, y);
 			if(!wv[ts.o(x, y)])
 			    continue;
-			float xs = Utils.clip(this.xs[O], -2f, 2f), ys = Utils.clip(this.ys[O], -2f, 2f);
+			float foamFloat = OptWnd.flatWorldCheckBox.a ? 0f : 2f;
+			float xs = Utils.clip(this.xs[O], -foamFloat, foamFloat), ys = Utils.clip(this.ys[O], -foamFloat, foamFloat);
 			nxv[O] = xv[O] + xs;
 			nyv[O] = yv[O] + ys;
 			float nv = (float)Math.hypot(nxv[O], nyv[O]);
@@ -151,7 +152,7 @@ public class WaterTile extends Tiler {
 			}
 		    }
 		}
-		float PF = 0.05f;
+		float PF =  0.05f;
 		for(int y = -I; y <= m.sz.y + I; y++) {
 		    for(int x = -I; x <= m.sz.x + I; x++) {
 			int O = fs.o(x, y);
