@@ -312,7 +312,11 @@ public class LoginScreen extends Widget {
 		    return;
 		if(stat.status == "up") {
 		    FastText.aprintf(g, new Coord(x, FastText.h * 0), ax, 0, "Server status: Online");
+			try {
 		    FastText.aprintf(g, new Coord(x, FastText.h * 1), ax, 0, "Hearthlings connected: %,d", stat.users);
+			} catch (ArrayIndexOutOfBoundsException e) {
+
+			}
 		} else if(stat.status == "down") {
 		    FastText.aprintf(g, new Coord(x, FastText.h * 0), ax, 0, "Server status: Offline");
 		} else if(stat.status == "shutdown") {
