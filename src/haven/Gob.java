@@ -2296,7 +2296,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			"/boar",
 			"/badger",
 			"/wolverine",
-			"/boreworn",
+			"/boreworm",
 			"/greenooze",
 			"/adder",
 			"/caverat",
