@@ -200,8 +200,10 @@ public class OceanScoutBot extends Window implements Runnable {
 
     private boolean isDangerZone(Coord t) {
         for (Gob gob : nearbyGobs) {
-            if ((gob.getres().name.endsWith("/walrus") || (gob.getres().name.endsWith("/orca")) && t.dist(gob.rc.floor()) < 11 * 14)) {
-                return true;
+            if(gob.getres() != null){
+                if ((gob.getres().name.endsWith("/walrus") || (gob.getres().name.endsWith("/orca")) && t.dist(gob.rc.floor()) < 11 * 14)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -209,8 +211,10 @@ public class OceanScoutBot extends Window implements Runnable {
 
     private Coord2d isVeryDangerZone(Coord t) {
         for (Gob gob : nearbyGobs) {
-            if ((gob.getres().name.endsWith("/walrus") || (gob.getres().name.endsWith("/orca")) && t.dist(gob.rc.floor()) < 11 * 11)) {
-                return gob.rc;
+            if (gob.getres() != null) {
+                if ((gob.getres().name.endsWith("/walrus") || (gob.getres().name.endsWith("/orca")) && t.dist(gob.rc.floor()) < 11 * 11)) {
+                    return gob.rc;
+                }
             }
         }
         return null;
