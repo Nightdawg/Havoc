@@ -2297,6 +2297,7 @@ public class OptWnd extends Window {
 				{a = Utils.getprefb("removeCrops", false);}
 				public void set(boolean val) {
 					Utils.setprefb("removeCrops", val);
+					removeCrop = val;
 					a = val;
 				}
 			}, prev.pos("bl").adds(0, 2));
