@@ -352,7 +352,7 @@ public class GobIcon extends GAttrib {
 	    return(ret);
 	}
 
-	public static Settings load(Message blob) {
+	public static Settings load(Message blob, UI ui) {
 	    if(!Arrays.equals(blob.bytes(sig.length), sig))
 		throw(new Message.FormatError("Invalid signature"));
 	    int ver = blob.uint8();
@@ -382,6 +382,7 @@ public class GobIcon extends GAttrib {
 		}
 		ret.settings.put(res.name, set);
 	    }
+		CustomMapIcons.addCustomSettings(ret.settings, ui);
 	    return(ret);
 	}
     }
