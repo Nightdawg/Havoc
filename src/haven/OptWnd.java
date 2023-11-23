@@ -1868,7 +1868,7 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 2));
 
-			prev = add(autoFlowerUsesAllInventoriesCheckBox = new CheckBox("Use ALL inventories (containers) with Auto Flower-Menu Repeater"){
+			prev = add(autoFlowerUsesAllInventoriesCheckBox = new CheckBox("Use ALL inventories (containers) with Repeater"){
 				{a = Utils.getprefb("autoFlowerUsesAllInventories", false);}
 				public void set(boolean val) {
 					Utils.setprefb("autoFlowerUsesAllInventories", val);
