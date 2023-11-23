@@ -104,6 +104,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	private boolean malePlayer = false;
 	private boolean femalePlayer = false;
 	public Boolean imInCoracle = false;
+	public Boolean imOnSkis = false;
 	public Boolean imDrinking = false;
 	private Boolean itsLoftar = null;
 	private long lastKnockSoundtime = 0;
@@ -197,12 +198,17 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		if (this.getres().name.equals("gfx/borka/body") && isMannequin != null && !isMannequin){
 			boolean imOnLand = true;
 			imInCoracle = false;
+			imOnSkis = false;
 			Iterator<String> iter2 = poses.iterator();
 			while (iter2.hasNext()) {
 				String s = iter2.next();
 				if (s.contains("coracleidle") || s.contains("coraclerowan")) {
 					imOnLand = false;
 					imInCoracle = true;
+					break;
+				}
+				if (s.contains("skian-idle") || s.contains("skian-walk") || s.contains("skian-run")) {
+					imOnSkis = true;
 					break;
 				}
 				if (s.contains("rowboat") || s.contains("snekkja") || s.contains("knarr") || s.contains("dugout")) {

@@ -390,6 +390,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/GridHeightCalculator");
 		makeLocal("paginae/nightdawg/OtherTools/OreAndStoneCounter");
 		makeLocal("paginae/nightdawg/OtherTools/CoracleScript");
+		makeLocal("paginae/nightdawg/OtherTools/SkisScript");
 		makeLocal("paginae/nightdawg/OtherTools/CloverScript");
 		makeLocal("paginae/nightdawg/OtherTools/RefillWaterContainers");
 		makeLocal("paginae/nightdawg/OtherTools/HarvestNearestDreamcatcher");
@@ -793,6 +794,16 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.coracleScriptThread = null;
 					gui.coracleScriptThread = new Thread(new CoracleScript(gui), "CoracleScript");
 					gui.coracleScriptThread.start();
+				}
+			} else if (ad[2].equals("SkisScript")) {
+				if (gui.skisScriptThread == null) {
+					gui.skisScriptThread = new Thread(new SkisScript(gui), "SkisScript");
+					gui.skisScriptThread.start();
+				} else {
+					gui.skisScriptThread.interrupt();
+					gui.skisScriptThread = null;
+					gui.skisScriptThread = new Thread(new SkisScript(gui), "SkisScript");
+					gui.skisScriptThread.start();
 				}
 			} else if (ad[2].equals("CloverScript")) {
 				if (gui.cloverScriptThread == null) {
