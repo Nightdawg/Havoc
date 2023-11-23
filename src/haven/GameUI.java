@@ -1414,7 +1414,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	} else if(msg == "prog") {
 	    if(args.length > 0) {
 		double p = ((Number)args[0]).doubleValue() / 100.0;
-		if(OptWnd.autoDrinkTeaWhileWorkingCheckBox.a && getmeter("stam", 0) != null && getmeter("stam", 0).a < 0.75){
+		if(OptWnd.autoDrinkWhileWorkingCheckBox.a && getmeter("stam", 0) != null && getmeter("stam", 0).a < 0.75){
 			if(p == 0 && System.currentTimeMillis() > lastAutoDrinkTime + 1000 || System.currentTimeMillis() > lastAutoDrinkTime + 3500){
 				lastAutoDrinkTime = System.currentTimeMillis();
 				drink(0.99);

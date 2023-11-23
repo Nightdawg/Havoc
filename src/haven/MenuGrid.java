@@ -34,7 +34,6 @@ import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
 import haven.automated.*;
 import haven.automated.cookbook.CookingRecipes;
-import haven.sprites.ClueSprite;
 
 import java.util.*;
 
@@ -382,6 +381,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleBeeSkepsRadii");
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleTroughsRadii");
 		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleMineSweeper");
+		makeLocal("paginae/nightdawg/CustomClientToggles/ToggleWorkAutodrink");
 
 		makeLocal("paginae/nightdawg/OtherTools/MiningSafetyAssistant");
 		makeLocal("paginae/nightdawg/OtherTools/CookBook");
@@ -745,6 +745,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 				OptWnd.showFoodTroughsRadiiCheckBox.set(!OptWnd.showFoodTroughsRadiiCheckBox.a);
 			} else if (ad[2].equals("MineSweeper")) {
 				OptWnd.enableMineSweeperCheckBox.set(!OptWnd.enableMineSweeperCheckBox.a);
+			} else if (ad[2].equals("WorkAutodrink")) {
+				OptWnd.autoDrinkWhileWorkingCheckBox.set(!OptWnd.autoDrinkWhileWorkingCheckBox.a);
 			}
 		} else if (ad[1].equals("OtherTools")){
 			if (ad[2].equals("MiningSafetyAssistant")) {

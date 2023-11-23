@@ -1772,7 +1772,7 @@ public class OptWnd extends Window {
 	public static CheckBox autoDropLeechesCheckBox = null;
 	public static CheckBox noCursorItemDroppingCheckBox = null;
 	public static CheckBox noCursorItemDroppingInWaterCheckBox = null;
-	public static CheckBox autoDrinkTeaWhileWorkingCheckBox = null;
+	public static CheckBox autoDrinkWhileWorkingCheckBox = null;
 
 	public class NDGameplaySettingsPanel extends Panel {
 		private final List<String> runSpeeds = Arrays.asList("Crawl", "Walk", "Run", "Sprint");
@@ -1942,13 +1942,13 @@ public class OptWnd extends Window {
 				}
 			}, prev.pos("bl").adds(0, 2));
 
-			prev = add(autoDrinkTeaWhileWorkingCheckBox = new CheckBox("Automatically Drink Tea/Water While Working."){
+			prev = add(autoDrinkWhileWorkingCheckBox = new CheckBox("Automatically Drink Tea/Water While Working."){
 				{a = Utils.getprefb("autoDrinkTeaOrWater", false);}
 				public void set(boolean val) {
 					Utils.setprefb("autoDrinkTeaOrWater", val);
 					a = val;
 					if (ui != null && ui.gui != null) {
-						ui.gui.optionInfoMsg("Auto-drinking Tea and Water is now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
+						ui.gui.optionInfoMsg("Auto-Drinking Tea and Water is now " + (val ? "ENABLED" : "DISABLED") + "!", (val ? msgGreen : msgRed));
 					}
 				}
 			}, prev.pos("bl").adds(0, 12));
@@ -4328,7 +4328,7 @@ public class OptWnd extends Window {
 				"\n$col[200,0,0]{WARNING: If you're holding something on your cursor, you're NOT ABLE to enter Deep Water to Swim. The game prevents you from doing it.}", UI.scale(300));
 		noCursorItemDroppingInWaterCheckBox.tooltip = RichText.render("$col[218,163,0]{Warning:} If the previous option is Enabled, it will overwrite this one. You will still not be able to drop items in water.\n$col[185,185,185]{You can still drop the item on your cursor if you hold Ctrl.}\n$col[218,163,0]{Note:} $col[185,185,185]{This option can also be turned on/off using an Action Button.}" +
 				"\n$col[200,0,0]{WARNING: If you're holding something on your cursor, you're NOT ABLE to enter Deep Water to Swim. The game prevents you from doing it.}", UI.scale(300));
-		autoDrinkTeaWhileWorkingCheckBox.tooltip = RichText.render("When your goes reaches below 70%, automatically drink Tea or Water (depending on your current Energy).", UI.scale(300));
+		autoDrinkWhileWorkingCheckBox.tooltip = RichText.render("When your goes reaches below 70%, automatically drink Tea or Water (depending on your current Energy).", UI.scale(300));
 		autoStudyCheckBox.tooltip = RichText.render("If this is enabled, curiosities will be automatically replaced in the Study Report once they finish being studied." +
 				"\nIt picks items from your Inventory and currently open Cupboards (only Cupboards, no other containers)." +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{Once a curiosity is studied, this will only look for a replacement that has the same name. It does not actually try picking new items that are not currently being studied.}", UI.scale(300));
