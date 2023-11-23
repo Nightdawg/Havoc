@@ -423,7 +423,7 @@ public class Equipory extends Widget implements DTarget {
 		super.tick(dt);
 		if (OptWnd.autoDropLeechesCheckBox.a && player && checkForLeeches) {
 			long now = System.currentTimeMillis();
-			if ((now - delayedUpdateTime) > 100){
+			if ((now - delayedUpdateTime) > 200){
 				for (SLOTS slot : SLOTS.values()) {
 					WItem equippedItem = slots[slot.idx];
 					if (equippedItem != null && equippedItem.item != null && equippedItem.item.getname() != null && equippedItem.item.getname().contains("Leech")){
