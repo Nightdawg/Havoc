@@ -355,7 +355,7 @@ public class Equipory extends Widget implements DTarget {
 		GameUI gui = ui.gui;
 		if (updateBottomText) {
 			long now = System.currentTimeMillis();
-			if ((now - delayedUpdateTime) > 100){ // ND: Hopefully 100ms is enough? I can't reproduce it any more on my PC at least. This is client-sided, so ping should not affect it (SHOULD, BUT GOD KNOWS WITH LOFTAR)
+			if ((now - delayedUpdateTime) > 200){ // ND: 100ms was not enough, bumped to 200ms
 				// ND: I genuinely don't know any other workaround to this crap not updating when you add a new item. For some reason this doesn't happen in Ardennes' (old render)
 				//     In Ardennes', it looks like the UI freezes for a second when you try to add the new item sometimes. Maybe these weird hiccups are different in new render? For now, I have no clue.
 				int prc = 0, exp = 0, det, intl = 0, ste = 0, snk, aHard = 0, aSoft = 0;
