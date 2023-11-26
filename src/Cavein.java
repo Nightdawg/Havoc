@@ -8,10 +8,11 @@ import haven.res.lib.bollar.*;
 import java.awt.*;
 import java.util.*;
 import java.nio.*;
+import java.awt.Color;
 import java.util.List;
 
 /* >spr: Cavein */
-@haven.FromResource(name = "gfx/fx/cavewarn", version = 6)
+@haven.FromResource(name = "gfx/fx/cavewarn", version = 7)
 public class Cavein extends Sprite implements Sprite.CDel, PView.Render2D {
     static final Pipe.Op mat = new Light.PhongLight(false,
 						    new Color(255, 255, 255), new Color(255, 255, 255),
