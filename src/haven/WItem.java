@@ -34,6 +34,8 @@ import java.util.List;
 import haven.ItemInfo.AttrCache;
 import haven.automated.AutoFlowerRepeater;
 import haven.automated.ItemSearcher;
+import haven.res.ui.tt.q.qbuff.QBuff;
+import haven.res.ui.tt.q.quality.Quality;
 import haven.resutil.Curiosity;
 
 import static haven.Inventory.sqsz;
@@ -218,29 +220,53 @@ public class WItem extends Widget implements DTarget {
 	    g.defstate();
 		String itemName = item.getname().toLowerCase();
 		String searchKeyword = ItemSearcher.itemHighlighted.toLowerCase();
+
 		if (searchKeyword.length() > 1) {
-			if (searchKeyword.contains("||")) {
-				String[] keywords = searchKeyword.split("\\|\\|");
-				boolean matchFound = Arrays.stream(keywords)
-						.map(String::trim)
-						.anyMatch(keyword -> itemName.contains(keyword) && keyword.length() > 2);
-				if (matchFound) {
-					delayCounter++;
-					if (delayCounter > 40) {
-						delayCounter = 0;
-						colorValue = colorValue == 255 ? 0 : 255;
+			QBuff itemQuality = item.quality();
+			double quality = (itemQuality != null) ? itemQuality.q : -1;
+			boolean qualityMatch = false;
+			boolean nameMatch = false;
+			boolean qualityConditionPresent = false;
+
+			String[] parts = searchKeyword.split("\\|\\|");
+			for (String part : parts) {
+				part = part.trim();
+
+
+				if (part.startsWith(">") || part.startsWith("<")) {
+					qualityConditionPresent = true;
+					if (itemQuality != null) {
+						try {
+							double qualityThreshold = Double.parseDouble(part.substring(1).trim());
+							if ((part.startsWith(">") && quality > qualityThreshold) ||
+									(part.startsWith("<") && quality < qualityThreshold)) {
+								qualityMatch = true;
+							}
+						} catch (NumberFormatException ignored) {}
 					}
-					g.usestate(new ColorMask(new Color(colorValue, colorValue, colorValue, colorValue)));
+				}
+				else if (itemName.contains(part) && part.length() > 2) {
+					nameMatch = true;
+				}
+			}
+
+
+			boolean highlight;
+			if (qualityConditionPresent) {
+				if (nameMatch || parts.length == 1) {
+					highlight = qualityMatch;
+				} else {
+					highlight = false;
 				}
 			} else {
-				if (itemName.contains(searchKeyword) && searchKeyword.length() > 2) {
-					delayCounter++;
-					if (delayCounter > 40) {
-						delayCounter = 0;
-						colorValue = colorValue == 255 ? 0 : 255;
-					}
-					g.usestate(new ColorMask(new Color(colorValue, colorValue, colorValue, colorValue)));
-				}
+				highlight = nameMatch;
+			}
+
+			if (highlight) {
+				long currentTimeInSeconds = System.currentTimeMillis() / 200;
+				boolean isSecondOdd = currentTimeInSeconds % 2 != 0;
+				colorValue = isSecondOdd ? 255 : 0;
+				g.usestate(new ColorMask(new Color(colorValue, colorValue, colorValue, colorValue)));
 			}
 		} else {
 			if(olcol.get() != null){

@@ -49,6 +49,7 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, EquipTarget, Skeleton.HasPose {
@@ -1746,22 +1747,59 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	public void setGobSearchOverlay() {
-		if (getres() != null) {
-			String resourceName = getres().basename().replace("stockpile", "");
-			resourceName = resourceName.toLowerCase();
-			String searchKeyword = GobSearcher.gobHighlighted.toLowerCase();
-			boolean result;
-			if (searchKeyword.contains("||")) {
-				String[] keywords = searchKeyword.split("\\|\\|"); // Updated split regex
-				String finalResourceName = resourceName;
-				result = Arrays.stream(keywords)
-						.anyMatch(keyword -> finalResourceName.contains(keyword) && keyword.length() > 2);
-			} else {
-				result = resourceName.contains(searchKeyword) && searchKeyword.length() > 2;
-			}
+		if (getres() == null) return;
 
-			setSearchOl(result);
+		String resourceName = getres().basename().toLowerCase().replace("stockpile", "");
+		String searchKeyword = GobSearcher.gobHighlighted.toLowerCase();
+		boolean result = false;
+
+		if (searchKeyword.contains("||")) {
+			String[] keywords = searchKeyword.split("\\|\\|");
+			for (String keyword : keywords) {
+				if (resourceName.contains(keyword) && keyword.length() > 2) {
+					result = true;
+					break;
+				}
+			}
+		} else {
+			result = resourceName.contains(searchKeyword) && searchKeyword.length() > 2;
 		}
+
+		String barterStandOverlays = null;
+		if (resourceName.contains("barter")) {
+			try {
+				barterStandOverlays = this.ols.stream()
+						.map(ol -> {
+							try {
+								if (ol.sdt != null)
+									return glob.sess.getres(haven.Utils.uint16d(ol.sdt.rbuf, 0)).get().basename();
+								else return null;
+							} catch (IndexOutOfBoundsException e) {
+								return "N/A";
+							}
+						})
+						.filter(Objects::nonNull)
+						.collect(Collectors.joining(", "));
+			} catch (Exception ignores) {
+			}
+		}
+
+		if (barterStandOverlays != null) {
+			if (searchKeyword.contains("||")) {
+				for (String keyword : searchKeyword.split("\\|\\|")) {
+					if (keyword.startsWith("@") && keyword.length() > 2 && barterStandOverlays.contains(keyword.replaceAll("@", ""))) {
+						result = true;
+						break;
+					}
+				}
+			} else {
+				if (searchKeyword.startsWith("@") && searchKeyword.length() > 3 && barterStandOverlays.contains(searchKeyword.replaceAll("@", ""))) {
+					result = true;
+				}
+			}
+		}
+
+		setSearchOl(result);
 	}
 
 	public void updateResPeekDependantHighlights(MessageBuf sdt) {
