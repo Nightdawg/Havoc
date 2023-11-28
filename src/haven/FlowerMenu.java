@@ -316,7 +316,8 @@ public class FlowerMenu extends Widget {
 	    wdgmsg("cl", -1);
 	} else {
 		if(AutoFlowerRepeater.option != null){
-			AutoFlowerRepeater.option = option.name;
+			if (!option.name.equals("Eat") && !option.name.equals("Study"))
+				AutoFlowerRepeater.option = option.name;
 		}
 	    wdgmsg("cl", option.num, ui.modflags());
 	}
