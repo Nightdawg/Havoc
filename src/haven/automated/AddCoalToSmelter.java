@@ -35,7 +35,13 @@ public class AddCoalToSmelter implements Runnable {
             return;
         }
 
-        WItem coalw = gui.maininv.getItemPartial("Coal");
+        WItem coalw = null;
+        for(Inventory inventory : gui.getAllInventories()){
+            coalw = inventory.getItemPartialNotStack("Coal");
+            if(coalw != null){
+                break;
+            }
+        }
         if (coalw == null) {
             gui.error("No coal found in the inventory");
             return;

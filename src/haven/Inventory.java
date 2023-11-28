@@ -265,6 +265,21 @@ public class Inventory extends Widget implements DTarget {
 		return null;
 	}
 
+	public WItem getItemPartialNotStack(String name) {
+		if (name == null)
+			return null;
+		for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+			if (wdg instanceof WItem) {
+				String wdgname = ((WItem)wdg).item.getname();
+				if (wdgname.contains(name) && !wdgname.contains("stack")) {
+					System.out.println(wdgname);
+					return (WItem) wdg;
+				}
+			}
+		}
+		return null;
+	}
+
 	public WItem getItemPrecise(String name) {
 		if (name == null)
 			return null;

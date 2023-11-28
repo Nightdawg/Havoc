@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="gluegen-rt-natives-linux-aarch64" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
