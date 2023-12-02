@@ -2,21 +2,43 @@ package haven;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class GobGrowthInfo extends GobInfo {
+	private final String RES_NAME;
     private static final int TREE_START = 10;
     private static final int BUSH_START = 30;
     private static final double TREE_MULT = 100.0 / (100.0 - TREE_START);
     private static final double BUSH_MULT = 100.0 / (100.0 - BUSH_START);
     private static final Color BG = new Color(0, 0, 0, 0);
+	private static final Map<String, BufferedImage> stageTextCache = new HashMap<>();
+
+
+	public static BufferedImage getStageImage(int stage, int maxStage) {
+		String key = stage + "/" + maxStage;
+		if (!stageTextCache.containsKey(key)) {
+			BufferedImage stageImage = renderStageText(key);
+			stageTextCache.put(key, stageImage);
+		}
+		return stageTextCache.get(key);
+	}
+
+
+
+	private static BufferedImage renderStageText(String stage) {
+		return Text.std.renderstroked(stage, new Color(255, 243, 180,255), Color.BLACK).img;
+	}
+
 
     protected GobGrowthInfo(Gob owner) {
 	super(owner);
+	if(owner.getres() != null){
+		this.RES_NAME = owner.getres().name;
+	} else {
+		this.RES_NAME = "";
+	}
     }
 
     @Override
@@ -42,6 +64,9 @@ public class GobGrowthInfo extends GobInfo {
 	super.dispose();
     }
 
+	public final BufferedImage YELLOW_DOT = drawDot(new Color(255, 255, 0,255));
+	public final BufferedImage RED_DOT = drawDot(new Color(255, 0, 0,255));
+
     private BufferedImage growth() {
 	Text.Line line = null;
 	Resource res = gob.getres();
@@ -56,9 +81,23 @@ public class GobGrowthInfo extends GobInfo {
 	    if(data != null) {
 		int stage = data.uint8();
 		if(stage > maxStage) {stage = maxStage;}
-		Color c = Utils.blendcol((double) stage / maxStage, Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN);
-		line = Text.std.renderstroked(String.format("%d/%d", stage, maxStage), c, Color.BLACK);
-	    }
+		if(RES_NAME.contains("turnip") || RES_NAME.contains("carrot") || RES_NAME.contains("leek")){
+			 if (stage == maxStage - 2){
+				return YELLOW_DOT;
+			} else if (stage == maxStage){
+				return RED_DOT;
+			} else {
+				 return getStageImage(stage, maxStage);
+			}
+		} else {
+			if (stage == maxStage){
+				return RED_DOT;
+			} else {
+				return getStageImage(stage, maxStage);
+			}
+
+		}
+		}
 	} else if(isSpriteKind(gob, "Tree")) {
 		boolean isHidden = true;
 	    Message data = getDrawableData(gob);
@@ -87,7 +126,28 @@ public class GobGrowthInfo extends GobInfo {
 	return null;
     }
 
-    private static Message getDrawableData(Gob gob) {
+
+	private BufferedImage drawDot(Color c) {
+		int diameter = 11;
+		BufferedImage img = new BufferedImage(diameter, diameter * 2, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = img.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		int alpha = 215;
+		Color transparentColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+		g.setColor(transparentColor);
+
+		g.fillOval(0, 1, diameter, diameter);
+
+		g.setColor(Color.BLACK);
+		g.setStroke(new BasicStroke(1));
+		g.drawOval(0, 1, diameter, diameter);
+
+		g.dispose();
+		return img;
+	}
+
+
+	private static Message getDrawableData(Gob gob) {
 	Drawable dr = gob.getattr(Drawable.class);
 	ResDrawable d = (dr instanceof ResDrawable) ? (ResDrawable) dr : null;
 	if(d != null)
