@@ -131,12 +131,14 @@ public class CollisionBox extends SlottedNode implements Rendered {
 				}
 			}
 		}
+		if(res.name.endsWith("/consobj")){
+			growingTreeOrBush = true;
+		}
 		synchronized (MODEL_CACHE) {
 			if (!growingTreeOrBush)
 				model = MODEL_CACHE.get(res);
 			if(model == null) {
 				List<List<Coord3f>> polygons = new LinkedList<>();
-
 				Collection<Resource.Neg> negs = res.layers(Resource.Neg.class);
 				if(negs != null) {
 					for (Resource.Neg neg : negs) {
@@ -153,7 +155,6 @@ public class CollisionBox extends SlottedNode implements Rendered {
 						polygons.add(box);
 					}
 				}
-
 				Collection<Resource.Obstacle> obstacles = res.layers(Resource.Obstacle.class);
 				if(obstacles != null) {
 					Optional<Coord2d> minX;
@@ -197,6 +198,12 @@ public class CollisionBox extends SlottedNode implements Rendered {
 						ax = -6F; bx = 6F; ay = -3F; by = 3F;
 					} else if (res.name.startsWith("gfx/kritter/horse/")) {
 						ax = -8F; bx = 8F; ay = -4F; by = 4F;
+					} else if (res.name.endsWith("/consobj")) {
+						ResDrawable rd = gob.getattr(ResDrawable.class);
+						if (rd != null && rd.sdt.rbuf.length >= 4) {
+							MessageBuf buf = rd.sdt.clone();
+							ax = buf.rbuf[0]; bx = buf.rbuf[2]; ay = buf.rbuf[1]; by = buf.rbuf[3];
+						}
 					}
 					if (ax != 0 && bx != 0 && ay != 0 && by != 0) {
 						box.add(new Coord3f(ax, -ay, Z));
