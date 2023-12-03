@@ -474,7 +474,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 	    g = new haven.error.SimpleHandler("Haven main group", true);
 	} else if(!ed.equals("")) {
 	    try {
-		final haven.error.ErrorHandler hg = new haven.error.ErrorHandler(new java.net.URL(ed));
+		final haven.error.ErrorHandler hg = new haven.error.ErrorHandler(new java.net.URI(ed).toURL());
 		hg.sethandler(new haven.error.ErrorGui(null) {
 			public void errorsent() {
 			    hg.interrupt();
@@ -482,7 +482,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 		    });
 		g = hg;
 		new DeadlockWatchdog(hg).start();
-	    } catch(java.net.MalformedURLException e) {
+	    } catch(java.net.MalformedURLException | java.net.URISyntaxException e) {
 	    }
 	}
 	Thread main = new HackThread(g, () -> main2(args), "Haven main thread");
