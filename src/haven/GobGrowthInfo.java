@@ -4,10 +4,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class GobGrowthInfo extends GobInfo {
-	private final String RES_NAME;
     private static final int TREE_START = 10;
     private static final int BUSH_START = 30;
     private static final double TREE_MULT = 100.0 / (100.0 - TREE_START);
@@ -17,7 +15,8 @@ public class GobGrowthInfo extends GobInfo {
 
 
 	public static BufferedImage getStageImage(int stage, int maxStage) {
-		String key = stage + "/" + maxStage;
+		String key = String.valueOf(stage);
+//				+ "/" + maxStage
 		if (!stageTextCache.containsKey(key)) {
 			BufferedImage stageImage = renderStageText(key);
 			stageTextCache.put(key, stageImage);
@@ -34,11 +33,6 @@ public class GobGrowthInfo extends GobInfo {
 
     protected GobGrowthInfo(Gob owner) {
 	super(owner);
-	if(owner.getres() != null){
-		this.RES_NAME = owner.getres().name;
-	} else {
-		this.RES_NAME = "";
-	}
     }
 
     @Override
@@ -81,7 +75,7 @@ public class GobGrowthInfo extends GobInfo {
 	    if(data != null) {
 		int stage = data.uint8();
 		if(stage > maxStage) {stage = maxStage;}
-		if(RES_NAME.contains("turnip") || RES_NAME.contains("carrot") || RES_NAME.contains("leek")){
+		if(res != null && (res.name.contains("turnip") || res.name.contains("carrot") || res.name.contains("leek"))){
 			 if (stage == maxStage - 2){
 				return YELLOW_DOT;
 			} else if (stage == maxStage){
