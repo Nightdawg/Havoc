@@ -2030,12 +2030,16 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	}
 
 	private void updateCheeseRacksHighlight() {
+		int olsSize = ols.size();
+		if(collisionBox != null)
+			olsSize = olsSize - 1;
+
 		if (getres() != null && Pattern.matches("gfx/terobjs/cheeserack", getres().name)) {
 			if (OptWnd.showWorkstationStageCheckBox.a) {
-				if (ols.size() == 3) {
+				if (olsSize == 3) {
 					if (OptWnd.showWorkstationStageRedCheckBox.a) setGobStateHighlight(GobStateHighlight.State.RED);
 					else delattr(GobStateHighlight.class);
-				} else if (ols.size() == 0) {
+				} else if (olsSize == 0) {
 					if (OptWnd.showWorkstationStageGreenCheckBox.a) setGobStateHighlight(GobStateHighlight.State.GREEN);
 					else delattr(GobStateHighlight.class);
 				} else {
