@@ -1,7 +1,6 @@
 package haven.automated;
 
 import haven.*;
-import haven.automated.helpers.FarmingStatic;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
