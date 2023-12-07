@@ -536,6 +536,7 @@ public class OptWnd extends Window {
 	private CheckBox useAlternativeUi;
 	public static CheckBox disableMapTileTransition;
 	public static CheckBox enableDragWindowsInWhenResizingCheckBox;
+	public static CheckBox showMapMarkerNamesCheckBox;
 	public static CheckBox enableSnapWindowsBackInsideCheckBox;
 	private Label interfaceScaleLabel;
 	private HSlider interfaceScaleHSlider;
@@ -906,6 +907,13 @@ public class OptWnd extends Window {
 			};
 			rightColumn = expWindowGrp.add("Top", rightColumn.pos("bl").adds(36, 3));
 			rightColumn = expWindowGrp.add("Bottom", rightColumn.pos("ur").adds(32, 0));
+			rightColumn = add(showMapMarkerNamesCheckBox = new CheckBox("Show Map Marker Names"){
+				{a = (Utils.getprefb("showMapMarkerNames", true));}
+				public void set(boolean val) {
+					Utils.setprefb("showMapMarkerNames", val);
+					a = val;
+				}
+			}, rightColumn.pos("bl").adds(0, 22).x(UI.scale(230)));
 
 			if (Utils.getprefb("expWindowLocationIsTop", true)){
 				expWindowGrp.check(0);
@@ -4281,6 +4289,7 @@ public class OptWnd extends Window {
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{If a cave-in has been mined out, the tiles surrounding it will still drop cave dust, and they will still show a number on the ground. The cave dust tiles are pre-generated with the world. That's just how Loftar coded it.}" +
 				"\n$col[218,163,0]{Note:} $col[185,185,185]{You can still pick up the cave dust item off the ground. The numbers are affected only by the duration of the falling dust particles effect (aka dust rain), which can be set below}" +
 				"\n\n$col[200,0,0]{NOTE:} $col[185,185,185]{There's a bug with the falling dust particles, that we can't really \"fix\". If you mine them out on a level, the same particles can also show up on different levels or the overworld. If you want them to vanish, you can just relog, but they will despawn from their original location too.}", UI.scale(300));
+		showMapMarkerNamesCheckBox.tooltip = RichText.render("$col[218,163,0]{Note:} $col[185,185,185]{The marker names are NOT visible in compact mode.}", UI.scale(320));
 	}
 
 	private void setTooltipsForCombatSettingsStuff(){

@@ -31,7 +31,6 @@ import java.util.function.*;
 import java.awt.Color;
 import haven.MapFile.Segment;
 import haven.MapFile.DataGrid;
-import haven.MapFile.Grid;
 import haven.MapFile.GridInfo;
 import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
@@ -369,6 +368,8 @@ public class MiniMap extends Widget {
 	public static final Coord flagcc;
 	public final Marker m;
 	public final Text tip;
+
+	public static HashMap<String, Tex> titleTexMap = new HashMap<String, Tex>();
 	public Area hit;
 	private Resource.Image img;
 	private Coord imgsz;
@@ -384,6 +385,8 @@ public class MiniMap extends Widget {
 	public DisplayMarker(Marker marker) {
 	    this.m = marker;
 	    this.tip = Text.render(m.nm);
+		if (!titleTexMap.containsKey(tip.text))
+			titleTexMap.put(tip.text, Text.renderstroked(tip.text, Color.white, Color.BLACK, Text.num12boldFnd).tex());
 	    if(marker instanceof PMarker)
 		this.hit = Area.sized(flagcc.inv(), UI.scale(flagbg.sz));
 	}
@@ -647,6 +650,10 @@ public class MiniMap extends Widget {
 		if(filter(mark))
 		    continue;
 		mark.draw(g, mark.m.tc.sub(dloc.tc).div(scalef()).add(hsz));
+		if (!compact) {
+			if (OptWnd.showMapMarkerNamesCheckBox.a)
+				g.image(DisplayMarker.titleTexMap.get(mark.tip.text), mark.m.tc.sub(dloc.tc).div(scalef()).add(hsz).add(-mark.tip.text.length()*3,-30));
+		}
 	    }
 	}
     }
