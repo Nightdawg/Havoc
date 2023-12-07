@@ -51,7 +51,7 @@ import java.awt.datatransfer.*;
 public class ChatUI extends Widget {
     public static final RichText.Foundry fnd = new RichText.Foundry(new ChatParser(TextAttribute.FONT, Text.dfont.deriveFont(UI.scale(12f)), TextAttribute.FOREGROUND, Color.BLACK)).aa(true);
     public static final Text.Foundry qfnd = new Text.Foundry(Text.dfont, 12, new java.awt.Color(192, 255, 192));
-    public static final int selw = UI.scale(130);
+    public static final int selw = UI.scale(150);
     public static final Coord marg = UI.scale(new Coord(9, 9));
     public static final Color[] urgcols = new Color[] {
 	null,
@@ -894,7 +894,7 @@ public class ChatUI extends Widget {
 
     public static class MultiChat extends EntryChannel {
 	public final int urgency;
-	private final String name;
+	final String name;
 	private final Map<Integer, Color> pc = new HashMap<Integer, Color>();
 
 	public class NamedMessage extends Message {
@@ -1347,7 +1347,7 @@ public class ChatUI extends Widget {
 			g.aimage(icon, Coord.of(x, my), 0.0, 0.5); x += icon.sz().x;
 			g.aimage(name, Coord.of(x, my), 0.0, 0.5);
 		    }
-		    g.image(chandiv, Coord.of(0, y + chanseld.sz().y));
+		    g.image(chandiv, Coord.of(UI.scale(6), y + chanseld.sz().y));
 		}
 	    }
 	}

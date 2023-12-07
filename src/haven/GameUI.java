@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -153,6 +153,11 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
 	public static boolean showUI = true;
 	public CraftHistoryBelt histbelt;
+
+	public boolean areaChatLoaded = false;
+
+	private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+	private Future<?> areaChatFuture;
 
 
 
@@ -869,6 +874,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
     public void addchild(Widget child, Object... args) {
 	String place = ((String)args[0]).intern();
+		System.out.println("Place: " + place);
 	if(place == "mapview") {
 	    child.resize(sz);
 	    map = add((MapView)child, Coord.z);
@@ -967,6 +973,20 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    zerg.addpol(p);
 	} else if(place == "chat") {
 	    chat.addchild(child);
+		if (!areaChatLoaded){ // ND: Do this stuff to select Area Chat on login
+			Map<String, ChatUI.MultiChat> channels = new HashMap<>();
+			for (Widget w = chat.lchild; w != null; w = w.prev) {
+				if (w instanceof ChatUI.MultiChat) {
+					ChatUI.MultiChat chat = ((ChatUI.MultiChat) w);
+					channels.put(chat.name, chat);
+				}
+			}
+			if (channels.get("Area Chat") != null)
+				chat.select(channels.get("Area Chat"), false);
+			if (areaChatFuture != null)
+				areaChatFuture.cancel(true);
+			areaChatFuture = executor.scheduleWithFixedDelay(this::setAreaChatLoaded, 1000, 5000, TimeUnit.MILLISECONDS);
+		}
 	} else if(place == "party") {
 	    ulpanel.add(child, portrait.pos("bl").adds(0, 10));
 	} else if(place == "meter") {
@@ -1046,6 +1066,11 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	    throw(new UI.UIException("Illegal gameui child", place, args));
 	}
     }
+
+	public void setAreaChatLoaded() {
+		areaChatLoaded = true;
+		areaChatFuture.cancel(true);
+	}
 
     public void cdestroy(Widget w) {
 	if(w instanceof Window) {

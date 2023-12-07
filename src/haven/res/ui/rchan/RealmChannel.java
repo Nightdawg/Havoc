@@ -15,7 +15,7 @@ public class RealmChannel extends ChatUI.MultiChat {
     private final Map<Long, Sender> senders = new HashMap<>();
 
     public RealmChannel(String name) {
-	super(true, name, 0);
+	super(true, name + " (P)", 0);
     }
 
     public static Widget mkwidget(UI ui, Object[] args) {
