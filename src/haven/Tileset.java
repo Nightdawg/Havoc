@@ -302,6 +302,21 @@ public class Tileset extends Resource.Layer {
 				}
 			}
 		}
+		if (res == null || (res != null && !res.name.startsWith("gfx/tiles/"))){
+			DRandom trnd = new DRandom(new DRandom(seed).randl(res.name.hashCode(), trn.tile));
+			Random ornd = new Random();
+			Tileset set = trn.tileset(trn.tile);
+			for(Coord tc : trn.tiles()) {
+				ornd.setSeed(trnd.randl(tc.x - trn.area.ul.x, tc.y - trn.area.ul.y));
+				if(ornd.nextDouble() < p) {
+					Gob g = new Flavor.Obj(buf,
+							tc.mul(tilesz).add(tilesz.mul(ornd.nextDouble(), ornd.nextDouble())),
+							ornd.nextDouble() * 2 * Math.PI);
+					g.setattr(new ResDrawable(g, this.res, Message.nil));
+					buf.add(g, set.flavobjmat);
+				}
+			}
+		}
 	}
     }
 
