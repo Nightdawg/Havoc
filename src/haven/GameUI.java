@@ -874,7 +874,6 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 
     public void addchild(Widget child, Object... args) {
 	String place = ((String)args[0]).intern();
-		System.out.println("Place: " + place);
 	if(place == "mapview") {
 	    child.resize(sz);
 	    map = add((MapView)child, Coord.z);
