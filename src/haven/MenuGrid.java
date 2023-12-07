@@ -402,6 +402,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/QuestgiverTriangulation");
 //		makeLocal("paginae/nightdawg/OtherTools/Timers");
 		makeLocal("paginae/nightdawg/OtherTools/QuestHelper");
+		makeLocal("paginae/nightdawg/OtherTools/RefillCheeseTrays");
 	}
 
 	public static ArrayList<String> customButtonPaths = new ArrayList<String>();
@@ -908,7 +909,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.questhelper.show();
 					gui.questhelper.active = true;
 				}
+			}else if (ad[2].equals("RefillCheeseTrays")) {
+				// TODO: refill cheese trays here
 			}
+
 		}
 	}
 
