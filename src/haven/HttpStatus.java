@@ -118,19 +118,23 @@ public class HttpStatus extends HackThread {
 		    byte[] buf = new byte[1024];
 		    int len = 0;
 		    while(true) {
-			int off = len;
-			len += fp.read(buf, off, buf.length - len);
-			line: while(true) {
-			    for(int i = off; i < len; i++) {
-				if(buf[i] == 10) {
-				    handle(buf, 0, i);
-				    System.arraycopy(buf, i + 1, buf, 0, len -= i + 1);
-				    off = 0;
-				    continue line;
+				try {
+					int off = len;
+					len += fp.read(buf, off, buf.length - len);
+					line:
+					while (true) {
+						for (int i = off; i < len; i++) {
+							if (buf[i] == 10) {
+								handle(buf, 0, i);
+								System.arraycopy(buf, i + 1, buf, 0, len -= i + 1);
+								off = 0;
+								continue line;
+							}
+						}
+						break;
+					}
+				} catch (IndexOutOfBoundsException ignored){
 				}
-			    }
-			    break;
-			}
 		    }
 		} finally {
 		    fp.close();
