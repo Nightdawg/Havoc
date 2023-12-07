@@ -39,7 +39,7 @@ public class TileStatic {
         ORE_NAMES.put("argentite", "silvershine");
         ORE_NAMES.put("blackcoal", "coal");
         ORE_NAMES.put("cuprite", "wine glance");
-        ORE_NAMES.put("casserite", "casserite");
+        ORE_NAMES.put("cassiterite", "cassiterite");
         ORE_NAMES.put("chalcopyrite", "chalcopyrite");
         ORE_NAMES.put("hematite", "bloodstone");
         ORE_NAMES.put("hornsilver", "horn silver");
