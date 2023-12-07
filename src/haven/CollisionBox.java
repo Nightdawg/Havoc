@@ -122,6 +122,7 @@ public class CollisionBox extends SlottedNode implements Rendered {
 		TreeScale treeScale = null;
 		float boxScale = 1.0f;
 		boolean growingTreeOrBush = false;
+		boolean aurochsSpecialCase = false;
 		if ((res.name.startsWith("gfx/terobjs/trees") && !res.name.endsWith("log") && !res.name.endsWith("oldtrunk")) || res.name.startsWith("gfx/terobjs/bushes")) {
 			treeScale = gob.getattr(TreeScale.class);
 			if (treeScale != null) {
@@ -133,6 +134,23 @@ public class CollisionBox extends SlottedNode implements Rendered {
 		}
 		if(res.name.endsWith("/consobj")){
 			growingTreeOrBush = true;
+		}
+		if(res.name.endsWith("/cattle")){
+			for (GAttrib g : gob.attr.values()) {
+				if (g instanceof Drawable) {
+					if (g instanceof Composite) {
+						Composite c = (Composite) g;
+						if (c.comp.cmod.size() > 0) {
+							for (Composited.MD item : c.comp.cmod) {
+								if (item.mod.get().basename().equals("aurochs")){
+									growingTreeOrBush = true;
+									aurochsSpecialCase = true;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		synchronized (MODEL_CACHE) {
 			if (!growingTreeOrBush)
@@ -152,7 +170,9 @@ public class CollisionBox extends SlottedNode implements Rendered {
 						bboxa.y = neg.ac.y;
 						bboxb.x = neg.bc.x;
 						bboxb.y = neg.bc.y;
-						polygons.add(box);
+						if (!aurochsSpecialCase) {
+							polygons.add(box);
+						}
 					}
 				}
 				Collection<Resource.Obstacle> obstacles = res.layers(Resource.Obstacle.class);
@@ -178,9 +198,11 @@ public class CollisionBox extends SlottedNode implements Rendered {
 							bboxa.y = (int) minY.get().getX();
 							bboxb.x = (int) maxX.get().getX();
 							bboxb.y = (int) maxY.get().getY();
-							polygons.add(Arrays.stream(polygon)
-									.map(coord2d -> new Coord3f((float) coord2d.x, (float) -coord2d.y, Z))
-									.collect(Collectors.toList()));
+							if (!aurochsSpecialCase) {
+								polygons.add(Arrays.stream(polygon)
+										.map(coord2d -> new Coord3f((float) coord2d.x, (float) -coord2d.y, Z))
+										.collect(Collectors.toList()));
+							}
 						}
 					}
 				}
@@ -198,6 +220,10 @@ public class CollisionBox extends SlottedNode implements Rendered {
 						ax = -6F; bx = 6F; ay = -3F; by = 3F;
 					} else if (res.name.startsWith("gfx/kritter/horse/")) {
 						ax = -8F; bx = 8F; ay = -4F; by = 4F;
+					} else if (res.name.startsWith("gfx/kritter/cattle/cattle")) {
+						if (aurochsSpecialCase){
+							ax = -11.8F; bx = 11.8F; ay = -3.8F; by = 3.8F;
+						}
 					} else if (res.name.endsWith("/consobj")) {
 						ResDrawable rd = gob.getattr(ResDrawable.class);
 						if (rd != null && rd.sdt.rbuf.length >= 4) {
