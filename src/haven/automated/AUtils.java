@@ -649,16 +649,18 @@ public class AUtils {
         return true;
     }
 
-    public static WItem findItemByPrefixInInv(final Inventory inv, final String resNamePrefix) {
-        for (Widget wdg = inv.child; wdg != null; wdg = wdg.next) {
-            if (wdg instanceof WItem) {
-                final WItem witm = (WItem)wdg;
-                try {
-                    if (witm.item.getres().name.startsWith(resNamePrefix)) {
-                        return witm;
+    public static WItem findItemByPrefixInAllInventories(GameUI gui, final String resNamePrefix) {
+        for(Inventory inventory : gui.getAllInventories()){
+            for (Widget wdg = inventory.child; wdg != null; wdg = wdg.next) {
+                if (wdg instanceof WItem) {
+                    final WItem witm = (WItem)wdg;
+                    try {
+                        if (witm.item.getres().name.startsWith(resNamePrefix)) {
+                            return witm;
+                        }
                     }
+                    catch (Loading ignored) {}
                 }
-                catch (Loading ignored) {}
             }
         }
         return null;

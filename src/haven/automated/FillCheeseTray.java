@@ -12,7 +12,7 @@ public class FillCheeseTray implements Runnable {
     @Override
     public void run() {
         WItem curd;
-        while ((curd = AUtils.findItemByPrefixInInv(this.gui.maininv, "gfx/invobjs/curd")) != null || this.gui.vhand != null) {
+        while ((curd = AUtils.findItemByPrefixInAllInventories(gui, "gfx/invobjs/curd")) != null || this.gui.vhand != null) {
             WItem tray = null;
             for (Widget w = this.gui.lchild; w != null && tray == null; w = w.prev) {
                 if (w instanceof Window) {
