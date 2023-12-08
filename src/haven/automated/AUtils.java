@@ -613,4 +613,71 @@ public class AUtils {
         return false;
     }
 
+    public static boolean waitForEmptyHand(final GameUI gui, final int timeout, final String error) throws InterruptedException {
+        int t = 0;
+        while (gui.vhand != null) {
+            t += 5;
+            if (t >= timeout) {
+                gui.error(error);
+                return false;
+            }
+            try {
+                Thread.sleep(5L);
+            }
+            catch (InterruptedException ie) {
+                throw ie;
+            }
+        }
+        return true;
+    }
+
+    public static boolean waitForOccupiedHand(final GameUI gui, final int timeout, final String error) throws InterruptedException {
+        int t = 0;
+        while (gui.vhand == null) {
+            t += 5;
+            if (t >= timeout) {
+                gui.error(error);
+                return false;
+            }
+            try {
+                Thread.sleep(5L);
+            }
+            catch (InterruptedException ie) {
+                throw ie;
+            }
+        }
+        return true;
+    }
+
+    public static WItem findItemByPrefixInInv(final Inventory inv, final String resNamePrefix) {
+        for (Widget wdg = inv.child; wdg != null; wdg = wdg.next) {
+            if (wdg instanceof WItem) {
+                final WItem witm = (WItem)wdg;
+                try {
+                    if (witm.item.getres().name.startsWith(resNamePrefix)) {
+                        return witm;
+                    }
+                }
+                catch (Loading ignored) {}
+            }
+        }
+        return null;
+    }
+
+    public static WItem findItemInInv(final Inventory inv, final String resName) {
+        for (Widget wdg = inv.child; wdg != null; wdg = wdg.next) {
+            if (wdg instanceof WItem) {
+                final WItem witm = (WItem)wdg;
+                try {
+                    if (witm.item.getres().name.equals(resName)) {
+                        return witm;
+                    }
+                }
+                catch (Loading ignored) {}
+            }
+        }
+        return null;
+    }
+
+
 }

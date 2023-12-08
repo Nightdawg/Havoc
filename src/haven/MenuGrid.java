@@ -910,7 +910,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 					gui.questhelper.active = true;
 				}
 			}else if (ad[2].equals("RefillCheeseTrays")) {
-				// TODO: refill cheese trays here
+				gui.runActionThread(new Thread(new FillCheeseTray(gui), "FillCheeseTrays"));
 			}
 
 		}
