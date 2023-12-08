@@ -301,7 +301,6 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                         if (res.equals("gfx/terobjs/ladder") || res.equals("gfx/terobjs/minesupport")) {
                             if (support.rc.dist(minedTile) <= 100) {
                                 if (support.getattr(GobHealth.class) != null) {
-                                    System.out.println(support.getattr(GobHealth.class).hp);
                                     if (support.getattr(GobHealth.class).hp <= 0.5 && stopMiningFifty) {
                                         ui.root.wdgmsg("gk", 27);
                                         gui.error("Support nearby below 50%..");
@@ -316,7 +315,6 @@ public class MiningSafetyAssistant extends Window implements Runnable {
                         } else if (res.equals("gfx/terobjs/column")) {
                             if (support.rc.dist(minedTile) <= 125) {
                                 if (support.getattr(GobHealth.class) != null) {
-                                    System.out.println(support.getattr(GobHealth.class).hp);
                                     if (support.getattr(GobHealth.class).hp <= 0.5 && stopMiningFifty) {
                                         ui.root.wdgmsg("gk", 27);
                                         gui.error("Support nearby below 50%..");
