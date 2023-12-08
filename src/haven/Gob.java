@@ -1543,7 +1543,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public void hidingBoxUpdated() {
 		status.update(StatusType.hidingBox);
 	}
-	public void drawableUpdated() { status.update(StatusType.drawable); }
+	public void drawableUpdated() {
+		status.update(StatusType.drawable);
+		growthInfoUpdated();
+	}
 	public void iconUpdated() { status.update(StatusType.icon);}
 	private void updateState() {
 		if(updateseq == 0 || !status.updated()) {return;}
