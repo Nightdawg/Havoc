@@ -118,7 +118,7 @@ public class CombatDistanceTool extends Window implements Runnable {
             double addedValue = 0.0;
             synchronized (ui.sess.glob.oc) {
                 for (Gob gob : ui.sess.glob.oc) {
-                    if (gob.getres() != null && gob.rc.dist(gui.map.player().rc) < 1) {
+                    if (gob.getres() != null && gob.rc.dist(gui.map.player().rc) < 11) {
                         addedValue = vehicleDistance.getOrDefault(gob.getres().name, 0.0);
                     }
                     if(gob.id == gui.fv.current.gobid){
