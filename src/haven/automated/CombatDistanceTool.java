@@ -113,7 +113,7 @@ public class CombatDistanceTool extends Window implements Runnable {
 
     private void tryToAutoDistance() {
         if (gui != null && gui.map != null && gui.map.player() != null && gui.fv.current != null) {
-            double value = -1.0;
+            Double value = -1.0;
 
             double addedValue = 0.0;
             synchronized (ui.sess.glob.oc) {
@@ -128,7 +128,7 @@ public class CombatDistanceTool extends Window implements Runnable {
                     }
                 }
             }
-            if(value > 0){
+            if(value != null && value > 0){
                 moveToDistance(value+addedValue);
             }
 
