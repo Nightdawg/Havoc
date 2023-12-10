@@ -27,6 +27,8 @@ public class TileHighlight {
     public static final Color other = new Color(255, 255, 255, 32);
     public static final int elh = elf.height() + UI.scale(2);
 
+
+
 	public static final Map<String, List<String>> tileHighhlightNames = new HashMap<String, List<String>>(){{
 		put("Ground Tiles", new ArrayList<String>(){{
 			add("gfx/tiles/ashland");
@@ -57,11 +59,13 @@ public class TileHighlight {
 			add("gfx/tiles/highground");
 			add("gfx/tiles/leaf");
 			add("gfx/tiles/leafpatch");
+			add("gfx/tiles/leafdetritus");
 			add("gfx/tiles/lichenwold");
 			add("gfx/tiles/lushcave");
 			add("gfx/tiles/lushfield");
 			add("gfx/tiles/mine");
 			add("gfx/tiles/moor");
+			add("gfx/tiles/mossbrush");
 			add("gfx/tiles/mountain");
 			add("gfx/tiles/mountainsnow");
 			add("gfx/tiles/nil");
@@ -90,6 +94,7 @@ public class TileHighlight {
 			add("gfx/tiles/warmdepth");
 			add("gfx/tiles/water");
 			add("gfx/tiles/wildmoor");
+			add("gfx/tiles/wildturf");
 		}});
 		put("Ores (Cave Walls)", new ArrayList<String>(){{
 			add("gfx/tiles/rocks/argentite");
