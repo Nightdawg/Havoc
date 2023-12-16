@@ -13,10 +13,10 @@ public class PingSprite extends MapSprite {
     private Color col;
     private double timetolive;
 
-    public PingSprite(Coord2d rc, Color col) {
+    public PingSprite(Coord2d rc, Color col, int timetolive) {
         this.rc = rc;
         this.col = col;
-        timetolive = 4;
+        this.timetolive = timetolive;
     }
     
     @Override

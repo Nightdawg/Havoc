@@ -1002,7 +1002,7 @@ public class ChatUI extends Widget {
 									Coord2d playertopartym = partyc.sub(playerc);
 									Coord2d partyoffset = new Coord2d(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
 									Coord2d pingc = playerc.add(playertopartym).add(partyoffset);
-									ui.gui.mapfile.view.addSprite(new PingSprite(pingc, pm.col));
+									ui.gui.mapfile.view.addSprite(new PingSprite(pingc, pm.col, 4));
 									try {
 										AudioInputStream in = AudioSystem.getAudioInputStream(mapPingFile);
 										AudioFormat tgtFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2,4, 44100, false);

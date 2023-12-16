@@ -29,6 +29,7 @@ package haven;
 import haven.automated.GobSearcher;
 import haven.automated.helpers.HitBoxes;
 import haven.automated.mapper.MappingClient;
+import haven.map.PingSprite;
 import haven.render.*;
 import haven.render.gl.GLObject;
 import haven.res.gfx.fx.msrad.MSRad;
@@ -137,6 +138,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			toggleMineLadderRadius();
 			toggleBeeSkepRadius();
 			toggleTroughsRadius();
+
 			HitBoxes.addHitBox(this);
 			if (getattr(Drawable.class) instanceof Composite) {
 				try {
@@ -144,8 +146,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 //					knocked = false;
 					isComposite = true;
 					if(!alarmPlayed.contains(id)) {
-						if(AlarmManager.play(res.name, Gob.this))
+						if(AlarmManager.play(res.name, Gob.this)){
+							addTenSecondsMarker();
 							alarmPlayed.add(id);
+						}
 					}
 					initiateAnimalOverlays();
 					initCustomGAttrs();
@@ -165,6 +169,18 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 				initiateAnimalOverlays();
 			}
 			toggleSpeedBuffAuras();
+		}
+	}
+
+	public void addTenSecondsMarker(){
+		if(this.getres() != null && (this.getres().name.equals("gfx/kritter/spermwhale/spermwhale") || this.getres().name.equals("gfx/kritter/orca/orca"))){
+			if(glob.sess.ui.gui != null && glob.sess.ui.gui.map != null && glob.sess.ui.gui.map.player() != null){
+				Coord2d playerc = glob.sess.ui.gui.map.player().rc;
+				Coord2d partyc = rc;
+				Coord2d playertopartym = partyc.sub(playerc);
+				Coord2d pingc = playerc.add(playertopartym);
+				glob.sess.ui.gui.mapfile.view.addSprite(new PingSprite(pingc, Color.red, 20));
+			}
 		}
 	}
 
