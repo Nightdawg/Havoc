@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -28,13 +29,16 @@ public class StatusWdg extends Widget {
     // GNU ping IPv4:   64 bytes from ansgar.seatribe.se (213.239.201.139): icmp_seq=1 ttl=50 time=72.5 ms
     // GNU ping IPv6:   64 bytes from ansgar.seatribe.se: icmp_seq=1 ttl=53 time=15.3 ms
     private static final Pattern pattern = Pattern.compile(iswindows ? ".+?=(\\d+)[^ \\d\\s]" : ".+?time=(\\d+\\.?\\d*) ms");
-    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private static Future<?> future;
 
     public final HttpStatus stat;
 
     public StatusWdg() {
         this.stat = new HttpStatus(Bootstrap.defserv.get());
-        executor.scheduleWithFixedDelay(this::startUpdater, 0, 5, TimeUnit.SECONDS);
+        if (future != null)
+            future.cancel(true);
+        future = executor.scheduleWithFixedDelay(this::startUpdater, 0, 5, TimeUnit.SECONDS);
     }
 
     private void updatepingtime() {

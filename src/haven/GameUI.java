@@ -112,8 +112,8 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public Thread oceanScoutBotThread;
 	public TunnelerBot tunnelerBot;
 	public Thread tunnelerBotThread;
-	public RecipeCollector recipeCollector;
-	private Thread recipeCollectorThread;
+	public static RecipeCollector recipeCollector;
+	private static Thread recipeCollectorThread;
 	public CookingRecipes cookbook;
 	public MiningSafetyAssistant miningSafetyAssistantWindow;
 	public Thread miningSafetyAssistantThread;
@@ -157,9 +157,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	public boolean areaChatLoaded = false;
 
 	private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-	private Future<?> areaChatFuture;
-
-
+	private static Future<?> areaChatFuture;
 
 	private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(GameUI.class, slot -> slot.wdg())

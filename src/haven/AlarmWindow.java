@@ -27,8 +27,8 @@ public class AlarmWindow extends Window {
 	static Label bottomNote;
 	static Label defaultsReloadedText;
 	private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-	private Future<?> future;
-	private Future<?> future2;
+	private static Future<?> future;
+	private static Future<?> future2;
 
 
 	public AlarmWindow() {

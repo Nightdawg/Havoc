@@ -857,7 +857,7 @@ public class GobIcon extends GAttrib {
 		}
 
 		private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-		private Future<?> future;
+		private static Future<?> future;
 		private void updateAllCheckbox() {
 			if(toggleAll == null) {
 				return;

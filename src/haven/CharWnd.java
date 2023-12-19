@@ -80,7 +80,7 @@ public class CharWnd extends Window {
     private long scost; // ND: Made this long so it doesn't flip over when adding way too many points for the memes
 
 	private static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-	private Future<?> equiporyFuture;
+	private static Future<?> equiporyFuture;
 
     public static class FoodMeter extends Widget {
 	public static final Tex frame =  Resource.loadtex("gfx/hud/chr/foodm"); // ND: The size of this image affects everything on the left side lmao

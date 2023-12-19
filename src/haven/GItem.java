@@ -205,7 +205,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 		info.add(new ItemInfo.Pagina(this, pg.text));
 	    this.info = info;
 		try {
-			ui.gui.recipeCollector.addFood(info, getres().name);
+			GameUI.recipeCollector.addFood(info, getres().name);
 		} catch (NullPointerException ex){
 			System.out.println("Problem with adding new food to cookbook.");
 		}
