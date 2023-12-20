@@ -10,6 +10,7 @@ public class QBuff extends ItemInfo.Tip {
     public BufferedImage icon;
     public String name;
     public double q;
+	public Tex qtex = null;
 
     public QBuff(Owner owner, BufferedImage icon, String name, double q) {
 	super(owner);

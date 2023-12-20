@@ -17,6 +17,14 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
 	//super(owner, Resource.classres(Quality.class).layer(Resource.imgc, 0).scaled(), "Quality", q);
         super(owner, qualityWorkaround, "Quality", q); //ND: workaround suggested by loftar
     }
+    public Quality(Owner owner, double q, boolean goFuckYourself) {
+        //super(owner, Resource.classres(Quality.class).layer(Resource.imgc, 0).scaled(), "Quality", q);
+        super(owner, qualityWorkaround, "Quality", q); //ND: workaround suggested by loftar
+        if (goFuckYourself){
+            qtex = overlay();
+        }
+    }
+
 
     public static ItemInfo mkinfo(Owner owner, Object... args) {
 	return(new Quality(owner, ((Number)args[1]).doubleValue()));

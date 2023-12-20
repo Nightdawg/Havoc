@@ -33,8 +33,10 @@ import haven.res.ui.tt.q.quality.Quality;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owner {
     public Indir<Resource> res;
@@ -190,11 +192,65 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	GSprite spr = spr();
 	if(spr != null)
 	    spr.tick(dt);
+	updateQuality();
 	updcontinfo();
 	if(!hoverset)
 	    hovering = null;
 	hoverset = false;
     }
+
+	private final AtomicBoolean needUpdateQuality = new AtomicBoolean();
+
+	private void updateQuality() {
+		if (needUpdateQuality.get()) {
+			needUpdateQuality.set(false);
+			try {
+				List<ItemInfo> info = this.info;
+				if (info != null && !info.isEmpty()) {
+					synchronized (infoSync) {
+						info = this.info;
+						if (info != null && !info.isEmpty()) {
+							Widget stack = contents;
+							if (stack != null) {
+								List<WItem> ret = new ArrayList<>();
+								if (stack.getClass().toString().contains("ItemStack")) {
+									try {
+										Field fwmap = stack.getClass().getField("wmap");
+										Map<GItem, WItem> wmap = (Map<GItem, WItem>) fwmap.get(stack);
+										ret.addAll(wmap.values());
+									} catch (IllegalAccessException | NoSuchFieldException e) {
+										throw (new RuntimeException(e));
+									}
+								}
+								if (!ret.isEmpty()) {
+									int amount = 0;
+									double sum = 0;
+									for (WItem w : ret) {
+										QBuff q = w.item.quality();
+										if (q != null) {
+											amount++;
+											sum += q.q;
+										}
+									}
+									if (amount > 0) {
+										Quality q = ItemInfo.find(Quality.class, info);
+										if (q == null) {
+											info.add(new Quality(this, sum / amount, true));
+										} else {
+											q.q = sum / amount;
+											quality().qtex = q.overlay();
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			} catch (Throwable e) {
+				needUpdateQuality.set(true);
+			}
+		}
+	}
 
     public List<ItemInfo> info() {
 	if(this.info == null) {
@@ -209,6 +265,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 		} catch (NullPointerException ex){
 			System.out.println("Problem with adding new food to cookbook.");
 		}
+		needUpdateQuality.set(true);
 	}
 	return(this.info);
     }
@@ -255,6 +312,8 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	    super.uimsg(name, args);
 	}
     }
+
+	private final Object infoSync = new Object();
 
     public void addchild(Widget child, Object... args) {
 	/* XXX: Update this to use a checkable args[0] once a

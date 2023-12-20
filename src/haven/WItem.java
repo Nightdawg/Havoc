@@ -216,13 +216,13 @@ public class WItem extends Widget implements DTarget {
     public void draw(GOut g) {
 	GSprite spr = item.spr();
 	if(spr != null) {
+		QBuff itemQuality = item.quality();
 	    Coord sz = spr.sz();
 	    g.defstate();
 		String itemName = item.getname().toLowerCase();
 		String searchKeyword = ItemSearcher.itemHighlighted.toLowerCase();
 
 		if (searchKeyword.length() > 1) {
-			QBuff itemQuality = item.quality();
 			double quality = (itemQuality != null) ? itemQuality.q : -1;
 			boolean qualityMatch = false;
 			boolean nameMatch = false;
@@ -305,6 +305,11 @@ public class WItem extends Widget implements DTarget {
 			drawCircleProgress(g, sz);
 		else
 			drawmeter(g, sz);
+		if (itemQuality != null) {
+			if (itemQuality.qtex != null) {
+				g.aimage(itemQuality.qtex, new Coord(g.sz().x, 0), 1, 0.2);
+			}
+		}
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
 	}
