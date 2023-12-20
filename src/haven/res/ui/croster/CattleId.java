@@ -55,7 +55,7 @@ public class CattleId extends GAttrib implements RenderTree.Node, PView.Render2D
     private int lgrp;
     private Tex rnm;
     public void draw(GOut g, Pipe state) {
-	Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 25), state, Area.sized(g.sz())).round2();
+	Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 10), state, Area.sized(g.sz())).round2();
 	if(sc.isect(Coord.z, g.sz())) {
 	    Entry entry = entry();
 	    int grp = (entry != null) ? entry.grp : 0;
@@ -67,7 +67,7 @@ public class CattleId extends GAttrib implements RenderTree.Node, PView.Render2D
 		lgrp = grp;
 	    }
 	    if((rnm != null) && (wnd != null) && wnd.visible) {
-		Coord nmc = sc.sub(rnm.sz().x / 2, -rnm.sz().y);
+		Coord nmc = sc.sub(rnm.sz().x / 2, 0);
 		g.image(rnm, nmc);
 		if((entry != null) && entry.mark.a)
 		    g.image(CheckBox.smark, nmc.sub(CheckBox.smark.sz().x, 0));
