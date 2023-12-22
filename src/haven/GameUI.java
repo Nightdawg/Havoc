@@ -31,6 +31,7 @@ import haven.automated.cookbook.CookingRecipes;
 import haven.automated.cookbook.RecipeCollector;
 import haven.automated.mapper.MappingClient;
 import haven.res.ui.stackinv.ItemStack;
+import haven.resutil.Ridges;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -438,6 +439,7 @@ public class GameUI extends ConsoleHost implements Console.Directory, UI.Message
 	if (!Utils.getprefb("showCraftHistoryBar", false)) {
 		histbelt.hide();
 	}
+	Ridges.setCliffMatColor();
     }
 
     protected void attached() {

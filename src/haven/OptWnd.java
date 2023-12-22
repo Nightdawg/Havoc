@@ -28,6 +28,7 @@ package haven;
 
 import haven.render.*;
 import haven.res.gfx.fx.msrad.MSRad;
+import haven.resutil.Ridges;
 import haven.sprites.AggroCircleSprite;
 import haven.sprites.AuraCircleSprite;
 import haven.sprites.ChaseVectorSprite;
@@ -3331,7 +3332,6 @@ public class OptWnd extends Window {
 	public static ColorOptionWidget collisionBoxesColorOptionWidget;
 	public static String[] collisionBoxesColorSetting = Utils.getprefsa("collisionBoxes" + "_colorSetting", new String[]{"255", "255", "255", "235"});
 	public static ColorOptionWidget cliffsHighlightColorOptionWidget;
-	public static Pipe.Op cliffMat = null;
 	public static String[] cliffsHighlightColorSetting = Utils.getprefsa("cliffsHighlight" + "_colorSetting", new String[]{"255", "0", "0", "170"});
 	public static ColorOptionWidget fullContainerOrFinishedWorkstationColorOptionWidget;
 	public static String[] fullContainerOrFinishedWorkstationColorSetting = Utils.getprefsa("fullContainerOrFinishedWorkstation" + "_colorSetting", new String[]{"170", "0", "0", "170"});
@@ -3433,7 +3433,7 @@ public class OptWnd extends Window {
 			}), leftColumn.pos("ur").adds(30, 0));
 			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
 			leftColumn = add(cliffsHighlightColorOptionWidget = new ColorOptionWidget("Cliffs Highlight (Color Overlay):", "cliffsHighlight", 246, Integer.parseInt(cliffsHighlightColorSetting[0]), Integer.parseInt(cliffsHighlightColorSetting[1]), Integer.parseInt(cliffsHighlightColorSetting[2]), Integer.parseInt(cliffsHighlightColorSetting[3]), (Color col) -> {
-				cliffMat = new MixColor(cliffsHighlightColorOptionWidget.currentColor);
+				Ridges.setCliffMatColor();
 				if (ui.sess != null)
 					ui.sess.glob.map.invalidateAll();
 			}){}, leftColumn.pos("bl").adds(0, 1).x(0));
@@ -3441,12 +3441,11 @@ public class OptWnd extends Window {
 			leftColumn = add(new Button(UI.scale(70), "Reset", false).action(() -> {
 				Utils.setprefsa("cliffsHighlight" + "_colorSetting", new String[]{"255", "0", "0", "170"});
 				cliffsHighlightColorOptionWidget.cb.colorChooser.setColor(cliffsHighlightColorOptionWidget.currentColor = new Color(255, 0, 0, 170));
-				cliffMat = new MixColor(cliffsHighlightColorOptionWidget.currentColor);
+				Ridges.setCliffMatColor();
 				if (ui.sess != null)
 					ui.sess.glob.map.invalidateAll();
 			}), leftColumn.pos("ur").adds(30, 0));
 			leftColumn.tooltip = RichText.render("Reset to default color", UI.scale(300));
-			cliffMat = new MixColor(OptWnd.cliffsHighlightColorOptionWidget.currentColor);
 
 			leftColumn = add(new Label("Containers & Workstations"), leftColumn.pos("bl").adds(0, 12).x(UI.scale(122)));
 			leftColumn = add(fullContainerOrFinishedWorkstationColorOptionWidget = new ColorOptionWidget("Full Container / Finished Workstation:", "fullContainerOrFinishedWorkstation", 246,
@@ -4155,7 +4154,6 @@ public class OptWnd extends Window {
 		Panel alarmsettings = add(new NDAlarmsAndSoundsSettingsPanel(advancedSettings));
 		Panel colorsettings = add(new NDColorSettingsPanel(advancedSettings));
 		Panel serverintegrationsettings = add(new NDServerIntegrationSettingsPanel(advancedSettings));
-
 
 		int y2 = UI.scale(6);
 		y2 = advancedSettings.add(new PButton(UI.scale(200), "Interface & Display Settings", -1, iface, "Interface & Display Settings"), 0, y2).pos("bl").adds(0, 5).y;
