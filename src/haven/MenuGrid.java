@@ -396,7 +396,6 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 		makeLocal("paginae/nightdawg/OtherTools/HarvestNearestDreamcatcher");
 		makeLocal("paginae/nightdawg/OtherTools/DestroyNearestTrellisPlantScript");
 		makeLocal("paginae/nightdawg/OtherTools/CombatDistanceTool");
-		makeLocal("paginae/nightdawg/OtherTools/PanicButton");
 		makeLocal("paginae/nightdawg/OtherTools/InventorySearcher");
 		makeLocal("paginae/nightdawg/OtherTools/ObjectSearcher");
 		makeLocal("paginae/nightdawg/OtherTools/QuestgiverTriangulation");
@@ -862,15 +861,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 						gui.combatDistanceToolThread = null;
 					}
 				}
-			} else if (ad[2].equals("PanicButton")) {
-				if(gui.panicButtonWindow != null){
-					gui.panicButtonWindow.reqdestroy();
-					gui.panicButtonWindow = null;
-				} else {
-					gui.panicButtonWindow = new PanicButtonWindow(gui);
-					gui.add(gui.panicButtonWindow, new Coord(gui.sz.x/2 - gui.panicButtonWindow.sz.x/2, gui.sz.y/2 - gui.panicButtonWindow.sz.y/2 - 300));
-				}
-			} else if (ad[2].equals("InventorySearcher")) {
+			}
+			else if (ad[2].equals("InventorySearcher")) {
 				if(gui.itemSearcher != null){
 					gui.itemSearcher.reqdestroy();
 					gui.itemSearcher = null;
