@@ -148,7 +148,7 @@ public class RecipeCollector implements Runnable {
         queuedFood.clear();
 
         if(currentQueue.size() > 0){
-            sendToHttpServer(currentQueue);
+//            sendToHttpServer(currentQueue);
 
             for(ParsedFoodInfo foodInfo : currentQueue){
                 insertIntoDatabase(foodInfo);
@@ -156,62 +156,62 @@ public class RecipeCollector implements Runnable {
         }
     }
 
-    public void sendToHttpServer(Set<ParsedFoodInfo> foodInfos) {
-        JSONArray jsonArray = new JSONArray();
-        for (ParsedFoodInfo foodInfo : foodInfos) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("hash", foodInfo.hash);
-            jsonObject.put("name", foodInfo.itemName);
-            jsonObject.put("resource", foodInfo.resourceName);
-            jsonObject.put("energy", foodInfo.energy);
-            jsonObject.put("hunger", foodInfo.hunger);
-            jsonObject.put("totalFep", foodInfo.totalFep);
-            jsonObject.put("str1", foodInfo.str1);
-            jsonObject.put("str2", foodInfo.str2);
-            jsonObject.put("agi1", foodInfo.agi1);
-            jsonObject.put("agi2", foodInfo.agi2);
-            jsonObject.put("int1", foodInfo.int1);
-            jsonObject.put("int2", foodInfo.int2);
-            jsonObject.put("con1", foodInfo.con1);
-            jsonObject.put("con2", foodInfo.con2);
-            jsonObject.put("per1", foodInfo.per1);
-            jsonObject.put("per2", foodInfo.per2);
-            jsonObject.put("cha1", foodInfo.cha1);
-            jsonObject.put("cha2", foodInfo.cha2);
-            jsonObject.put("dex1", foodInfo.dex1);
-            jsonObject.put("dex2", foodInfo.dex2);
-            jsonObject.put("wil1", foodInfo.wil1);
-            jsonObject.put("wil2", foodInfo.wil2);
-            jsonObject.put("psy1", foodInfo.psy1);
-            jsonObject.put("psy2", foodInfo.psy2);
-            JSONArray ingredientsArray = new JSONArray();
-            for (ParsedFoodInfo.FoodIngredient ingredient : foodInfo.ingredients) {
-                JSONObject ingredientObject = new JSONObject();
-                ingredientObject.put("name", ingredient.name);
-                ingredientObject.put("percentage", ingredient.percentage);
-                ingredientsArray.put(ingredientObject);
-            }
-            jsonObject.put("ingredients", ingredientsArray);
-            jsonArray.put(jsonObject);
-        }
-
-        try {
-            URL apiUrl = new URL("https://logs.havocandhearth.net/food-log/create");
-            HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("x-security-token", "96Jgf8H185h0iam54jFjg5JfsgG");
-            connection.setDoOutput(true);
-
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = jsonArray.toString().getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            connection.getResponseCode();
-            connection.disconnect();
-        } catch (IOException ignored) {}
-    }
+//    public void sendToHttpServer(Set<ParsedFoodInfo> foodInfos) {
+//        JSONArray jsonArray = new JSONArray();
+//        for (ParsedFoodInfo foodInfo : foodInfos) {
+//            JSONObject jsonObject = new JSONObject();
+//            jsonObject.put("hash", foodInfo.hash);
+//            jsonObject.put("name", foodInfo.itemName);
+//            jsonObject.put("resource", foodInfo.resourceName);
+//            jsonObject.put("energy", foodInfo.energy);
+//            jsonObject.put("hunger", foodInfo.hunger);
+//            jsonObject.put("totalFep", foodInfo.totalFep);
+//            jsonObject.put("str1", foodInfo.str1);
+//            jsonObject.put("str2", foodInfo.str2);
+//            jsonObject.put("agi1", foodInfo.agi1);
+//            jsonObject.put("agi2", foodInfo.agi2);
+//            jsonObject.put("int1", foodInfo.int1);
+//            jsonObject.put("int2", foodInfo.int2);
+//            jsonObject.put("con1", foodInfo.con1);
+//            jsonObject.put("con2", foodInfo.con2);
+//            jsonObject.put("per1", foodInfo.per1);
+//            jsonObject.put("per2", foodInfo.per2);
+//            jsonObject.put("cha1", foodInfo.cha1);
+//            jsonObject.put("cha2", foodInfo.cha2);
+//            jsonObject.put("dex1", foodInfo.dex1);
+//            jsonObject.put("dex2", foodInfo.dex2);
+//            jsonObject.put("wil1", foodInfo.wil1);
+//            jsonObject.put("wil2", foodInfo.wil2);
+//            jsonObject.put("psy1", foodInfo.psy1);
+//            jsonObject.put("psy2", foodInfo.psy2);
+//            JSONArray ingredientsArray = new JSONArray();
+//            for (ParsedFoodInfo.FoodIngredient ingredient : foodInfo.ingredients) {
+//                JSONObject ingredientObject = new JSONObject();
+//                ingredientObject.put("name", ingredient.name);
+//                ingredientObject.put("percentage", ingredient.percentage);
+//                ingredientsArray.put(ingredientObject);
+//            }
+//            jsonObject.put("ingredients", ingredientsArray);
+//            jsonArray.put(jsonObject);
+//        }
+//
+//        try {
+//            URL apiUrl = new URL("https://logs.havocandhearth.net/food-log/create");
+//            HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
+//            connection.setRequestMethod("POST");
+//            connection.setRequestProperty("Content-Type", "application/json");
+//            connection.setRequestProperty("x-security-token", "96Jgf8H185h0iam54jFjg5JfsgG");
+//            connection.setDoOutput(true);
+//
+//            try (OutputStream os = connection.getOutputStream()) {
+//                byte[] input = jsonArray.toString().getBytes(StandardCharsets.UTF_8);
+//                os.write(input, 0, input.length);
+//            }
+//
+//            connection.getResponseCode();
+//            connection.disconnect();
+//        } catch (IOException ignored) {}
+//    }
 
     private void insertIntoDatabase(ParsedFoodInfo foodInfo){
         Connection connection = null;

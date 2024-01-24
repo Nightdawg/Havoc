@@ -4,7 +4,7 @@ import haven.Button;
 import haven.Label;
 import haven.Window;
 import haven.*;
-import haven.automated.cookbook.importExport.SynchronizationHelper;
+//import haven.automated.cookbook.importExport.SynchronizationHelper;
 
 
 import java.awt.*;
@@ -115,12 +115,12 @@ public class CookingRecipes extends Window {
         add(foodList, UI.scale(5, 50));
 
 
-        add(new Button(UI.scale(150), "Synchronize") {
-            @Override
-            public void click() {
-                SynchronizationHelper.synchronizeRecipes(ui.gui);
-            }
-        }, UI.scale(25, 658));
+//        add(new Button(UI.scale(150), "Synchronize") {
+//            @Override
+//            public void click() {
+//                SynchronizationHelper.synchronizeRecipes(ui.gui);
+//            }
+//        }, UI.scale(25, 658));
 
         getData();
     }
