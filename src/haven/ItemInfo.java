@@ -291,7 +291,7 @@ public abstract class ItemInfo {
 						float count = 0;
 						try {
 							count = Float.parseFloat(m.group(1));
-						} catch (Exception e) {CrashLogger.logCrash(e);}
+						} catch (Exception e) {/*CrashLogger.logCrash(e);*/}
 						return new Content(m.group(3), m.group(2), count);
 					}
 				}
@@ -472,7 +472,7 @@ public abstract class ItemInfo {
 			}
 			parseAttrMods(bonuses, ItemInfo.findall(AttrMod.class, infos));
 		} catch (Exception e) {
-			CrashLogger.logCrash(e);
+			/*CrashLogger.logCrash(e);*/
 		}
 		Pair<Integer, Integer> wear = ItemInfo.getArmor(infos);
 		if (wear != null) {
@@ -554,7 +554,7 @@ public abstract class ItemInfo {
 						res = m.group(1);
 					}
 				} catch (Exception e) {
-					CrashLogger.logCrash(e);
+					/*CrashLogger.logCrash(e);*/
 				}
 			} else if(info instanceof Name) {
 				Name name = (Name) info;
@@ -565,7 +565,7 @@ public abstract class ItemInfo {
 							res = m.group(1);
 						}
 					} catch (Exception e) {
-						CrashLogger.logCrash(e);
+						/*CrashLogger.logCrash(e);*/
 					}
 				}
 			}
@@ -614,7 +614,7 @@ public abstract class ItemInfo {
 		}
 		return(save.get());
 	    } catch(Loading e) {
-			CrashLogger.logCrash(e);
+			/*CrashLogger.logCrash(e);*/
 		return(null);
 	    }
 	}

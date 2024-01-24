@@ -50,7 +50,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
     static {
 	try {
 	    javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-	} catch(Exception e) {CrashLogger.logCrash(e);}
+	} catch(Exception e) {/*CrashLogger.logCrash(e);*/}
     }
 
 	static {
@@ -351,7 +351,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
 		ui.interrupt();
 		try {
 		    ui.join(5000);
-		} catch(InterruptedException e) {CrashLogger.logCrash(e);}
+		} catch(InterruptedException e) {/*CrashLogger.logCrash(e);*/}
 		if(ui.isAlive())
 		    Warning.warn("ui thread failed to terminate");
 		dispose();
@@ -466,7 +466,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory, AWTE
     }
     
     public static void main(final String[] args) {
-		Thread.setDefaultUncaughtExceptionHandler(new CrashLogger());
+//		Thread.setDefaultUncaughtExceptionHandler(new CrashLogger());
 	/* Set up the error handler as early as humanly possible. */
 	ThreadGroup g = new ThreadGroup("Haven main group");
 	String ed = Utils.getprop("haven.errorurl", "");

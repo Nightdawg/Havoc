@@ -70,7 +70,7 @@ public class DowseFx extends Sprite {
 	float locoffsetZ = 0;
 	try {
 		locoffsetZ = startZ-gobowner.getc().z;
-	} catch (Loading e) {CrashLogger.logCrash(e);};
+	} catch (Loading e) {/*CrashLogger.logCrash(e);*/};
 	ByteBuffer buf = ByteBuffer.allocate(128);
 	buf.order(ByteOrder.nativeOrder());
 	byte alpha;

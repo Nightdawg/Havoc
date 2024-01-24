@@ -58,7 +58,7 @@ public class HelpWnd extends Window {
 	    try {
 		text.settext(res.get().flayer(Resource.pagina).text);
 		showing = res;
-	    } catch(Loading e) {CrashLogger.logCrash(e);}
+	    } catch(Loading e) {/*CrashLogger.logCrash(e);*/}
 	}
     }
 }

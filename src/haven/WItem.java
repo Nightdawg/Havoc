@@ -298,7 +298,7 @@ public class WItem extends Widget implements DTarget {
 				}
 			}
 		} catch (Exception e) {
-			CrashLogger.logCrash(e);
+			/*CrashLogger.logCrash(e);*/
 		}
 		drawnum(g, sz);
 		if (isNotInStudy != null && isNotInStudy)

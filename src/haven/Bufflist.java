@@ -107,7 +107,7 @@ public class Bufflist extends Widget {
 					if (res.basename().equals(name))
 						return buff;
 				} catch (Loading e) {
-					CrashLogger.logCrash(e);
+					/*CrashLogger.logCrash(e);*/
 				}
 			}
 		}

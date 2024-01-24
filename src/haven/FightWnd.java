@@ -193,7 +193,7 @@ public class FightWnd extends Widget {
 		    set(loading.get());
 		    loading = null;
 		} catch(Loading e) {
-			CrashLogger.logCrash(e);
+			/*CrashLogger.logCrash(e);*/
 		}
 	    }
 	    super.tick(dt);
@@ -494,7 +494,7 @@ public class FightWnd extends Widget {
 						g.image(add[addp == i ? 1 : 0], c.add(addOffX, subOffY));
 					}
 				} catch (Loading e) {
-					CrashLogger.logCrash(e);
+					/*CrashLogger.logCrash(e);*/
 				}
 				g.chcolor(255, 255, 255, 255);
 				String keybindString = Fightsess.kb_acts[i].key().name();
@@ -513,7 +513,7 @@ public class FightWnd extends Widget {
 						}
 					});
 				} catch (Loading e) {
-					CrashLogger.logCrash(e);
+					/*CrashLogger.logCrash(e);*/
 				}
 			}
 		}
@@ -944,7 +944,7 @@ public class FightWnd extends Widget {
 				needFilter = false;
 			}
 		} catch (Resource.Loading e) {
-			CrashLogger.logCrash(e);
+			/*CrashLogger.logCrash(e);*/
 		}
 	}
 

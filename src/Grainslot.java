@@ -35,7 +35,7 @@ public class Grainslot extends Widget implements DTarget, ItemInfo.Owner {
 		    iconc = icon.get().layer(Resource.imgc).tex();
 		g.image(iconc, new Coord(ic + 1, ic + 1));
 	    } catch(Loading e) {
-			CrashLogger.logCrash(e);
+			/*CrashLogger.logCrash(e);*/
 	    }
 	}
 	super.draw(g);

@@ -29,7 +29,7 @@ package com.jcraft.jorbis;
 
 import com.jcraft.jogg.*;
 import haven.Config;
-import haven.CrashLogger;
+/*import haven.CrashLogger;*/
 import haven.MainFrame;
 
 import java.io.InputStream;
@@ -637,7 +637,7 @@ public class VorbisFile{
         }
       }
       catch(Exception e){
-        CrashLogger.logCrash(e);
+        /*CrashLogger.logCrash(e);*/
       }
       return 0;
     }
@@ -661,7 +661,7 @@ public class VorbisFile{
       }
     }
     catch(Exception e){
-      CrashLogger.logCrash(e);
+      /*CrashLogger.logCrash(e);*/
     }
     return 0;
   }

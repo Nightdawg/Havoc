@@ -195,7 +195,7 @@ public class Session implements Resource.Resolver {
 						return entry.getKey();
 					}
 				} catch (Loading e) {
-					CrashLogger.logCrash(e);
+					/*CrashLogger.logCrash(e);*/
 				}
 			}
 		}

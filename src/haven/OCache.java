@@ -402,7 +402,7 @@ public class OCache implements Iterable<Gob> {
 					gob.init(false);
 				}
 			} catch (Exception e) {
-				CrashLogger.logCrash(e);
+				/*CrashLogger.logCrash(e);*/
 //				System.out.println("Exception initializing gob " + gob.id);
 //				e.printStackTrace();
 			}
