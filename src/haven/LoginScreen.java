@@ -43,8 +43,8 @@ public class LoginScreen extends Widget {
     private Button optbtn;
     private OptWnd opts = new OptWnd(false);
 	AccountList accounts;
-	private Window updateWindow;
-	private static boolean updateWindowShown = false;
+//	private Window updateWindow;
+//	private static boolean updateWindowShown = false;
 
     private String getpref(String name, String def) {
 	return(Utils.getpref(name + "@" + hostname, def));
@@ -67,33 +67,33 @@ public class LoginScreen extends Widget {
 	Gob.alarmPlayed.clear();
 	Gob.batsLeaveMeAlone = false;
 	Gob.batsFearMe = false;
-	updateWindow = new Window(Coord.z, "Update Available!", true) {
-		{
-			Widget prev;
-			prev = add(new Label("A new client version is available!"), UI.scale(new Coord(74, 3)));
-			prev = add(new Label("Please remember to update your client to avoid bugs & crashes."), prev.pos("bl").adds(0, 8).x(0));
-			Button close = new Button(UI.scale(120), "Close", false) {
-				@Override
-				public void click() {
-					parent.reqdestroy();
-				}
-			};
-			add(close, prev.pos("bl").adds(0, 10).adds(92, 2));
-			pack();
-		}
-
-		@Override
-		public void drag(Coord off) {
-			// ND: Don't do anything
-		}
-		@Override
-		public void wdgmsg(Widget sender, String msg, Object... args) {
-			if (msg.equals("close"))
-				reqdestroy();
-			else
-				super.wdgmsg(sender, msg, args);
-		}
-	};
+//	updateWindow = new Window(Coord.z, "Update Available!", true) {
+//		{
+//			Widget prev;
+//			prev = add(new Label("A new client version is available!"), UI.scale(new Coord(74, 3)));
+//			prev = add(new Label("Please remember to update your client to avoid bugs & crashes."), prev.pos("bl").adds(0, 8).x(0));
+//			Button close = new Button(UI.scale(120), "Close", false) {
+//				@Override
+//				public void click() {
+//					parent.reqdestroy();
+//				}
+//			};
+//			add(close, prev.pos("bl").adds(0, 10).adds(92, 2));
+//			pack();
+//		}
+//
+//		@Override
+//		public void drag(Coord off) {
+//			// ND: Don't do anything
+//		}
+//		@Override
+//		public void wdgmsg(Widget sender, String msg, Object... args) {
+//			if (msg.equals("close"))
+//				reqdestroy();
+//			else
+//				super.wdgmsg(sender, msg, args);
+//		}
+//	};
     }
 
     //public static final KeyBinding kb_savtoken = KeyBinding.get("login/savtoken", KeyMatch.forchar('R', KeyMatch.M)); // ND: Why the fuck are there keybinds for these? Someone might press one of those by mistake.
@@ -385,10 +385,10 @@ public class LoginScreen extends Widget {
 	}
 
 	public void tick(double dt){
-		if (!Config.clientVersion.equals(Config.webClientVersion) && !updateWindowShown) {
-			adda(updateWindow, 0.5, 0);
-			updateWindowShown = true;
-		}
+//		if (!Config.clientVersion.equals(Config.webClientVersion) && !updateWindowShown) {
+//			adda(updateWindow, 0.5, 0);
+//			updateWindowShown = true;
+//		}
 		super.tick(dt);
 	}
 

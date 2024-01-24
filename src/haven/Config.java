@@ -42,7 +42,7 @@ import java.nio.file.*;
 
 public class Config {
 	public static final String clientVersion = "v1.0.21a";
-	public static String webClientVersion = "";
+//	public static String webClientVersion = "";
 	public static final File HOMEDIR = new File("").getAbsoluteFile();
     public static final Properties jarprops = getjarprops();
     public static final String confid = jarprops.getProperty("config.client-id", "unknown");
@@ -60,45 +60,45 @@ public class Config {
 	}
     }
 
-	static {
-		getVersion();
-	}
+//	static {
+//		getVersion();
+//	}
 
-	public static void getVersion() {
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		Future<Void> future = executor.submit(() -> {
-			try {
-				URL url = new URL("https://logs.havocandhearth.net/version/check");
-				HttpURLConnection con = (HttpURLConnection) url.openConnection();
-				con.setRequestMethod("GET");
-				int responseCode = con.getResponseCode();
-				if (responseCode == HttpURLConnection.HTTP_OK) {
-					try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-						String inputLine;
-						StringBuilder response = new StringBuilder();
-						while ((inputLine = in.readLine()) != null) {
-							response.append(inputLine);
-						}
-						JSONObject jsonObject = new JSONObject(response.toString());
-						webClientVersion = jsonObject.getString("version");
-					}
-				} else {
-					webClientVersion = clientVersion;
-				}
-			} catch (Exception e) {
-				webClientVersion = clientVersion;
-			}
-			return null;
-		});
-
-		try {
-			future.get(1, TimeUnit.SECONDS);
-		} catch (InterruptedException | ExecutionException | TimeoutException e) {
-			webClientVersion = clientVersion;
-		} finally {
-			executor.shutdown();
-		}
-	}
+//	public static void getVersion() {
+//		ExecutorService executor = Executors.newSingleThreadExecutor();
+//		Future<Void> future = executor.submit(() -> {
+//			try {
+//				URL url = new URL("https://logs.havocandhearth.net/version/check");
+//				HttpURLConnection con = (HttpURLConnection) url.openConnection();
+//				con.setRequestMethod("GET");
+//				int responseCode = con.getResponseCode();
+//				if (responseCode == HttpURLConnection.HTTP_OK) {
+//					try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+//						String inputLine;
+//						StringBuilder response = new StringBuilder();
+//						while ((inputLine = in.readLine()) != null) {
+//							response.append(inputLine);
+//						}
+//						JSONObject jsonObject = new JSONObject(response.toString());
+//						webClientVersion = jsonObject.getString("version");
+//					}
+//				} else {
+//					webClientVersion = clientVersion;
+//				}
+//			} catch (Exception e) {
+//				webClientVersion = clientVersion;
+//			}
+//			return null;
+//		});
+//
+//		try {
+//			future.get(1, TimeUnit.SECONDS);
+//		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+//			webClientVersion = clientVersion;
+//		} finally {
+//			executor.shutdown();
+//		}
+//	}
 
 	public static File getFile(String name) {
 		return new File(HOMEDIR, name);
