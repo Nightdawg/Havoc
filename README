@@ -1,9 +1,11 @@
+***WE'RE NO LONGER UPDATING THIS CLIENT***
+
 Havoc repo: https://github.com/Nightdawg/Havoc.git
 Loftar's repo: git://sh.seatribe.se/hafen-client
 
 DON'T BOTHER USING LOFTAR'S GITHUB REPO!!! Use his seatribe repo, cause he often times forgets updating the one on github.
 
-Quick set up for future users (we're no longer updating this):
+Quick set up for future users:
 
 1. Fork the Havoc repo
 2. Pull from Loftar's repo
