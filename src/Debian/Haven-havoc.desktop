@@ -1,10 +1,11 @@
 [Desktop Entry]
 Version=1.1
 Type=Application
+Categories=Game
 Name=Haven-hearth-HAVOC
 Comment=try survive in haven and hearth world, good luck!
-Icon=./Games/Haven/cache/https/game.havenandhearth.com/java/icon.gif
-Exec=bash ./Games/Haven/Havoc/haven-havoc.sh
 Path=./Games/Haven/Havoc
-Actions=
-Categories=Game;
+Icon=./res/icon.png
+Exec=bash ./Games/Haven/Havoc/haven-havoc.sh
+Actions=;
+
